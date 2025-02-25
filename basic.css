@@ -1,6 +1,7 @@
 * {
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
 }
 
 @font-face {
@@ -15,63 +16,67 @@
 
 body {
     margin: 0 auto;
+    width: 100%;
     max-width: 1200px;
     background-color: #f4ebdd;
     font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif !important;
-
+    padding: 0 15px;
 }
 
 .titleContainer {
-    margin: 100px;
+    margin: 5vw;
 }
 
 .bandName {
     font-family: 'Astrella', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     width: 100%;
     text-align: center;
-    font-size: 170px;
+    font-size: clamp(3.5rem, 14vw, 170px);
     color: #000;
-    line-height: 170px;
+    line-height: 1;
 }
 
 .bandNameSmall {
     font-family: 'Astrella', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     width: 100%;
     text-align: left;
-    font-size: 100px;
+    font-size: clamp(2.5rem, 8vw, 100px);
     color: #000;
-    line-height: 100px;
+    line-height: 1;
 }
 
 .photosContainer {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; /* Changed to space-between for even distribution */
     gap: 20px;
-    max-width: calc(2 * (100% / 2 + 20px)); /* Limits to 3 items' width plus gaps */
+    width: 100%;
 }
 
 img {
-    flex: 0 1 calc(50% - 20px);
-    text-align: center;
+    width: calc(33.33% - 20px); /* Base: 3 columns, accounting for gap */
+    min-width: 0; /* Prevents overflow */
+    max-width: 100%; /* Ensures responsiveness */
+    height: auto;
     background-color: #f0f0f0;
     box-sizing: border-box;
 }
 
 .equipmentTypes {
     display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    gap: 20px; 
-    height: 60px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    height: auto;
+    margin: 10px 0;
 }
 
 .equipmentType {
-    font-size: 20px;
+    font-size: clamp(1.25rem, 2vw, 24px);
     padding: 6px;
     color: #FFF;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     height: 100%;
 }
 
@@ -82,76 +87,61 @@ img {
 }
 
 tr .equipmentType {
-    font-size: 10px;
+    font-size: clamp(0.875rem, 1.5vw, 12px);
 }
 
 .minorDesc {
-    font-size: 10px;
+    font-size: clamp(0.875rem, 1.2vw, 12px);
 }
 
-.preferred {
-    background-color: #062;
-}
-
-.required {
-    background-color: #C30;
-}
-
-.info {
-    background-color: #06F;
-}
-
-.optional {
-    background-color: #F60;
-}
+.preferred { background-color: #062; }
+.required { background-color: #C30; }
+.info { background-color: #06F; }
+.optional { background-color: #F60; }
 
 #externalLinks {
-    font-size: 32px;
+    font-size: clamp(1.75rem, 3vw, 36px);
 }
 
 h1, h2, h3, h4, h5 {
     text-align: left;
-    margin: 50px 0px 30px 0px;
-    padding: 10px 0px;
+    margin: 3vw 0 2vw 0;
+    padding: 1vw 0;
 }
 
-h1 {
-    border-bottom: thin solid #0002;
-}
+h1 { border-bottom: thin solid #0002; }
 
 h2, h3 {
-    margin: 40px 0px 10px 0px;
-    padding: 10px 0px;
+    margin: 2.5vw 0 1vw 0;
+    padding: 1vw 0;
 }
 
 th {
-    font-size: 16px;
+    font-size: clamp(1.25rem, 1.8vw, 18px);
     font-weight: bold;
     border-bottom: thin solid #0002;
 }
 
 th, td {
     text-align: left;
-    padding: 4px 40px 4px 0px;
+    padding: 0.5vw 2vw 0.5vw 0;
 }
 
 .categoryTitle {
     text-align: left;
-    font-size: 50px;
+    font-size: clamp(2.25rem, 5vw, 50px);
 }
 
 .bandDescription {
     text-align: center;
-    font-size: 20px;
-    text-transform: full-width;
-    margin-top: 30px;
+    font-size: clamp(1.5rem, 2.5vw, 24px);
+    margin-top: 2vw;
 }
 
 .bandLongDescription {
-    font-size: 16px;
+    font-size: clamp(1.25rem, 1.8vw, 18px);
     text-align: left;
 }
-
 
 .albumsList {
     text-align: center;
@@ -159,19 +149,19 @@ th, td {
 
 .menu {
     text-align: center;
-    font-size: 30px;
-    margin-top: 40px;
+    font-size: clamp(1.875rem, 3vw, 34px);
+    margin-top: 2.5vw;
 }
 
 .menuItem {
     cursor: pointer;
-    padding: 5px 20px;
+    padding: 0.5vw 1.5vw;
     display: inline-block;
-    line-height: 25px;
+    line-height: 1.5;
 }
 
 .menuDesc {
-    font-size:10px;
+    font-size: clamp(0.875rem, 1.2vw, 12px);
     text-align: left;
 }
 
@@ -186,8 +176,8 @@ a:hover {
 }
 
 .menu a i {
-    font-size: 16px;
-    vertical-align:middle;
+    font-size: clamp(1rem, 1.5vw, 18px);
+    vertical-align: middle;
 }
 
 .menuItem:hover, .menuLink:hover {
@@ -198,45 +188,82 @@ a:hover {
 
 .menuLinks {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 1.5vw;
 }
 
 .menuLink {
     display: inline-block;
-    width: 70px;
-    font-size: 20px;
+    width: clamp(50px, 6vw, 70px);
+    font-size: clamp(1.5rem, 2vw, 24px);
 }
 
 .disabled {
     opacity: 0.2;
 }
 
-img {
-    width: 48%;
-    padding: 0 1%;
-}
-
 .question {
-    margin-top: 20px;
-    padding: 15px;
+    margin-top: 1.5vw;
+    padding: 1vw;
     background-color: #e8f7ff;
     border-left: 4px solid #3498db;
     border-radius: 4px;
 }
 
 .answer {
-    margin-top: 10px;
-    padding-left: 20px;
+    margin-top: 0.8vw;
+    padding-left: 1.5vw;
 }
 
 .speaker {
     font-weight: bold;
     color: #C00;
-    margin-right: 5px;
+    margin-right: 0.5vw;
 }
 
-
 .footer {
-    margin-top: 50px;
-    font-size: 12px;
+    margin-top: 3vw;
+    font-size: clamp(1rem, 1.5vw, 14px);
+}
+
+@media screen and (max-width: 1024px) {
+    img {
+        width: calc(50% - 20px); /* 2 columns */
+    }
+}
+
+@media screen and (max-width: 768px) {
+    img {
+        width: calc(100% - 20px); /* 1 column */
+    }
+    
+    .photosContainer {
+        justify-content: center;
+    }
+    
+    .equipmentTypes {
+        flex-direction: column;
+    }
+    
+    .equipmentType {
+        width: 100%;
+    }
+    
+    .titleContainer {
+        margin: 3vw;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .bandName {
+        line-height: 1.2;
+    }
+    
+    .bandNameSmall {
+        text-align: center;
+    }
+    
+    .menuItem {
+        display: block;
+        margin: 0.5vw 0;
+    }
 }
