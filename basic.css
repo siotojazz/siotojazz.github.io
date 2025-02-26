@@ -21,10 +21,52 @@ body {
     background-color: #f4ebdd;
     font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif !important;
     padding: 0 15px;
+    font-size: clamp(16px, calc(24px - 0.5vw), 24px);
+}
+
+details {
+    padding: 20px;
+    margin-bottom: 10px;
+    transition: 0.1s;
+}
+
+summary {
+    cursor: pointer;
+    padding: 10px;
+    font-weight: bold;
+    transition: 0.1s;
+    margin: -20px;
+}
+
+details > div:first-of-type {
+    margin-top: 40px;
+    opacity: 0;
+    height: 0;
+    transition: 0.1s;
+}
+
+details[open] > div:first-of-type {
+    opacity: 1;
+    height: auto;
+    transition: 0.3s;
+}
+
+summary:hover, details[open] {
+    background-color: #000;
+    color: #FFF;
+    transition: 0.3s;
 }
 
 .titleContainer {
     margin: 5vw;
+}
+
+.subtitle {
+    margin-top:0px;
+    letter-spacing: 6px;
+    font-weight: normal;
+    font-size: 20px;
+    color: #444;
 }
 
 .bandName {
@@ -72,12 +114,10 @@ img {
 }
 
 .equipmentType {
-    font-size: clamp(1.25rem, 2vw, 24px);
+    font-size: clamp(24px, calc(32px - 0.5vw), 32px);
     padding: 6px;
     color: #FFF;
-    width: 100%;
-    max-width: 400px;
-    height: 100%;
+    width: calc(25% - 20px);
 }
 
 .equipmentType:hover {
@@ -87,11 +127,13 @@ img {
 }
 
 tr .equipmentType {
-    font-size: clamp(0.875rem, 1.5vw, 12px);
+    font-size: clamp(18px, calc(22px - 0.5vw), 22px);
 }
 
 .minorDesc {
-    font-size: clamp(0.875rem, 1.2vw, 12px);
+    margin: 0px;
+    padding: 0px;
+    font-size: clamp(12px, calc(20px - 0.5vw), 20px);
 }
 
 .preferred { background-color: #062; }
@@ -101,6 +143,10 @@ tr .equipmentType {
 
 #externalLinks {
     font-size: clamp(1.75rem, 3vw, 36px);
+}
+
+#externalLinks a:link, #externalLinks a:visited {
+    color: #AAA !important;
 }
 
 h1, h2, h3, h4, h5 {
@@ -134,12 +180,12 @@ th, td {
 
 .bandDescription {
     text-align: center;
-    font-size: clamp(1.5rem, 2.5vw, 24px);
-    margin-top: 2vw;
+    margin-top: 0px;
+    letter-spacing: 8px; 
+    color: #777;
 }
 
 .bandLongDescription {
-    font-size: clamp(1.25rem, 1.8vw, 18px);
     text-align: left;
 }
 
@@ -188,13 +234,16 @@ a:hover {
 
 .menuLinks {
     text-align: center;
-    margin-bottom: 1.5vw;
+    margin: 1.5vw 0;
 }
 
 .menuLink {
-    display: inline-block;
+    display: inline-flex;
     width: clamp(50px, 6vw, 70px);
+    height: clamp(50px, 6vw, 70px);
     font-size: clamp(1.5rem, 2vw, 24px);
+    place-items: center;
+    justify-content: center;
 }
 
 .disabled {
@@ -204,7 +253,7 @@ a:hover {
 .question {
     margin-top: 1.5vw;
     padding: 1vw;
-    background-color: #e8f7ff;
+    background-color: #151515;
     border-left: 4px solid #3498db;
     border-radius: 4px;
 }
@@ -216,7 +265,7 @@ a:hover {
 
 .speaker {
     font-weight: bold;
-    color: #C00;
+    color: #3498db;
     margin-right: 0.5vw;
 }
 
@@ -229,23 +278,23 @@ a:hover {
     img {
         width: calc(50% - 20px); /* 2 columns */
     }
+
+    .equipmentType {
+        width: calc(50% - 20px);
+    }
 }
 
 @media screen and (max-width: 768px) {
     img {
         width: calc(100% - 20px); /* 1 column */
     }
+
+    .equipmentType {
+        width: calc(100% - 20px);
+    }
     
     .photosContainer {
         justify-content: center;
-    }
-    
-    .equipmentTypes {
-        flex-direction: column;
-    }
-    
-    .equipmentType {
-        width: 100%;
     }
     
     .titleContainer {
