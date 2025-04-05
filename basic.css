@@ -225,6 +225,7 @@ th, td {
 a:link, a:visited {
     color: #633;
     text-decoration: none;
+    transition: 0.2s;
 }
 
 details a:link, details a:visited {
@@ -242,6 +243,10 @@ progress[value]::-webkit-progress-bar { background-color: #C00; }
 a:hover {
     filter: brightness(1.5);
     transition: 0.2s;
+}
+
+a:hover img {
+    filter: brightness(0.7) !important;
 }
 
 .menu a i {
