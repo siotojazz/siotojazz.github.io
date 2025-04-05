@@ -52,9 +52,14 @@ details[open] > div:first-of-type {
 }
 
 summary:hover, details[open] {
-    background-color: #000;
+    background-color: #1F1F1F;
     color: #FFF;
     transition: 0.3s;
+}
+
+.bandLongDescription p {
+    text-indent: 30px;         
+    margin: 20px 0px;          
 }
 
 .titleContainer {
@@ -90,18 +95,17 @@ summary:hover, details[open] {
 .photosContainer {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between; /* Changed to space-between for even distribution */
+    justify-content: space-between;
     gap: 20px;
     width: 100%;
 }
 
 img {
     width: calc(33.33% - 20px); /* Base: 3 columns, accounting for gap */
-    min-width: 0; /* Prevents overflow */
-    max-width: 100%; /* Ensures responsiveness */
-    height: auto;
-    background-color: #f0f0f0;
-    box-sizing: border-box;
+    height: auto; /* Ensures height scales with width, preserving aspect ratio */
+    box-sizing: border-box; /* Keeps padding/border within width */
+    object-fit: contain; /* Prevents stretching, keeps aspect ratio */
+    display: block; /* Avoids inline spacing issues */
 }
 
 .equipmentTypes {
@@ -109,6 +113,7 @@ img {
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
+    object-fit: contain;
     height: auto;
     margin: 10px 0;
 }
@@ -208,13 +213,25 @@ th, td {
 
 .menuDesc {
     font-size: clamp(0.875rem, 1.2vw, 12px);
-    text-align: left;
+    text-align: center;
 }
 
 a:link, a:visited {
     color: #633;
     text-decoration: none;
 }
+
+details a:link, details a:visited {
+    color: #39F;
+}
+
+progress {
+    border-radius: 0px;
+    border: 0px;
+}
+
+progress[value]::-moz-progress-bar { background-color: #C00; }
+progress[value]::-webkit-progress-bar { background-color: #C00; }
 
 a:hover {
     filter: brightness(1.5);
