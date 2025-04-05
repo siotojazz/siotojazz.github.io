@@ -32,11 +32,16 @@ details {
 }
 
 summary {
+    list-style: none;
     cursor: pointer;
     padding: 10px;
     font-weight: bold;
     transition: 0.1s;
     margin: -20px;
+}
+
+summary i {
+    padding: 0px 10px 0px 10px;
 }
 
 details > div:first-of-type {
