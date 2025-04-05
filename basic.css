@@ -28,6 +28,7 @@ details {
     padding: 20px;
     margin-bottom: 10px;
     transition: 0.1s;
+    overflow-x: auto;
 }
 
 summary {
@@ -100,7 +101,7 @@ summary:hover, details[open] {
     width: 100%;
 }
 
-img {
+details img {
     width: calc(33.33% - 20px); /* Base: 3 columns, accounting for gap */
     height: auto; /* Ensures height scales with width, preserving aspect ratio */
     box-sizing: border-box; /* Keeps padding/border within width */
@@ -292,7 +293,7 @@ a:hover {
 }
 
 @media screen and (max-width: 1024px) {
-    img {
+    details img {
         width: calc(50% - 20px); /* 2 columns */
     }
 
@@ -302,7 +303,7 @@ a:hover {
 }
 
 @media screen and (max-width: 768px) {
-    img {
+    details img {
         width: calc(100% - 20px); /* 1 column */
     }
 
