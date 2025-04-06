@@ -352,9 +352,38 @@ a:hover img {
     margin-right: 0.5vw;
 }
 
+#LineUp tr td:first-child {
+    font-weight: bold;
+}
+
 .footer {
     margin-top: 3vw;
     font-size: 80%;
+}
+
+#scrollToTopBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: #000;
+    border: solid 1px #000;
+    font-size: 100%;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#top #scrollToTopBtn {
+    display: block;
+}
+
+#scrollToTopBtn:hover {
+    background-color: #111;
+    color: #f4ebdd;
+}
+
+.show-scroll-btn {
+    display: block;
 }
 
 @media screen and (max-width: 1024px) {
@@ -395,3 +424,4 @@ a:hover img {
         margin: 0.5vw 0;
     }
 }
+
