@@ -22,6 +22,7 @@ body {
     font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif !important;
     padding: 0 15px;
     font-size: clamp(12px, calc(32px - 0.5vw), 32px);
+    scroll-behavior: smooth;
 }
 
 details {
@@ -39,6 +40,9 @@ summary {
     font-size: 130%;
     transition: 0.1s;
     margin: -20px;
+    color:#000;
+    border: 1px solid #000;
+    background-color: #00000015;
 }
 
 summary i {
@@ -59,10 +63,57 @@ details[open] > div:first-of-type {
 }
 
 summary:hover, details[open] {
-    background-color: #1F1F1F;
-    color: #FFF;
+    color: #000;
     transition: 0.3s;
 }
+
+nav {
+    padding: 40px 0px;
+    margin: 40px 0px;
+    border-top:  1px solid #0003;
+    border-bottom: 1px solid #0003;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+}
+
+nav li {
+    flex: 1 1 250px;
+    min-width: 250px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #111 !important; 
+    display: block; 
+    padding: 15px 20px;
+    border: 1px solid #AAA; 
+    box-shadow: 0 px 5px #000;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: left;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+nav a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 5px #0006;
+    background-color: #FFF3; 
+}
+
+nav a:active {
+    transform: translateY(0px);
+    box-shadow: 0 3px 5px #0006 inset;
+    background-color: #0003; 
+    transition: 0.1s;
+}
+
 
 .bandLongDescription p {
     text-indent: 30px;         
@@ -74,7 +125,7 @@ summary:hover, details[open] {
 }
 
 .subtitle {
-    margin-top:0px;
+    margin-top: 0px;
     letter-spacing: 6px;
     font-weight: normal;
     font-size: 80%;
@@ -158,20 +209,22 @@ tr .equipmentType {
 }
 
 #externalLinks a:link, #externalLinks a:visited {
-    color: #AAA !important;
 }
 
 h1, h2, h3, h4, h5 {
     text-align: left;
-    margin: 3vw 0 2vw 0;
-    padding: 1vw 0;
 }
 
 h1 { border-bottom: thin solid #0002; }
 
 h2, h3 {
-    margin: 2.5vw 0 1vw 0;
-    padding: 1vw 0;
+    margin: 20px 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: solid 1px #0003;
+}
+
+hr {
+    border-color: #0003;
 }
 
 th {
@@ -230,12 +283,15 @@ a:link, a:visited {
 }
 
 details a:link, details a:visited {
-    color: #39F;
+    color: #06A;
+}
+
+details img {
+    border: 1px solid #111;
 }
 
 progress {
-    border-radius: 0px;
-    border: 0px;
+    border: 1px solid #0006;
 }
 
 progress[value]::-moz-progress-bar { background-color: #C00; }
@@ -280,7 +336,7 @@ a:hover img {
 .question {
     margin-top: 1.5vw;
     padding: 1vw;
-    background-color: #151515;
+    background-color: #0001;
     border-left: 4px solid #3498db;
     border-radius: 4px;
 }
