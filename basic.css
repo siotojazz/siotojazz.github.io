@@ -21,7 +21,7 @@ body {
     background-color: #f4ebdd;
     font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif !important;
     padding: 0 15px;
-    font-size: clamp(16px, calc(24px - 0.5vw), 24px);
+    font-size: clamp(12px, calc(32px - 0.5vw), 32px);
 }
 
 details {
@@ -36,6 +36,7 @@ summary {
     cursor: pointer;
     padding: 10px;
     font-weight: bold;
+    font-size: 130%;
     transition: 0.1s;
     margin: -20px;
 }
@@ -76,7 +77,7 @@ summary:hover, details[open] {
     margin-top:0px;
     letter-spacing: 6px;
     font-weight: normal;
-    font-size: 20px;
+    font-size: 80%;
     color: #444;
 }
 
@@ -84,7 +85,7 @@ summary:hover, details[open] {
     font-family: 'Astrella', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     width: 100%;
     text-align: center;
-    font-size: clamp(3.5rem, 14vw, 170px);
+    font-size: clamp(170px, calc(50px - 0.5vw), 50px);
     color: #000;
     line-height: 1;
 }
@@ -93,7 +94,7 @@ summary:hover, details[open] {
     font-family: 'Astrella', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     width: 100%;
     text-align: left;
-    font-size: clamp(2.5rem, 8vw, 100px);
+    font-size: 500%;
     color: #000;
     line-height: 1;
 }
@@ -125,7 +126,7 @@ details img {
 }
 
 .equipmentType {
-    font-size: clamp(24px, calc(32px - 0.5vw), 32px);
+    font-size: 120%;
     padding: 6px;
     color: #FFF;
     width: calc(25% - 20px);
@@ -138,13 +139,13 @@ details img {
 }
 
 tr .equipmentType {
-    font-size: clamp(18px, calc(22px - 0.5vw), 22px);
+    font-size: 100%;
 }
 
 .minorDesc {
     margin: 0px;
     padding: 0px;
-    font-size: clamp(12px, calc(20px - 0.5vw), 20px);
+    font-size: 60%;
 }
 
 .preferred { background-color: #062; }
@@ -153,7 +154,7 @@ tr .equipmentType {
 .optional { background-color: #F60; }
 
 #externalLinks {
-    font-size: clamp(1.75rem, 3vw, 36px);
+    font-size: 300%;
 }
 
 #externalLinks a:link, #externalLinks a:visited {
@@ -174,7 +175,7 @@ h2, h3 {
 }
 
 th {
-    font-size: clamp(1.25rem, 1.8vw, 18px);
+    font-size: 110%;
     font-weight: bold;
     border-bottom: thin solid #0002;
 }
@@ -186,7 +187,7 @@ th, td {
 
 .categoryTitle {
     text-align: left;
-    font-size: clamp(2.25rem, 5vw, 50px);
+    font-size: 240%;
 }
 
 .bandDescription {
@@ -206,7 +207,7 @@ th, td {
 
 .menu {
     text-align: center;
-    font-size: clamp(1.875rem, 3vw, 34px);
+    font-size: 200%;
     margin-top: 2.5vw;
 }
 
@@ -218,7 +219,7 @@ th, td {
 }
 
 .menuDesc {
-    font-size: clamp(0.875rem, 1.2vw, 12px);
+    font-size: 40%;
     text-align: center;
 }
 
@@ -249,7 +250,7 @@ a:hover img {
 }
 
 .menu a i {
-    font-size: clamp(1rem, 1.5vw, 18px);
+    font-size: 100%;
     vertical-align: middle;
 }
 
@@ -266,9 +267,8 @@ a:hover img {
 
 .menuLink {
     display: inline-flex;
-    width: clamp(50px, 6vw, 70px);
-    height: clamp(50px, 6vw, 70px);
-    font-size: clamp(1.5rem, 2vw, 24px);
+    padding: 5%;
+    font-size: 260%;
     place-items: center;
     justify-content: center;
 }
@@ -298,7 +298,7 @@ a:hover img {
 
 .footer {
     margin-top: 3vw;
-    font-size: clamp(1rem, 1.5vw, 14px);
+    font-size: 80%;
 }
 
 @media screen and (max-width: 1024px) {
@@ -332,10 +332,6 @@ a:hover img {
 @media screen and (max-width: 480px) {
     .bandName {
         line-height: 1.2;
-    }
-    
-    .bandNameSmall {
-        text-align: center;
     }
     
     .menuItem {
