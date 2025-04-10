@@ -84,12 +84,12 @@ nav ul {
 }
 
 nav li {
-    flex: 1 1 250px;
-    min-width: 250px;
+    flex: 1 1 300px;
+    min-width: 300px;
 }
 
 nav a {
-    text-decoration: none;
+    text-decoration: none !important;
     color: #111 !important; 
     display: block; 
     padding: 15px 20px;
@@ -98,6 +98,7 @@ nav a {
     transition: transform 0.2s, box-shadow 0.2s;
     text-align: left;
     height: 100%;
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -261,14 +262,17 @@ th, td {
 .menu {
     text-align: center;
     font-size: 200%;
-    margin-top: 2.5vw;
+    margin-top: 5.5vw;
 }
 
 .menuItem {
+    font-size: 100%;
     cursor: pointer;
     padding: 0.5vw 1.5vw;
     display: inline-block;
     line-height: 1.5;
+    border: 2px solid #111;
+    margin-bottom: 30px;
 }
 
 .menuDesc {
@@ -277,7 +281,7 @@ th, td {
 }
 
 a:link, a:visited {
-    color: #633;
+    color: #111;
     text-decoration: none;
     transition: 0.2s;
 }
@@ -299,6 +303,7 @@ progress[value]::-webkit-progress-bar { background-color: #C00; }
 
 a:hover {
     filter: brightness(1.5);
+    text-decoration: underline;
 }
 
 a:hover img {
@@ -393,6 +398,10 @@ a:hover img {
 
     .equipmentType {
         width: calc(50% - 20px);
+    }
+
+    .menuItem {
+        display: block;
     }
 }
 
