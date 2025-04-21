@@ -20,12 +20,12 @@ body {
     max-width: 800px;
     background-color: #f4ebdd;
     font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    padding: 20px 20px 0;
+    padding: 10px 20px;
     font-size: clamp(16px, 2.5vw, 18px);
     scroll-behavior: smooth;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
 }
@@ -54,13 +54,20 @@ body {
     animation: zoomInSubtitle 2s cubic-bezier(0.5, 0, 0.5, 1.2);
 }
 
+.buttonWrapper {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
 .linkContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
     width: 100%;
-    flex-grow: 0;
 }
 
 .linkButton {
@@ -326,7 +333,7 @@ body {
 
 @media screen and (max-width: 768px) {
     body {
-        padding: 15px 15px 0;
+        padding: 8px 15px;
     }
 
     .titleContainer {
@@ -360,7 +367,7 @@ body {
 
 @media screen and (max-width: 480px) {
     body {
-        padding: 10px 10px 0;
+        padding: 5px 10px;
     }
 
     .titleContainer {
