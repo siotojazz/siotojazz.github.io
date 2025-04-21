@@ -71,7 +71,7 @@ body {
     font-size: clamp(18px, 3vw, 20px);
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), -5px -5px 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
     position: relative;
     transition: transform 0.3s, background 0.3s, color 0.3s, box-shadow 0.3s;
     animation: bounceIn 1s cubic-bezier(0.7, -0.3, 0.3, 1.3) forwards;
@@ -113,7 +113,7 @@ body {
     transform: perspective(600px) translateZ(20px) skewY(2deg);
     background: #000000;
     color: #f4ebdd;
-    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 .linkButton:hover::before {
@@ -143,7 +143,7 @@ body {
     font-weight: 900;
     text-shadow: -1px 0 #000, 1px 0 #000, 0 -1px #000, 0 1px #000, 3px 3px 6px rgba(0, 0, 0, 0.8);
     opacity: 1;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), -5px -5px 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
     animation: bounceIn 1s cubic-bezier(0.7, -0.3, 0.3, 1.3) forwards;
     animation-delay: calc(0.2s * var(--index));
 }
@@ -172,7 +172,7 @@ body {
 .albumButton:hover {
     background-color: rgba(0, 0, 0, 0.9);
     transform: perspective(600px) translateZ(20px) skewY(2deg) scale(1.02);
-    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(3px);
 }
 
@@ -219,7 +219,7 @@ body {
     text-decoration: none;
     color: #111;
     font-size: 24px;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), -5px -5px 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
     position: relative;
     transition: transform 0.3s, background 0.3s, color 0.3s, box-shadow 0.3s;
     animation: flipIn 0.7s cubic-bezier(0.8, -0.4, 0.2, 1.5) forwards;
@@ -254,7 +254,7 @@ body {
     transform: perspective(600px) translateZ(20px) skewY(2deg);
     background: #000000;
     color: #f4ebdd;
-    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 .socialLink:hover::before {
