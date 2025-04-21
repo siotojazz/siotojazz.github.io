@@ -20,14 +20,19 @@ body {
     max-width: 800px;
     background-color: #f4ebdd;
     font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    padding: 20px;
+    padding: 20px 20px 0;
     font-size: clamp(16px, 2.5vw, 18px);
     scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
 .titleContainer {
     text-align: center;
-    margin: 4vw 0;
+    margin: 2vw 0;
 }
 
 .bandName {
@@ -54,15 +59,16 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    margin: 0 auto;
-    max-width: 500px;
+    width: 100%;
+    flex-grow: 0;
 }
 
 .linkButton {
     display: flex;
     align-items: center;
-    width: 100%;
-    padding: 15px 20px;
+    width: 40vw;
+    min-width: 320px;
+    padding: 15px 30px;
     background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
     border: 3px solid #111;
     border-radius: 0;
@@ -91,15 +97,18 @@ body {
     animation-delay: calc(0.2s * var(--index));
 }
 
-.linkButton i, .linkButton .linkDesc {
-    position: relative;
-    transition: transform 0.3s;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
 .linkButton i {
     margin-right: 10px;
     font-size: clamp(18px, 3vw, 20px);
+    transition: transform 0.3s;
+}
+
+.linkButton .linkDesc {
+    color: #999;
+    font-size: clamp(12px, 2vw, 13px);
+    font-weight: normal;
+    margin-left: auto;
+    transition: transform 0.3s, color 0.3s;
 }
 
 .linkButton:nth-child(1) { --index: 1; }
@@ -120,20 +129,20 @@ body {
     transform: translateZ(-10px);
 }
 
-.linkButton:hover i, .linkButton:hover .linkDesc {
+.linkButton:hover i {
     transform: translateZ(5px);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.linkDesc {
-    font-size: clamp(12px, 2vw, 13px);
-    font-weight: normal;
-    margin-left: auto;
+.linkButton:hover .linkDesc {
+    transform: translateZ(3px);
+    color: #bbb;
 }
 
 .albumButton {
     position: relative;
-    padding: 20px;
+    width: 40vw;
+    min-width: 320px;
+    padding: 15px 30px;
     background-image: url('truestate/sioto_jazz_album_cover_small.png');
     background-size: cover;
     background-position: center 10%;
@@ -161,11 +170,23 @@ body {
     animation-delay: calc(0.2s * var(--index));
 }
 
-.albumButton i, .albumButton .linkDesc {
+.albumButton i {
     color: #ffffff;
     font-weight: 900;
     opacity: 1;
+    margin-right: 10px;
+    font-size: clamp(20px, 3.5vw, 22px);
     transition: transform 0.3s;
+    text-shadow: -1px 0 #000, 1px 0 #000, 0 -1px #000, 0 1px #000, 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+.albumButton .linkDesc {
+    color: #999;
+    font-size: clamp(12px, 2vw, 13px);
+    font-weight: normal;
+    margin-left: auto;
+    opacity: 1;
+    transition: transform 0.3s, color 0.3s;
     text-shadow: -1px 0 #000, 1px 0 #000, 0 -1px #000, 0 1px #000, 3px 3px 6px rgba(0, 0, 0, 0.8);
 }
 
@@ -186,18 +207,15 @@ body {
 
 .albumButton:hover .linkDesc {
     transform: translateZ(3px);
-}
-
-.albumButton:hover i, .albumButton:hover .linkDesc {
-    color: #ffffff;
-    text-shadow: -1px 0 #000, 1px 0 #000, 0 -1px #000, 0 1px #000, 3px 3px 6px rgba(0, 0, 0, 0.8);
+    color: #bbb;
 }
 
 .socialLinks {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 100%;
+    width: 40vw;
+    min-width: 320px;
     max-height: 0;
     overflow-y: auto;
     transition: max-height 0.7s ease-in-out;
@@ -212,7 +230,7 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 10px;
+    padding: 10px 30px;
     background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
     border: 3px solid #111;
     border-radius: 0;
@@ -241,7 +259,6 @@ body {
 
 .socialLink i {
     transition: transform 0.3s;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .socialLink:nth-child(1) { --index: 1; }
@@ -263,7 +280,6 @@ body {
 
 .socialLink:hover i {
     transform: translateZ(5px);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes zoomInTitle {
@@ -284,7 +300,7 @@ body {
     0% { transform: translateY(50px) scale(0.8); opacity: 0; }
     50% { transform: translateY(-15px) scale(1.15) rotate(5deg); opacity: 0.7; }
     70% { transform: translateY(10px) scale(0.95) rotate(-3deg); opacity: 0.9; }
-    100% { transform: translateY(0) scale(1) rotate(0); opacity: 1; }
+    100% { transform: scale(1) translateY(0) rotate(0); opacity: 1; }
 }
 
 @keyframes parallaxBounce {
@@ -309,8 +325,12 @@ body {
 }
 
 @media screen and (max-width: 768px) {
+    body {
+        padding: 15px 15px 0;
+    }
+
     .titleContainer {
-        margin: 6vw 0;
+        margin: 4vw 0;
     }
 
     .bandName {
@@ -318,13 +338,19 @@ body {
     }
 
     .linkButton {
-        padding: 12px 15px;
+        width: 100%;
+        padding: 12px 20px;
         font-size: clamp(16px, 2.8vw, 18px);
     }
 
     .albumButton {
-        padding: 15px;
+        width: 100%;
+        padding: 12px 20px;
         font-size: clamp(18px, 3vw, 20px);
+    }
+
+    .socialLinks {
+        width: 100%;
     }
 
     .linkDesc {
@@ -334,11 +360,11 @@ body {
 
 @media screen and (max-width: 480px) {
     body {
-        padding: 15px;
+        padding: 10px 10px 0;
     }
 
     .titleContainer {
-        margin: 8vw 0;
+        margin: 6vw 0;
     }
 
     .bandName {
@@ -354,12 +380,16 @@ body {
     }
 
     .linkButton {
-        padding: 10px 12px;
+        padding: 10px 15px;
         font-size: clamp(14px, 2.5vw, 16px);
     }
 
     .albumButton {
-        padding: 12px;
+        padding: 10px 15px;
         font-size: clamp(16px, 2.8vw, 18px);
+    }
+
+    .socialLink {
+        padding: 10px 15px;
     }
 }
