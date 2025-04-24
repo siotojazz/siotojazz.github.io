@@ -192,6 +192,12 @@ body {
     transition: opacity 0.4s;
 }
 
+.liveCover::after {
+    background-image: url('livecover.png') !important;
+    background-size: cover !important;
+    background-position: center 30% !important;
+}
+
 .albumButton i {
     color: #ffffff;
     font-weight: 900;
