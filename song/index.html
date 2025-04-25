@@ -100,7 +100,7 @@
 
         .linkRow {
             display: flex;
-            justify-content: flex-start;
+            justify-content: flex-start; /* Reverted to flex-start as playText is inside linkButton */
             align-items: center;
             width: 100%;
         }
@@ -108,6 +108,8 @@
         .linkButton {
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Space between platform text and playText */
+            width: 100%; /* Full width to allow playText to align right */
             gap: 6.4px;
             text-decoration: none;
             color: #e0e0e0; /* Soft off-white */
@@ -152,33 +154,34 @@
             color: #ff3333 !important; /* Brighter red */
         }
 
-        .trackList {
+        .platformText {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 12px;
-            width: 320px; /* Fixed width */
-            padding: 16px;
-            background-color: #1a1a1a; /* Less black */
-            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2)); /* Black-gray gradient */
-        }
-
-        .trackItem {
-            display: inline-flex;
             align-items: center;
-            opacity: 0.3; /* 30% opacity */
-            transition: opacity 0.3s ease;
+            gap: 6.4px; /* Space between icon and platform name */
         }
 
-        .trackItem:hover {
-            opacity: 0.6; /* 60% opacity on hover */
-        }
-
-        .trackItem a {
-            text-decoration: none;
+        .playText {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: clamp(10px, 1.6vw, 12px); /* Smaller font size */
+            opacity: 0.5; /* 50% transparent */
             color: #e0e0e0; /* Soft off-white */
-            font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-            font-size: clamp(9.6px, 1.6vw, 11.2px); /* Smaller track list */
+            text-transform: uppercase; /* All caps */
+        }
+
+        .playText i {
+            font-size: clamp(8px, 1.2vw, 10px); /* Smaller icon size */
+            text-shadow: 1px 1px 2px #000000 !important; /* Black shadow for 3D */
+        }
+
+        .linkButton:hover .playText {
+            color: #ffffff !important; /* Brighter white on hover */
+            opacity: 0.7; /* Slightly more opaque on hover */
+        }
+
+        .linkButton:hover .playText i {
+            text-shadow: 4px 4px 8px #000000 !important; /* Stronger shadow on hover */
         }
     </style>
 </head>
@@ -192,49 +195,14 @@
             </div>
             <div class="linkContainer">
                 <div class="linkRow">
-                    <a href="https://open.spotify.com/track/4zsjiqocsDqutg8UStfhJQ" class="linkButton" id="spotifyLink">
-                        <i class="fab fa-spotify" aria-hidden="true"></i>
-                        Spotify
+                    <a href="#" class="linkButton" id="primaryLink">
+                        <span class="platformText">
+                            <i class="fab fa-spotify" id="linkIcon" aria-hidden="true"></i>
+                            <span id="linkText">Spotify</span>
+                        </span>
+                        <span class="playText"><i class="fas fa-play"></i> PLAY</span>
                     </a>
                 </div>
-                <div class="linkRow">
-                    <a href="https://www.youtube.com/watch?v=yvLuSa4OSZM" class="linkButton" id="youtubeLink">
-                        <i class="fab fa-youtube" aria-hidden="true"></i>
-                        YouTube
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="trackList">
-            <div class="trackItem">
-                <a href="/song/?name=Jetpacks">Jetpacks</a>
-            </div>
-            <div class="trackItem">
-                <a href="/song/?name=Mad">Mad</a>
-            </div>
-            <div class="trackItem">
-                <a href="/song/?name=Language">Language</a>
-            </div>
-            <div class="trackItem">
-                <a href="/song/?name=Again">Again</a>
-            </div>
-            <div class="trackItem">
-                <a href="/song/?name=Patience">Patience</a>
-            </div>
-            <div class="trackItem">
-                <a href="/song/?name=Sun">Sun</a>
-            </div>
-            <div class="trackItem">
-                <a href="/song/?name=Empire%20State%20Space%20Station">Empire State Space Station</a>
-            </div>
-            <div class="trackItem">
-                <a href="/song/?name=Ink">Ink</a>
-            </div>
-            <div class="trackItem">
-                <a href="/song/?name=Rites">Rites</a>
-            </div>
-            <div class="trackItem">
-                <a href="/song/?name=Dreams">Dreams</a>
             </div>
         </div>
     </main>
@@ -323,10 +291,22 @@
             return null;
         }
 
-        function updateSongDetails(trackName) {
+        function getLinkTypeFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const linkType = params.get('link');
+            if (linkType) {
+                console.log('Link type from URL:', linkType); // Debug
+                return linkType.toLowerCase().trim();
+            }
+            console.log('No link type in URL, using default');
+            return 'spotify';
+        }
+
+        function updateSongDetails(trackName, linkType) {
             const songNameElement = document.getElementById('songName');
-            const spotifyLinkElement = document.getElementById('spotifyLink');
-            const youtubeLinkElement = document.getElementById('youtubeLink');
+            const primaryLinkElement = document.getElementById('primaryLink');
+            const linkIconElement = document.getElementById('linkIcon');
+            const linkTextElement = document.getElementById('linkText');
 
             const track = trackMap[trackName] || trackMap['jetpacks'];
             console.log('Selected track:', track); // Debug
@@ -338,24 +318,29 @@
                 console.error('Song name element not found');
             }
 
-            if (spotifyLinkElement) {
-                spotifyLinkElement.href = track.spotify;
-                console.log('Spotify link set to:', track.spotify); // Debug
+            if (primaryLinkElement && linkIconElement && linkTextElement) {
+                if (linkType === 'youtube') {
+                    primaryLinkElement.href = track.youtube;
+                    linkIconElement.className = 'fab fa-youtube';
+                    linkTextElement.textContent = 'YouTube';
+                    console.log('YouTube link set to:', track.youtube); // Debug
+                } else {
+                    primaryLinkElement.href = track.spotify;
+                    linkIconElement.className = 'fab fa-spotify';
+                    linkTextElement.textContent = 'Spotify';
+                    console.log('Spotify link set to:', track.spotify); // Debug
+                }
             } else {
-                console.error('Spotify link element not found');
-            }
-
-            if (youtubeLinkElement) {
-                youtubeLinkElement.href = track.youtube;
-                console.log('YouTube link set to:', track.youtube); // Debug
-            } else {
-                console.error('YouTube link element not found');
+                console.error('Link elements not found');
             }
         }
 
         const defaultTrackName = 'jetpacks';
+        const defaultLinkType = 'spotify';
         const trackName = getTrackNameFromUrl() || defaultTrackName;
+        const linkType = getLinkTypeFromUrl() || defaultLinkType;
         console.log('Final track name:', trackName); // Debug
+        console.log('Final link type:', linkType); // Debug
 
         if (!trackMap[trackName]) {
             const songNameElement = document.getElementById('songName');
@@ -367,7 +352,7 @@
             }
         }
 
-        updateSongDetails(trackName);
+        updateSongDetails(trackName, linkType);
     </script>
 </body>
 </html>
