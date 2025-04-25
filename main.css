@@ -23,16 +23,20 @@ body {
     padding: 5px 20px;
     font-size: clamp(16px, 2.5vw, 18px);
     scroll-behavior: smooth;
+}
+
+main {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
     min-height: 100vh;
+    align-items: center;
 }
 
 .titleContainer {
     text-align: center;
-    margin: 2vw 0 0;
+    margin: 2vw 0 20px;
+    position: relative;
+    z-index: 1000;
 }
 
 .bandName {
@@ -42,6 +46,17 @@ body {
     line-height: 1.1;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     animation: zoomInTitle 1.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.bandNameLink {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    transition: transform 0.4s ease-in-out;
+}
+
+.bandNameLink:hover {
+    transform: scale(1.05);
 }
 
 .bandDescription {
@@ -56,7 +71,6 @@ body {
 
 .buttonWrapper {
     display: flex;
-    flex-grow: 0.3;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -86,9 +100,7 @@ body {
     cursor: pointer;
     box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
     position: relative;
-     transition: transform 0.4s, background 0.4s, color 0.4s, box-shadow 0.4s ease-in-out;
-    /*animation: bounceIn 1s cubic-bezier(0.7, -0.3, 0.3, 1.3) forwards;
-    animation-delay: calc(0.2s * var(--index)); */
+    transition: transform 0.4s, background 0.4s, color 0.4s, box-shadow 0.4s ease-in-out;
 }
 
 .linkButton::before {
@@ -100,8 +112,6 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.05);
     z-index: -1;
-    /* animation: parallaxBounce 1s cubic-bezier(0.6, -0.2, 0.4, 1.4) forwards;
-    animation-delay: calc(0.2s * var(--index)); */
     transition: transform 0.4s;
 }
 
@@ -147,6 +157,13 @@ body {
     color: #bbb;
 }
 
+.copyButton {
+    width: auto;
+    padding: 10px 20px;
+    font-size: clamp(14px, 2.2vw, 16px);
+    margin-top: 15px;
+}
+
 .albumButton {
     position: relative;
     width: 400px;
@@ -159,8 +176,7 @@ body {
     opacity: 1;
     box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
     animation: bounceIn 1s cubic-bezier(0.7, -0.3, 0.3, 1.3) forwards;
-    /*animation-delay: calc(0.2s * var(--index));*/
-     transition: transform 0.4s, background-color 0.4s, box-shadow 0.4s ease-in-out; 
+    transition: transform 0.4s, background-color 0.4s, box-shadow 0.4s ease-in-out;
 }
 
 .albumButton::before {
@@ -172,9 +188,6 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.50);
     z-index: -1;
-    /* animation: parallaxBounce 1s cubic-bezier(0.6, -0.2, 0.4, 1.4) forwards;
-    animation-delay: calc(0.2s * var(--index)); 
-    transition: transform 0.4s;*/
 }
 
 .albumButton::after {
@@ -315,6 +328,683 @@ body {
     transform: translateZ(5px);
 }
 
+/* Merchandise Page Styles */
+.merchContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 30px;
+    margin-top: clamp(30px, 5vw, 40px);
+}
+
+.merchNote {
+    font-size: clamp(14px, 2.2vw, 16px);
+    color: #555;
+    text-align: center;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+.paymentNote {
+    font-size: clamp(16px, 2.5vw, 18px);
+    color: #111;
+    text-align: center;
+    max-width: 600px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    background: linear-gradient(to bottom, #e8e0d1, #d8d0c1);
+    padding: 15px;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.merchItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    transition: transform 0.4s, box-shadow 0.4s ease-in-out;
+}
+
+.merchItem:hover {
+    transform: perspective(800px) translateZ(20px) scale(1.02);
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3);
+}
+
+.merchImage {
+    width: 150px;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #111;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.merchDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.merchDetails h3 {
+    font-family: 'Garet', sans-serif;
+    font-size: clamp(18px, 3vw, 20px);
+    color: #111;
+    font-weight: bold;
+}
+
+.merchDetails p {
+    font-size: clamp(14px, 2.2vw, 15px);
+    color: #333;
+}
+
+.merchButton {
+    width: 100%;
+    max-width: 200px;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: clamp(16px, 2.5vw, 18px);
+}
+
+.backButton {
+    width: 100%;
+    max-width: 200px;
+    justify-content: center;
+    margin Wetlands: 20px;
+}
+
+.optionGroup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.optionGroup label {
+    font-size: clamp(14px, 2.2vw, 15px);
+    color: #111;
+    font-weight: bold;
+}
+
+.optionGroup select {
+    padding: 5px 10px;
+    font-size: clamp(14px, 2.2vw, 15px);
+    font-family: 'Garet', sans-serif;
+    background: #f0e8d9;
+    border: 2px solid #111;
+    color: #111;
+    cursor: pointer;
+    transition: background 0.4s, border-color 0.4s;
+}
+
+.optionGroup select:focus {
+    outline: none;
+    border-color: #555;
+    background: #e8e0d1;
+}
+
+/* Extras Page Styles */
+.category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 30px;
+    margin-top: clamp(30px, 5vw, 40px);
+}
+
+.extraNav {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 200px;
+    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    z-index: 1000;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.extraNav ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.extraNav li {
+    width: 100%;
+}
+
+.extraNav a {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
+    border: 2px solid #111;
+    text-decoration: none;
+    color: #111;
+    font-size: clamp(14px, 2.2vw, 16px);
+    font-weight: bold;
+    transition: transform 0.4s, background 0.4s, color 0.4s;
+}
+
+.extraNav a:hover {
+    transform: perspective(800px) translateZ(10px) scale(1.05);
+    background: #000000 radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
+    color: #f4ebdd;
+}
+
+.extraNav a i {
+    margin-right: 8px;
+}
+
+details {
+    width: 100%;
+    max-width: 600px;
+    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    transition: transform 0.4s, box-shadow 0.4s;
+}
+
+details:hover {
+    transform: perspective(800px) translateZ(20px) scale(1.02);
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4);
+}
+
+summary {
+    font-family: 'Garet', sans-serif;
+    font-size: clamp(18px, 3vw, 20px);
+    font-weight: bold;
+    color: #111;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+summary i {
+    margin-right: 10px;
+}
+
+.detailsContent {
+    padding: 20px;
+    color: #333;
+    font-size: clamp(14px, 2.2vw, 16px);
+}
+
+.bandLongDescription p {
+    margin-bottom: 15px;
+}
+
+.audioContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.audioItem {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
+    border: 3px solid #111;
+    padding: 20px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
+    position: relative;
+    transition: transform 0.4s, box-shadow 0.4s ease-in-out;
+}
+
+.audioItem:hover {
+    transform: perspective(800px) translateZ(20px) scale(1.02);
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3);
+}
+
+.audioItem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.05);
+    z-index: -1;
+    transition: transform 0.4s;
+}
+
+.audioItem:hover::before {
+    transform: translateZ(-10px);
+    animation: hoverPulse 1.5s infinite ease-in-out;
+}
+
+.audioItem .customAudio {
+    display: none;
+}
+
+.audioControls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    background: linear-gradient(to bottom, #e8e0d1, #d8d0c1);
+    padding: 10px;
+    border: 2px solid #111;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.audioControlBtn {
+    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
+    border: 2px solid #111;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+}
+
+.audioControlBtn:hover {
+    transform: perspective(400px) translateZ(10px) scale(1.1);
+    background: #000000 radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.audioControlBtn i {
+    color: #111;
+    font-size: clamp(16px, 2.5vw, 18px);
+}
+
+.audioControlBtn:hover i {
+    color: #f4ebdd;
+}
+
+.progressContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+.currentTime, .duration {
+    font-size: clamp(12px, 2vw, 14px);
+    color: #111;
+    min-width: 40px;
+}
+
+.progressBar {
+    width: 100%;
+    height: 10px;
+    background: #f4ebdd;
+    border: 2px solid #111;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.progressBar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #111;
+    border: 2px solid #f4ebdd;
+    border-radius: 50%;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.progressBar::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #111;
+    border: 2px solid #f4ebdd;
+    border-radius: 50%;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.volumeContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volumeContainer i {
+    color: #111;
+    font-size: clamp(16px, 2.5vw, 18px);
+}
+
+.volumeSlider {
+    width: 80px;
+    height: 8px;
+    background: #f4ebdd;
+    border: 2px solid #111;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.volumeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #111;
+    border: 2px solid #f4ebdd;
+    border-radius: 50%;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.volumeSlider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #111;
+    border: 2px solid #f4ebdd;
+    border-radius: 50%;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.audioDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.audioTitle {
+    font-family: 'Garet', sans-serif;
+    font-weight: bold;
+    font-size: clamp(18px, 3vw, 20px);
+    color: #111;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.audioIntensity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: clamp(14px, 2.2vw, 16px);
+    color: #333;
+}
+
+.audioIntensity progress {
+    width: 100%;
+    max-width: 200px;
+    height: 12px;
+    background: #f4ebdd;
+    border: 2px solid #111;
+    border-radius: 5px;
+}
+
+.audioIntensity progress::-webkit-progress-bar {
+    background: #f4ebdd;
+    border-radius: 3px;
+}
+
+.audioIntensity progress::-webkit-progress-value {
+    background: var(--progress-color, #111);
+    border-radius: 3px;
+}
+
+.audioIntensity progress::-moz-progress-bar {
+    background: var(--progress-color, #111);
+    border-radius: 3px;
+}
+
+.audioItem .linkButton {
+    width: auto;
+    padding: 10px 20px;
+    font-size: clamp(14px, 2.2vw, 16px);
+    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+    transition: transform 0.4s, background 0.4s, color 0.4s;
+}
+
+.audioItem .linkButton:hover {
+    transform: perspective(800px) translateZ(10px) scale(1.05);
+    background: #000000 radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
+    color: #f4ebdd;
+}
+
+.extraTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
+    border: 2px solid #111;
+}
+
+.extraTable th, .extraTable td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #111;
+    vertical-align: middle;
+}
+
+.extraTable th {
+    background: #d8d0c1;
+    font-weight: bold;
+    color: #111;
+}
+
+.extraTable td {
+    color: #333;
+}
+
+.techRiderTable {
+    display: table;
+}
+
+.techRiderTable th, .techRiderTable td {
+    width: 25%;
+    padding: 10px;
+    font-size: clamp(12px, 2vw, 14px);
+}
+
+.photosContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.photosContainer img {
+    width: 100%;
+    height: auto;
+    border: 2px solid #111;
+    transition: transform 0.4s;
+}
+
+.photosContainer img:hover {
+    transform: scale(1.05);
+}
+
+.externalLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.externalLinks a {
+    width: 100%;
+    max-width: 200px;
+    justify-content: center;
+}
+
+.logoImage {
+    max-width: 200px;
+    height: auto;
+    border: 2px solid #111;
+}
+
+.bannerImage {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #111;
+}
+
+.fontLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-size: clamp(20px, 4vw, 24px);
+}
+
+.interviewSection {
+    margin-bottom: 25px;
+}
+
+.question {
+    font-weight: bold;
+    font-size: clamp(16px, 2.5vw, 18px);
+    color: #111;
+    margin-bottom: 15px;
+}
+
+.answer p {
+    margin-bottom: 15px;
+}
+
+.speaker {
+    font-weight: bold;
+    color: #111;
+    margin-right: 5px;
+}
+
+.equipmentTypes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.equipmentList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.techRiderList {
+    display: none;
+}
+
+.equipmentItem {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
+    border: 3px solid #111;
+    padding: 20px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
+    margin-bottom: 20px;
+    transition: transform 0.4s, box-shadow 0.4s ease-in-out;
+}
+
+.equipmentItem:hover {
+    transform: perspective(800px) translateZ(20px) scale(1.02);
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3);
+}
+
+.equipmentField {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: clamp(14px, 2.2vw, 16px);
+    color: #333;
+    flex-wrap: wrap;
+}
+
+.equipmentLabel {
+    font-weight: bold;
+    color: #111;
+    min-width: 100px;
+}
+
+.equipmentType {
+    padding: 5px 10px;
+    border: 2px solid #111;
+    font-size: clamp(12px, 2vw, 14px);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.equipmentType.preferred {
+    background: #ff6200;
+}
+
+.equipmentType.required {
+    background: #ff0000;
+}
+
+.equipmentType.info {
+    background: #00b7eb;
+}
+
+.equipmentType.optional {
+    background: #00f7ff;
+    color: #111;
+}
+
+.minorDesc {
+    font-size: clamp(10px, 1.8vw, 12px);
+    color: #fff;
+    white-space: normal;
+    max-width: 100%;
+}
+
+.equipmentType .minorDesc {
+    color: inherit;
+}
+
+.note {
+    margin-top: 20px;
+}
+
+.note h3 {
+    font-family: 'Garet', sans-serif;
+    font-size: clamp(16px, 2.5vw, 18px);
+    color: #111;
+    margin-bottom: 15px;
+}
+
+.footer {
+    text-align: center;
+    color: #777;
+    font-size: clamp(12px, 2vw, 14px);
+    margin-top: 30px;
+    padding: 15px 0;
+    width: 100%;
+}
+
+#scrollToTopBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: auto;
+    padding: 10px 20px;
+    font-size: clamp(14px, 2.2vw, 16px);
+    display: none;
+}
+
+#scrollToTopBtn.visible {
+    display: flex;
+}
+
 @keyframes hoverPulse {
     0% { opacity: 0.5; transform: translateZ(-15px) scale(1); }
     50% { opacity: 0.3; transform: translateZ(-15px) scale(1.02); }
@@ -343,7 +1033,7 @@ body {
 }
 
 @keyframes parallaxBounce {
-    0% { transform: translateY(60px) translateX(10px);  }
+    0% { transform: translateY(60px) translateX(10px); }
     50% { transform: translateY(-20px) translateX(-5px); }
     70% { transform: translateY(15px) translateX(3px); }
     100% { transform: translateY(0) translateX(0); }
@@ -365,78 +1055,483 @@ body {
 
 @media screen and (max-width: 768px) {
     body {
-        padding: 4px 15px;
+        padding: 10px 20px;
+        font-size: clamp(18px, 3vw, 20px);
+    }
+
+    main {
+        margin-left: 0;
     }
 
     .titleContainer {
-        margin: 4vw 0 0;
+        margin: 5vw 0 20px;
+    }
+
+    .bandName {
+        font-size: clamp(60px, 14vw, 90px);
+    }
+
+    .bandDescription {
+        font-size: clamp(14px, 2.8vw, 16px);
     }
 
     .buttonWrapper {
         margin-top: 0;
     }
 
-    .bandName {
-        font-size: clamp(50px, 12vw, 80px);
+    .merchContainer, .category {
+        margin-top: clamp(30px, 5vw, 40px);
+        gap: 35px;
     }
 
     .linkButton {
         width: 100%;
-        padding: 12px 20px;
-        font-size: clamp(16px, 2.8vw, 18px);
+        padding: 18px 30px;
+        font-size: clamp(20px, 3.5vw, 22px);
+    }
+
+    .copyButton {
+        padding: 12px 24px;
+        font-size: clamp(16px, 2.5vw, 18px);
     }
 
     .albumButton {
         width: 100%;
-        padding: 12px 20px;
-        font-size: clamp(18px, 3vw, 20px);
+        padding: 18px 30px;
+        font-size: clamp(22px, 3.8vw, 24px);
     }
 
     .socialLinks {
         width: 100%;
     }
 
+    .socialLink {
+        padding: 12px 30px;
+        font-size: clamp(22px, 4.5vw, 26px);
+    }
+
     .linkDesc {
-        font-size: clamp(10px, 1.8vw, 12px);
+        font-size: clamp(13px, 2.2vw, 15px);
+    }
+
+    .merchItem {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+    }
+
+    .merchImage {
+        width: 100%;
+        height: 250px;
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .merchButton, .backButton {
+        width: 100%;
+        max-width: none;
+        padding: 15px 30px;
+        font-size: clamp(20px, 3.5vw, 22px);
+    }
+
+    .optionGroup {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .optionGroup label {
+        font-size: clamp(16px, 2.5vw, 18px);
+    }
+
+    .optionGroup select {
+        width: 100%;
+        max-width: 250px;
+        padding: 10px 15px;
+        font-size: clamp(16px, 2.5vw, 18px);
+    }
+
+    .extraNav {
+        position: static;
+        width: 100%;
+        max-width: none;
+        margin: 20px 0;
+        max-height: none;
+        padding: 20px;
+    }
+
+    .extraNav ul {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .extraNav a {
+        width: 100%;
+        font-size: clamp(18px, 3vw, 20px);
+        padding: 12px 24px;
+    }
+
+    .extraNav a i {
+        font-size: clamp(18px, 3vw, 20px);
+    }
+
+    details {
+        max-width: none;
+        padding: 20px;
+    }
+
+    summary {
+        font-size: clamp(20px, 3.5vw, 22px);
+    }
+
+    summary i {
+        font-size: clamp(20px, 3.5vw, 22px);
+    }
+
+    .detailsContent {
+        padding: 24px;
+        font-size: clamp(16px, 2.5vw, 18px);
+    }
+
+    .audioItem {
+        padding: 24px;
+    }
+
+    .audioControls {
+        padding: 15px;
+        gap: 18px;
+    }
+
+    .audioControlBtn {
+        width: 50px;
+        height: 50px;
+    }
+
+    .audioControlBtn i {
+        font-size: clamp(20px, 3.5vw, 22px);
+    }
+
+    .progressContainer {
+        max-width: none;
+    }
+
+    .progressBar {
+        height: 14px;
+    }
+
+    .progressBar::-webkit-slider-thumb,
+    .progressBar::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+    }
+
+    .volumeSlider {
+        width: 100px;
+        height: 12px;
+    }
+
+    .volumeSlider::-webkit-slider-thumb,
+    .volumeSlider::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+    }
+
+    .currentTime, .duration {
+        font-size: clamp(14px, 2.5vw, 16px);
+        min-width: 50px;
+    }
+
+    .audioTitle {
+        font-size: clamp(20px, 3.5vw, 22px);
+    }
+
+    .audioIntensity {
+        font-size: clamp(16px, 2.5vw, 18px);
+    }
+
+    .audioIntensity progress {
+        max-width: none;
+        height: 14px;
+    }
+
+    .audioItem .linkButton {
+        padding: 12px 24px;
+        font-size: clamp(16px, 2.5vw, 18px);
+    }
+
+    .photosContainer {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .externalLinks a {
+        max-width: none;
+        padding: 15px 30px;
+        font-size: clamp(18px, 3vw, 20px);
+    }
+
+    .logoImage {
+        max-width: 250px;
+    }
+
+    .bannerImage {
+        max-width: 100%;
+    }
+
+    .fontLinks {
+        font-size: clamp(22px, 4.5vw, 26px);
+    }
+
+    .question {
+        font-size: clamp(18px, 3vw, 20px);
+    }
+
+    .extraTable th, .extraTable td {
+        padding: 15px;
+        font-size: clamp(14px, 2.5vw, 16px);
+    }
+
+    .techRiderTable {
+        display: none;
+    }
+
+    .techRiderList {
+        display: flex;
+    }
+
+    .equipmentType {
+        font-size: clamp(14px, 2.5vw, 16px);
+        padding: 8px 15px;
+    }
+
+    .minorDesc {
+        font-size: clamp(12px, 2vw, 14px);
+    }
+
+    .equipmentItem {
+        padding: 24px;
+    }
+
+    .equipmentField {
+        font-size: clamp(16px, 2.5vw, 18px);
+    }
+
+    .equipmentLabel {
+        min-width: 100px;
+    }
+
+    .footer {
+        font-size: clamp(14px, 2.5vw, 16px);
+        margin-top: 35px;
+        padding: 20px 0;
+    }
+
+    #scrollToTopBtn {
+        padding: 12px 24px;
+        font-size: clamp(16px, 2.5vw, 18px);
     }
 }
 
 @media screen and (max-width: 480px) {
     body {
-        padding: 3px 10px;
+        padding: 8px 15px;
+        font-size: clamp(20px, 3.5vw, 22px);
     }
 
     .titleContainer {
-        margin: 6vw 0 0;
-    }
-
-    .buttonWrapper {
-        margin-top: 0;
+        margin: 7vw 0 15px;
     }
 
     .bandName {
-        font-size: clamp(40px, 10vw, 60px);
+        font-size: clamp(50px, 12vw, 75px);
     }
 
     .bandDescription {
-        font-size: clamp(10px, 2vw, 12px);
+        font-size: clamp(15px, 3vw, 17px);
+    }
+
+    .merchContainer, .category {
+        margin-top: clamp(25px, 4vw, 35px);
+        gap: 30px;
     }
 
     .linkContainer {
-        gap: 12px;
+        gap: 20px;
     }
 
     .linkButton {
-        padding: 10px 15px;
-        font-size: clamp(14px, 2.5vw, 16px);
+        padding: 15px 25px;
+        font-size: clamp(18px, 3.2vw, 20px);
+    }
+
+    .copyButton {
+        padding: 10px 20px;
+        font-size: clamp(15px, 2.5vw, 17px);
     }
 
     .albumButton {
-        padding: 10px 15px;
-        font-size: clamp(16px, 2.8vw, 18px);
+        padding: 15px 25px;
+        font-size: clamp(20px, 3.5vw, 22px);
     }
 
     .socialLink {
-        padding: 10px 15px;
+        padding: 15px 25px;
+        font-size: clamp(24px, 5vw, 28px);
+    }
+
+    .merchNote {
+        font-size: clamp(15px, 2.5vw, 17px);
+    }
+
+    .paymentNote {
+        font-size: clamp(17px, 3vw, 19px);
+    }
+
+    .merchItem {
+        padding: 20px;
+    }
+
+    .merchImage {
+        height: 200px;
+    }
+
+    .merchDetails h3 {
+        font-size: clamp(20px, 3.5vw, 22px);
+    }
+
+    .merchDetails p {
+        font-size: clamp(15px, 2.5vw, 17px);
+    }
+
+    .optionGroup label {
+        font-size: clamp(15px, 2.5vw, 17px);
+    }
+
+    .optionGroup select {
+        font-size: clamp(15px, 2.5vw, 17px);
+        padding: 8px 12px;
+    }
+
+    .extraNav {
+        margin: 15px 0;
+        padding: 15px;
+    }
+
+    .extraNav a {
+        font-size: clamp(16px, 3vw, 18px);
+        padding: 10px 20px;
+    }
+
+    .extraNav a i {
+        font-size: clamp(16px, 3vw, 18px);
+    }
+
+    details {
+        padding: 18px;
+    }
+
+    summary {
+        font-size: clamp(18px, 3.2vw, 20px);
+    }
+
+    summary i {
+        font-size: clamp(18px, 3.2vw, 20px);
+    }
+
+    .detailsContent {
+        font-size: clamp(15px, 2.5vw, 17px);
+        padding: 20px;
+    }
+
+    .audioItem {
+        padding: 20px;
+    }
+
+    .audioControls {
+        padding: 12px;
+        gap: 15px;
+    }
+
+    .audioControlBtn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .audioControlBtn i {
+        font-size: clamp(18px, 3.2vw, 20px);
+    }
+
+    .progressBar {
+        height: 12px;
+    }
+
+    .progressBar::-webkit-slider-thumb,
+    .progressBar::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+    }
+
+    .volumeSlider {
+        width: 80px;
+        height: 10px;
+    }
+
+    .volumeSlider::-webkit-slider-thumb,
+    .volumeSlider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+    }
+
+    .currentTime, .duration {
+        font-size: clamp(13px, 2.2vw, 15px);
+    }
+
+    .audioIntensity progress {
+        height: 12px;
+    }
+
+    .audioItem .linkButton {
+        padding: 10px 20px;
+        font-size: clamp(15px, 2.5vw, 17px);
+    }
+
+    .extraTable th, .extraTable td {
+        padding: 12px;
+        font-size: clamp(13px, 2.2vw, 15px);
+    }
+
+    .equipmentType {
+        font-size: clamp(13px, 2.2vw, 15px);
+        padding: 6px 12px;
+    }
+
+    .minorDesc {
+        font-size: clamp(11px, 2vw, 13px);
+    }
+
+    .equipmentItem {
+        padding: 20px;
+    }
+
+    .equipmentField {
+        font-size: clamp(15px, 2.5vw, 17px);
+    }
+
+    .equipmentLabel {
+        min-width: 90px;
+    }
+
+    .question {
+        font-size: clamp(17px, 3vw, 19px);
+    }
+
+    .footer {
+        margin-top: 30px;
+        padding: 15px 0;
+        font-size: clamp(15px, 2.5vw, 17px);
+    }
+
+    #scrollToTopBtn {
+        padding: 10px 20px;
+        font-size: clamp(15px, 2.5vw, 17px);
     }
 }
