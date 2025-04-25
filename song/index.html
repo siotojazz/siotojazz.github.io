@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Preview - Sioto Jazz</title>
+    <link rel="stylesheet" href="../main.css">
+    <script src="https://kit.fontawesome.com/6a71727312.js" crossorigin="anonymous"></script>
+    <style>
+        .songContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            margin-top: clamp(30px, 5vw, 40px);
+            gap: 20px;
+        }
+
+        .songEmbed {
+            width: 100%;
+        }
+
+        .songEmbed iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+        }
+
+        .errorMessage {
+            font-size: clamp(12px, 2vw, 14px);
+            color: #ff0000;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .trackList {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .trackItem {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .trackItem a {
+            text-decoration: none;
+            color: rgba(17, 17, 17, 0.7);
+            font-size: clamp(10px, 1.8vw, 12px);
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .trackItem a i {
+            font-size: clamp(10px, 1.8vw, 12px);
+            color: rgba(17, 17, 17, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="titleContainer">
+            <a href="../index.html" class="bandNameLink">
+                <h1 class="bandName">Sioto Jazz</h1>
+            </a>
+            <p class="bandDescription">pop rock indie jazz folk from Macedonia</p>
+        </div>
+
+        <div class="songContainer">
+            <div class="songEmbed" id="songEmbed"></div>
+            <div class="trackList">
+                <div class="trackItem">
+                    <a href="/song/?id=4zsjiqocsDqutg8UStfhJQ">
+                        <i class="fas fa-music"></i> Jetpacks
+                    </a>
+                </div>
+                <div class="trackItem">
+                    <a href="/song/?id=7gXbFB9gOuqMxSLwd7P7Pk">
+                        <i class="fas fa-music"></i> Mad
+                    </a>
+                </div>
+                <div class="trackItem">
+                    <a href="/song/?id=11CUEDRt6gFM5WBQYc3Rap">
+                        <i class="fas fa-music"></i> Language
+                    </a>
+                </div>
+                <div class="trackItem">
+                    <a href="/song/?id=6myfKNR3uvv4907UVPRvbf">
+                        <i class="fas fa-music"></i> Again
+                    </a>
+                </div>
+                <div class="trackItem">
+                    <a href="/song/?id=06hihmTizTKpVeKbBSYftq">
+                        <i class="fas fa-music"></i> Patience
+                    </a>
+                </div>
+                <div class="trackItem">
+                    <a href="/song/?id=44VovVLdQ9MiCCxgTJPkL8">
+                        <i class="fas fa-music"></i> Sun
+                    </a>
+                </div>
+                <div class="trackItem">
+                    <a href="/song/?id=3E64ltmlCQ0DNiKv06kfQJ">
+                        <i class="fas fa-music"></i> Empire State Space Station
+                    </a>
+                </div>
+                <div class="trackItem">
+                    <a href="/song/?id=2HRnjwDFFDC8JuKg4VRwyA">
+                        <i class="fas fa-music"></i> Ink
+                    </a>
+                </div>
+                <div class="trackItem">
+                    <a href="/song/?id=68WiBvGPnmGpboXHO1900Y">
+                        <i class="fas fa-music"></i> Rites
+                    </a>
+                </div>
+                <div class="trackItem">
+                    <a href="/song/?id=2t0mB1FE5g0hO7BSikisfU">
+                        <i class="fas fa-music"></i> Dreams
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>© 2025 Sioto Jazz. All rights reserved.</p>
+        </footer>
+    </main>
+
+    <script>
+        function getTrackIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const trackId = params.get('id');
+            // Basic validation: Spotify track IDs are alphanumeric, typically 22 characters
+            if (trackId && /^[a-zA-Z0-9]{22}$/.test(trackId)) {
+                return trackId;
+            }
+            return null;
+        }
+
+        function embedSpotifyTrack(trackId) {
+            const embedContainer = document.getElementById('songEmbed');
+            if (!trackId) {
+                embedContainer.classList.add('errorMessage');
+                embedContainer.innerHTML = '<p>Invalid or missing track ID. Please provide a valid Spotify track ID.</p>';
+                return;
+            }
+
+            const embedUrl = `https://open.spotify.com/embed/track/${trackId}`;
+            embedContainer.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`;
+        }
+
+        // Default track from the album (e.g., "Jetpacks")
+        const defaultTrackId = '4zsjiqocsDqutg8UStfhJQ';
+        const trackId = getTrackIdFromUrl() || defaultTrackId;
+        embedSpotifyTrack(trackId);
+    </script>
+</body>
+</html>
