@@ -216,142 +216,175 @@
                 console.log('Font Awesome loaded successfully.');
             }
         };
-
+    
         const trackMap = {
             'jetpacks': {
                 id: '4zsjiqocsDqutg8UStfhJQ',
                 name: 'Jetpacks',
-                spotify: 'https://open.spotify.com/track/4zsjiqocsDqutg8UStfhJQ',
+                spotifyUri: 'spotify:track:4zsjiqocsDqutg8UStfhJQ',
+                spotifyWeb: 'https://open.spotify.com/track/4zsjiqocsDqutg8UStfhJQ',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=100s'
             },
             'mad': {
                 id: '7gXbFB9gOuqMxSLwd7P7Pk',
                 name: 'Mad',
-                spotify: 'https://open.spotify.com/track/7gXbFB9gOuqMxSLwd7P7Pk',
+                spotifyUri: 'spotify:track:7gXbFB9gOuqMxSLwd7P7Pk',
+                spotifyWeb: 'https://open.spotify.com/track/7gXbFB9gOuqMxSLwd7P7Pk',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=305s'
             },
             'language': {
                 id: '11CUEDRt6gFM5WBQYc3Rap',
                 name: 'Language',
-                spotify: 'https://open.spotify.com/track/11CUEDRt6gFM5WBQYc3Rap',
+                spotifyUri: 'spotify:track:11CUEDRt6gFM5WBQYc3Rap',
+                spotifyWeb: 'https://open.spotify.com/track/11CUEDRt6gFM5WBQYc3Rap',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=562s'
             },
             'again': {
                 id: '6myfKNR3uvv4907UVPRvbf',
                 name: 'Again',
-                spotify: 'https://open.spotify.com/track/6myfKNR3uvv4907UVPRvbf',
+                spotifyUri: 'spotify:track:6myfKNR3uvv4907UVPRvbf',
+                spotifyWeb: 'https://open.spotify.com/track/6myfKNR3uvv4907UVPRvbf',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=733s'
             },
             'patience': {
                 id: '06hihmTizTKpVeKbBSYftq',
                 name: 'Patience',
-                spotify: 'https://open.spotify.com/track/06hihmTizTKpVeKbBSYftq',
+                spotifyUri: 'spotify:track:06hihmTizTKpVeKbBSYftq',
+                spotifyWeb: 'https://open.spotify.com/track/06hihmTizTKpVeKbBSYftq',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=968s'
             },
             'sun': {
                 id: '44VovVLdQ9MiCCxgTJPkL8',
                 name: 'Sun',
-                spotify: 'https://open.spotify.com/track/44VovVLdQ9MiCCxgTJPkL8',
+                spotifyUri: 'spotify:track:44VovVLdQ9MiCCxgTJPkL8',
+                spotifyWeb: 'https://open.spotify.com/track/44VovVLdQ9MiCCxgTJPkL8',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=1227s'
             },
             'empire state space station': {
                 id: '3E64ltmlCQ0DNiKv06kfQJ',
                 name: 'Empire State Space Station',
-                spotify: 'https://open.spotify.com/track/3E64ltmlCQ0DNiKv06kfQJ',
+                spotifyUri: 'spotify:track:3E64ltmlCQ0DNiKv06kfQJ',
+                spotifyWeb: 'https://open.spotify.com/track/3E64ltmlCQ0DNiKv06kfQJ',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=1456s'
             },
             'ink': {
                 id: '2HRnjwDFFDC8JuKg4VRwyA',
                 name: 'Ink',
-                spotify: 'https://open.spotify.com/track/2HRnjwDFFDC8JuKg4VRwyA',
+                spotifyUri: 'spotify:track:2HRnjwDFFDC8JuKg4VRwyA',
+                spotifyWeb: 'https://open.spotify.com/track/2HRnjwDFFDC8JuKg4VRwyA',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=1748s'
             },
             'rites': {
                 id: '68WiBvGPnmGpboXHO1900Y',
                 name: 'Rites',
-                spotify: 'https://open.spotify.com/track/68WiBvGPnmGpboXHO1900Y',
+                spotifyUri: 'spotify:track:68WiBvGPnmGpboXHO1900Y',
+                spotifyWeb: 'https://open.spotify.com/track/68WiBvGPnmGpboXHO1900Y',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=2169s'
             },
             'dreams': {
                 id: '2t0mB1FE5g0hO7BSikisfU',
                 name: 'Dreams',
-                spotify: 'https://open.spotify.com/track/2t0mB1FE5g0hO7BSikisfU',
+                spotifyUri: 'spotify:track:2t0mB1FE5g0hO7BSikisfU',
+                spotifyWeb: 'https://open.spotify.com/track/2t0mB1FE5g0hO7BSikisfU',
                 youtube: 'https://www.youtube.com/watch?v=yvLuSa4OSZM&t=2258s'
             }
         };
-
+    
         function getTrackNameFromUrl() {
             const params = new URLSearchParams(window.location.search);
             const trackName = params.get('name');
             if (trackName) {
-                console.log('Track name from URL:', trackName); // Debug
+                console.log('Track name from URL:', trackName);
                 return decodeURIComponent(trackName).toLowerCase().trim();
             }
             console.log('No track name in URL, using default');
             return null;
         }
-
+    
         function getLinkTypeFromUrl() {
             const params = new URLSearchParams(window.location.search);
             const linkType = params.get('link');
             if (linkType) {
-                console.log('Link type from URL:', linkType); // Debug
+                console.log('Link type from URL:', linkType);
                 return linkType.toLowerCase().trim();
             }
             console.log('No link type in URL, using default');
             return 'spotify';
         }
-
+    
+        function openSpotifyLink(track, fallbackUrl) {
+            const spotifyUri = track.spotifyUri;
+            // Attempt to open the Spotify app
+            window.location.href = spotifyUri;
+    
+            // Fallback to web link if the app doesn't open after a short delay
+            setTimeout(() => {
+                // Check if the page is still active (i.e., app didn't open)
+                if (document.hasFocus()) {
+                    console.log('Spotify app not opened, falling back to web link:', fallbackUrl);
+                    window.location.href = fallbackUrl;
+                }
+            }, 1000); // 1-second delay to allow app to open
+        }
+    
         function updateSongDetails(trackName, linkType) {
             const songNameElement = document.getElementById('songName');
             const primaryLinkElement = document.getElementById('primaryLink');
             const linkIconElement = document.getElementById('linkIcon');
             const linkTextElement = document.getElementById('linkText');
-
+    
             const track = trackMap[trackName] || trackMap['jetpacks'];
-            console.log('Selected track:', track); // Debug
-
+            console.log('Selected track:', track);
+    
             if (songNameElement) {
                 songNameElement.textContent = track.name;
-                console.log('Song name set to:', track.name); // Debug
+                console.log('Song name set to:', track.name);
             } else {
                 console.error('Song name element not found');
             }
-
+    
             if (primaryLinkElement && linkIconElement && linkTextElement) {
                 if (linkType === 'youtube') {
                     primaryLinkElement.href = track.youtube;
                     linkIconElement.className = 'fab fa-youtube';
                     linkTextElement.textContent = 'YouTube';
-                    console.log('YouTube link set to:', track.youtube); // Debug
+                    console.log('YouTube link set to:', track.youtube);
+                    // Remove onclick for YouTube to avoid interference
+                    primaryLinkElement.onclick = null;
                 } else {
-                    primaryLinkElement.href = track.spotify;
+                    // Set a placeholder href to avoid default navigation
+                    primaryLinkElement.href = '#';
                     linkIconElement.className = 'fab fa-spotify';
                     linkTextElement.textContent = 'Spotify';
-                    console.log('Spotify link set to:', track.spotify); // Debug
+                    console.log('Spotify URI set to:', track.spotifyUri);
+                    // Add click event to handle Spotify URI and fallback
+                    primaryLinkElement.onclick = (e) => {
+                        e.preventDefault(); // Prevent default anchor behavior
+                        openSpotifyLink(track, track.spotifyWeb);
+                    };
                 }
             } else {
                 console.error('Link elements not found');
             }
         }
-
+    
         const defaultTrackName = 'jetpacks';
         const defaultLinkType = 'spotify';
         const trackName = getTrackNameFromUrl() || defaultTrackName;
         const linkType = getLinkTypeFromUrl() || defaultLinkType;
-        console.log('Final track name:', trackName); // Debug
-        console.log('Final link type:', linkType); // Debug
-
+        console.log('Final track name:', trackName);
+        console.log('Final link type:', linkType);
+    
         if (!trackMap[trackName]) {
             const songNameElement = document.getElementById('songName');
             if (songNameElement) {
                 songNameElement.textContent = trackMap['jetpacks'].name;
                 songNameElement.style.color = '#ff0000';
                 songNameElement.title = 'Invalid track name. Showing default track.';
-                console.log('Invalid track, set to default:', trackMap['jetpacks'].name); // Debug
+                console.log('Invalid track, set to default:', trackMap['jetpacks'].name);
             }
         }
-
+    
         updateSongDetails(trackName, linkType);
     </script>
 </body>
