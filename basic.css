@@ -11,7 +11,7 @@
 
 @font-face {
     font-family: 'Garet';
-    src: url('Garet.ttf') format('truetype');
+    src: url('truestate/Garet.ttf') format('truetype');
 }
 
 body {
@@ -393,6 +393,36 @@ a:hover img {
 
 .show-scroll-btn {
     display: block;
+}
+
+.fancyLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 1.1em;
+    font-weight: 600;
+    background-color: #1e90ff; /* A vibrant blue for emphasis */
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fancyLink:hover {
+    background-color: #ff4500; /* A contrasting orange for hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.fancyLink i {
+    font-size: 0.9em;
+    transition: transform 0.3s ease;
+}
+
+.fancyLink:hover i {
+    transform: translateX(5px); /* Arrow moves slightly right on hover */
 }
 
 @media screen and (max-width: 768px) {

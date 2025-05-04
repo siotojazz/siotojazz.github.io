@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Rider</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="../main.css">
+    <style>
+        @font-face {
+            font-family: 'Astrella';
+            src: url('../truestate/Astrella.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'Garet';
+            src: url('../truestate/Garet.ttf') format('truetype');
+        }
+
+        a:link, a:visited {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        body {
+            font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            max-width: 950px;
+            margin: 40px auto;
+            line-height: 1.6;
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, #3b82f6, #ef4444);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 700;
+            color: #111827;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .header .bandName {
+            font-family: 'Astrella', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-size: 36px;
+            margin: 5px 0;
+            color: #111827;
+        }
+
+        .header p {
+            margin: 5px 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .legend, .section {
+            margin-bottom: 40px;
+        }
+
+        .legend h2, .section h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .legend-item {
+            padding: 8px;
+            text-align: center;
+            color: #1f2937;
+            font-weight: 500;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .preferred { border-left: 6px solid #3b82f6; }
+        .required { border-left: 6px solid #ef4444; }
+        .info { border-left: 6px solid #10b981; }
+        .optional { border-left: 6px solid #f59e0b; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #f4ebdd;
+        }
+
+        th {
+            background-color: #222;
+            font-weight: 600;
+            color: #FFF;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #e4dbcd;
+        }
+
+        .preferred { background-color: #e0e7ff; border-bottom: 2px solid #3b82f6; }
+        .required { background-color: #fee2e2; border-bottom: 2px solid #ef4444; }
+        .info { background-color: #d1fae5; border-bottom: 2px solid #10b981; }
+        .optional { background-color: #fef3c7; border-bottom: 2px solid #f59e0b; }
+
+        td i {
+            margin-right: 6px;
+            font-size: 12px;
+        }
+
+        .preferred i { color: #3b82f6; }
+        .required i { color: #ef4444; }
+        .info i { color: #10b981; }
+        .optional i { color: #f59e0b; }
+
+        .note p {
+            font-size: 14px;
+            margin: 10px 0;
+            color: #374151;
+        }
+
+        .contact div {
+            font-size: 14px;
+            margin: 5px 0;
+            color: #374151;
+        }
+
+        .download-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #3b82f6, #60a5fa);
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(to right, #2563eb, #3b82f6);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Technical Rider</h1>
+        <p class="bandName bandNameLink"><a href="..">SIOTO JAZZ</a></p>
+        <p>Last Updated: May 4, 2025</p>
+    </div>
+    <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
+
+    <div class="legend">
+        <h2>Equipment Types</h2>
+        <div class="legend-grid">
+            <div class="legend-item preferred"><strong>Preferred</strong><br> Must be provided, but the exact model is not required</div>
+            <div class="legend-item required"><strong>Required</strong><br> Must be provided exactly as noted</div>
+            <div class="legend-item info"><strong>Info</strong><br> We take these things with us</div>
+            <div class="legend-item optional"><strong>Optional</strong><br> Nice to have, but not essential</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Equipment Requirements</h2>
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Mic/Connection</th>
+                <th>Equipment</th>
+                <th>Power</th>
+            </tr>
+            <tr>
+                <td>Kick Drum</td>
+                <td class="preferred"><i class="fas fa-microphone fa-xs"></i> Beta 91 (In), Beta 52 (Out)</td>
+                <td class="preferred"><i class="fas fa-drum fa-xs"></i> Pearl Export 22”</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Snare Drum</td>
+                <td class="preferred"><i class="fas fa-microphone fa-xs"></i> SM 57 (Top), SM 81 (Bottom)</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Rack Tom</td>
+                <td class="preferred"><i class="fas fa-microphone fa-xs"></i> Beta 98</td>
+                <td class="preferred"><i class="fas fa-drum fa-xs"></i> Pearl Export 12”</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Floor Tom</td>
+                <td class="preferred"><i class="fas fa-microphone fa-xs"></i> Beta 98</td>
+                <td class="preferred"><i class="fas fa-drum fa-xs"></i> Pearl Export 14”</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Overheads</td>
+                <td class="preferred"><i class="fas fa-microphone fa-xs"></i> SM 81 (L/R)</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Bass Guitar</td>
+                <td class="required"><i class="fas fa-plug fa-xs"></i> XLR Line Out</td>
+                <td class="preferred"><i class="fas fa-guitar fa-xs"></i> Fender Rumble 500</td>
+                <td class="info"><i class="fas fa-plug fa-xs"></i> 220V EU (1 plug)</td>
+            </tr>
+            <tr>
+                <td>Guitar 1</td>
+                <td class="required"><i class="fas fa-microphone fa-xs"></i> SM 57</td>
+                <td class="info"><i class="fas fa-guitar fa-xs"></i> Fender Rumble 100</td>
+                <td class="info"><i class="fas fa-plug fa-xs"></i> 220V EU (4 plugs)</td>
+            </tr>
+            <tr>
+                <td>Guitar 2</td>
+                <td class="required"><i class="fas fa-microphone fa-xs"></i> SM 57</td>
+                <td class="preferred"><i class="fas fa-guitar fa-xs"></i> Boss Katana 50</td>
+                <td class="info"><i class="fas fa-plug fa-xs"></i> 220V EU (4 plugs)</td>
+            </tr>
+            <tr>
+                <td>Saxophone</td>
+                <td class="preferred"><i class="fas fa-microphone fa-xs"></i> Beta 98H/C or SM 58</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Vocals (4)</td>
+                <td class="preferred"><i class="fas fa-microphone fa-xs"></i> SM 86</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Additional</td>
+                <td>-</td>
+                <td class="required"><i class="fas fa-tools fa-xs"></i> Digital Mixer</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Additional</td>
+                <td>-</td>
+                <td class="optional"><i class="fas fa-tools fa-xs"></i> 4x Guitar Stands, 1x Sheet Music Stand</td>
+                <td>-</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section note">
+        <h2>Monitor Mixes</h2>
+        <p>Provide 4–5 separate monitor mixes. Place one speaker next to the drummer, one in front of the lead vocal, and one or two on the stage sides.</p>
+    </div>
+
+    <div class="section contact">
+        <h2>Band Contact</h2>
+        <div>Andrej Bogatinoski</div>
+        <div>+389 70 316 460</div>
+        <div>siotojazz@gmail.com</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" crossorigin="anonymous"></script>
+    <script>
+        function downloadPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                if (!jsPDF) throw new Error("jsPDF library not loaded");
+                const doc = new jsPDF();
+
+                // Font embedding (disabled to bypass "a.metadata.unicode is undefined" error)
+                /*
+                let astrellaLoaded = false;
+                let garetLoaded = false;
+
+                try {
+                    console.log('Attempting to load Astrella font...');
+                    doc.addFileToVFS('Astrella.ttf', 'ASTRELLA_BASE64_STRING_HERE');
+                    doc.addFont('Astrella.ttf', 'Astrella', 'normal');
+                    astrellaLoaded = true;
+                    console.log('Astrella font loaded successfully');
+                } catch (e) {
+                    console.error('Failed to load Astrella font:', e.message);
+                    alert('Failed to load Astrella font. Using Helvetica as fallback.');
+                }
+
+                try {
+                    console.log('Attempting to load Garet font...');
+                    doc.addFileToVFS('Garet.ttf', 'GARET_BASE64_STRING_HERE');
+                    doc.addFont('Garet.ttf', 'Garet', 'normal');
+                    doc.addFont('Garet.ttf', 'Garet', 'bold');
+                    garetLoaded = true;
+                    console.log('Garet font loaded successfully');
+                } catch (e) {
+                    console.error('Failed to load Garet font:', e.message);
+                    alert('Failed to load Garet font. Using Helvetica as fallback.');
+                }
+                */
+
+                // Use Helvetica as fallback
+                const astrellaFont = 'helvetica';
+                const garetFont = 'helvetica';
+
+                // Header
+                doc.setFontSize(18);
+                doc.setFont(garetFont, 'bold');
+                doc.text('Technical Rider', 105, 20, { align: 'center' });
+                doc.setFontSize(16);
+                doc.setFont(astrellaFont, 'normal');
+                doc.text('Sioto Jazz', 105, 30, { align: 'center' });
+                doc.setLineWidth(0.5);
+                doc.setDrawColor(59, 130, 246);
+                doc.line(80, 35, 130, 35);
+
+                // Equipment Types
+                doc.setFontSize(14);
+                doc.setFont(garetFont, 'bold');
+                doc.text('Equipment Types', 15, 50);
+                doc.autoTable({
+                    startY: 55,
+                    head: [['Type', 'Description']],
+                    body: [
+                        ['Preferred', 'Must be provided, but the exact model is not required'],
+                        ['Required', 'Must be provided exactly as noted'],
+                        ['Info', 'We take these things with us'],
+                        ['Optional', 'Nice to have, but not essential'],
+                    ],
+                    styles: {
+                        font: garetFont,
+                        fontSize: 8,
+                        cellPadding: 2,
+                        textColor: [31, 41, 55],
+                        lineColor: [244, 235, 221], // #f4ebdd
+                        lineWidth: 0.2
+                    },
+                    headStyles: {
+                        fillColor: [34, 34, 34], // #222
+                        textColor: [255, 255, 255], // #FFF
+                        fontStyle: 'bold'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [228, 219, 205] // #e4dbcd
+                    },
+                    margin: { left: 15, right: 15 },
+                    columnStyles: {
+                        0: { cellWidth: 40 },
+                        1: { cellWidth: 'auto' }
+                    },
+                    didParseCell: function (data) {
+                        if (data.section === 'body' && data.column.index === 0) {
+                            const cellText = data.cell.text[0];
+                            data.cell.styles.fontStyle = 'bold'; // Bold for Type column
+                            if (cellText === 'Preferred') {
+                                data.cell.styles.fillColor = [224, 231, 255]; // #e0e7ff
+                            } else if (cellText === 'Required') {
+                                data.cell.styles.fillColor = [254, 226, 226]; // #fee2e2
+                            } else if (cellText === 'Info') {
+                                data.cell.styles.fillColor = [209, 250, 229]; // #d1fae5
+                            } else if (cellText === 'Optional') {
+                                data.cell.styles.fillColor = [254, 243, 199]; // #fef3c7
+                            }
+                        }
+                    }
+                });
+
+                // Equipment Requirements
+                let finalY = doc.lastAutoTable.finalY + 10;
+                doc.setFontSize(14);
+                doc.setFont(garetFont, 'bold');
+                doc.text('Equipment Requirements', 15, finalY);
+                doc.autoTable({
+                    startY: finalY + 5,
+                    head: [['Type', 'Mic/Connection', 'Equipment', 'Power']],
+                    body: [
+                        ['Kick Drum', 'Beta 91 (In), Beta 52 (Out)', 'Pearl Export 22”', '-'],
+                        ['Snare Drum', 'SM 57 (Top), SM 81 (Bottom)', '-', '-'],
+                        ['Rack Tom', 'Beta 98', 'Pearl Export 12”', '-'],
+                        ['Floor Tom', 'Beta 98', 'Pearl Export 14”', '-'],
+                        ['Overheads', 'SM 81 (L/R)', '-', '-'],
+                        ['Bass Guitar', 'XLR Line Out', 'Fender Rumble 500', '220V EU (1 plug)'],
+                        ['Guitar 1', 'SM 57', 'Fender Rumble 100', '220V EU (4 plugs)'],
+                        ['Guitar 2', 'SM 57', 'Boss Katana 50', '220V EU (4 plugs)'],
+                        ['Saxophone', 'Beta 98H/C or SM 58', '-', '-'],
+                        ['Vocals (4)', 'SM 86', '-', '-'],
+                        ['Additional', '-', 'Digital Mixer', '-'],
+                        ['Additional', '-', '4x Guitar Stands, 1x Sheet Music Stand', '-'],
+                    ],
+                    styles: {
+                        font: garetFont,
+                        fontSize: 8,
+                        cellPadding: 2,
+                        textColor: [31, 41, 55],
+                        lineColor: [244, 235, 221], // #f4ebdd
+                        lineWidth: 0.2
+                    },
+                    headStyles: {
+                        fillColor: [34, 34, 34], // #222
+                        textColor: [255, 255, 255], // #FFF
+                        fontStyle: 'bold'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [228, 219, 205] // #e4dbcd
+                    },
+                    margin: { left: 15, right: 15 },
+                    columnStyles: {
+                        0: { cellWidth: 40 },
+                        1: { cellWidth: 50 },
+                        2: { cellWidth: 50 },
+                        3: { cellWidth: 40 }
+                    },
+                    didParseCell: function (data) {
+                        if (data.section === 'body') {
+                            const cellText = data.cell.text[0];
+                            const columnIndex = data.column.index;
+
+                            // Mic/Connection column
+                            if (columnIndex === 1) {
+                                if (['Beta 91 (In), Beta 52 (Out)', 'SM 57 (Top), SM 81 (Bottom)', 'Beta 98', 'SM 81 (L/R)', 'Beta 98H/C or SM 58', 'SM 86'].includes(cellText)) {
+                                    data.cell.styles.fillColor = [224, 231, 255]; // #e0e7ff
+                                } else if (['XLR Line Out', 'SM 57'].includes(cellText)) {
+                                    data.cell.styles.fillColor = [254, 226, 226]; // #fee2e2
+                                } else {
+                                    data.cell.styles.fillColor = false;
+                                }
+                            }
+
+                            // Equipment column
+                            if (columnIndex === 2) {
+                                if (['Pearl Export 22”', 'Pearl Export 12”', 'Pearl Export 14”', 'Fender Rumble 500', 'Boss Katana 50'].includes(cellText)) {
+                                    data.cell.styles.fillColor = [224, 231, 255]; // #e0e7ff
+                                } else if (['Digital Mixer'].includes(cellText)) {
+                                    data.cell.styles.fillColor = [254, 226, 226]; // #fee2e2
+                                } else if (['Fender Rumble 100'].includes(cellText)) {
+                                    data.cell.styles.fillColor = [209, 250, 229]; // #d1fae5
+                                } else if (['4x Guitar Stands, 1x Sheet Music Stand'].includes(cellText)) {
+                                    data.cell.styles.fillColor = [254, 243, 199]; // #fef3c7
+                                } else {
+                                    data.cell.styles.fillColor = false;
+                                }
+                            }
+
+                            // Power column
+                            if (columnIndex === 3) {
+                                if (['220V EU (1 plug)', '220V EU (4 plugs)'].includes(cellText)) {
+                                    data.cell.styles.fillColor = [209, 250, 229]; // #d1fae5
+                                } else {
+                                    data.cell.styles.fillColor = false;
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Monitor Mixes
+                finalY = doc.lastAutoTable.finalY + 10;
+                doc.setFontSize(14);
+                doc.setFont(garetFont, 'bold');
+                doc.text('Monitor Mixes', 15, finalY);
+                doc.setFontSize(10);
+                doc.setFont(garetFont, 'normal');
+                doc.text('Provide 4–5 separate monitor mixes. Place one speaker next to the drummer, one in front of the lead vocal, and one or two on the stage sides.', 15, finalY + 10, { maxWidth: 180 });
+
+                // Band Contact
+                finalY += 30;
+                doc.setFontSize(14);
+                doc.setFont(garetFont, 'bold');
+                doc.text('Band Contact', 15, finalY);
+                doc.setFontSize(10);
+                doc.setFont(garetFont, 'normal');
+                doc.text('Andrej Bogatinoski', 15, finalY + 10);
+                doc.text('+389 70 316 460', 15, finalY + 20);
+                doc.text('siotojazz@gmail.com', 15, finalY + 30);
+
+                // Save PDF
+                doc.save('Sioto_Jazz_Technical_Rider.pdf');
+            } catch (error) {
+                alert('Failed to generate PDF: ' + error.message);
+                console.error('PDF generation error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
