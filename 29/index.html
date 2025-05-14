@@ -6,6 +6,8 @@
   <title>Sioto Jazz - 29</title>
   <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Orbitron Font for Area 51 Aesthetic -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <!-- VCR OSD Mono (via CDN, supports Cyrillic) -->
   <style>
     @font-face {
@@ -120,15 +122,148 @@
     }
 
     #confidential-notice {
-      font-family: 'VCR OSD Mono', monospace;
+      font-family: 'Orbitron', 'VCR OSD Mono', monospace;
       font-size: 12px;
-      font-weight: bold;
+      font-weight: 700;
       color: #ff3333;
       text-transform: uppercase;
       text-align: center;
       margin: 10px auto;
+      padding: 6px;
+      border: 2px solid #ff3333;
+      background: rgba(8, 12, 12, 0.95);
+      position: relative;
+      text-shadow: 0 0 5px #ff3333, 0 0 10px #00ccff;
+      animation: neon-pulse 2s infinite;
+      overflow: hidden;
+    }
+
+    #confidential-notice::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 2px,
+        rgba(255, 51, 51, 0.2) 2px,
+        rgba(255, 51, 51, 0.2) 4px
+      );
+      animation: scanline 4s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #confidential-notice::after {
+      content: 'CLASSIFIED';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-family: 'Orbitron', 'VCR OSD Mono', monospace;
+      font-size: 20px;
+      color: #ff3333;
+      opacity: 0.3;
+      text-shadow: 0 0 10px #ff3333;
+      z-index: 0;
+    }
+
+    #confidential-notice span {
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes neon-pulse {
+      0%, 100% { text-shadow: 0 0 5px #ff3333, 0 0 10px #00ccff; }
+      50% { text-shadow: 0 0 10px #ff3333, 0 0 20px #00ccff; }
+    }
+
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+
+    #code-input-section {
+      margin: 15px auto;
+      padding: 10px;
+      border: 2px solid #00ccff;
+      background: rgba(8, 12, 12, 0.95);
+      text-align: center;
+      position: relative;
+    }
+
+    #code-input-section::before {
+      content: 'ACCESS CODE';
+      position: absolute;
+      top: -8px;
+      left: 10px;
+      font-size: 8px;
+      color: #00ccff;
+      background: #060a0a;
+      padding: 1px 4px;
+      border: 1px solid #002244;
+    }
+
+    #code-input {
+      font-family: 'VCR OSD Mono', monospace;
+      font-size: 12px;
+      padding: 4px 8px;
+      background: #001122;
+      border: 2px solid #002244;
+      color: #00ccff;
+      width: 250px;
+      margin-right: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #code-input:focus {
+      border-color: #00ccff;
+      animation: static-pulse 0.4s infinite;
+    }
+
+    #code-submit {
+      font-family: 'VCR OSD Mono', monospace;
+      font-size: 12px;
+      padding: 4px 8px;
+      background: #001122;
+      border: 2px solid #002244;
+      color: #00ccff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    #code-submit:hover {
+      background: #002244;
+      animation: static-pulse 0.4s infinite;
+    }
+
+    #code-message {
+      font-family: 'VCR OSD Mono', monospace;
+      font-size: 10px;
+      margin-top: 8px;
       padding: 4px;
+      text-transform: uppercase;
+      display: none;
+    }
+
+    #code-message.success {
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      background: rgba(0, 255, 0, 0.2);
+      animation: glitch-shift 0.6s ease-in-out infinite;
+      display: block;
+    }
+
+    #code-message.error {
+      color: #ff3333;
       border: 1px solid #ff3333;
+      background: rgba(255, 51, 51, 0.2);
+      animation: glitch-shift 0.6s ease-in-out infinite;
+      display: block;
     }
 
     #tracklist {
@@ -171,14 +306,36 @@
     }
 
     .track-error .play-pause-btn,
-    .track-error .reset-btn {
+    .track-error .reset-btn,
+    .track-error .lyrics-btn {
       border-color: #ff3333;
       cursor: not-allowed;
       opacity: 0.5;
     }
 
     .track-error .play-pause-btn:hover,
-    .track-error .reset-btn:hover {
+    .track-error .reset-btn:hover,
+    .track-error .lyrics-btn:hover {
+      background: #001122;
+      animation: none;
+    }
+
+    .track-disabled {
+      opacity: 0.5;
+      background: rgba(0, 76, 115, 0.15);
+    }
+
+    .track-disabled .play-pause-btn,
+    .track-disabled .reset-btn,
+    .track-disabled .lyrics-btn {
+      border-color: #666;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .track-disabled .play-pause-btn:hover,
+    .track-disabled .reset-btn:hover,
+    .track-disabled .lyrics-btn:hover {
       background: #001122;
       animation: none;
     }
@@ -207,9 +364,10 @@
     .track-info {
       flex: 1;
       display: flex;
-      flex-direction: row; /* Changed from column to row */
-      gap: 6px; /* Adjusted for horizontal spacing */
-      align-items: center; /* Vertically align title and label */
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
     }
 
     .track-title {
@@ -218,14 +376,14 @@
       font-weight: bold;
       color: #d0d0d0;
       text-transform: uppercase;
-      flex-shrink: 1; /* Prevent title from overflowing */
+      flex-shrink: 1;
     }
 
     .track-label {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 8px;
+      font-size: 10px;
       text-transform: uppercase;
-      padding: 1px 4px;
+      padding: 2px 6px;
       border-radius: 2px;
       display: inline-block;
       border: 0.5px solid;
@@ -369,7 +527,7 @@
       height: 100%;
       background: repeating-linear-gradient(
         to bottom,
-        transparent 0%,
+        transparent 0,
         transparent 2px,
         rgba(0, 204, 255, 0.05) 2px,
         rgba(0, 204, 255, 0.05) 4px
@@ -478,9 +636,14 @@
   <div class="container">
     <section id="album-info">
       <img id="album-cover" src="album_cover.png" alt="Album Cover">
-      <div id="confidential-notice" data-glitch="РЕСТРИКТИРАНИ ДЕМОА - КОНФИДЕНЦИЈАЛНО">
-        RESTRICTED DEMOS - CONFIDENTIAL USE ONLY - UNAUTHORIZED DISTRIBUTION PROHIBITED
+      <div id="confidential-notice" data-glitch="ЗОНА 51 - ЗАБРАЊЕНО">
+        <span>CLASSIFIED DEMOS - NO UNAUTHORIZED ACCESS</span>
       </div>
+    </section>
+    <section id="code-input-section">
+      <input type="text" id="code-input" placeholder="ENTER ACCESS CODE" maxlength="50">
+      <button id="code-submit" data-glitch="SUBMIT">SUBMIT</button>
+      <div id="code-message"></div>
     </section>
     <section id="tracklist">
       <ul id="tracks"></ul>
@@ -511,6 +674,87 @@
     let currentAudio = null;
     let currentButton = null;
 
+    // Simple hash function (SHA-1 inspired)
+    function generateHash(input) {
+      function rotateLeft(n, s) {
+        return (n << s) | (n >>> (32 - s));
+      }
+      let h0 = 0x67452301, h1 = 0xEFCDAB89, h2 = 0x98BADCFE, h3 = 0x10325476, h4 = 0xC3D2E1F0;
+      let message = encodeURIComponent(input).split('').map(c => c.charCodeAt(0));
+      const length = message.length * 8;
+      message.push(0x80);
+      while ((message.length * 8) % 512 !== 448) {
+        message.push(0);
+      }
+      message.push(0, 0, 0, 0, (length >>> 24) & 0xFF, (length >>> 16) & 0xFF, (length >>> 8) & 0xFF, length & 0xFF);
+      for (let i = 0; i < message.length; i += 64) {
+        let w = new Array(80);
+        for (let j = 0; j < 16; j++) {
+          w[j] = (message[i + j * 4] << 24) | (message[i + j * 4 + 1] << 16) | (message[i + j * 4 + 2] << 8) | message[i + j * 4 + 3];
+        }
+        for (let j = 16; j < 80; j++) {
+          w[j] = rotateLeft(w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16], 1);
+        }
+        let a = h0, b = h1, c = h2, d = h3, e = h4;
+        for (let j = 0; j < 80; j++) {
+          let f, k;
+          if (j < 20) { f = (b & c) | (~b & d); k = 0x5A827999; }
+          else if (j < 40) { f = b ^ c ^ d; k = 0x6ED9EBA1; }
+          else if (j < 60) { f = (b & c) | (b & d) | (c & d); k = 0x8F1BBCDC; }
+          else { f = b ^ c ^ d; k = 0xCA62C1D6; }
+          let temp = (rotateLeft(a, 5) + f + e + k + w[j]) >>> 0;
+          e = d; d = c; c = rotateLeft(b, 30); b = a; a = temp;
+        }
+        h0 = (h0 + a) >>> 0; h1 = (h1 + b) >>> 0; h2 = (h2 + c) >>> 0; h3 = (h3 + d) >>> 0; h4 = (h4 + e) >>> 0;
+      }
+      const hash = [h0, h1, h2, h3, h4].map(h => ('00000000' + h.toString(16)).slice(-8)).join('');
+      return hash.slice(0, 32); // Ensure 32 characters
+    }
+
+    // Normalize title for comparison
+    function normalizeTitle(title) {
+      return title.toLowerCase().replace(/\s+/g, '');
+    }
+
+    // Validate access code
+    function validateAccessCode(code, tracks, isHash = false) {
+      console.log(`Validating ${isHash ? 'hash' : 'code'}: ${code}`);
+      if (isHash) {
+        // Check jazz hash
+        if (code === generateHash('jazz@0#guiltyfeet')) {
+          return { isJazz: true };
+        }
+        // Check track hashes
+        const track = tracks.find(t => generateHash(`${normalizeTitle(t.title)}@${t.id}#guiltyfeet`) === code);
+        if (track) {
+          return { track };
+        }
+        return null;
+      } else {
+        if (!code.endsWith('#guiltyfeet')) {
+          return null;
+        }
+        const [titleId] = code.split('#');
+        const [title, id] = titleId.split('@');
+        if (!title || !id) {
+          return null;
+        }
+        if (title.toLowerCase() === 'jazz' && id === '0') {
+          return { isJazz: true };
+        }
+        const track = tracks.find(t => normalizeTitle(t.title) === normalizeTitle(title) && t.id.toString() === id);
+        if (track) {
+          return { track };
+        }
+        return null;
+      }
+    }
+
+    // Parse URL query parameter
+    const params = new URLSearchParams(window.location.search);
+    const trackParam = params.get('track');
+    console.log(`URL trackParam: ${trackParam}`);
+
     fetch('album.json')
       .then(response => {
         if (!response.ok) throw new Error('Failed to load album.json');
@@ -519,14 +763,24 @@
       .then(albumData => {
         document.getElementById('album-cover').src = albumData.album.coverImage || 'album_cover.png';
         const trackList = document.getElementById('tracks');
+
+        // Check if URL grants access
+        const urlValidation = trackParam ? validateAccessCode(trackParam, albumData.tracks, true) : null;
+        const isJazzEnabled = urlValidation && urlValidation.isJazz;
+        const enabledTrack = urlValidation && urlValidation.track;
+
         albumData.tracks.forEach(track => {
           const audio = new Audio(track.mp3);
           audio.id = `audio-${track.id}`;
           audio.preload = 'metadata';
           document.body.appendChild(audio);
 
+          // Enable track if jazz code or matching track
+          const isTrackEnabled = isJazzEnabled || (enabledTrack && enabledTrack.id === track.id && normalizeTitle(enabledTrack.title) === normalizeTitle(track.title));
+          console.log(`Track ${track.title} (ID: ${track.id}) enabled: ${isTrackEnabled}`);
+
           const li = document.createElement('li');
-          li.className = 'track';
+          li.className = `track ${isTrackEnabled ? '' : 'track-disabled'}`;
           li.setAttribute('data-id', track.id);
           li.innerHTML = `
             <div class="track-info">
@@ -534,10 +788,10 @@
               <span class="track-label ${track.label.replace(/\s+/g, '-').toLowerCase()}">${track.label}</span>
             </div>
             <div class="audio-player" id="player-${track.id}">
-              <button class="play-pause-btn" data-id="${track.id}" data-glitch="ПУШТИ"><i class="fas fa-play"></i></button>
+              <button class="play-pause-btn" data-id="${track.id}" data-glitch="ПУШТИ" ${isTrackEnabled ? '' : 'disabled'}><i class="fas fa-play"></i></button>
               <div class="progress-bar" data-id="${track.id}"><div class="progress" id="progress-${track.id}"></div></div>
-              <button class="reset-btn" data-id="${track.id}" data-glitch="РЕСЕТ"><i class="fas fa-undo"></i></button>
-              <button class="lyrics-btn" onclick="showLyrics(${track.id})" data-glitch="ТЕКСТ"><i class="fas fa-book"></i></button>
+              <button class="reset-btn" data-id="${track.id}" data-glitch="РЕСЕТ" ${isTrackEnabled ? '' : 'disabled'}><i class="fas fa-undo"></i></button>
+              <button class="lyrics-btn" onclick="showLyrics(${track.id})" data-glitch="ТЕКСТ" ${isTrackEnabled ? '' : 'disabled'}><i class="fas fa-book"></i></button>
             </div>
           `;
           trackList.appendChild(li);
@@ -547,11 +801,59 @@
             li.classList.add('track-error');
             li.querySelector('.play-pause-btn').disabled = true;
             li.querySelector('.reset-btn').disabled = true;
+            li.querySelector('.lyrics-btn').disabled = true;
           });
+        });
+
+        // Code input handling
+        const codeInput = document.getElementById('code-input');
+        const codeSubmit = document.getElementById('code-submit');
+        const codeMessage = document.getElementById('code-message');
+
+        codeSubmit.addEventListener('click', () => {
+          const code = codeInput.value.trim();
+          console.log(`Submit clicked, code: ${code}`);
+          let isValid = false;
+          let message = '';
+
+          if (!code) {
+            message = 'ERROR: NO CODE ENTERED';
+          } else {
+            const validation = validateAccessCode(code, albumData.tracks);
+            if (validation) {
+              isValid = true;
+              if (validation.isJazz) {
+                message = 'ACCESS GRANTED: ALL TRACKS UNLOCKED';
+                const hash = generateHash('jazz@0#guiltyfeet');
+                console.log(`Updating URL to: ?track=${hash}`);
+                window.location.search = `?track=${hash}`;
+              } else {
+                message = `ACCESS GRANTED: ${validation.track.title.toUpperCase()} UNLOCKED`;
+                const hash = generateHash(`${normalizeTitle(validation.track.title)}@${validation.track.id}#guiltyfeet`);
+                console.log(`Updating URL to: ?track=${hash}`);
+                window.location.search = `?track=${hash}`;
+              }
+            } else {
+              message = 'ERROR: INVALID ACCESS CODE';
+            }
+          }
+
+          codeMessage.textContent = message;
+          codeMessage.className = isValid ? 'success' : 'error';
+          console.log(`Message: ${message}, isValid: ${isValid}`);
+        });
+
+        // Allow Enter key to submit code
+        codeInput.addEventListener('keypress', (event) => {
+          if (event.key === 'Enter') {
+            console.log('Enter key pressed');
+            codeSubmit.click();
+          }
         });
 
         document.querySelectorAll('.play-pause-btn').forEach(button => {
           button.addEventListener('click', () => {
+            if (button.disabled) return;
             const trackId = button.dataset.id;
             const audio = document.getElementById(`audio-${trackId}`);
             const progress = document.getElementById(`progress-${trackId}`);
@@ -565,10 +867,11 @@
 
             if (audio.paused) {
               audio.play().catch(error => {
-                console.error(`Playback failed for track ${trackId}:`, error);
+                console.error(`Playback failed for track ${trackId}: ${error}`);
                 button.closest('.track').classList.add('track-error');
                 button.disabled = true;
                 button.closest('.audio-player').querySelector('.reset-btn').disabled = true;
+                button.closest('.audio-player').querySelector('.lyrics-btn').disabled = true;
               });
               button.querySelector('i').className = 'fas fa-pause';
               button.dataset.glitch = 'ПАУЗА';
@@ -601,19 +904,21 @@
 
         document.querySelectorAll('.reset-btn').forEach(button => {
           button.addEventListener('click', () => {
+            if (button.disabled) return;
             const trackId = button.dataset.id;
             const audio = document.getElementById(`audio-${trackId}`);
             const progress = document.getElementById(`progress-${trackId}`);
-            if (!audio || button.disabled) return;
+            if (!audio) return;
 
             audio.currentTime = 0;
             progress.style.width = '0%';
             if (currentAudio === audio && !audio.paused) {
               audio.play().catch(error => {
-                console.error(`Playback failed after reset for track ${trackId}:`, error);
+                console.error(`Playback failed after reset for track ${trackId}: ${error}`);
                 button.closest('.track').classList.add('track-error');
                 button.disabled = true;
                 button.closest('.audio-player').querySelector('.play-pause-btn').disabled = true;
+                button.closest('.audio-player').querySelector('.lyrics-btn').disabled = true;
               });
             }
           });
@@ -625,7 +930,7 @@
             const audio = document.getElementById(`audio-${trackId}`);
             const progress = document.getElementById(`progress-${trackId}`);
             const playButton = bar.closest('.audio-player').querySelector('.play-pause-btn');
-            if (!audio || !isFinite(audio.duration)) return;
+            if (!audio || !isFinite(audio.duration) || playButton.disabled) return;
 
             const rect = bar.getBoundingClientRect();
             const clickX = event.clientX - rect.left;
@@ -642,10 +947,11 @@
 
             if (audio.paused) {
               audio.play().catch(error => {
-                console.error(`Playback failed after seek for track ${trackId}:`, error);
+                console.error(`Playback failed after seek for track ${trackId}: ${error}`);
                 bar.closest('.track').classList.add('track-error');
                 playButton.disabled = true;
                 bar.closest('.audio-player').querySelector('.reset-btn').disabled = true;
+                bar.closest('.audio-player').querySelector('.lyrics-btn').disabled = true;
               });
               playButton.querySelector('i').className = 'fas fa-pause';
               playButton.dataset.glitch = 'ПАУЗА';
@@ -656,49 +962,51 @@
         });
 
         window.showLyrics = function(trackId) {
-            const track = albumData.tracks.find(t => t.id === trackId);
-            const lyricsContent = document.getElementById('lyrics-content');
-            let lyrics = track.lyrics || 'No lyrics available';
-            const date = track.date || '';
+          const lyricsButton = document.querySelector(`.audio-player#player-${trackId} .lyrics-btn`);
+          if (lyricsButton.disabled) return;
 
-            // Process timestamps and translations as plain text
-            lyrics = lyrics.replace(/\[(\d{2}:\d{2})\]/g, '[$1]');
+          const track = albumData.tracks.find(t => t.id === trackId);
+          const lyricsContent = document.getElementById('lyrics-content');
+          let lyrics = track.lyrics || 'No lyrics available';
+          const date = track.date || '';
 
-            document.getElementById('lyrics-title').textContent = track.title;
-            lyricsContent.innerHTML = '';
-            lyricsContent.classList.add('typewriter', 'typewriter-cursor');
-            document.getElementById('lyrics-viewer').classList.remove('hidden');
+          lyrics = lyrics.replace(/\[(\d{2}:\d{2})\]/g, '[$1]');
 
-            const lines = lyrics.split('\n');
-            let lineIndex = 0;
-            const totalDuration = 500; // 0.5 seconds
-            const delayPerLine = lines.length > 0 ? totalDuration / lines.length : 10;
+          document.getElementById('lyrics-title').textContent = track.title;
+          lyricsContent.innerHTML = '';
+          lyricsContent.classList.add('typewriter', 'typewriter-cursor');
+          document.getElementById('lyrics-viewer').classList.remove('hidden');
 
-            function typeNextLine() {
-                if (lineIndex < lines.length) {
-                    const line = lines[lineIndex];
-                    const span = document.createElement('span');
-                    span.className = 'typed-line';
-                    span.textContent = line;
-                    lyricsContent.appendChild(span);
-                    lyricsContent.appendChild(document.createElement('br'));
+          const lines = lyrics.split('\n');
+          let lineIndex = 0;
+          const totalDuration = 500;
+          const delayPerLine = lines.length > 0 ? totalDuration / lines.length : 10;
 
-                    lyricsContent.scrollTop = lyricsContent.scrollHeight;
+          function typeNextLine() {
+            if (lineIndex < lines.length) {
+              const line = lines[lineIndex];
+              const span = document.createElement('span');
+              span.className = 'typed-line';
+              span.textContent = line;
+              lyricsContent.appendChild(span);
+              lyricsContent.appendChild(document.createElement('br'));
 
-                    lineIndex++;
-                    setTimeout(typeNextLine, delayPerLine);
-                } else {
-                    lyricsContent.classList.remove('typewriter', 'typewriter-cursor');
-                    if (date) {
-                        const dateSpan = document.createElement('span');
-                        dateSpan.className = 'lyric-date';
-                        dateSpan.textContent = `\n\n${date}`;
-                        lyricsContent.appendChild(dateSpan);
-                    }
-                }
+              lyricsContent.scrollTop = lyricsContent.scrollHeight;
+
+              lineIndex++;
+              setTimeout(typeNextLine, delayPerLine);
+            } else {
+              lyricsContent.classList.remove('typewriter', 'typewriter-cursor');
+              if (date) {
+                const dateSpan = document.createElement('span');
+                dateSpan.className = 'lyric-date';
+                dateSpan.textContent = `\n\n${date}`;
+                lyricsContent.appendChild(dateSpan);
+              }
             }
+          }
 
-            setTimeout(typeNextLine, 50);
+          setTimeout(typeNextLine, 50);
         };
 
         window.closeLyrics = function() {
@@ -707,8 +1015,10 @@
         };
       })
       .catch(error => {
-        console.error('Error loading album data:', error);
+        console.error(`Error loading album data: ${error}`);
         document.getElementById('album-cover').src = 'album_cover.png';
+        document.getElementById('code-message').textContent = 'ERROR: FAILED TO LOAD ALBUM DATA';
+        document.getElementById('code-message').className = 'error';
       });
   </script>
 </body>
