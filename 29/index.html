@@ -92,31 +92,8 @@
       margin: 10px auto;
       padding: 12px;
       background: rgba(8, 12, 12, 0.95);
-      border: 2px solid #002244;
       position: relative;
       z-index: 1;
-    }
-
-    .container::before,
-    .container::after {
-      content: '';
-      position: absolute;
-      background: #002244;
-      z-index: -1;
-    }
-
-    .container::before {
-      width: 100%;
-      height: 1px;
-      top: -4px;
-      left: 0;
-    }
-
-    .container::after {
-      width: 1px;
-      height: 100%;
-      left: -4px;
-      top: 0;
     }
 
     #album-info {
@@ -229,6 +206,10 @@
 
     .track-info {
       flex: 1;
+      display: flex;
+      flex-direction: row; /* Changed from column to row */
+      gap: 6px; /* Adjusted for horizontal spacing */
+      align-items: center; /* Vertically align title and label */
     }
 
     .track-title {
@@ -237,6 +218,41 @@
       font-weight: bold;
       color: #d0d0d0;
       text-transform: uppercase;
+      flex-shrink: 1; /* Prevent title from overflowing */
+    }
+
+    .track-label {
+      font-family: 'VCR OSD Mono', monospace;
+      font-size: 8px;
+      text-transform: uppercase;
+      padding: 1px 4px;
+      border-radius: 2px;
+      display: inline-block;
+      border: 0.5px solid;
+    }
+
+    .track-label.accepted {
+      background: rgba(0, 255, 0, 0.2);
+      color: #00ff00;
+      border-color: #00ff00;
+    }
+
+    .track-label.official-entry {
+      background: rgba(0, 0, 255, 0.2);
+      color: #00ccff;
+      border-color: #00ccff;
+    }
+
+    .track-label.needs-rework {
+      background: rgba(255, 165, 0, 0.2);
+      color: #ffa500;
+      border-color: #ffa500;
+    }
+
+    .track-label.early-demo {
+      background: rgba(255, 0, 0, 0.2);
+      color: #ff3333;
+      border-color: #ff3333;
     }
 
     .audio-player {
@@ -515,6 +531,7 @@
           li.innerHTML = `
             <div class="track-info">
               <span class="track-title">${track.title}</span>
+              <span class="track-label ${track.label.replace(/\s+/g, '-').toLowerCase()}">${track.label}</span>
             </div>
             <div class="audio-player" id="player-${track.id}">
               <button class="play-pause-btn" data-id="${track.id}" data-glitch="ПУШТИ"><i class="fas fa-play"></i></button>
@@ -659,30 +676,30 @@
 
             function typeNextLine() {
                 if (lineIndex < lines.length) {
-                const line = lines[lineIndex];
-                const span = document.createElement('span');
-                span.className = 'typed-line';
-                span.textContent = line;
-                lyricsContent.appendChild(span);
-                lyricsContent.appendChild(document.createElement('br'));
+                    const line = lines[lineIndex];
+                    const span = document.createElement('span');
+                    span.className = 'typed-line';
+                    span.textContent = line;
+                    lyricsContent.appendChild(span);
+                    lyricsContent.appendChild(document.createElement('br'));
 
-                lyricsContent.scrollTop = lyricsContent.scrollHeight;
+                    lyricsContent.scrollTop = lyricsContent.scrollHeight;
 
-                lineIndex++;
-                setTimeout(typeNextLine, delayPerLine);
+                    lineIndex++;
+                    setTimeout(typeNextLine, delayPerLine);
                 } else {
-                lyricsContent.classList.remove('typewriter', 'typewriter-cursor');
-                if (date) {
-                    const dateSpan = document.createElement('span');
-                    dateSpan.className = 'lyric-date';
-                    dateSpan.textContent = `\n\n${date}`;
-                    lyricsContent.appendChild(dateSpan);
-                }
+                    lyricsContent.classList.remove('typewriter', 'typewriter-cursor');
+                    if (date) {
+                        const dateSpan = document.createElement('span');
+                        dateSpan.className = 'lyric-date';
+                        dateSpan.textContent = `\n\n${date}`;
+                        lyricsContent.appendChild(dateSpan);
+                    }
                 }
             }
 
             setTimeout(typeNextLine, 50);
-            };
+        };
 
         window.closeLyrics = function() {
           document.getElementById('lyrics-viewer').classList.add('hidden');
