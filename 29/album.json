@@ -79,7 +79,16 @@
         "label": "official entry"
       },
       {
+
         "id": 10,
+        "title": "The Color of Your Car",
+        "mp3": "audio/the_color_of_your_car.mp3",
+        "lyrics": "keep it a secret, I don't want to know\nthe color of, the color of\nthe color of your car\n\nkeep it to yourself, I don't want to know\nthe color of, the color of\nthe color of your car\n\nthis time, everything I want\nis not to stumble upon you\ndriving, to a place I've shown you\nwithout me in your car\n\nhow far could you go?\n\ndon’t tell me its shade, don’t let it slip,\nI’d rather miss that, I'd like to miss\nthe color of the glint\n\ndon’t tell me its shade, don’t let it slip,\nI’d rather miss that, I'd like to miss\nthe color of the glint\n\nthis time, everything I want\nis not to stumble upon you\ndriving, to a place I've shown you\nwithout me in your car\n\nhow far could I run away?",
+        "date": "2025-04-13 22:37",
+        "label": "early demo"
+      },
+      {
+        "id": 11,
         "title": "Higher Ground",
         "mp3": "audio/higher_ground.mp3",
         "lyrics": "I wanna take you down\nto a place we've known forever\nhigher ground\nwhere the body can sense the weather\n\nI know how it feels\nwhen the rain comes falling down,\nsense how it feels\nsoaking all of the ground\n\nI wanna take you down\nthe only road that leads to\nhigher ground\nso your eyes can see your home\n\nI know that it burns\nwhen you discover you love again,\nsense how it feels\nwith an ember in your heart\n\nIt's now been\nseveral years since the rain\nwashed away\nall the doubts that remained\n\nIt's now been\nseveral years since the rain\nwashed away\nall the doubts that remained\n\nI wanna take you down\nthe only road that leads to\nhigher ground\na little bit closer to the stars\n\nI know it burns\nwhen you discover you love again,\nsense how it feels\nwith an ember in your heart",
@@ -87,7 +96,7 @@
         "label": "official entry"
       },
       {
-        "id": 11,
+        "id": 12,
         "title": "Промена",
         "mp3": "audio/promena.mp3",
         "lyrics": "јас имам чувство дека нов ден изгрева\nјас имам чувство дека сè се менува",
