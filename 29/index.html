@@ -4,11 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sioto Jazz - 29</title>
-  <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <!-- Orbitron Font for Area 51 Aesthetic -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-  <!-- VCR OSD Mono (via CDN, supports Cyrillic) -->
   <style>
     @font-face {
       font-family: 'VCR OSD Mono';
@@ -27,8 +24,8 @@
       font-family: 'VCR OSD Mono', monospace;
       background: #060a0a;
       color: #a0a0a0;
-      font-size: 13px;
-      line-height: 1.4;
+      font-size: 14px;
+      line-height: 1.5;
       position: relative;
       overflow-x: hidden;
       min-height: 100vh;
@@ -90,19 +87,20 @@
     }
 
     .container {
-      max-width: 650px;
-      margin: 10px auto;
-      padding: 12px;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 15px;
       background: rgba(8, 12, 12, 0.95);
+      border: 2px solid #002244;
       position: relative;
       z-index: 1;
+      box-shadow: 0 0 8px rgba(0, 204, 255, 0.1); /* Reduced glow */
     }
 
     #album-info {
       text-align: center;
-      margin-bottom: 15px;
-      position: relative;
-      padding: 6px;
+      margin-bottom: 20px;
+      padding: 8px;
       border: 2px solid #001122;
       background: rgba(8, 12, 12, 0.95);
     }
@@ -117,25 +115,20 @@
       background: #060a0a;
     }
 
-    #album-cover[alt] {
-      color: #00ccff;
-    }
-
     #confidential-notice {
       font-family: 'Orbitron', 'VCR OSD Mono', monospace;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       color: #ff3333;
       text-transform: uppercase;
       text-align: center;
-      margin: 10px auto;
-      padding: 6px;
+      margin: 15px auto;
+      padding: 8px;
       border: 2px solid #ff3333;
       background: rgba(8, 12, 12, 0.95);
-      position: relative;
-      text-shadow: 0 0 5px #ff3333, 0 0 10px #00ccff;
+      text-shadow: 0 0 5px #ff3333, 0 0 8px #00ccff; /* Slightly reduced text-shadow */
       animation: neon-pulse 2s infinite;
-      overflow: hidden;
+      position: relative;
     }
 
     #confidential-notice::before {
@@ -164,10 +157,10 @@
       left: 50%;
       transform: translate(-50%, -50%) rotate(-45deg);
       font-family: 'Orbitron', 'VCR OSD Mono', monospace;
-      font-size: 20px;
+      font-size: 22px;
       color: #ff3333;
       opacity: 0.3;
-      text-shadow: 0 0 10px #ff3333;
+      text-shadow: 0 0 8px #ff3333; /* Reduced text-shadow */
       z-index: 0;
     }
 
@@ -177,8 +170,8 @@
     }
 
     @keyframes neon-pulse {
-      0%, 100% { text-shadow: 0 0 5px #ff3333, 0 0 10px #00ccff; }
-      50% { text-shadow: 0 0 10px #ff3333, 0 0 20px #00ccff; }
+      0%, 100% { text-shadow: 0 0 5px #ff3333, 0 0 8px #00ccff; }
+      50% { text-shadow: 0 0 8px #ff3333, 0 0 12px #00ccff; } /* Reduced intensity */
     }
 
     @keyframes scanline {
@@ -187,8 +180,8 @@
     }
 
     #code-input-section {
-      margin: 15px auto;
-      padding: 10px;
+      margin: 20px auto;
+      padding: 12px;
       border: 2px solid #00ccff;
       background: rgba(8, 12, 12, 0.95);
       text-align: center;
@@ -199,53 +192,59 @@
       content: 'ACCESS CODE';
       position: absolute;
       top: -8px;
-      left: 10px;
-      font-size: 8px;
+      left: 12px;
+      font-size: 9px;
       color: #00ccff;
       background: #060a0a;
-      padding: 1px 4px;
+      padding: 2px 6px;
       border: 1px solid #002244;
     }
 
     #code-input {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 12px;
-      padding: 4px 8px;
+      font-size: 13px;
+      padding: 6px 10px;
       background: #001122;
       border: 2px solid #002244;
       color: #00ccff;
-      width: 250px;
-      margin-right: 10px;
+      width: 260px;
+      margin-right: 12px;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     #code-input:focus {
       border-color: #00ccff;
-      animation: static-pulse 0.4s infinite;
+      box-shadow: 0 0 3px rgba(0, 204, 255, 0.3); /* Reduced glow */
     }
 
     #code-submit {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 12px;
-      padding: 4px 8px;
-      background: #001122;
+      font-size: 13px;
+      padding: 6px 14px;
+      background: linear-gradient(45deg, #001122, #003366);
       border: 2px solid #002244;
       color: #00ccff;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     }
 
     #code-submit:hover {
-      background: #002244;
-      animation: static-pulse 0.4s infinite;
+      background: linear-gradient(45deg, #002244, #004488);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2); /* Reduced glow */
+    }
+
+    #code-submit:active {
+      transform: translateY(0);
+      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15); /* Reduced glow */
     }
 
     #code-message {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 10px;
-      margin-top: 8px;
-      padding: 4px;
+      font-size: 11px;
+      margin-top: 10px;
+      padding: 6px;
       text-transform: uppercase;
       display: none;
     }
@@ -254,7 +253,6 @@
       color: #00ff00;
       border: 1px solid #00ff00;
       background: rgba(0, 255, 0, 0.2);
-      animation: glitch-shift 0.6s ease-in-out infinite;
       display: block;
     }
 
@@ -262,14 +260,12 @@
       color: #ff3333;
       border: 1px solid #ff3333;
       background: rgba(255, 51, 51, 0.2);
-      animation: glitch-shift 0.6s ease-in-out infinite;
       display: block;
     }
 
     #tracklist {
-      margin-bottom: 15px;
-      position: relative;
-      padding: 6px;
+      margin-bottom: 20px;
+      padding: 8px;
       border: 2px solid #002244;
       background: rgba(8, 12, 12, 0.95);
     }
@@ -281,8 +277,8 @@
     .track {
       display: flex;
       align-items: center;
-      padding: 6px;
-      margin-bottom: 6px;
+      padding: 8px;
+      margin-bottom: 8px;
       background: rgba(0, 76, 115, 0.25);
       border: 2px solid #001122;
       position: relative;
@@ -291,7 +287,7 @@
 
     .track:hover {
       background: rgba(0, 76, 115, 0.35);
-      animation: glitch-shift 0.6s ease-in-out;
+      box-shadow: 0 0 5px rgba(0, 204, 255, 0.15); /* Reduced glow */
     }
 
     .track-error {
@@ -302,12 +298,13 @@
     .track-error .track-title::after {
       content: ' (Failed to load)';
       color: #ff3333;
-      font-size: 10px;
+      font-size: 11px;
     }
 
     .track-error .play-pause-btn,
     .track-error .reset-btn,
-    .track-error .lyrics-btn {
+    .track-error .lyrics-btn,
+    .track-error .copy-link-btn {
       border-color: #ff3333;
       cursor: not-allowed;
       opacity: 0.5;
@@ -315,9 +312,11 @@
 
     .track-error .play-pause-btn:hover,
     .track-error .reset-btn:hover,
-    .track-error .lyrics-btn:hover {
-      background: #001122;
-      animation: none;
+    .track-error .lyrics-btn:hover,
+    .track-error .copy-link-btn:hover {
+      background: linear-gradient(45deg, #001122, #003366);
+      transform: none;
+      box-shadow: none;
     }
 
     .track-disabled {
@@ -327,7 +326,8 @@
 
     .track-disabled .play-pause-btn,
     .track-disabled .reset-btn,
-    .track-disabled .lyrics-btn {
+    .track-disabled .lyrics-btn,
+    .track-disabled .copy-link-btn {
       border-color: #666;
       cursor: not-allowed;
       opacity: 0.5;
@@ -335,29 +335,23 @@
 
     .track-disabled .play-pause-btn:hover,
     .track-disabled .reset-btn:hover,
-    .track-disabled .lyrics-btn:hover {
-      background: #001122;
-      animation: none;
-    }
-
-    @keyframes glitch-shift {
-      0% { transform: translateX(0); filter: brightness(1); }
-      20% { transform: translateX(3px); filter: brightness(1.3); }
-      40% { transform: translateX(-2px); filter: brightness(0.8); }
-      60% { transform: translateX(1px); filter: brightness(1.2); }
-      100% { transform: translateX(0); filter: brightness(1); }
+    .track-disabled .lyrics-btn:hover,
+    .track-disabled .copy-link-btn:hover {
+      background: linear-gradient(45deg, #001122, #003366);
+      transform: none;
+      box-shadow: none;
     }
 
     .track::before {
       content: 'DATA ' attr(data-id);
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 8px;
+      font-size: 9px;
       color: #00ccff;
       position: absolute;
       top: -8px;
-      left: 4px;
+      left: 6px;
       background: #060a0a;
-      padding: 1px 4px;
+      padding: 2px 6px;
       border: 1px solid #002244;
     }
 
@@ -367,12 +361,12 @@
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      gap: 6px;
+      gap: 10px;
     }
 
     .track-title {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: bold;
       color: #d0d0d0;
       text-transform: uppercase;
@@ -381,12 +375,10 @@
 
     .track-label {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 10px;
+      font-size: 11px;
       text-transform: uppercase;
-      padding: 2px 6px;
-      border-radius: 2px;
-      display: inline-block;
-      border: 0.5px solid;
+      padding: 3px 8px;
+      border: 1px solid;
     }
 
     .track-label.accepted {
@@ -416,42 +408,126 @@
     .audio-player {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 12px;
     }
 
     .play-pause-btn,
     .reset-btn,
-    .lyrics-btn {
-      background: #001122;
+    .lyrics-btn,
+    .copy-link-btn {
+      background: linear-gradient(45deg, #001122, #003366);
       border: 2px solid #002244;
       color: #00ccff;
       font-size: 14px;
-      padding: 5px 8px;
+      padding: 6px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
     }
 
     .play-pause-btn:hover,
     .reset-btn:hover,
-    .lyrics-btn:hover {
-      background: #002244;
-      animation: static-pulse 0.4s infinite;
+    .lyrics-btn:hover,
+    .copy-link-btn:hover {
+      background: linear-gradient(45deg, #002244, #004488);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2); /* Reduced glow */
+    }
+
+    .play-pause-btn:active,
+    .reset-btn:active,
+    .lyrics-btn:active,
+    .copy-link-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15); /* Reduced glow */
+    }
+
+    .play-pause-btn::after,
+    .reset-btn::after,
+    .lyrics-btn::after,
+    .copy-link-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(45deg, #002244, #004488);
+      color: #00ccff;
+      font-size: 10px;
+      padding: 4px 8px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+      z-index: 10;
+    }
+
+    .play-pause-btn:hover::after,
+    .reset-btn:hover::after,
+    .lyrics-btn:hover::after,
+    .copy-link-btn:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .copy-link-btn {
+      display: none;
+    }
+
+    .track:not(.track-disabled) .copy-link-btn {
+      display: inline-block;
     }
 
     .progress-bar {
-      width: 90px;
-      height: 24px;
-      background: #060a0a;
+      width: 140px;
+      height: 22px;
+      background: linear-gradient(90deg, #060a0a, #0a1c2a);
       border: 1px solid #001122;
       cursor: pointer;
       position: relative;
+      box-shadow: 0 0 3px rgba(0, 204, 255, 0.1); /* Reduced glow */
     }
 
     .progress {
       height: 100%;
-      background: #00ccff;
+      background: linear-gradient(90deg, #00ccff, #33eeff);
       width: 0;
+      transition: width 0.2s ease;
+      box-shadow: 0 0 3px rgba(0, 204, 255, 0.3); /* Reduced glow */
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        max-width: 95%;
+        margin: 10px auto;
+        padding: 10px;
+      }
+      .progress-bar {
+        width: 100px;
+      }
+      .play-pause-btn,
+      .reset-btn,
+      .lyrics-btn,
+      .copy-link-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+        padding: 4px;
+      }
+      .audio-player {
+        gap: 8px;
+      }
+      .track-info {
+        gap: 6px;
+      }
+      .track-title {
+        font-size: 16px;
+      }
     }
 
     @keyframes static-pulse {
@@ -464,45 +540,45 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: #060a0a;
+      background: rgba(6, 10, 10, 0.95);
       padding: 20px;
       border: 2px solid #00ccff;
-      max-width: 400px;
+      max-width: 450px;
       min-height: 200px;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
       z-index: 2000;
       font-family: 'VCR OSD Mono', monospace;
-      box-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
-      animation: crt-flicker 0.1s infinite;
+      box-shadow: 0 0 6px rgba(0, 204, 255, 0.15); /* Reduced glow */
     }
 
     @media (max-width: 768px) {
       #lyrics-viewer {
-        width: 100vw;
-        height: 100vh;
+        width: 90vw;
+        height: 90vh;
         max-width: none;
         max-height: none;
-        top: 0;
-        left: 0;
-        transform: none;
-        padding: 10px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 15px;
         box-sizing: border-box;
       }
 
       #lyrics-viewer h3 {
-        font-size: 14px;
-        margin-bottom: 6px;
+        font-size: 15px;
+        margin-bottom: 10px;
       }
 
       #lyrics-content {
-        font-size: 18px;
-        min-height: calc(100vh - 60px);
+        font-size: 15px;
+        min-height: calc(90vh - 70px);
+        line-height: 1.6;
       }
 
       #lyrics-viewer button {
-        font-size: 14px;
-        padding: 4px 6px;
+        font-size: 13px;
+        padding: 5px 8px;
       }
     }
 
@@ -511,11 +587,13 @@
     }
 
     #lyrics-viewer h3 {
-      font-size: 14px;
-      margin-bottom: 8px;
+      font-size: 15px;
+      margin-bottom: 10px;
       border-bottom: 1px solid #002244;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
       color: #00ccff;
+      text-align: center;
+      text-shadow: 0 0 3px rgba(0, 204, 255, 0.3); /* Reduced glow */
     }
 
     #lyrics-viewer::before {
@@ -547,8 +625,19 @@
       white-space: pre-wrap;
       overflow: hidden;
       display: block;
-      min-height: 100px;
+      min-height: 120px;
       z-index: 2;
+      transition: filter 0.3s ease;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    #lyrics-content.typewriter {
+      filter: blur(2px);
+    }
+
+    #lyrics-content:not(.typewriter) {
+      filter: blur(0);
     }
 
     #lyrics-content.typewriter-cursor::after {
@@ -567,15 +656,13 @@
     #lyrics-content .lyric-date {
       color: #00ccff;
       font-style: italic;
-      font-size: 10px;
+      font-size: 11px;
       opacity: 0.7;
+      display: block;
+      margin-top: 12px;
     }
 
-    #lyrics-content.typewriter {
-      visibility: visible;
-    }
-
-    #lyrics-content .typed-char {
+    #lyrics-content .typed-line {
       opacity: 0;
       animation: type-char 0.03s ease-in forwards;
     }
@@ -587,48 +674,26 @@
     }
 
     #lyrics-viewer button {
-      background: #001122;
+      background: linear-gradient(45deg, #001122, #003366);
       border: 2px solid #002244;
       color: #00ccff;
       font-size: 14px;
       padding: 5px 8px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
       position: relative;
       z-index: 2;
     }
 
     #lyrics-viewer button:hover {
-      background: #002244;
-      animation: static-pulse 0.4s infinite;
+      background: linear-gradient(45deg, #002244, #004488);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2); /* Reduced glow */
     }
 
-    [data-glitch] {
-      position: relative;
-      display: inline-block;
-    }
-
-    [data-glitch].glitch-active::before {
-      content: attr(data-glitch);
-      position: absolute;
-      top: 0;
-      left: 0;
-      color: #cc00cc;
-      font-size: 0.8em;
-      animation: glitch-swap 0.4s infinite;
-    }
-
-    [data-glitch].glitch-active > * {
-      opacity: 0;
-    }
-
-    @keyframes glitch-swap {
-      0% { transform: translateX(0); opacity: 1; }
-      20% { transform: translateX(2px); opacity: 0.6; }
-      40% { transform: translateX(-2px); opacity: 0.8; }
-      60% { transform: translateX(1px); opacity: 0.5; }
-      80% { transform: translateX(-1px); opacity: 0.7; }
-      100% { transform: translateX(0); opacity: 1; }
+    #lyrics-viewer button:active {
+      transform: translateY(0);
+      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15); /* Reduced glow */
     }
   </style>
 </head>
@@ -636,35 +701,25 @@
   <div class="container">
     <section id="album-info">
       <img id="album-cover" src="album_cover.png" alt="Album Cover">
-      <div id="confidential-notice" data-glitch="ЗОНА 51 - ЗАБРАЊЕНО">
+      <div id="confidential-notice">
         <span>CLASSIFIED DEMOS - NO UNAUTHORIZED ACCESS</span>
       </div>
     </section>
     <section id="code-input-section">
       <input type="text" id="code-input" placeholder="ENTER ACCESS CODE" maxlength="50">
-      <button id="code-submit" data-glitch="SUBMIT">SUBMIT</button>
+      <button id="code-submit"><span>SUBMIT</span></button>
       <div id="code-message"></div>
     </section>
     <section id="tracklist">
       <ul id="tracks"></ul>
     </section>
     <section id="lyrics-viewer" class="hidden">
-      <h3 data-glitch="ТЕКСТОВИ"><span id="lyrics-title"></span></h3>
+      <h3><span id="lyrics-title"></span></h3>
       <pre id="lyrics-content"></pre>
-      <button class="close-btn" onclick="closeLyrics()" data-glitch="ЗАТВОРИ"><i class="fas fa-times"></i></button>
+      <button class="close-btn" onclick="closeLyrics()"><i class="fas fa-times"></i></button>
     </section>
   </div>
   <script>
-    function triggerGlitch() {
-      const glitchElements = document.querySelectorAll('[data-glitch]');
-      glitchElements.forEach(el => {
-        el.classList.add('glitch-active');
-        setTimeout(() => el.classList.remove('glitch-active'), 400);
-      });
-    }
-
-    setInterval(triggerGlitch, Math.random() * 4000 + 8000);
-
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' || event.keyCode === 27) {
         closeLyrics();
@@ -674,7 +729,6 @@
     let currentAudio = null;
     let currentButton = null;
 
-    // Simple hash function (SHA-1 inspired)
     function generateHash(input) {
       function rotateLeft(n, s) {
         return (n << s) | (n >>> (32 - s));
@@ -708,23 +762,19 @@
         h0 = (h0 + a) >>> 0; h1 = (h1 + b) >>> 0; h2 = (h2 + c) >>> 0; h3 = (h3 + d) >>> 0; h4 = (h4 + e) >>> 0;
       }
       const hash = [h0, h1, h2, h3, h4].map(h => ('00000000' + h.toString(16)).slice(-8)).join('');
-      return hash.slice(0, 32); // Ensure 32 characters
+      return hash.slice(0, 32);
     }
 
-    // Normalize title for comparison
     function normalizeTitle(title) {
       return title.toLowerCase().replace(/\s+/g, '');
     }
 
-    // Validate access code
     function validateAccessCode(code, tracks, isHash = false) {
       console.log(`Validating ${isHash ? 'hash' : 'code'}: ${code}`);
       if (isHash) {
-        // Check jazz hash
         if (code === generateHash('jazz@0#guiltyfeet')) {
           return { isJazz: true };
         }
-        // Check track hashes
         const track = tracks.find(t => generateHash(`${normalizeTitle(t.title)}@${t.id}#guiltyfeet`) === code);
         if (track) {
           return { track };
@@ -750,7 +800,16 @@
       }
     }
 
-    // Parse URL query parameter
+    function updateProgressBar(audio, progressBar) {
+      if (!audio || audio.paused || !isFinite(audio.duration)) {
+        progressBar.style.width = '0%';
+        return;
+      }
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progressBar.style.width = `${percent}%`;
+      console.log(`Progress for audio-${audio.id}: ${percent.toFixed(2)}%`);
+    }
+
     const params = new URLSearchParams(window.location.search);
     const trackParam = params.get('track');
     console.log(`URL trackParam: ${trackParam}`);
@@ -764,7 +823,6 @@
         document.getElementById('album-cover').src = albumData.album.coverImage || 'album_cover.png';
         const trackList = document.getElementById('tracks');
 
-        // Check if URL grants access
         const urlValidation = trackParam ? validateAccessCode(trackParam, albumData.tracks, true) : null;
         const isJazzEnabled = urlValidation && urlValidation.isJazz;
         const enabledTrack = urlValidation && urlValidation.track;
@@ -775,7 +833,6 @@
           audio.preload = 'metadata';
           document.body.appendChild(audio);
 
-          // Enable track if jazz code or matching track
           const isTrackEnabled = isJazzEnabled || (enabledTrack && enabledTrack.id === track.id && normalizeTitle(enabledTrack.title) === normalizeTitle(track.title));
           console.log(`Track ${track.title} (ID: ${track.id}) enabled: ${isTrackEnabled}`);
 
@@ -788,24 +845,42 @@
               <span class="track-label ${track.label.replace(/\s+/g, '-').toLowerCase()}">${track.label}</span>
             </div>
             <div class="audio-player" id="player-${track.id}">
-              <button class="play-pause-btn" data-id="${track.id}" data-glitch="ПУШТИ" ${isTrackEnabled ? '' : 'disabled'}><i class="fas fa-play"></i></button>
+              <button class="play-pause-btn" data-id="${track.id}" data-tooltip="Play/Pause" ${isTrackEnabled ? '' : 'disabled'}><span><i class="fas fa-play"></i></span></button>
               <div class="progress-bar" data-id="${track.id}"><div class="progress" id="progress-${track.id}"></div></div>
-              <button class="reset-btn" data-id="${track.id}" data-glitch="РЕСЕТ" ${isTrackEnabled ? '' : 'disabled'}><i class="fas fa-undo"></i></button>
-              <button class="lyrics-btn" onclick="showLyrics(${track.id})" data-glitch="ТЕКСТ" ${isTrackEnabled ? '' : 'disabled'}><i class="fas fa-book"></i></button>
+              <button class="reset-btn" data-id="${track.id}" data-tooltip="Reset" ${isTrackEnabled ? '' : 'disabled'}><span><i class="fas fa-undo"></i></span></button>
+              <button class="lyrics-btn" onclick="showLyrics(${track.id})" data-tooltip="Lyrics" ${isTrackEnabled ? '' : 'disabled'}><span><i class="fas fa-book"></i></span></button>
+              <button class="copy-link-btn" data-id="${track.id}" data-tooltip="Copy Link" ${isTrackEnabled ? '' : 'disabled'}><span><i class="fas fa-link"></i></span></button>
             </div>
           `;
           trackList.appendChild(li);
 
+          const progressBar = document.getElementById(`progress-${track.id}`);
+          audio.addEventListener('loadedmetadata', () => {
+            console.log(`Metadata loaded for audio-${track.id}, duration: ${audio.duration}`);
+          });
+          audio.addEventListener('timeupdate', () => {
+            updateProgressBar(audio, progressBar);
+          });
+          audio.addEventListener('ended', () => {
+            progressBar.style.width = '0%';
+            li.querySelector('.play-pause-btn i').className = 'fas fa-play';
+            currentAudio = null;
+            currentButton = null;
+            console.log(`Audio-${track.id} ended`);
+          });
           audio.addEventListener('error', () => {
             console.warn(`Failed to load audio for ${track.mp3}`);
             li.classList.add('track-error');
             li.querySelector('.play-pause-btn').disabled = true;
             li.querySelector('.reset-btn').disabled = true;
             li.querySelector('.lyrics-btn').disabled = true;
+            li.querySelector('.copy-link-btn').disabled = true;
+            progressBar.style.width = '0%';
+            document.getElementById('code-message').textContent = `ERROR: FAILED TO LOAD TRACK ${track.title.toUpperCase()}`;
+            document.getElementById('code-message').className = 'error';
           });
         });
 
-        // Code input handling
         const codeInput = document.getElementById('code-input');
         const codeSubmit = document.getElementById('code-submit');
         const codeMessage = document.getElementById('code-message');
@@ -843,7 +918,6 @@
           console.log(`Message: ${message}, isValid: ${isValid}`);
         });
 
-        // Allow Enter key to submit code
         codeInput.addEventListener('keypress', (event) => {
           if (event.key === 'Enter') {
             console.log('Enter key pressed');
@@ -856,12 +930,11 @@
             if (button.disabled) return;
             const trackId = button.dataset.id;
             const audio = document.getElementById(`audio-${trackId}`);
-            const progress = document.getElementById(`progress-${trackId}`);
+            const progressBar = document.getElementById(`progress-${trackId}`);
 
             if (currentAudio && currentAudio !== audio) {
               currentAudio.pause();
               currentButton.querySelector('i').className = 'fas fa-play';
-              currentButton.dataset.glitch = 'ПУШТИ';
               document.getElementById(`progress-${currentAudio.id.split('-')[1]}`).style.width = '0%';
             }
 
@@ -872,33 +945,20 @@
                 button.disabled = true;
                 button.closest('.audio-player').querySelector('.reset-btn').disabled = true;
                 button.closest('.audio-player').querySelector('.lyrics-btn').disabled = true;
+                button.closest('.audio-player').querySelector('.copy-link-btn').disabled = true;
+                progressBar.style.width = '0%';
+                document.getElementById('code-message').textContent = `ERROR: FAILED TO PLAY TRACK ${trackId}`;
+                document.getElementById('code-message').className = 'error';
               });
               button.querySelector('i').className = 'fas fa-pause';
-              button.dataset.glitch = 'ПАУЗА';
               currentAudio = audio;
               currentButton = button;
             } else {
               audio.pause();
               button.querySelector('i').className = 'fas fa-play';
-              button.dataset.glitch = 'ПУШТИ';
               currentAudio = null;
               currentButton = null;
             }
-
-            audio.addEventListener('timeupdate', () => {
-              if (isFinite(audio.duration)) {
-                const percent = (audio.currentTime / audio.duration) * 100;
-                progress.style.width = `${percent}%`;
-              }
-            });
-
-            audio.addEventListener('ended', () => {
-              progress.style.width = '0%';
-              button.querySelector('i').className = 'fas fa-play';
-              button.dataset.glitch = 'ПУШТИ';
-              currentAudio = null;
-              currentButton = null;
-            });
           });
         });
 
@@ -907,11 +967,11 @@
             if (button.disabled) return;
             const trackId = button.dataset.id;
             const audio = document.getElementById(`audio-${trackId}`);
-            const progress = document.getElementById(`progress-${trackId}`);
+            const progressBar = document.getElementById(`progress-${trackId}`);
             if (!audio) return;
 
             audio.currentTime = 0;
-            progress.style.width = '0%';
+            progressBar.style.width = '0%';
             if (currentAudio === audio && !audio.paused) {
               audio.play().catch(error => {
                 console.error(`Playback failed after reset for track ${trackId}: ${error}`);
@@ -919,13 +979,17 @@
                 button.disabled = true;
                 button.closest('.audio-player').querySelector('.play-pause-btn').disabled = true;
                 button.closest('.audio-player').querySelector('.lyrics-btn').disabled = true;
+                button.closest('.audio-player').querySelector('.copy-link-btn').disabled = true;
+                progressBar.style.width = '0%';
+                document.getElementById('code-message').textContent = `ERROR: FAILED TO RESET TRACK ${trackId}`;
+                document.getElementById('code-message').className = 'error';
               });
             }
           });
         });
 
         document.querySelectorAll('.progress-bar').forEach(bar => {
-          bar.addEventListener('click', (event) => {
+          function handleSeek(event) {
             const trackId = bar.dataset.id;
             const audio = document.getElementById(`audio-${trackId}`);
             const progress = document.getElementById(`progress-${trackId}`);
@@ -933,16 +997,18 @@
             if (!audio || !isFinite(audio.duration) || playButton.disabled) return;
 
             const rect = bar.getBoundingClientRect();
-            const clickX = event.clientX - rect.left;
-            const percentage = clickX / rect.width;
+            const clientX = event.type.includes('touch') ? event.touches[0].clientX : event.clientX;
+            const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
             audio.currentTime = percentage * audio.duration;
             progress.style.width = `${percentage * 100}%`;
+            console.log(`Seek to ${percentage * 100}% for audio-${trackId}`);
 
             if (currentAudio && currentAudio !== audio) {
               currentAudio.pause();
               currentButton.querySelector('i').className = 'fas fa-play';
-              currentButton.dataset.glitch = 'ПУШТИ';
               document.getElementById(`progress-${currentAudio.id.split('-')[1]}`).style.width = '0%';
+              currentAudio = null;
+              currentButton = null;
             }
 
             if (audio.paused) {
@@ -952,12 +1018,61 @@
                 playButton.disabled = true;
                 bar.closest('.audio-player').querySelector('.reset-btn').disabled = true;
                 bar.closest('.audio-player').querySelector('.lyrics-btn').disabled = true;
+                bar.closest('.audio-player').querySelector('.copy-link-btn').disabled = true;
+                progress.style.width = '0%';
+                document.getElementById('code-message').textContent = `ERROR: FAILED TO SEEK TRACK ${trackId}`;
+                document.getElementById('code-message').className = 'error';
               });
               playButton.querySelector('i').className = 'fas fa-pause';
-              playButton.dataset.glitch = 'ПАУЗА';
               currentAudio = audio;
               currentButton = playButton;
             }
+          }
+
+          bar.addEventListener('click', handleSeek);
+          bar.addEventListener('mousedown', () => {
+            const moveHandler = (event) => handleSeek(event);
+            document.addEventListener('mousemove', moveHandler);
+            document.addEventListener('mouseup', () => {
+              document.removeEventListener('mousemove', moveHandler);
+            }, { once: true });
+          });
+
+          bar.addEventListener('touchstart', (event) => {
+            event.preventDefault();
+            const touchHandler = (e) => handleSeek(e);
+            document.addEventListener('touchmove', touchHandler);
+            document.addEventListener('touchend', () => {
+              document.removeEventListener('touchmove', touchHandler);
+            }, { once: true });
+          });
+        });
+
+        document.querySelectorAll('.copy-link-btn').forEach(button => {
+          button.addEventListener('click', () => {
+            if (button.disabled) return;
+            const trackId = button.dataset.id;
+            const track = albumData.tracks.find(t => t.id.toString() === trackId);
+            const hash = generateHash(`${normalizeTitle(track.title)}@${track.id}#guiltyfeet`);
+            const url = `${window.location.origin}${window.location.pathname}?track=${hash}`;
+            navigator.clipboard.writeText(url).then(() => {
+              const message = document.getElementById('code-message');
+              message.textContent = `LINK COPIED: ${track.title.toUpperCase()}`;
+              message.className = 'success';
+              setTimeout(() => {
+                message.textContent = '';
+                message.className = '';
+              }, 3000);
+            }).catch(err => {
+              console.error(`Failed to copy link: ${err}`);
+              const message = document.getElementById('code-message');
+              message.textContent = 'ERROR: FAILED TO COPY LINK';
+              message.className = 'error';
+              setTimeout(() => {
+                message.textContent = '';
+                message.className = '';
+              }, 3000);
+            });
           });
         });
 
@@ -979,7 +1094,7 @@
 
           const lines = lyrics.split('\n');
           let lineIndex = 0;
-          const totalDuration = 500;
+          const totalDuration = 300;
           const delayPerLine = lines.length > 0 ? totalDuration / lines.length : 10;
 
           function typeNextLine() {
