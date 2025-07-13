@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Sioto Jazz - 29</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
@@ -29,6 +29,7 @@
       position: relative;
       overflow-x: hidden;
       min-height: 100vh;
+      touch-action: manipulation;
     }
 
     body::before {
@@ -58,9 +59,9 @@
     }
 
     @keyframes grid-pulse {
-      0% { opacity: 0.7; transform: translate(0, 0); }
-      50% { opacity: 0.4; transform: translate(2px, 2px); }
-      100% { opacity: 0.7; transform: translate(0, 0); }
+      0% { opacity: 0.5; transform: translate(0, 0); }
+      50% { opacity: 0.3; transform: translate(1px, 1px); }
+      100% { opacity: 0.5; transform: translate(0, 0); }
     }
 
     body::after {
@@ -79,35 +80,35 @@
 
     @keyframes glitch-overlay {
       0%, 20%, 40%, 60%, 80% { opacity: 0; }
-      10% { opacity: 0.12; transform: translateX(3px); }
-      30% { opacity: 0.1; transform: translateX(-2px); }
-      50% { opacity: 0.12; transform: translateY(2px); }
-      70% { opacity: 0.1; transform: translateY(-2px); }
-      90% { opacity: 0.12; transform: translateX(1px); }
+      10% { opacity: 0.08; transform: translateX(2px); }
+      30% { opacity: 0.06; transform: translateX(-1px); }
+      50% { opacity: 0.08; transform: translateY(1px); }
+      70% { opacity: 0.06; transform: translateY(-1px); }
+      90% { opacity: 0.08; transform: translateX(1px); }
     }
 
     .container {
       max-width: 700px;
-      margin: 20px auto;
-      padding: 15px;
+      margin: 15px auto;
+      padding: 12px;
       background: rgba(8, 12, 12, 0.95);
       border: 2px solid #002244;
       position: relative;
       z-index: 1;
-      box-shadow: 0 0 8px rgba(0, 204, 255, 0.1); /* Reduced glow */
+      box-shadow: 0 0 8px rgba(0, 204, 255, 0.1);
     }
 
     #album-info {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       padding: 8px;
       border: 2px solid #001122;
       background: rgba(8, 12, 12, 0.95);
     }
 
     #album-cover {
-      max-width: 340px;
-      min-height: 340px;
+      max-width: 300px;
+      min-height: 300px;
       border: 2px solid #001122;
       image-rendering: pixelated;
       display: block;
@@ -117,16 +118,16 @@
 
     #confidential-notice {
       font-family: 'Orbitron', 'VCR OSD Mono', monospace;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: #ff3333;
       text-transform: uppercase;
       text-align: center;
-      margin: 15px auto;
-      padding: 8px;
+      margin: 10px auto;
+      padding: 6px;
       border: 2px solid #ff3333;
       background: rgba(8, 12, 12, 0.95);
-      text-shadow: 0 0 5px #ff3333, 0 0 8px #00ccff; /* Slightly reduced text-shadow */
+      text-shadow: 0 0 3px #ff3333, 0 0 5px #00ccff;
       animation: neon-pulse 2s infinite;
       position: relative;
     }
@@ -157,10 +158,10 @@
       left: 50%;
       transform: translate(-50%, -50%) rotate(-45deg);
       font-family: 'Orbitron', 'VCR OSD Mono', monospace;
-      font-size: 22px;
+      font-size: 18px;
       color: #ff3333;
       opacity: 0.3;
-      text-shadow: 0 0 8px #ff3333; /* Reduced text-shadow */
+      text-shadow: 0 0 5px #ff3333;
       z-index: 0;
     }
 
@@ -170,8 +171,8 @@
     }
 
     @keyframes neon-pulse {
-      0%, 100% { text-shadow: 0 0 5px #ff3333, 0 0 8px #00ccff; }
-      50% { text-shadow: 0 0 8px #ff3333, 0 0 12px #00ccff; } /* Reduced intensity */
+      0%, 100% { text-shadow: 0 0 3px #ff3333, 0 0 5px #00ccff; }
+      50% { text-shadow: 0 0 5px #ff3333, 0 0 8px #00ccff; }
     }
 
     @keyframes scanline {
@@ -180,8 +181,8 @@
     }
 
     #code-input-section {
-      margin: 20px auto;
-      padding: 12px;
+      margin: 15px auto;
+      padding: 8px;
       border: 2px solid #00ccff;
       background: rgba(8, 12, 12, 0.95);
       text-align: center;
@@ -192,36 +193,36 @@
       content: 'ACCESS CODE';
       position: absolute;
       top: -8px;
-      left: 12px;
-      font-size: 9px;
+      left: 10px;
+      font-size: 8px;
       color: #00ccff;
       background: #060a0a;
-      padding: 2px 6px;
+      padding: 2px 5px;
       border: 1px solid #002244;
     }
 
     #code-input {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 13px;
-      padding: 6px 10px;
+      font-size: 12px;
+      padding: 6px 8px;
       background: #001122;
       border: 2px solid #002244;
       color: #00ccff;
-      width: 260px;
-      margin-right: 12px;
+      width: 220px;
+      margin-right: 10px;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     #code-input:focus {
       border-color: #00ccff;
-      box-shadow: 0 0 3px rgba(0, 204, 255, 0.3); /* Reduced glow */
+      box-shadow: 0 0 3px rgba(0, 204, 255, 0.3);
     }
 
     #code-submit {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 13px;
-      padding: 6px 14px;
+      font-size: 12px;
+      padding: 6px 12px;
       background: linear-gradient(45deg, #001122, #003366);
       border: 2px solid #002244;
       color: #00ccff;
@@ -232,19 +233,19 @@
     #code-submit:hover {
       background: linear-gradient(45deg, #002244, #004488);
       transform: translateY(-2px);
-      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2); /* Reduced glow */
+      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2);
     }
 
     #code-submit:active {
       transform: translateY(0);
-      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15); /* Reduced glow */
+      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15);
     }
 
     #code-message {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 11px;
-      margin-top: 10px;
-      padding: 6px;
+      font-size: 10px;
+      margin-top: 8px;
+      padding: 5px;
       text-transform: uppercase;
       display: none;
     }
@@ -263,11 +264,43 @@
       display: block;
     }
 
+    .toggle-btn {
+      display: none;
+      font-family: 'VCR OSD Mono', monospace;
+      font-size: 12px;
+      padding: 8px;
+      width: 100%;
+      background: linear-gradient(45deg, #001122, #003366);
+      border: 2px solid #002244;
+      color: #00ccff;
+      cursor: pointer;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .toggle-btn:hover {
+      background: linear-gradient(45deg, #002244, #004488);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2);
+    }
+
+    .toggle-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15);
+    }
+
     #tracklist {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       padding: 8px;
       border: 2px solid #002244;
       background: rgba(8, 12, 12, 0.95);
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }
+
+    #tracklist.hidden {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
     }
 
     #tracks {
@@ -287,7 +320,7 @@
 
     .track:hover {
       background: rgba(0, 76, 115, 0.35);
-      box-shadow: 0 0 5px rgba(0, 204, 255, 0.15); /* Reduced glow */
+      box-shadow: 0 0 5px rgba(0, 204, 255, 0.15);
     }
 
     .track-error {
@@ -298,7 +331,7 @@
     .track-error .track-title::after {
       content: ' (Failed to load)';
       color: #ff3333;
-      font-size: 11px;
+      font-size: 10px;
     }
 
     .track-error .play-pause-btn,
@@ -345,13 +378,13 @@
     .track::before {
       content: 'DATA ' attr(data-id);
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 9px;
+      font-size: 8px;
       color: #00ccff;
       position: absolute;
       top: -8px;
       left: 6px;
       background: #060a0a;
-      padding: 2px 6px;
+      padding: 2px 5px;
       border: 1px solid #002244;
     }
 
@@ -361,12 +394,18 @@
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+    }
+
+    .track-title-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .track-title {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: bold;
       color: #d0d0d0;
       text-transform: uppercase;
@@ -375,9 +414,9 @@
 
     .track-label {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
-      padding: 3px 8px;
+      padding: 3px 6px;
       border: 1px solid;
     }
 
@@ -408,7 +447,7 @@
     .audio-player {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .play-pause-btn,
@@ -419,11 +458,11 @@
       border: 2px solid #002244;
       color: #00ccff;
       font-size: 14px;
-      padding: 6px;
+      padding: 5px;
       cursor: pointer;
       transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -436,7 +475,7 @@
     .copy-link-btn:hover {
       background: linear-gradient(45deg, #002244, #004488);
       transform: translateY(-2px);
-      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2); /* Reduced glow */
+      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2);
     }
 
     .play-pause-btn:active,
@@ -444,13 +483,15 @@
     .lyrics-btn:active,
     .copy-link-btn:active {
       transform: translateY(0);
-      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15); /* Reduced glow */
+      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15);
     }
 
     .play-pause-btn::after,
     .reset-btn::after,
     .lyrics-btn::after,
-    .copy-link-btn::after {
+    .copy-link-btn::after,
+    .auto-scroll-btn::after,
+    .speed-btn::after {
       content: attr(data-tooltip);
       position: absolute;
       bottom: 100%;
@@ -458,8 +499,8 @@
       transform: translateX(-50%);
       background: linear-gradient(45deg, #002244, #004488);
       color: #00ccff;
-      font-size: 10px;
-      padding: 4px 8px;
+      font-size: 9px;
+      padding: 3px 6px;
       white-space: nowrap;
       opacity: 0;
       visibility: hidden;
@@ -470,7 +511,9 @@
     .play-pause-btn:hover::after,
     .reset-btn:hover::after,
     .lyrics-btn:hover::after,
-    .copy-link-btn:hover::after {
+    .copy-link-btn:hover::after,
+    .auto-scroll-btn:hover::after,
+    .speed-btn:hover::after {
       opacity: 1;
       visibility: visible;
     }
@@ -484,13 +527,13 @@
     }
 
     .progress-bar {
-      width: 140px;
-      height: 22px;
+      width: 120px;
+      height: 20px;
       background: linear-gradient(90deg, #060a0a, #0a1c2a);
       border: 1px solid #001122;
       cursor: pointer;
       position: relative;
-      box-shadow: 0 0 3px rgba(0, 204, 255, 0.1); /* Reduced glow */
+      box-shadow: 0 0 3px rgba(0, 204, 255, 0.1);
     }
 
     .progress {
@@ -498,41 +541,7 @@
       background: linear-gradient(90deg, #00ccff, #33eeff);
       width: 0;
       transition: width 0.2s ease;
-      box-shadow: 0 0 3px rgba(0, 204, 255, 0.3); /* Reduced glow */
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        max-width: 95%;
-        margin: 10px auto;
-        padding: 10px;
-      }
-      .progress-bar {
-        width: 100px;
-      }
-      .play-pause-btn,
-      .reset-btn,
-      .lyrics-btn,
-      .copy-link-btn {
-        width: 30px;
-        height: 30px;
-        font-size: 12px;
-        padding: 4px;
-      }
-      .audio-player {
-        gap: 8px;
-      }
-      .track-info {
-        gap: 6px;
-      }
-      .track-title {
-        font-size: 16px;
-      }
-    }
-
-    @keyframes static-pulse {
-      0%, 100% { filter: brightness(1); }
-      50% { filter: brightness(1.4); }
+      box-shadow: 0 0 3px rgba(0, 204, 255, 0.3);
     }
 
     #lyrics-viewer {
@@ -541,45 +550,18 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background: rgba(6, 10, 10, 0.95);
-      padding: 20px;
+      padding: 10px;
       border: 2px solid #00ccff;
-      max-width: 450px;
-      min-height: 200px;
-      max-height: 85vh;
+      width: 90%;
+      max-width: 600px;
+      height: auto;
+      max-height: 80vh;
       overflow-y: auto;
       z-index: 2000;
       font-family: 'VCR OSD Mono', monospace;
-      box-shadow: 0 0 6px rgba(0, 204, 255, 0.15); /* Reduced glow */
-    }
-
-    @media (max-width: 768px) {
-      #lyrics-viewer {
-        width: 90vw;
-        height: 90vh;
-        max-width: none;
-        max-height: none;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 15px;
-        box-sizing: border-box;
-      }
-
-      #lyrics-viewer h3 {
-        font-size: 15px;
-        margin-bottom: 10px;
-      }
-
-      #lyrics-content {
-        font-size: 15px;
-        min-height: calc(90vh - 70px);
-        line-height: 1.6;
-      }
-
-      #lyrics-viewer button {
-        font-size: 13px;
-        padding: 5px 8px;
-      }
+      box-shadow: 0 0 6px rgba(0, 204, 255, 0.15);
+      font-size: 13px;
+      line-height: 1.4;
     }
 
     #lyrics-viewer.hidden {
@@ -587,13 +569,13 @@
     }
 
     #lyrics-viewer h3 {
-      font-size: 15px;
-      margin-bottom: 10px;
+      font-size: 14px;
+      margin: 0 150px 8px 10px;
       border-bottom: 1px solid #002244;
-      padding-bottom: 6px;
+      padding-bottom: 5px;
       color: #00ccff;
-      text-align: center;
-      text-shadow: 0 0 3px rgba(0, 204, 255, 0.3); /* Reduced glow */
+      text-align: left;
+      text-shadow: 0 0 3px rgba(0, 204, 255, 0.3);
     }
 
     #lyrics-viewer::before {
@@ -614,22 +596,45 @@
       z-index: 1;
     }
 
-    @keyframes crt-flicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.98; }
-    }
-
     #lyrics-content {
       position: relative;
       color: #00ccff;
       white-space: pre-wrap;
-      overflow: hidden;
+      overflow-y: auto;
       display: block;
-      min-height: 120px;
+      min-height: 100px;
+      max-height: calc(80vh - 80px);
       z-index: 2;
       transition: filter 0.3s ease;
-      font-size: 15px;
-      line-height: 1.6;
+      font-size: 13px;
+      line-height: 1.4;
+      padding: 8px;
+      border: 1px solid #002244;
+      background: rgba(6, 10, 10, 0.98);
+    }
+
+    /* Cross-browser scrollbar styles */
+    #lyrics-content {
+      scrollbar-width: thin;
+      scrollbar-color: #00ccff #001122;
+    }
+
+    #lyrics-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #lyrics-content::-webkit-scrollbar-track {
+      background: #001122;
+      border-left: 1px solid #002244;
+    }
+
+    #lyrics-content::-webkit-scrollbar-thumb {
+      background: #00ccff;
+      border-radius: 4px;
+    }
+
+    #lyrics-content::-webkit-scrollbar-thumb:hover {
+      background: #33eeff;
     }
 
     #lyrics-content.typewriter {
@@ -656,10 +661,10 @@
     #lyrics-content .lyric-date {
       color: #00ccff;
       font-style: italic;
-      font-size: 11px;
+      font-size: 10px;
       opacity: 0.7;
       display: block;
-      margin-top: 12px;
+      margin-top: 8px;
     }
 
     #lyrics-content .typed-line {
@@ -678,7 +683,7 @@
       border: 2px solid #002244;
       color: #00ccff;
       font-size: 14px;
-      padding: 5px 8px;
+      padding: 5px;
       cursor: pointer;
       transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
       position: relative;
@@ -688,12 +693,247 @@
     #lyrics-viewer button:hover {
       background: linear-gradient(45deg, #002244, #004488);
       transform: translateY(-2px);
-      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2); /* Reduced glow */
+      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2);
     }
 
     #lyrics-viewer button:active {
       transform: translateY(0);
-      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15); /* Reduced glow */
+      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15);
+    }
+
+    #lyrics-viewer button.close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+    }
+
+    #lyrics-viewer button.auto-scroll-btn {
+      position: absolute;
+      top: 10px;
+      right: 50px;
+      width: 32px;
+      height: 32px;
+    }
+
+    #lyrics-viewer button.speed-btn {
+      position: absolute;
+      top: 10px;
+      width: 32px;
+      height: 32px;
+      font-size: 12px;
+      padding: 0;
+      text-align: center;
+    }
+
+    #lyrics-viewer button.speed-btn.slow {
+      right: 90px;
+    }
+
+    #lyrics-viewer button.speed-btn.medium {
+      right: 130px;
+    }
+
+    #lyrics-viewer button.speed-btn.fast {
+      right: 170px;
+    }
+
+    #lyrics-viewer button.speed-btn.active {
+      background: linear-gradient(45deg, #004488, #0066aa);
+      border-color: #00ccff;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 12px;
+      }
+
+      .container {
+        max-width: 100%;
+        margin: 5px;
+        padding: 6px;
+      }
+
+      .toggle-btn {
+        display: block;
+      }
+
+      #album-cover {
+        max-width: 250px;
+        min-height: 250px;
+      }
+
+      #confidential-notice {
+        font-size: 11px;
+        padding: 6px;
+      }
+
+      #confidential-notice::after {
+        font-size: 16px;
+      }
+
+      #code-input-section {
+        padding: 10px;
+      }
+
+      #code-input {
+        width: 100%;
+        max-width: 240px;
+        font-size: 12px;
+        padding: 8px;
+      }
+
+      #code-submit {
+        width: 100px;
+        font-size: 12px;
+        padding: 8px;
+        margin-top: 8px;
+      }
+
+      .track {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 4px;
+        margin-bottom: 3px;
+      }
+
+      .track-info {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 2px;
+      }
+
+      .track-title-container {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        flex-wrap: nowrap;
+        overflow: hidden;
+      }
+
+      .track-title {
+        font-size: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .track-label {
+        font-size: 9px;
+        padding: 2px 4px;
+      }
+
+      .audio-player {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 4px;
+        width: 100%;
+        margin-top: 2px;
+        justify-content: flex-start;
+      }
+
+      .play-pause-btn,
+      .reset-btn,
+      .lyrics-btn,
+      .copy-link-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+        padding: 6px;
+      }
+
+      .progress-bar {
+        width: 70px;
+        height: 14px;
+      }
+
+      #lyrics-viewer {
+        width: 98vw;
+        height: 95vh;
+        max-height: none;
+        padding: 4px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      #lyrics-viewer h3 {
+        font-size: 13px;
+        margin: 0 180px 4px 4px;
+        padding-bottom: 4px;
+      }
+
+      #lyrics-content {
+        line-height: 1.3;
+        min-height: 0;
+        max-height: calc(95vh - 55px);
+        padding: 4px;
+      }
+
+      #lyrics-content {
+        scrollbar-width: thin;
+        scrollbar-color: #00ccff #001122;
+      }
+
+      #lyrics-content::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #lyrics-viewer button.close-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+        padding: 6px;
+      }
+
+      #lyrics-viewer button.auto-scroll-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+        padding: 6px;
+        right: 48px;
+      }
+
+      #lyrics-viewer button.speed-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+        padding: 0;
+      }
+
+      #lyrics-viewer button.speed-btn.slow {
+        right: 90px;
+      }
+
+      #lyrics-viewer button.speed-btn.medium {
+        right: 132px;
+      }
+
+      #lyrics-viewer button.speed-btn.fast {
+        right: 174px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      #album-cover {
+        max-width: 200px;
+        min-height: 200px;
+      }
+
+      #code-input {
+        max-width: 200px;
+      }
+
+      #code-submit {
+        width: 80px;
+      }
+
+      #lyrics-viewer h3 {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
@@ -710,6 +950,7 @@
       <button id="code-submit"><span>SUBMIT</span></button>
       <div id="code-message"></div>
     </section>
+    <button id="toggle-tracklist" class="toggle-btn">Show Tracks</button>
     <section id="tracklist">
       <ul id="tracks"></ul>
     </section>
@@ -717,6 +958,10 @@
       <h3><span id="lyrics-title"></span></h3>
       <pre id="lyrics-content"></pre>
       <button class="close-btn" onclick="closeLyrics()"><i class="fas fa-times"></i></button>
+      <button class="auto-scroll-btn" onclick="toggleAutoScroll()" data-tooltip="Start Auto-Scroll"><i class="fas fa-arrow-down"></i></button>
+      <button class="speed-btn slow active" onclick="setAutoScrollSpeed('slow')" data-tooltip="Slow (Hourglass)"><i class="fas fa-hourglass-start"></i></button>
+      <button class="speed-btn medium" onclick="setAutoScrollSpeed('medium')" data-tooltip="Medium (Clock)"><i class="fas fa-clock"></i></button>
+      <button class="speed-btn fast" onclick="setAutoScrollSpeed('fast')" data-tooltip="Fast (Bolt)"><i class="fas fa-bolt"></i></button>
     </section>
   </div>
   <script>
@@ -728,6 +973,8 @@
 
     let currentAudio = null;
     let currentButton = null;
+    let autoScrollInterval = null;
+    let scrollSpeed = 0.5; // Default: Medium (pixels per 50ms)
 
     function generateHash(input) {
       function rotateLeft(n, s) {
@@ -810,6 +1057,78 @@
       console.log(`Progress for audio-${audio.id}: ${percent.toFixed(2)}%`);
     }
 
+    function toggleAutoScroll() {
+      const lyricsContent = document.getElementById('lyrics-content');
+      const autoScrollBtn = document.querySelector('#lyrics-viewer .auto-scroll-btn');
+      if (autoScrollInterval || document.getElementById('lyrics-viewer').classList.contains('hidden')) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+        autoScrollBtn.querySelector('i').className = 'fas fa-arrow-down';
+        autoScrollBtn.setAttribute('data-tooltip', 'Start Auto-Scroll');
+        console.log('Auto-scroll stopped');
+        return;
+      }
+      lyricsContent.scrollTop = 0; // Reset to top
+      lyricsContent.offsetHeight; // Force reflow
+      console.log(`Starting auto-scroll with speed: ${scrollSpeed}px/50ms, scrollTop: ${lyricsContent.scrollTop}`);
+      autoScrollInterval = setInterval(() => {
+        const maxScroll = lyricsContent.scrollHeight - lyricsContent.clientHeight;
+        if (lyricsContent.scrollHeight > lyricsContent.clientHeight && lyricsContent.scrollTop < maxScroll) {
+          lyricsContent.scrollTop += scrollSpeed;
+          console.log(`Scrolling, scrollTop: ${lyricsContent.scrollTop}, maxScroll: ${maxScroll}`);
+        } else {
+          clearInterval(autoScrollInterval);
+          autoScrollInterval = null;
+          autoScrollBtn.querySelector('i').className = 'fas fa-arrow-down';
+          autoScrollBtn.setAttribute('data-tooltip', 'Start Auto-Scroll');
+          console.log('Auto-scroll reached bottom or no scrollable content');
+        }
+      }, 50);
+      autoScrollBtn.querySelector('i').className = 'fas fa-pause';
+      autoScrollBtn.setAttribute('data-tooltip', 'Stop Auto-Scroll');
+    }
+
+    function setAutoScrollSpeed(speed) {
+      const speeds = {
+        slow: 0.3,
+        medium: 0.5,
+        fast: 0.8
+      };
+      scrollSpeed = speeds[speed] || 0.5;
+      document.querySelectorAll('#lyrics-viewer .speed-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`#lyrics-viewer .speed-btn.${speed}`).classList.add('active');
+      console.log(`Set auto-scroll speed to ${speed} (${scrollSpeed}px/50ms)`);
+      
+      // Restart auto-scroll with new speed if it's running
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+        const lyricsContent = document.getElementById('lyrics-content');
+        const autoScrollBtn = document.querySelector('#lyrics-viewer .auto-scroll-btn');
+        if (document.getElementById('lyrics-viewer').classList.contains('hidden')) return;
+        lyricsContent.scrollTop = 0; // Reset to top
+        lyricsContent.offsetHeight; // Force reflow
+        console.log(`Restarting auto-scroll with speed: ${scrollSpeed}px/50ms`);
+        autoScrollInterval = setInterval(() => {
+          const maxScroll = lyricsContent.scrollHeight - lyricsContent.clientHeight;
+          if (lyricsContent.scrollHeight > lyricsContent.clientHeight && lyricsContent.scrollTop < maxScroll) {
+            lyricsContent.scrollTop += scrollSpeed;
+            console.log(`Scrolling, scrollTop: ${lyricsContent.scrollTop}, maxScroll: ${maxScroll}`);
+          } else {
+            clearInterval(autoScrollInterval);
+            autoScrollInterval = null;
+            autoScrollBtn.querySelector('i').className = 'fas fa-arrow-down';
+            autoScrollBtn.setAttribute('data-tooltip', 'Start Auto-Scroll');
+            console.log('Auto-scroll reached bottom or no scrollable content');
+          }
+        }, 50);
+        autoScrollBtn.querySelector('i').className = 'fas fa-pause';
+        autoScrollBtn.setAttribute('data-tooltip', 'Stop Auto-Scroll');
+      }
+    }
+
     const params = new URLSearchParams(window.location.search);
     const trackParam = params.get('track');
     console.log(`URL trackParam: ${trackParam}`);
@@ -841,8 +1160,10 @@
           li.setAttribute('data-id', track.id);
           li.innerHTML = `
             <div class="track-info">
-              <span class="track-title">${track.title}</span>
-              <span class="track-label ${track.label.replace(/\s+/g, '-').toLowerCase()}">${track.label}</span>
+              <div class="track-title-container">
+                <span class="track-title">${track.title}</span>
+                <span class="track-label ${track.label.replace(/\s+/g, '-').toLowerCase()}">${track.label}</span>
+              </div>
             </div>
             <div class="audio-player" id="player-${track.id}">
               <button class="play-pause-btn" data-id="${track.id}" data-tooltip="Play/Pause" ${isTrackEnabled ? '' : 'disabled'}><span><i class="fas fa-play"></i></span></button>
@@ -1085,6 +1406,22 @@
           let lyrics = track.lyrics || 'No lyrics available';
           const date = track.date || '';
 
+          // Calculate dynamic font size based on longest verse (mobile only)
+          let fontSize = 13; // Default for desktop
+          if (window.innerWidth <= 600) {
+            const verses = lyrics.split('\n\n').filter(v => v.trim());
+            const longestVerseLength = Math.max(...verses.map(v => v.length));
+            if (longestVerseLength < 100) {
+              fontSize = 16; // Short verses, max readability
+            } else if (longestVerseLength < 200) {
+              fontSize = 14; // Medium verses, balanced
+            } else {
+              fontSize = 12; // Long verses, ensure fit
+            }
+            console.log(`Longest verse length: ${longestVerseLength}, setting mobile font-size: ${fontSize}px`);
+          }
+          lyricsContent.style.fontSize = `${fontSize}px`;
+
           lyrics = lyrics.replace(/\[(\d{2}:\d{2})\]/g, '[$1]');
 
           document.getElementById('lyrics-title').textContent = track.title;
@@ -1094,7 +1431,7 @@
 
           const lines = lyrics.split('\n');
           let lineIndex = 0;
-          const totalDuration = 300;
+          const totalDuration = window.innerWidth <= 600 ? 150 : 300;
           const delayPerLine = lines.length > 0 ? totalDuration / lines.length : 10;
 
           function typeNextLine() {
@@ -1125,9 +1462,46 @@
         };
 
         window.closeLyrics = function() {
+          if (autoScrollInterval) {
+            clearInterval(autoScrollInterval);
+            autoScrollInterval = null;
+            const autoScrollBtn = document.querySelector('#lyrics-viewer .auto-scroll-btn');
+            if (autoScrollBtn) {
+              autoScrollBtn.querySelector('i').className = 'fas fa-arrow-down';
+              autoScrollBtn.setAttribute('data-tooltip', 'Start Auto-Scroll');
+              console.log('Auto-scroll stopped on close');
+            }
+          }
           document.getElementById('lyrics-viewer').classList.add('hidden');
           document.getElementById('lyrics-content').innerHTML = '';
+          document.getElementById('lyrics-content').style.fontSize = ''; // Reset font size
         };
+
+        const toggleTracklistBtn = document.getElementById('toggle-tracklist');
+        const tracklistSection = document.getElementById('tracklist');
+
+        toggleTracklistBtn.addEventListener('click', () => {
+          tracklistSection.classList.toggle('hidden');
+          toggleTracklistBtn.textContent = tracklistSection.classList.contains('hidden')
+            ? 'Show Tracks'
+            : 'Hide Tracks';
+        });
+
+        document.querySelectorAll('button').forEach(button => {
+          button.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            button.dispatchEvent(new Event('click'));
+          }, { passive: false });
+        });
+
+        document.getElementById('lyrics-viewer').addEventListener('click', (e) => {
+          if (e.target === document.getElementById('lyrics-viewer')) {
+            closeLyrics();
+          }
+        });
+
+        // Initialize default speed
+        setAutoScrollSpeed('medium');
       })
       .catch(error => {
         console.error(`Error loading album data: ${error}`);
