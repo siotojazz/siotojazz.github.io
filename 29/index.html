@@ -264,43 +264,11 @@
       display: block;
     }
 
-    .toggle-btn {
-      display: none;
-      font-family: 'VCR OSD Mono', monospace;
-      font-size: 12px;
-      padding: 8px;
-      width: 100%;
-      background: linear-gradient(45deg, #001122, #003366);
-      border: 2px solid #002244;
-      color: #00ccff;
-      cursor: pointer;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .toggle-btn:hover {
-      background: linear-gradient(45deg, #002244, #004488);
-      transform: translateY(-2px);
-      box-shadow: 0 2px 4px rgba(0, 204, 255, 0.2);
-    }
-
-    .toggle-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 0 2px rgba(0, 204, 255, 0.15);
-    }
-
     #tracklist {
       margin-bottom: 15px;
       padding: 8px;
       border: 2px solid #002244;
       background: rgba(8, 12, 12, 0.95);
-      transition: max-height 0.3s ease, opacity 0.3s ease;
-    }
-
-    #tracklist.hidden {
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
     }
 
     #tracks {
@@ -405,11 +373,14 @@
 
     .track-title {
       font-family: 'VCR OSD Mono', monospace;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       color: #d0d0d0;
       text-transform: uppercase;
       flex-shrink: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .track-label {
@@ -755,10 +726,6 @@
         padding: 6px;
       }
 
-      .toggle-btn {
-        display: block;
-      }
-
       #album-cover {
         max-width: 250px;
         min-height: 250px;
@@ -808,14 +775,14 @@
       .track-title-container {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
         width: 100%;
         flex-wrap: nowrap;
         overflow: hidden;
       }
 
       .track-title {
-        font-size: 16px;
+        font-size: 18px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -950,7 +917,6 @@
       <button id="code-submit"><span>SUBMIT</span></button>
       <div id="code-message"></div>
     </section>
-    <button id="toggle-tracklist" class="toggle-btn">Show Tracks</button>
     <section id="tracklist">
       <ul id="tracks"></ul>
     </section>
@@ -1476,16 +1442,6 @@
           document.getElementById('lyrics-content').innerHTML = '';
           document.getElementById('lyrics-content').style.fontSize = ''; // Reset font size
         };
-
-        const toggleTracklistBtn = document.getElementById('toggle-tracklist');
-        const tracklistSection = document.getElementById('tracklist');
-
-        toggleTracklistBtn.addEventListener('click', () => {
-          tracklistSection.classList.toggle('hidden');
-          toggleTracklistBtn.textContent = tracklistSection.classList.contains('hidden')
-            ? 'Show Tracks'
-            : 'Hide Tracks';
-        });
 
         document.querySelectorAll('button').forEach(button => {
           button.addEventListener('touchstart', (e) => {
