@@ -657,6 +657,12 @@ document.addEventListener('mousemove', (event) => {
   mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 });
 
+document.addEventListener('touchmove', (event) => {
+  const touch = event.touches[0];
+  mouseX = (touch.clientX / window.innerWidth) * 2 - 1;
+  mouseY = -(touch.clientY / window.innerHeight) * 2 + 1;
+});
+
 // Scroll-based grid rotation and camera movement
 container.addEventListener('scroll', () => {
   updateScrollTransform();
