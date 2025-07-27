@@ -453,6 +453,7 @@ tr.track:hover {
     <section id="lyrics-section">
       <div class="lyrics-container" id="lyrics-container"></div>
     </section>
+    <div class="empty"></div>
   </div>
   <script>
     // Three.js and CSS3DRenderer setup
@@ -472,9 +473,18 @@ cssRenderer.domElement.style.pointerEvents = 'auto';
 document.body.appendChild(cssRenderer.domElement);
 
 // Move the .container into a CSS3DObject
-const container = document.querySelector('.container');
+if(!!window.chrome)
+{
+  container = document.querySelector('.empty');
+}
+else
+{
+  container = document.querySelector('.container');
+}
+
 const cssObject = new THREE.CSS3DObject(container);
 scene.add(cssObject);
+
 
 // Position the CSS3DObject in 3D space
 cssObject.position.set(0, camera.position.y - 380, -970);
