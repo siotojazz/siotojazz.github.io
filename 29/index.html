@@ -29,6 +29,7 @@ body {
   overflow-x: hidden;
   position: relative;
 }
+
 canvas {
   position: fixed;
   top: 0;
@@ -36,6 +37,7 @@ canvas {
   width: 100%;
   height: 100%;
   z-index: -1;
+  pointer-events: none; /* Prevent WebGL canvas from capturing pointer events */
 }
 
 .container {
@@ -44,7 +46,7 @@ canvas {
   margin: 0 auto;
   padding: 12px;
   position: relative;
-  z-index: 1;
+  z-index: 100;
   background: rgba(16, 24, 24, 0.8);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -53,6 +55,8 @@ canvas {
   box-sizing: border-box; /* Ensure padding is included in height */
   border: inset #09F3 1px;
   box-shadow: 0px 0px 30px #09F3;
+  position: relative;
+  pointer-events: auto; /* Already set, but verify it’s applied */
 }
 
 .title-bar {
@@ -468,6 +472,7 @@ const cssRenderer = new THREE.CSS3DRenderer();
 cssRenderer.setSize(window.innerWidth, window.innerHeight);
 cssRenderer.domElement.style.position = 'absolute';
 cssRenderer.domElement.style.top = '0';
+cssRenderer.domElement.style.zIndex = '10'; // Ensure it’s above the WebGL canvas
 cssRenderer.domElement.style.pointerEvents = 'auto';
 document.body.appendChild(cssRenderer.domElement);
 
@@ -657,6 +662,19 @@ document.addEventListener('mousemove', (event) => {
   mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 });
 
+// Handle touch events for taps/clicks
+cssRenderer.domElement.addEventListener('touchstart', (event) => {
+  // Prevent default to avoid issues with scrolling
+  event.preventDefault();
+  // Simulate a click event for the touched element
+  const touch = event.touches[0];
+  const element = document.elementFromPoint(touch.clientX, touch.clientY);
+  if (element) {
+    const clickEvent = new Event('click', { bubbles: true });
+    element.dispatchEvent(clickEvent);
+  }
+});
+
 document.addEventListener('touchmove', (event) => {
   const touch = event.touches[0];
   mouseX = (touch.clientX / window.innerWidth) * 2 - 1;
@@ -677,7 +695,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // Animation loop
 function animate() {
   requestAnimationFrame(animate);
-  // Move grids backward (positive Z) to simulate forward motion
+
+  // Update grid positions
   grids.forEach(grid => {
     grid.position.z += 0.1;
     if (grid.position.z > gridSize) {
@@ -691,28 +710,36 @@ function animate() {
       grid.position.x += gridSize * gridCount;
     }
   });
+
   // Update cssObject rotation based on mouse position
-  const maxRotation = Math.PI / 6; // Limit rotation to ±15 degrees
+  const maxRotation = Math.PI / 6;
   cssObject.rotation.y = mouseX * maxRotation;
-  cssObject.rotation.x = -Math.PI / 6 + mouseY * maxRotation * 0.5; // Less rotation on X for subtlety
+  cssObject.rotation.x = -Math.PI / 6 + mouseY * maxRotation * 0.5;
+
   // Update uniforms
   glowMaterial.uniforms.time.value += 0.016;
   blurMaterial.uniforms.time.value += 0.016;
   compositeMaterial.uniforms.time.value += 0.016;
-  // Render sharp grid
+
+  // Render WebGL scene to sharp render target
   webGLRenderer.setRenderTarget(sharpRenderTarget);
+  webGLRenderer.clear();
   webGLRenderer.render(scene, camera);
-  // Render blurred grid
+
+  // Render blurred scene
   webGLRenderer.setRenderTarget(blurRenderTarget);
   webGLRenderer.clear();
   webGLRenderer.render(blurScene, blurCamera);
-  // Render composite
+
+  // Render composite scene to the screen
   webGLRenderer.setRenderTarget(null);
   webGLRenderer.clear();
   webGLRenderer.render(compositeScene, compositeCamera);
-  // Render CSS3DObject
+
+  // Render CSS3D scene last to ensure it’s on top
   cssRenderer.render(scene, camera);
 }
+
 animate();
 
 // Handle window resize
