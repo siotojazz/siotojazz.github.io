@@ -44,7 +44,7 @@
       padding: 12px;
       position: relative;
       z-index: 1;
-      background: rgba(16, 24, 24, 0.2);
+      background: rgba(32, 36, 40, 0.3); /* Gray-ish, semi-transparent */
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       overflow-y: auto;
@@ -60,15 +60,15 @@
     }
     /* Scrollbar styles for WebKit browsers (Chrome, Safari, Edge) */
     .container::-webkit-scrollbar {
-      width: 4px; /* Very thin scrollbar */
+      width: 1px; /* Thinner scrollbar */
     }
     .container::-webkit-scrollbar-track {
       background: #0E1111; /* Dark track to blend with container */
-      border-radius: 2px;
+      border-radius: 1px;
     }
     .container::-webkit-scrollbar-thumb {
       background: #C0D4EE80; /* Semi-transparent thumb for visibility */
-      border-radius: 2px;
+      border-radius: 1px;
     }
     .container::-webkit-scrollbar-thumb:hover {
       background: #C0D4EECC; /* Slightly more opaque on hover for emphasis */
@@ -99,12 +99,11 @@
     .title-row {
       display: flex;
       align-items: center;
-      gap: 6px;
       justify-content: center;
     }
     #current-song {
       font-family: 'Garet-Heavy', sans-serif;
-      font-size: 16px;
+      font-size: 18px; /* Larger title */
       color: #C0D4EE;
       padding: 3px 6px;
       text-align: center;
@@ -112,6 +111,7 @@
     #song-times {
       font-size: 14px;
       color: #C0D4EE;
+      text-align: center;
     }
     .progress-row {
       display: flex;
@@ -418,8 +418,10 @@
       <img id="album-cover" src="album_cover.png" alt="Album Cover">
       <div class="controls-container">
         <div class="title-row">
-          <span id="current-song">Sioto Jazz - 29</span>
-          <span id="song-times">[00:00 / 00:00]</span>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <span id="current-song">Sioto Jazz - 29</span>
+            <span id="song-times">[00:00 / 00:00]</span>
+          </div>
         </div>
         <div class="progress-row">
           <div class="title-bar-progress"><div class="progress" id="global-progress"></div></div>
@@ -473,7 +475,7 @@
     </section>
   </div>
   <script>
-    // Three.js WebGL setup (no CSS3DRenderer)
+    // Three.js WebGL setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 4000);
     const webGLRenderer = new THREE.WebGLRenderer({ antialias: true });
@@ -486,6 +488,22 @@
     camera.rotation.x = -Math.PI / 6.5;
     const basePitch = camera.rotation.y;
     const baseCameraY = camera.position.y; // Base Y position for camera
+
+    // Variables for linear interpolation
+    let targetCameraY = baseCameraY;
+    let currentCameraY = baseCameraY;
+    let targetGridRotationX = basePitch;
+    let currentGridRotationX = basePitch;
+    let targetRotateX = 0;
+    let targetRotateY = 0;
+    let currentRotateX = 0;
+    let currentRotateY = 0;
+    const lerpSpeed = 0.01; // Smoothness for interpolation
+
+    // Linear interpolation function
+    function lerp(start, end, t) {
+      return start + (end - start) * t;
+    }
 
     // Glowing material for grid
     const glowMaterial = new THREE.ShaderMaterial({
@@ -628,15 +646,13 @@
     const container = document.querySelector('.container');
     function updateScrollTransform() {
       const scrollY = container.scrollTop;
-      grids.forEach(grid => {
-        grid.rotation.x = basePitch + scrollY * 0.0001;
-        grid.rotation.x = Math.max(-2 * Math.PI / 3, Math.min(0, grid.rotation.x));
-      });
       const scrollMax = container.scrollHeight - container.clientHeight;
       if (scrollMax > 0) {
         const scrollFraction = scrollY / scrollMax;
-        const cameraYRange = 100; // Max camera Y movement
-        camera.position.y = baseCameraY + scrollFraction * cameraYRange - cameraYRange / -2;
+        const cameraYRange = 100;
+        targetCameraY = baseCameraY + scrollFraction * cameraYRange - cameraYRange / -2;
+        targetGridRotationX = basePitch + scrollY * 0.0001;
+        targetGridRotationX = Math.max(-2 * Math.PI / 3, Math.min(0, targetGridRotationX));
       }
     }
 
@@ -648,27 +664,20 @@
     let mouseX = 0;
     let mouseY = 0;
     document.addEventListener('mousemove', (event) => {
-      // Normalize mouse position to [-1, 1] range
       mouseX = (event.clientX / window.innerWidth) * 2 - 1;
       mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-      
-      // Apply 3D transform to .container
-      const maxRotate = 35; // Maximum rotation angle in degrees
-      const rotateX = -mouseY * maxRotate; // Rotate around X-axis based on vertical mouse movement
-      const rotateY = mouseX * maxRotate; // Rotate around Y-axis based on horizontal mouse movement
-      container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      const maxRotate = 35;
+      targetRotateX = -mouseY * maxRotate;
+      targetRotateY = mouseX * maxRotate;
     });
 
     document.addEventListener('touchmove', (event) => {
       const touch = event.touches[0];
       mouseX = (touch.clientX / window.innerWidth) * 2 - 1;
       mouseY = -(touch.clientY / window.innerHeight) * 2 + 1;
-      
-      // Apply 3D transform to .container
-      const maxRotate = 35; // Maximum rotation angle in degrees
-      const rotateX = -mouseY * maxRotate; // Rotate around X-axis based on vertical mouse movement
-      const rotateY = mouseX * maxRotate; // Rotate around Y-axis based on horizontal mouse movement
-      container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      const maxRotate = 35;
+      targetRotateX = -mouseY * maxRotate;
+      targetRotateY = mouseX * maxRotate;
     });
 
     // Scroll-based grid rotation and camera movement
@@ -678,15 +687,20 @@
 
     // Force a small scroll on DOM load to trigger scroll handler
     document.addEventListener('DOMContentLoaded', () => {
-      container.scrollTop = 1; // Force a small scroll to trigger the scroll event
-      updateScrollTransform(); // Ensure transform is applied after DOM is ready
+      container.scrollTop = 1;
+      updateScrollTransform();
     });
 
     // Animation loop
     function animate() {
       requestAnimationFrame(animate);
-      // Move grids backward (positive Z) to simulate forward motion
+      // Interpolate camera position
+      currentCameraY = lerp(currentCameraY, targetCameraY, lerpSpeed);
+      camera.position.y = currentCameraY;
+      // Interpolate grid rotation
+      currentGridRotationX = lerp(currentGridRotationX, targetGridRotationX, lerpSpeed);
       grids.forEach(grid => {
+        grid.rotation.x = currentGridRotationX;
         grid.position.z += 0.1;
         if (grid.position.z > gridSize) {
           grid.position.z -= gridSize * gridCount;
@@ -699,6 +713,10 @@
           grid.position.x += gridSize * gridCount;
         }
       });
+      // Interpolate container rotation
+      currentRotateX = lerp(currentRotateX, targetRotateX, lerpSpeed * 3);
+      currentRotateY = lerp(currentRotateY, targetRotateY, lerpSpeed * 3);
+      container.style.transform = `perspective(1000px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
       // Update uniforms
       glowMaterial.uniforms.time.value += 0.016;
       blurMaterial.uniforms.time.value += 0.016;
