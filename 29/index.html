@@ -190,14 +190,14 @@ canvas {
 }
 #current-chord {
   font-family: 'Garet', sans-serif;
-  font-size: 12px;
+  font-size: 8px;
   color: #FFD700;
   text-shadow: 0px 0px 8px #FFD700;
   text-align: right;
   white-space: nowrap;
   padding: 2px 6px;
   background: linear-gradient(135deg, #1A2222, #0E1111);
-  border: 1px solid #445464;
+  border: 1px solid #FFD700;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 147, 255, 0.2);
   position: absolute;
   right: 6px;
@@ -658,33 +658,41 @@ tr.track:hover {
     0 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
   cursor: pointer;
+  min-width: 50px;
 }
 .chord-block.active {
-  background: linear-gradient(135deg, #3A4545, #2A3232);
-  color: #FFD700;
+  background: linear-gradient(135deg, #AA8700, #664700);
+  color: #FFF;
   box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.2),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.4),
-    0 3px 6px rgba(0, 0, 0, 0.4),
-    0 0 8px rgba(255, 215, 0, 0.3);
+    inset 0 1px 2px rgba(255, 255, 255, 0.5),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.7),
+    0 3px 6px rgba(0, 0, 0, 0.7),
+    0 0 8px rgba(255, 215, 0, 0.6);
+    transition: 0.2s;
+    z-index: 100;
 }
 .chord-block.past {
   background: linear-gradient(135deg, #2A3232, #1A2222);
   color: #C0D4EE;
+  opacity: 0.5;
 }
 .chord-block.past .chord-progress {
   width: 100%;
-  opacity: 0.5;
 }
+
+.chord-block.past { 
+  opacity: 0.2;
+}
+
 .chord-progress {
   position: absolute;
   bottom: 0;
   left: 0;
   height: 3px;
-  background: linear-gradient(90deg, #FFD700, #D4A017);
+  background: linear-gradient(0deg, #FFD700, #D4A017);
   width: 0;
   border-radius: 0;
-  box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 1.0);
   transition: width 0.016s linear;
 }
 .track-error .track-title::after {
@@ -694,9 +702,9 @@ tr.track:hover {
 
 .chord-repeat-superscript {
   position: absolute;
-  top: 1px;
-  right: 1px;
-  font-size: 6px;
+  top: 2px;
+  right: 2px;
+  font-size: 10px;
   color: #FFD700;
   opacity: 0.8;
   text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
@@ -710,7 +718,6 @@ tr.track:hover {
   font-size: 11px;
   padding: 8px;
   border: 1px solid #445464;
-  border-radius: 4px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   z-index: 100;
   pointer-events: none;
@@ -1626,7 +1633,6 @@ async function playTrack(index) {
 
   // Load structure with chord blocks
   structureContainer.innerHTML = `
-    <div class="structure-title">Song Structure</div>
     <div class="structure-content-container">
       ${formatStructure(track.structure, timings.chords)}
     </div>
