@@ -674,6 +674,7 @@ tr.track:hover {
 }
 .chord-block.past .chord-progress {
   width: 100%;
+  opacity: 0.5;
 }
 .chord-progress {
   position: absolute;
@@ -690,6 +691,53 @@ tr.track:hover {
   content: ' (Failed to load)';
   color: #FF3300;
 }
+
+.chord-repeat-superscript {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  font-size: 6px;
+  color: #FFD700;
+  opacity: 0.8;
+  text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+}
+
+.chord-tooltip {
+  position: absolute;
+  background: linear-gradient(135deg, #1A2222, #0E1111);
+  color: #C0D4EE;
+  font-family: 'Garet', sans-serif;
+  font-size: 11px;
+  padding: 8px;
+  border: 1px solid #445464;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chord-tooltip.visible {
+  opacity: 1;
+}
+
+.chord-tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chord-tooltip-fretboard {
+  font-family: monospace;
+  white-space: pre;
+  background: #0A1010;
+  padding: 4px;
+  border-radius: 2px;
+  line-height: 1.2;
+  font-size: 10px;
+}
+
   </style>
 </head>
 <body>
@@ -1011,6 +1059,7 @@ const barCount = 40;
 let frequencyData = new Uint8Array(barCount);
 let currentLyricIndex = -1;
 let currentChordIndex = -1;
+let chordData = {};
 
 // Initialize analyser
 analyser.fftSize = 128;
@@ -1162,28 +1211,78 @@ function getLabelIcon(label) {
   }
 }
 
+function formatChordShape(shape) {
+  const strings = ['e', 'B', 'G', 'D', 'A', 'E']; // Reversed for bottom-to-top display
+  const frets = shape.split('').map(f => f === 'x' ? 'x' : parseInt(f));
+  const maxFret = Math.max(...frets.filter(f => f !== 'x'));
+  const fretCount = maxFret > 4 ? maxFret + 1 : 5; // Include 0 fret if maxFret <= 4
+
+  // Initialize the diagram array
+  let diagram = [];
+  // Add fret numbers row
+  let fretRow = '   ';
+  for (let fret = 0; fret < fretCount; fret++) {
+    fretRow += `${fret.toString().padStart(2, '0')} `;
+  }
+  diagram.push(fretRow);
+
+  // Add each string row
+  strings.forEach((string, i) => {
+    let row = `${string} |`;
+    const fretValue = frets[5 - i]; // Map to EADGBE order
+    for (let fret = 0; fret < fretCount; fret++) {
+      if (fretValue === 'x' && fret === 0) {
+        row += 'x  ';
+      } else if (parseInt(fretValue) === fret) {
+        row += '●  ';
+      } else {
+        row += '   ';
+      }
+    }
+    diagram.push(row);
+  });
+
+  return diagram.join('\n');
+}
+
 function formatStructure(structure, chordTimings) {
   if (!structure || !structure.sections || structure.sections.length === 0) {
     return '<div class="lyrics-meta-structure"><i class="fas fa-sitemap"></i>No structure available</div>';
   }
   const sections = structure.sections.map((section, sectionIndex) => {
-    // Group identical consecutive chords
+    // Group identical consecutive chords and count repetitions
     const groupedChords = [];
     let chordIndex = 0;
-    section.chords.forEach((chord, idx) => {
-      const timing = chordTimings.find(t => t.sectionIndex === sectionIndex && t.originalChordIndex === idx);
+    let i = 0;
+    while (i < section.chords.length) {
+      let chord = section.chords[i];
+      let beatCount = 1;
+      let j = i + 1;
+      // Count consecutive identical chords
+      while (j < section.chords.length && section.chords[j] === chord) {
+        beatCount++;
+        j++;
+      }
+      const timing = chordTimings.find(t => t.sectionIndex === sectionIndex && t.originalChordIndex === i);
       if (timing) {
         groupedChords.push({
           chord,
           timing,
-          chordIndex
+          chordIndex,
+          repeatCount: beatCount > 1 ? beatCount : null // Store repeat count if > 1
         });
         chordIndex++;
       }
-    });
-    const chordsHtml = groupedChords.map(({ chord, timing, chordIndex }) => {
+      i = j;
+    }
+    const chordsHtml = groupedChords.map(({ chord, timing, chordIndex, repeatCount }) => {
       const chordId = `chord-${sectionIndex}-${chordIndex}`;
-      return `<div class="chord-block" data-chord-id="${chordId}" data-section-index="${sectionIndex}" data-chord-index="${chordIndex}" data-start-time="${timing.startTime}" data-end-time="${timing.endTime}">${chord}<div class="chord-progress"></div></div>`;
+      const repeatSuperscript = repeatCount ? `<div class="chord-repeat-superscript">${repeatCount}</div>` : '';
+      return `
+        <div class="chord-block" data-chord-id="${chordId}" data-section-index="${sectionIndex}" data-chord-index="${chordIndex}" data-start-time="${timing.startTime}" data-end-time="${timing.endTime}">
+          ${chord}${repeatSuperscript}
+          <div class="chord-progress"></div>
+        </div>`;
     }).join('');
     return `
       <div class="lyrics-meta-structure-section">${section.label}</div>
@@ -1520,7 +1619,7 @@ async function playTrack(index) {
     <div class="lyrics-meta-container">
       ${track.date ? `<div class="lyrics-meta-date"><i class="fas fa-calendar-alt"></i>${track.date}</div>` : ''}
       <div class="lyrics-meta-tempo"><i class="fas fa-tachometer-alt"></i>${track.tempo || 'N/A'} BPM</div>
-      <div class="lyrics-meta-timeSignature"><i class="fas fa-sitemap"></i>Time Signature: ${track.timeSignature || '4/4'}</div>
+      <div class="lyrics-meta-timeSignature"><i class="fas fa-sitemap"></i>${track.timeSignature || '4/4'}</div>
     </div>
   `;
   lyricsContainer.classList.add('visible');
@@ -1550,13 +1649,30 @@ async function playTrack(index) {
 
   // Add click event listener for chord blocks
   const structureContentContainer = structureContainer.querySelector('.structure-content-container');
-  structureContentContainer._clickHandler = (event) => {
+  structureContentContainer._clickHandler = async (event) => {
     const chordBlock = event.target.closest('.chord-block');
     if (chordBlock) {
       const startTime = chordBlock.getAttribute('data-start-time');
       if (startTime && currentAudio && isFinite(currentAudio.duration)) {
         currentAudio.currentTime = parseFloat(startTime);
         updateProgressBar(currentAudio, globalProgress);
+        if (currentAudio.paused) {
+          let useWebAudio = currentSource && audioContext.state !== 'suspended';
+          if (useWebAudio) {
+            useWebAudio = setupAudioRouting(currentAudio);
+          }
+          if (!useWebAudio) {
+            currentAudio.volume = document.getElementById('volume-slider').value / 100;
+          }
+          try {
+            await currentAudio.play();
+            document.getElementById('play-pause-btn').querySelector('i').className = 'fas fa-pause';
+            showButtonMessage('Play from Chord');
+          } catch (error) {
+            console.error(`Playback failed: ${error}`);
+            showButtonMessage('Playback Failed');
+          }
+        }
       }
     }
   };
@@ -1762,6 +1878,11 @@ fetch('album.json')
     return response.json();
   })
   .then(albumData => {
+    // Store chord data
+    chordData = albumData.chords.reduce((acc, chordObj) => {
+      return { ...acc, ...chordObj };
+    }, {});
+    
     document.getElementById('album-cover').src = albumData.album.coverImage || 'album_cover.png';
     const trackList = document.getElementById('tracks');
     tracks = albumData.tracks;
@@ -1845,6 +1966,65 @@ fetch('album.json')
       }
     });
 
+      document.addEventListener('mouseover', (event) => {
+      const chordBlock = event.target.closest('.chord-block');
+      if (chordBlock) {
+        // Extract chord name from the first text node, excluding superscript
+        let chordName = '';
+        for (let node of chordBlock.childNodes) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            chordName = node.textContent.trim();
+            break;
+          }
+        }
+        if (!chordName) {
+          console.warn('No valid chord name found in chord block');
+          return;
+        }
+        
+        const chordShape = chordData[chordName] || 'Unknown';
+        let tooltipContent = '';
+        if (chordShape !== 'Unknown') {
+          const fretboard = formatChordShape(chordShape);
+          tooltipContent = `
+            <div class="chord-tooltip-content">
+              <div>${chordName}</div>
+              <div class="chord-tooltip-fretboard">${fretboard}</div>
+            </div>
+          `;
+        } else {
+          tooltipContent = `
+            <div class="chord-tooltip-content">
+              <div>${chordName}</div>
+              <div class="chord-tooltip-fretboard">No chord shape available</div>
+            </div>
+          `;
+        }
+        
+        let tooltip = document.querySelector('.chord-tooltip');
+        if (!tooltip) {
+          tooltip = document.createElement('div');
+          tooltip.className = 'chord-tooltip';
+          document.body.appendChild(tooltip);
+        }
+        tooltip.innerHTML = tooltipContent;
+        const rect = chordBlock.getBoundingClientRect();
+        tooltip.style.left = `${rect.left + window.scrollX}px`;
+        tooltip.style.top = `${rect.bottom + window.scrollY + 5}px`;
+        tooltip.classList.add('visible');
+      }
+    });
+
+    document.addEventListener('mouseout', (event) => {
+      const chordBlock = event.target.closest('.chord-block');
+      if (chordBlock) {
+        const tooltip = document.querySelector('.chord-tooltip');
+        if (tooltip) {
+          tooltip.classList.remove('visible');
+        }
+      }
+    });
+
     document.getElementById('prev-btn').addEventListener('click', () => {
       if (repeatMode === 2) {
         playTrack(currentTrackIndex);
@@ -1860,19 +2040,19 @@ fetch('album.json')
       }
     });
 
-      document.getElementById('next-btn').addEventListener('click', () => {
-        if (repeatMode === 2) {
-          playTrack(currentTrackIndex);
-          showButtonMessage('Repeat Song');
-        } else if (currentTrackIndex < tracks.length - 1) {
-          const nextIndex = isShuffled ? getNextShuffledIndex() : currentTrackIndex + 1;
-          playTrack(nextIndex);
-          showButtonMessage('Next Track');
-        } else if (repeatMode === 1) {
-          playTrack(isShuffled ? getNextShuffledIndex() : 0);
-          showButtonMessage('Next Track');
-        }
-      });
+    document.getElementById('next-btn').addEventListener('click', () => {
+      if (repeatMode === 2) {
+        playTrack(currentTrackIndex);
+        showButtonMessage('Repeat Song');
+      } else if (currentTrackIndex < tracks.length - 1) {
+        const nextIndex = isShuffled ? getNextShuffledIndex() : currentTrackIndex + 1;
+        playTrack(nextIndex);
+        showButtonMessage('Next Track');
+      } else if (repeatMode === 1) {
+        playTrack(isShuffled ? getNextShuffledIndex() : 0);
+        showButtonMessage('Next Track');
+      }
+    });
 
     document.getElementById('play-pause-btn').addEventListener('click', async () => {
       if (audioContext.state === 'suspended') {
