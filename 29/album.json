@@ -30,7 +30,59 @@
       "date": "2024-12-06 22:27",
       "label": "official entry",
       "tempo": "78",
-      "chords": "A E B"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A", "A", "E", "E", "B", "B", "B", "C#m", 
+            "A", "A", "E", "E", "B", "B", "B", "C#m"]
+          },
+          {
+            "label": "Verse 1",
+            "chords": ["A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m"]
+          },
+          {
+            "label": "Solo 1",
+            "chords": ["A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m"]
+          },
+          {
+            "label": "Verse 2",
+            "chords": ["A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m"]
+          },
+          {
+            "label": "Solo 1",
+            "chords": ["A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m"]
+          },
+          {
+            "label": "Verse 3",
+            "chords": ["A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "C#m",
+                       "A", "A", "E", "E", "B", "B", "B", "B"]
+          }
+        ]
+      }
     },
     {
       "id": 2,
@@ -75,7 +127,15 @@
       "date": "2025-03-29 00:58",
       "label": "accepted",
       "tempo": "117",
-      "chords": "B5 F#5 G#5 E5"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     },
     {
       "id": 3,
@@ -127,7 +187,15 @@
       "date": "2025-04-01 21:26",
       "label": "official entry",
       "tempo": "87",
-      "chords": "F#5 E"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     },
     {
       "id": 4,
@@ -150,7 +218,15 @@
       "date": "2025-04-02 00:37",
       "label": "official entry",
       "tempo": "100",
-      "chords": "F#5 E"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     },
     {
       "id": 5,
@@ -177,7 +253,15 @@
       "date": "2025-04-02 19:58",
       "label": "needs polishing",
       "tempo": "105",
-      "chords": "E5 F#5 G#5"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     },
     {
       "id": 6,
@@ -222,7 +306,87 @@
       "date": "2025-04-03 01:53",
       "label": "official demo",
       "tempo": "118",
-      "chords": "Intro: B A A E<br>Chorus: A B G#m C#m"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["Badd11", "Badd11", "Badd11", "Badd11", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Esus4", "Esus4", "Esus4", "Esus4",
+          "Badd11", "Badd11", "Badd11", "Badd11", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Esus4", "Esus4", "Esus4", "Esus4",
+        "Badd11", "Badd11", "Badd11", "Badd11", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Esus4", "Esus4", "Esus4", "Esus4",
+      "Badd11", "Badd11", "Badd11", "Badd11", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Aadd9", "Esus4", "Esus4", "Esus4", "Esus4"]
+          },
+           {
+            "label": "Verse 1",
+            "chords": ["B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+            "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+        "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+      "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E"]
+          },
+          {
+            "label": "Pre-chorus",
+            "chords": ["B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+            "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+        "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+      "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "G#m", "G#m"]
+          },
+          {
+            "label": "Chorus 1",
+            "chords": ["A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+      "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "G#m", "G#m"]
+          },
+          {
+            "label": "Post-chorus",
+            "chords": ["B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+            "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E"]
+          },
+          {
+            "label": "Verse 1",
+            "chords": ["B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+            "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+        "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+      "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E"]
+          },
+          {
+            "label": "Interlude",
+            "chords": ["B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+            "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+            "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+            "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E"]
+          },
+          {
+            "label": "Bridge",
+            "chords": ["B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+            "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+        "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E",
+      "B", "B", "B", "B", "A", "A", "A", "A", "A", "A", "A", "A", "E", "E", "E", "E"]
+          },
+          {
+            "label": "Pre-chorus",
+            "chords": ["A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+      "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "G#m", "G#m"]
+          },
+          {
+            "label": "Chorus 2",
+            "chords": ["A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+      "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m"]
+          },
+          {
+            "label": "Chorus 3",
+            "chords": ["A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+      "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+    "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+      "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m"]
+          },
+          {
+            "label": "Outro",
+            "chords": ["A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+      "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+    "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m",
+      "A", "A", "B", "B", "G#m", "G#m", "C#m", "C#m", "A", "A", "B", "B", "E", "E", "E", "E"]
+          }
+        ]
+      }
     },
     {
       "id": 7,
@@ -257,7 +421,15 @@
       "date": "2025-04-04 19:24",
       "label": "official entry",
       "tempo": "92",
-      "chords": "Intro: C G Am F G<br>Chorus: F G Em F"
+      "timeSignature": "6/8",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     },
     {
       "id": 8,
@@ -308,7 +480,15 @@
       "date": "2025-04-05 00:08",
       "label": "accepted",
       "tempo": "102",
-      "chords": "Bm F# A E"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     },
     {
       "id": 9,
@@ -349,7 +529,15 @@
       "date": "2025-04-08 18:36",
       "label": "official entry",
       "tempo": "120",
-      "chords": "D E"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     },
     {
       "id": 10,
@@ -382,7 +570,15 @@
       "date": "2025-04-13 22:37",
       "label": "early demo",
       "tempo": "137",
-      "chords": "N/A"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     },
     {
       "id": 11,
@@ -425,7 +621,15 @@
       "date": "2025-05-16 01:34",
       "label": "accepted",
       "tempo": "84",
-      "chords": "Verse: G D A<br>Chorus: Bm G<br>Bridge: C5 G5 D5 E5"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     },
     {
       "id": 12,
@@ -438,7 +642,15 @@
       "date": "2025-05-18 18:46",
       "label": "needs lyrics",
       "tempo": "127",
-      "chords": "D A G A"
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": [
+          {
+            "label": "Intro",
+            "chords": ["A"]
+          }
+        ]
+      }
     }
   ]
 }
