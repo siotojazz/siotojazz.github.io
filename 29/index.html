@@ -548,6 +548,10 @@ tr.track:hover {
   transition: background 0.3s ease, color 0.3s ease;
   cursor: pointer;
 }
+.lyrics-content-container .lyric-line.past {
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
 .lyrics-content-container .lyric-line:hover {
   background: rgba(0, 112, 236, 0.2);
 }
@@ -1506,9 +1510,11 @@ function updateLyricAndChordHighlight(audio, timings) {
     currentChordElement.classList.remove('visible');
     const activeLyric = document.querySelector('.lyric-line.active');
     const activeChord = document.querySelector('.chord-block.active');
+    const pastLyrics = document.querySelectorAll('.lyric-line.past');
     const pastChords = document.querySelectorAll('.chord-block.past');
     if (activeLyric) activeLyric.classList.remove('active');
     if (activeChord) activeChord.classList.remove('active');
+    pastLyrics.forEach(line => line.classList.remove('past'));
     pastChords.forEach(block => block.classList.remove('past'));
     document.querySelectorAll('.chord-progress').forEach(progress => {
       progress.style.width = '0%';
@@ -1529,32 +1535,36 @@ function updateLyricAndChordHighlight(audio, timings) {
     }
   }
 
-  if (newLyricIndex !== currentLyricIndex) {
-    currentLyricIndex = newLyricIndex;
-    const lyricLines = document.querySelectorAll('.lyric-line');
-    lyricLines.forEach(line => line.classList.remove('active'));
-
-    const currentLyricElement = document.getElementById('current-lyric');
-    if (newLyricIndex >= 0) {
-      const lyricLine = document.querySelector(`.lyric-line[data-index="${newLyricIndex}"]`);
-      if (lyricLine) {
-        lyricLine.classList.add('active');
-        currentLyricElement.textContent = timings.lyrics[newLyricIndex].line;
-        currentLyricElement.classList.add('visible');
-
-        // Schedule lyric fade-out
-        const lyricDuration = (timings.lyrics[newLyricIndex].endTime - timings.lyrics[newLyricIndex].startTime) * 1000;
-        setTimeout(() => {
-          if (currentLyricIndex === newLyricIndex && currentLyricElement.textContent === timings.lyrics[newLyricIndex].line) {
-            currentLyricElement.classList.remove('visible');
-          }
-        }, lyricDuration - 300);
-      }
-    } else {
-      currentLyricElement.textContent = '';
-      currentLyricElement.classList.remove('visible');
+  const lyricLines = document.querySelectorAll('.lyric-line');
+  lyricLines.forEach(line => {
+    const lineIndex = parseInt(line.getAttribute('data-index'));
+    const timing = timings.lyrics[lineIndex];
+    line.classList.remove('active', 'past');
+    if (timing && currentTime >= timing.endTime) {
+      line.classList.add('past');
+    } else if (lineIndex === newLyricIndex) {
+      line.classList.add('active');
     }
+  });
+
+  const currentLyricElement = document.getElementById('current-lyric');
+  if (newLyricIndex >= 0) {
+    currentLyricElement.textContent = timings.lyrics[newLyricIndex].line;
+    currentLyricElement.classList.add('visible');
+
+    // Schedule lyric fade-out
+    const lyricDuration = (timings.lyrics[newLyricIndex].endTime - timings.lyrics[newLyricIndex].startTime) * 1000;
+    setTimeout(() => {
+      if (currentLyricIndex === newLyricIndex && currentLyricElement.textContent === timings.lyrics[newLyricIndex].line) {
+        currentLyricElement.classList.remove('visible');
+      }
+    }, lyricDuration - 300);
+  } else {
+    currentLyricElement.textContent = '';
+    currentLyricElement.classList.remove('visible');
   }
+
+  currentLyricIndex = newLyricIndex;
 
   // Update chord highlighting and progress
   let newChordIndex = -1;
