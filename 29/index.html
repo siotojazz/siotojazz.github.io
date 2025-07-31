@@ -658,7 +658,22 @@ tr.track:hover {
     0 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
   cursor: pointer;
-  min-width: 50px;
+  width: calc(40px * var(--repeat-count, 1)); /* Scale width by repeat count */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.chord-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-bottom: 4px;
+  padding: 4px;
+  background: linear-gradient(135deg, rgba(20, 28, 28, 0.5), rgba(14, 17, 17, 0.5));
+  border: 1px solid #344454;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), inset 0 -1px 2px rgba(0, 0, 0, 0.4);
 }
 .chord-block.active {
   background: linear-gradient(135deg, #AA8700, #664700);
@@ -698,16 +713,6 @@ tr.track:hover {
 .track-error .track-title::after {
   content: ' (Failed to load)';
   color: #FF3300;
-}
-
-.chord-repeat-superscript {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 10px;
-  color: #FFD700;
-  opacity: 0.8;
-  text-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
 }
 
 .chord-tooltip {
@@ -1252,12 +1257,66 @@ function formatChordShape(shape) {
   return diagram.join('\n');
 }
 
-function formatStructure(structure, chordTimings) {
+
+function formatStructure(structure, chordTimings, track) {
   if (!structure || !structure.sections || structure.sections.length === 0) {
     return '<div class="lyrics-meta-structure"><i class="fas fa-sitemap"></i>No structure available</div>';
   }
+
+  // Calculate min and max repeat counts across all sections
+  let minRepeat = Infinity;
+  let maxRepeat = -Infinity;
+  structure.sections.forEach(section => {
+    let i = 0;
+    while (i < section.chords.length) {
+      let chord = section.chords[i];
+      let beatCount = 1;
+      let j = i + 1;
+      while (j < section.chords.length && section.chords[j] === chord) {
+        beatCount++;
+        j++;
+      }
+      minRepeat = Math.min(minRepeat, beatCount);
+      maxRepeat = Math.max(maxRepeat, beatCount);
+      i = j;
+    }
+  });
+
+  const minMultiplier = 1;
+  const maxMultiplier = 4;
+
+  function mapRepeatCount(repeatCount) {
+    if (minRepeat === maxRepeat) {
+      return minMultiplier;
+    }
+    return (
+      ((repeatCount - minRepeat) / (maxRepeat - minRepeat)) * (maxMultiplier - minMultiplier) +
+      minMultiplier
+    );
+  }
+
+  const tempo = parseFloat(track.tempo) || 120;
+  const timeSignature = track.timeSignature || "4/4";
+  const beatsPerBar = parseInt(timeSignature.split('/')[0]) || 4;
+  const secondsPerBeat = 60 / tempo;
+  const secondsPerBar = secondsPerBeat * beatsPerBar;
+  const barGroupSize = 4; // Number of bars per group
+  const boundaryTolerance = secondsPerBeat * 0.25; // Increased tolerance to 25% of a beat
+
   const sections = structure.sections.map((section, sectionIndex) => {
-    // Group identical consecutive chords and count repetitions
+    const sectionChords = chordTimings.filter(t => t.sectionIndex === sectionIndex);
+    if (sectionChords.length === 0) {
+      return `
+        <div class="lyrics-meta-structure-section">${section.label}</div>
+        <div class="lyrics-meta-structure-content">
+          <div class="chord-group">No chords</div>
+        </div>
+      `;
+    }
+
+    const sectionStartTime = Math.min(...sectionChords.map(t => t.startTime));
+
+    // Group chords
     const groupedChords = [];
     let chordIndex = 0;
     let i = 0;
@@ -1265,37 +1324,86 @@ function formatStructure(structure, chordTimings) {
       let chord = section.chords[i];
       let beatCount = 1;
       let j = i + 1;
-      // Count consecutive identical chords
       while (j < section.chords.length && section.chords[j] === chord) {
         beatCount++;
         j++;
       }
-      const timing = chordTimings.find(t => t.sectionIndex === sectionIndex && t.originalChordIndex === i);
+      const timing = sectionChords.find(t => t.sectionIndex === sectionIndex && t.originalChordIndex === i);
       if (timing) {
+        const relativeStartTime = timing.startTime - sectionStartTime;
+        // Calculate bar number with tolerance
+        let startBar = Math.floor(relativeStartTime / secondsPerBar) + 1;
+        const exactBar = relativeStartTime / secondsPerBar;
+        // If chord is very close to the next bar, push it to that bar
+        if (exactBar % 1 >= 1 - (boundaryTolerance / secondsPerBar)) {
+          startBar = Math.ceil(exactBar) + 1;
+        }
+        // Log for debugging
+        console.log(`Chord: ${chord}, startTime: ${timing.startTime}, relativeStartTime: ${relativeStartTime}, startBar: ${startBar}`);
         groupedChords.push({
           chord,
           timing,
           chordIndex,
-          repeatCount: beatCount > 1 ? beatCount : null // Store repeat count if > 1
+          repeatCount: beatCount,
+          startBar
         });
         chordIndex++;
       }
       i = j;
     }
-    const chordsHtml = groupedChords.map(({ chord, timing, chordIndex, repeatCount }) => {
-      const chordId = `chord-${sectionIndex}-${chordIndex}`;
-      const repeatSuperscript = repeatCount ? `<div class="chord-repeat-superscript">${repeatCount}</div>` : '';
-      return `
-        <div class="chord-block" data-chord-id="${chordId}" data-section-index="${sectionIndex}" data-chord-index="${chordIndex}" data-start-time="${timing.startTime}" data-end-time="${timing.endTime}">
-          ${chord}${repeatSuperscript}
-          <div class="chord-progress"></div>
-        </div>`;
-    }).join('');
+
+    // Group chords into 4-bar segments and prevent lone chords
+    const barGroups = {};
+    groupedChords.forEach(({ chord, timing, chordIndex, repeatCount, startBar }, idx) => {
+      let groupIndex = Math.floor((startBar - 1) / barGroupSize);
+      // If this is the last chord in the section and it would be alone in a new group,
+      // merge it into the previous group if it's within tolerance
+      if (idx === groupedChords.length - 1 && groupIndex > 0) {
+        const prevGroupChords = groupedChords.filter(c => Math.floor((c.startBar - 1) / barGroupSize) === groupIndex - 1);
+        if (prevGroupChords.length > 0) {
+          const lastChordTime = timing.startTime;
+          const prevGroupEndTime = Math.max(...prevGroupChords.map(c => c.timing.endTime));
+          if (lastChordTime - prevGroupEndTime <= boundaryTolerance) {
+            groupIndex--; // Merge into previous group
+            console.log(`Merged last chord ${chord} into group ${groupIndex}`);
+          }
+        }
+      }
+      if (!barGroups[groupIndex]) {
+        barGroups[groupIndex] = [];
+      }
+      barGroups[groupIndex].push({ chord, timing, chordIndex, repeatCount });
+    });
+
+    // Generate HTML for each 4-bar group
+    const chordsHtml = Object.keys(barGroups)
+      .sort((a, b) => a - b)
+      .map(groupIndex => {
+        const chords = barGroups[groupIndex];
+        // Add bar number label for clarity
+        const startBar = parseInt(groupIndex) * barGroupSize + 1;
+        const endBar = startBar + barGroupSize - 1;
+        const chordBlocks = chords.map(({ chord, timing, chordIndex, repeatCount }) => {
+          const chordId = `chord-${sectionIndex}-${chordIndex}`;
+          const widthMultiplier = mapRepeatCount(repeatCount);
+          return `
+            <div class="chord-block" data-chord-id="${chordId}" data-section-index="${sectionIndex}" data-chord-index="${chordIndex}" data-start-time="${timing.startTime}" data-end-time="${timing.endTime}" style="--repeat-count: ${widthMultiplier};">
+              ${chord}
+              <div class="chord-progress"></div>
+            </div>`;
+        }).join('');
+        return `
+          <div class="chord-group">
+            ${chordBlocks}
+          </div>`;
+      }).join('');
+
     return `
       <div class="lyrics-meta-structure-section">${section.label}</div>
       <div class="lyrics-meta-structure-content">${chordsHtml}</div>
     `;
   });
+
   return `
     <div class="lyrics-meta-structure">
       ${sections.join('')}
@@ -1632,11 +1740,11 @@ async function playTrack(index) {
   lyricsContainer.classList.add('visible');
 
   // Load structure with chord blocks
-  structureContainer.innerHTML = `
-    <div class="structure-content-container">
-      ${formatStructure(track.structure, timings.chords)}
-    </div>
-  `;
+structureContainer.innerHTML = `
+  <div class="structure-content-container">
+    ${formatStructure(track.structure, timings.chords, track)}
+  </div>
+`;
   structureContainer.classList.add('visible');
 
   // Add click event listener for lyric rows
