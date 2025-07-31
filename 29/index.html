@@ -1263,7 +1263,17 @@ function formatStructure(structure, chordTimings, track) {
     return '<div class="lyrics-meta-structure"><i class="fas fa-sitemap"></i>No structure available</div>';
   }
 
-  // Calculate min and max repeat counts across all sections
+  const tempo = parseFloat(track.tempo) || 120;
+  const timeSignature = track.timeSignature || "4/4";
+  const beatsPerBar = parseInt(timeSignature.split('/')[0]) || 4;
+  const secondsPerBeat = 60 / tempo;
+  const secondsPerBar = secondsPerBeat * beatsPerBar;
+  const beatsPerGroup = 8; // 4 beats (1 bar) per group
+  const barsPerSuperGroup = 4; // 4 bars (16 beats) per super group
+  const beatsPerSuperGroup = barsPerSuperGroup * beatsPerBar;
+  const boundaryTolerance = secondsPerBeat * 0.25;
+
+  // Calculate min and max repeat counts for scaling
   let minRepeat = Infinity;
   let maxRepeat = -Infinity;
   structure.sections.forEach(section => {
@@ -1286,22 +1296,12 @@ function formatStructure(structure, chordTimings, track) {
   const maxMultiplier = 4;
 
   function mapRepeatCount(repeatCount) {
-    if (minRepeat === maxRepeat) {
-      return minMultiplier;
-    }
+    if (minRepeat === maxRepeat) return minMultiplier;
     return (
       ((repeatCount - minRepeat) / (maxRepeat - minRepeat)) * (maxMultiplier - minMultiplier) +
       minMultiplier
     );
   }
-
-  const tempo = parseFloat(track.tempo) || 120;
-  const timeSignature = track.timeSignature || "4/4";
-  const beatsPerBar = parseInt(timeSignature.split('/')[0]) || 4;
-  const secondsPerBeat = 60 / tempo;
-  const secondsPerBar = secondsPerBeat * beatsPerBar;
-  const barGroupSize = 4; // Number of bars per group
-  const boundaryTolerance = secondsPerBeat * 0.25; // Increased tolerance to 25% of a beat
 
   const sections = structure.sections.map((section, sectionIndex) => {
     const sectionChords = chordTimings.filter(t => t.sectionIndex === sectionIndex);
@@ -1316,7 +1316,7 @@ function formatStructure(structure, chordTimings, track) {
 
     const sectionStartTime = Math.min(...sectionChords.map(t => t.startTime));
 
-    // Group chords
+    // Group chords by beats
     const groupedChords = [];
     let chordIndex = 0;
     let i = 0;
@@ -1331,76 +1331,98 @@ function formatStructure(structure, chordTimings, track) {
       const timing = sectionChords.find(t => t.sectionIndex === sectionIndex && t.originalChordIndex === i);
       if (timing) {
         const relativeStartTime = timing.startTime - sectionStartTime;
-        // Calculate bar number with tolerance
-        let startBar = Math.floor(relativeStartTime / secondsPerBar) + 1;
-        const exactBar = relativeStartTime / secondsPerBar;
-        // If chord is very close to the next bar, push it to that bar
-        if (exactBar % 1 >= 1 - (boundaryTolerance / secondsPerBar)) {
-          startBar = Math.ceil(exactBar) + 1;
+        let startBeat = Math.floor(relativeStartTime / secondsPerBeat) + 1;
+        const exactBeat = relativeStartTime / secondsPerBeat;
+        if (exactBeat % 1 >= 1 - (boundaryTolerance / secondsPerBeat)) {
+          startBeat = Math.ceil(exactBeat) + 1;
         }
-        // Log for debugging
-        console.log(`Chord: ${chord}, startTime: ${timing.startTime}, relativeStartTime: ${relativeStartTime}, startBar: ${startBar}`);
         groupedChords.push({
           chord,
           timing,
           chordIndex,
           repeatCount: beatCount,
-          startBar
+          startBeat
         });
         chordIndex++;
       }
       i = j;
     }
 
-    // Group chords into 4-bar segments and prevent lone chords
-    const barGroups = {};
-    groupedChords.forEach(({ chord, timing, chordIndex, repeatCount, startBar }, idx) => {
-      let groupIndex = Math.floor((startBar - 1) / barGroupSize);
-      // If this is the last chord in the section and it would be alone in a new group,
-      // merge it into the previous group if it's within tolerance
-      if (idx === groupedChords.length - 1 && groupIndex > 0) {
-        const prevGroupChords = groupedChords.filter(c => Math.floor((c.startBar - 1) / barGroupSize) === groupIndex - 1);
+    // Group chords into super groups of 16 beats (4 bars)
+    const superGroups = {};
+    groupedChords.forEach(({ chord, timing, chordIndex, repeatCount, startBeat }, idx) => {
+      let superGroupIndex = Math.floor((startBeat - 1) / beatsPerSuperGroup);
+      // Prevent lone chords by merging into previous group if within tolerance
+      if (idx === groupedChords.length - 1 && superGroupIndex > 0) {
+        const prevGroupChords = groupedChords.filter(c => Math.floor((c.startBeat - 1) / beatsPerSuperGroup) === superGroupIndex - 1);
         if (prevGroupChords.length > 0) {
           const lastChordTime = timing.startTime;
           const prevGroupEndTime = Math.max(...prevGroupChords.map(c => c.timing.endTime));
           if (lastChordTime - prevGroupEndTime <= boundaryTolerance) {
-            groupIndex--; // Merge into previous group
-            console.log(`Merged last chord ${chord} into group ${groupIndex}`);
+            superGroupIndex--;
+            console.log(`Merged last chord ${chord} into super group ${superGroupIndex}`);
           }
         }
       }
-      if (!barGroups[groupIndex]) {
-        barGroups[groupIndex] = [];
+      if (!superGroups[superGroupIndex]) {
+        superGroups[superGroupIndex] = [];
       }
-      barGroups[groupIndex].push({ chord, timing, chordIndex, repeatCount });
+      superGroups[superGroupIndex].push({ chord, timing, chordIndex, repeatCount, startBeat });
     });
 
-    // Generate HTML for each 4-bar group
-    const chordsHtml = Object.keys(barGroups)
+    // Generate HTML for each super group
+    const superGroupHtml = Object.keys(superGroups)
       .sort((a, b) => a - b)
-      .map(groupIndex => {
-        const chords = barGroups[groupIndex];
-        // Add bar number label for clarity
-        const startBar = parseInt(groupIndex) * barGroupSize + 1;
-        const endBar = startBar + barGroupSize - 1;
-        const chordBlocks = chords.map(({ chord, timing, chordIndex, repeatCount }) => {
-          const chordId = `chord-${sectionIndex}-${chordIndex}`;
-          const widthMultiplier = mapRepeatCount(repeatCount);
-          return `
-            <div class="chord-block" data-chord-id="${chordId}" data-section-index="${sectionIndex}" data-chord-index="${chordIndex}" data-start-time="${timing.startTime}" data-end-time="${timing.endTime}" style="--repeat-count: ${widthMultiplier};">
-              ${chord}
-              <div class="chord-progress"></div>
-            </div>`;
+      .map(superGroupIndex => {
+        const chords = superGroups[superGroupIndex];
+        // Split into groups of up to 4 beats
+        const chordGroups = [];
+        let currentGroup = [];
+        let currentBeatCount = 0;
+        chords.forEach(chordInfo => {
+          const beatsInChord = chordInfo.repeatCount;
+          if (currentBeatCount + beatsInChord > beatsPerGroup) {
+            // Start a new group if adding this chord exceeds 4 beats
+            if (currentGroup.length > 0) {
+              chordGroups.push(currentGroup);
+              currentGroup = [];
+              currentBeatCount = 0;
+            }
+          }
+          currentGroup.push(chordInfo);
+          currentBeatCount += beatsInChord;
+          // If exactly 4 beats or end of super group, push the group
+          if (currentBeatCount >= beatsPerGroup || chordInfo === chords[chords.length - 1]) {
+            chordGroups.push(currentGroup);
+            currentGroup = [];
+            currentBeatCount = 0;
+          }
+        });
+        if (currentGroup.length > 0) {
+          chordGroups.push(currentGroup);
+        }
+
+        // Generate HTML for each chord group
+        const chordGroupsHtml = chordGroups.map(group => {
+          const chordBlocks = group.map(({ chord, timing, chordIndex, repeatCount }) => {
+            const chordId = `chord-${sectionIndex}-${chordIndex}`;
+            const widthMultiplier = mapRepeatCount(repeatCount);
+            return `
+              <div class="chord-block" data-chord-id="${chordId}" data-section-index="${sectionIndex}" data-chord-index="${chordIndex}" data-start-time="${timing.startTime}" data-end-time="${timing.endTime}" style="--repeat-count: ${widthMultiplier};">
+                ${chord}
+                <div class="chord-progress"></div>
+              </div>`;
+          }).join('');
+          return `<div class="chord-group">${chordBlocks}</div>`;
         }).join('');
-        return `
-          <div class="chord-group">
-            ${chordBlocks}
-          </div>`;
+
+        const startBar = parseInt(superGroupIndex) * barsPerSuperGroup + 1;
+        return `<div class="lyrics-meta-structure-content">${chordGroupsHtml}</div>`;
       }).join('');
 
     return `
       <div class="lyrics-meta-structure-section">${section.label}</div>
-      <div class="lyrics-meta-structure-content">${chordsHtml}</div>
+      ${superGroupHtml}
     `;
   });
 
@@ -1749,13 +1771,30 @@ structureContainer.innerHTML = `
 
   // Add click event listener for lyric rows
   const lyricsContentContainer = lyricsContainer.querySelector('.lyrics-content-container');
-  lyricsContentContainer._clickHandler = (event) => {
+  lyricsContentContainer._clickHandler = async (event) => {
     const lyricLine = event.target.closest('.lyric-line');
     if (lyricLine) {
       const startTime = lyricLine.getAttribute('data-start-time');
       if (startTime && currentAudio && isFinite(currentAudio.duration)) {
         currentAudio.currentTime = parseFloat(startTime);
         updateProgressBar(currentAudio, globalProgress);
+        if (currentAudio.paused) {
+          let useWebAudio = currentSource && audioContext.state !== 'suspended';
+          if (useWebAudio) {
+            useWebAudio = setupAudioRouting(currentAudio);
+          }
+          if (!useWebAudio) {
+            currentAudio.volume = document.getElementById('volume-slider').value / 100;
+          }
+          try {
+            await currentAudio.play();
+            document.getElementById('play-pause-btn').querySelector('i').className = 'fas fa-pause';
+            showButtonMessage('Play from Lyric');
+          } catch (error) {
+            console.error(`Playback failed: ${error}`);
+            showButtonMessage('Playback Failed');
+          }
+        }
       }
     }
   };
@@ -1857,6 +1896,9 @@ function seekToTime(event) {
     currentAudio.currentTime = percentage * currentAudio.duration;
     document.getElementById('global-progress').style.width = `${percentage * 100}%`;
     document.getElementById('song-times').textContent = `[${formatTime(currentAudio.currentTime)} / ${formatTime(currentAudio.duration)}]`;
+    if (currentTrackIndex >= 0) {
+      updateLyricAndChordHighlight(currentAudio, tracks[currentTrackIndex].timings);
+    }
     showButtonMessage('Seeked');
   }
 }
