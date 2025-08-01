@@ -26,13 +26,13 @@
     { "Bmaj7": "x24342" },
     { "Bm7": "x24232" },
     { "Badd11": "x99800" },
-    { "B5": "799xxx" },
+    { "B5": "x244xx" },
     { "C": "x32010" },
     { "Cm": "x35543" },
     { "C7": "x32310" },
     { "Cmaj7": "x32000" },
     { "Cm7": "x31313" },
-    { "C5": "81010xxx" },
+    { "C5": "x355xx" },
     { "C#": "x46664" },
     { "C#m": "x46654" },
     { "C#7": "x46464" },
@@ -44,7 +44,7 @@
     { "D7": "xx0212" },
     { "Dmaj7": "xx0222" },
     { "Dm7": "xx0211" },
-    { "D5": "101212xxx" },
+    { "D5": "x577xx" },
     { "D#": "xx5343" },
     { "D#m": "xx4342" },
     { "D#7": "xx1323" },
@@ -671,38 +671,39 @@
       "title": "Higher Ground",
       "mp3": "audio/higher_ground.mp3",
       "lyrics": [
-        { "line": "I wanna take you down", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "to a place we've known forever", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "higher ground", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "where the body can sense the weather", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "I know how it feels", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "when the rain comes falling down,", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "sense how it feels", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "soaking all of the ground", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true },
-        { "line": "I wanna take you down", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "the only road that leads to", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "higher ground", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "so your eyes can see your home", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "I know that it burns", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "when you discover you love again,", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "sense how it feels", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "with an ember in your heart", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true },
-        { "line": "It's now been", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "several years since the rain", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "washed away", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "all the doubts that remained", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "It's now been", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "several years since the rain", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "washed away", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "all the doubts that remained", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true },
-        { "line": "I wanna take you down", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "the only road that leads to", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "higher ground", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "a little bit closer to the stars", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "I know it burns", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "when you discover you love again,", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "sense how it feels", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "with an ember in your heart", "barNumber": null, "barLength": null, "offset": null }
+        { "line": "I wanna take you down", "barNumber": 1, "barLength": 2, "offset": -1.5 },
+        { "line": "to a place we've known forever", "barNumber": 2, "barLength": 1, "offset": 0 },
+        { "line": "higher ground", "barNumber": 3, "barLength": 1, "offset": 0 },
+        { "line": "where the body can sense the weather", "barNumber": 4, "barLength": 1, "offset": 0 },
+        { "line": "I know how it feels", "barNumber": 5, "barLength": 1, "offset": 0 },
+        { "line": "when the rain comes falling down,", "barNumber": 6, "barLength": 1, "offset": 0 },
+        { "line": "sense how it feels", "barNumber": 7, "barLength": 1, "offset": 0 },
+        { "line": "soaking all of the ground", "barNumber": 8, "barLength": 1, "offset": 0, "stanzaEnd": true },
+        { "line": "I wanna take you down", "barNumber": 17, "barLength": 1, "offset": -1.5 },
+        { "line": "the only road that leads to", "barNumber": 18, "barLength": 1, "offset": 0 },
+        { "line": "higher ground", "barNumber": 19, "barLength": 1, "offset": 0 },
+        { "line": "so your eyes can see your home", "barNumber": 20, "barLength": 1, "offset": 0 },
+        { "line": "I know that it burns", "barNumber": 21, "barLength": 1, "offset": 0 },
+        { "line": "when you discover you love again,", "barNumber": 22, "barLength": 1, "offset": 0 },
+        { "line": "sense how it feels", "barNumber": 23, "barLength": 1, "offset": 0 },
+        { "line": "with an ember in your heart", "barNumber": 24, "barLength": 1, "offset": 0, "stanzaEnd": true },
+        { "line": "It's now been", "barNumber": 50, "barLength": 1, "offset": 0 },
+        { "line": "several years since the rain", "barNumber": 51, "barLength": 1, "offset": 0 },
+        { "line": "washed away", "barNumber": 52, "barLength": 1, "offset": 0 },
+        { "line": "all the doubts that remained", "barNumber": 53, "barLength": 1, "offset": 0 },
+        { "line": "It's now been", "barNumber": 54, "barLength": 1, "offset": 0 },
+        { "line": "several years since the rain", "barNumber": 55, "barLength": 1, "offset": 0 },
+        { "line": "washed away", "barNumber": 56, "barLength": 1, "offset": 0 },
+        { "line": "all the doubts that remained", "barNumber": 57, "barLength": 1, "offset": 0 },
+        { "line": "that remained", "barNumber": 58, "barLength": 1, "offset": 0, "stanzaEnd": true },
+        { "line": "I wanna take you down", "barNumber": 63, "barLength": 1, "offset": -2 },
+        { "line": "the only road that leads to", "barNumber": 64, "barLength": 1, "offset": 0 },
+        { "line": "higher ground", "barNumber": 65, "barLength": 1, "offset": 0 },
+        { "line": "a little bit closer to the stars", "barNumber": 66, "barLength": 1, "offset": 0 },
+        { "line": "I know it burns", "barNumber": 67, "barLength": 1, "offset": 0 },
+        { "line": "when you discover you love again,", "barNumber": 68, "barLength": 1, "offset": 0 },
+        { "line": "sense how it feels", "barNumber": 69, "barLength": 1, "offset": 0 },
+        { "line": "with an ember in your heart", "barNumber": 70, "barLength": 1, "offset": 0 }
       ],
       "date": "2025-05-16 01:34",
       "label": "accepted",
@@ -712,7 +713,77 @@
         "sections": [
           {
             "label": "Intro",
-            "chords": ["A"]
+            "chords": ["𝄽", "𝄽", "𝄽", "𝄽"]
+          },
+           {
+            "label": "Verse 1",
+            "chords": ["G", "G", "D", "D", "A", "A", "A", "A", 
+          "G", "G", "D", "D", "A", "A", "A", "A",
+        "G", "G", "D", "D", "A", "A", "A", "A",
+      "G", "G", "D", "D", "A", "A", "A", "A"]
+          },
+           {
+            "label": "Interlude 1",
+            "chords": ["Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+          "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+        "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+      "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G" ]
+          },
+           {
+            "label": "Verse 2",
+            "chords": ["G", "G", "D", "D", "A", "A", "A", "A", 
+          "G", "G", "D", "D", "A", "A", "A", "A",
+        "G", "G", "D", "D", "A", "A", "A", "A",
+      "G", "G", "D", "D", "A", "A", "A", "A"]
+          },
+           {
+            "label": "Interlude 2",
+            "chords": ["Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+          "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+        "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+      "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G" ]
+          },
+           {
+            "label": "Solo",
+            "chords": ["G", "G", "D", "D", "A", "A", "A", "A", 
+          "G", "G", "D", "D", "A", "A", "A", "A",
+        "G", "G", "D", "D", "A", "A", "A", "A",
+      "G", "G", "D", "D", "A", "A", "A", "A"]
+          },
+           {
+            "label": "Interlude / Solo",
+            "chords": ["Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+          "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+        "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+      "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm" ]
+          },
+           {
+            "label": "Bridge",
+            "chords": ["C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
+            "C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
+            "C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
+            "C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
+            "C5", "G5", "G5", "G5", "D5", "D5", "D5", "D5",
+            "C5", "C5", "C5", "C5", "C5", "C5", "C5", "C5"
+           ]
+          },
+          {
+            "label": "Pause",
+            "chords": ["𝄽", "𝄽", "𝄽", "𝄽", "𝄽", "𝄽", "𝄽", "𝄽"]
+          },
+           {
+            "label": "Verse 3",
+            "chords": ["G", "G", "D", "D", "A", "A", "A", "A", 
+          "G", "G", "D", "D", "A", "A", "A", "A",
+        "G", "G", "D", "D", "A", "A", "A", "A",
+      "G", "G", "D", "D", "A", "A", "A", "A"]
+          },
+           {
+            "label": "Outro",
+            "chords": ["Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+          "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+        "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
+      "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G" ]
           }
         ]
       }
