@@ -276,57 +276,78 @@
       "title": "Magic",
       "mp3": "audio/magic.mp3",
       "lyrics": [
-        { "line": "Hey, you gotta know", "barNumber": 8, "barLength": 1, "offset": 0 },
-        { "line": "it's our past I've been longing for", "barNumber": 9, "barLength": 2, "offset": 0 },
-        { "line": "down by the street", "barNumber": 12, "barLength": 1, "offset": 0 },
-        { "line": "when our eyes again will meet", "barNumber": 13, "barLength": 2, "offset": 0 },
-        { "line": "(I won't turn away)", "barNumber": 15, "barLength": 1, "offset": 0, "stanzaEnd": true },
-        { "line": "the sky has a million satellites", "barNumber": 16, "barLength": 2, "offset": 0 },
-        { "line": "and there's all this technology", "barNumber": 18, "barLength": 2, "offset": 0 },
-        { "line": "there are a million aeroplanes", "barNumber": 20, "barLength": 2, "offset": 0 },
-        { "line": "so many places to be", "barNumber": 22, "barLength": 2, "offset": 0, "stanzaEnd": true },
-        { "line": "I can't find you", "barNumber": 23, "barLength": 2, "offset": 1 },
-        { "line": "still can't find you", "barNumber": 24, "barLength": 2, "offset": 1 },
-        { "line": "I can't find you", "barNumber": 25, "barLength": 2, "offset": 1 },
-        { "line": "someone like you", "barNumber": 26, "barLength": 2, "offset": 1, "stanzaEnd": true },
-        { "line": "Hey, you oughta see", "barNumber": 30, "barLength": 1, "offset": 0 },
-        { "line": "It's been just shadows where light should be", "barNumber": 31, "barLength": 2, "offset": 0 },
-        { "line": "the things you mean to say", "barNumber": 34, "barLength": 1, "offset": 0 },
-        { "line": "know they're just a glance away", "barNumber": 35, "barLength": 2, "offset": 0 },
-        { "line": "(I will know by heart)", "barNumber": 37, "barLength": 1, "offset": 0, "stanzaEnd": true },
-        { "line": "the sky has a million satellites", "barNumber": 38, "barLength": 2, "offset": 0 },
-        { "line": "and there's all this technology", "barNumber": 40, "barLength": 2, "offset": 0 },
-        { "line": "there are a million aeroplanes", "barNumber": 42, "barLength": 2, "offset": 0 },
-        { "line": "so many places to be just fine", "barNumber": 44, "barLength": 2, "offset": 0, "stanzaEnd": true },
-        { "line": "but I want you", "barNumber": 62, "barLength": 1, "offset": 0 },
-        { "line": "I want you", "barNumber": 63, "barLength": 1, "offset": -1 },
-        { "line": "I want you", "barNumber": 64, "barLength": 1, "offset": -1 },
-        { "line": "I want you", "barNumber": 65, "barLength": 1, "offset": -1, "stanzaEnd": true },
-        { "line": "friends gather round", "barNumber": 66, "barLength": 1, "offset": 0 },
-        { "line": "to slag me off when I'm feeling down", "barNumber": 67, "barLength": 3, "offset": 0 },
-        { "line": "Hey, I want you near", "barNumber": 70, "barLength": 2, "offset": 0 },
-        { "line": "maybe for a day or a couple of years", "barNumber": 71, "barLength": 3, "offset": 0 },
-        { "line": "(cuz it's home to me)", "barNumber": 73, "barLength": 1, "offset": 0, "stanzaEnd": true },
-        { "line": "the sky has a million satellites", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "and there's all this technology", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "there are a million aeroplanes", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "so many places to be", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true },
-        { "line": "still can't find you", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "I can't find you", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "I can't find you", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "someone like you", "barNumber": null, "barLength": null, "offset": null,  "stanzaEnd": true },
-        { "line": "magic is what I'll do", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "cuz I know the feeling is true", "barNumber": null, "barLength": null, "offset": null }
+        { "line": "Hey, you gotta know", "barNumber": 16, "barLength": 2, "offset": 0 },
+        { "line": "it's our past I've been longing for", "barNumber": 19, "barLength": 4, "offset": 0 },
+        { "line": "down by the street", "barNumber": 24, "barLength": 2, "offset": 0 },
+        { "line": "when our eyes again will meet", "barNumber": 27, "barLength": 3, "offset": 0 },
+        { "line": "(I won't turn away)", "barNumber": 30, "barLength": 2, "offset": 0, "stanzaEnd": true },
+        { "line": "the sky has a million satellites", "barNumber": 33, "barLength": 3, "offset": 0 },
+        { "line": "and there's all this technology", "barNumber": 37, "barLength": 3, "offset": 0 },
+        { "line": "there are a million aeroplanes", "barNumber": 41, "barLength": 3, "offset": 0 },
+        { "line": "so many places to be", "barNumber": 45, "barLength": 2, "offset": 0, "stanzaEnd": true },
+        { "line": "I can't find you", "barNumber": 47, "barLength": 3, "offset": 0 },
+        { "line": "still can't find you", "barNumber": 48, "barLength": 3, "offset": 0 },
+        { "line": "I can't find you", "barNumber": 51, "barLength": 3, "offset": 0 },
+        { "line": "someone like you", "barNumber": 54, "barLength": 3, "offset": 0, "stanzaEnd": true },
+        { "line": "Hey, you oughta see", "barNumber": 60, "barLength": 2, "offset": 0 },
+        { "line": "It's been just shadows where light should be", "barNumber": 62, "barLength": 4, "offset": 0 },
+        { "line": "the things you mean to say", "barNumber": 68, "barLength": 2, "offset": 0 },
+        { "line": "know they're just a glance away", "barNumber": 70, "barLength": 4, "offset": 0 },
+        { "line": "(I will know by heart)", "barNumber": 74, "barLength": 2, "offset": 0, "stanzaEnd": true },
+        { "line": "the sky has a million satellites", "barNumber": 76, "barLength": 4, "offset": 0 },
+        { "line": "and there's all this technology", "barNumber": 80, "barLength": 4, "offset": 0 },
+        { "line": "there are a million aeroplanes", "barNumber": 84, "barLength": 4, "offset": 0 },
+        { "line": "so many places to be just fine", "barNumber": 88, "barLength": 4, "offset": 0, "stanzaEnd": true },
+        { "line": "but I want you", "barNumber": 124, "barLength": 2, "offset": 0 },
+        { "line": "I want you", "barNumber": 126, "barLength": 2, "offset": 0 },
+        { "line": "I want you", "barNumber": 128, "barLength": 2, "offset": 0 },
+        { "line": "I want you", "barNumber": 130, "barLength": 2, "offset": 0, "stanzaEnd": true },
+        { "line": "friends gather round", "barNumber": 132, "barLength": 2, "offset": 0 },
+        { "line": "to slag me off when I'm feeling down", "barNumber": 134, "barLength": 6, "offset": 0 },
+        { "line": "Hey, I want you near", "barNumber": 140, "barLength": 4, "offset": 0 },
+        { "line": "maybe for a day or a couple of years", "barNumber": 142, "barLength": 4, "offset": 0 },
+        { "line": "(cuz it's home to me)", "barNumber": 146, "barLength": 2, "offset": 0, "stanzaEnd": true },
+        { "line": "the sky has a million satellites", "barNumber": 148, "barLength": 4, "offset": 0 },
+        { "line": "and there's all this technology", "barNumber": 152, "barLength": 4, "offset": 0 },
+        { "line": "there are a million aeroplanes", "barNumber": 156, "barLength": 4, "offset": 0 },
+        { "line": "so many places to be", "barNumber": 160, "barLength": 2, "offset": 0, "stanzaEnd": true },
+        { "line": "still can't find you", "barNumber": 164, "barLength": 2, "offset": 0 },
+        { "line": "I can't find you", "barNumber": 166, "barLength": 2, "offset": 0 },
+        { "line": "I can't find you", "barNumber": 168, "barLength": 2, "offset": 0 },
+        { "line": "someone like you", "barNumber": 170, "barLength": 2, "offset": 0, "stanzaEnd": true },
+        { "line": "magic is what I'll do", "barNumber": 172, "barLength": 2, "offset": 0 },
+        { "line": "cuz I know the feeling is true", "barNumber": 174, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-01 21:26",
       "label": "official entry",
-      "tempo": "87",
+      "tempo": "174",
       "timeSignature": "4/4",
       "structure": {
         "sections": [
           {
             "label": "Intro",
-            "chords": ["A"]
+            "chords": [
+              "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E",
+              "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E",
+              "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E",
+              "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E", "F#5", "F#5", "F#5", "E"
+            ]
+          },
+          {
+            "label": "Verse 1",
+            "chords": [
+              "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E", "E", "E", "E", "F#5", "F#5", "F#5", "F#5",
+              "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E", "E", "E", "E", "F#5", "F#5", "F#5", "F#5",
+              "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E", "E", "E", "E", "F#5", "F#5", "F#5", "F#5",
+              "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E", "E", "E", "E", "F#5", "F#5", "F#5", "F#5"
+            ]
+          },
+          {
+            "label": "Chorus",
+            "chords": [
+              "F#5->A", "A", "F#5", "F#5", "E5+B", "F#5", "F#5", "F#5", "F#5->A", "A", "F#5", "F#5", "E5+B", "F#5", "F#5", "F#5",
+              "F#5->A", "A", "F#5", "F#5", "E5+B", "F#5", "F#5", "F#5", "F#5->A", "A", "F#5", "F#5", "E5+B", "F#5", "F#5", "F#5"
+            ]
           }
         ]
       }
@@ -357,7 +378,7 @@
         "sections": [
           {
             "label": "Intro",
-            "chords": ["A"]
+            "chords": ["F#5", "F#5", "A", "F#5"]
           }
         ]
       }
