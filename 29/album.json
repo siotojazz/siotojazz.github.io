@@ -371,7 +371,7 @@
         { "line": "на тој остров во пацификот", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-04-02 00:37",
-      "label": "sax[great], guitar1[meh], guitar2[great], bass[great], drums[great]",
+      "label": "sax[great], guitar1[great], guitar2[great], bass[great], drums[great]",
       "tempo": "100",
       "timeSignature": "4/4",
       "structure": {
