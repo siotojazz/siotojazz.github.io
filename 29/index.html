@@ -6,8 +6,7 @@
   <title>Sioto Jazz - 29</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <style>
-    @font-face {
+  <style>@font-face {
   font-family: 'Garet';
   src: url('../fonts/Garet.ttf') format('truetype');
   font-weight: normal;
@@ -637,7 +636,6 @@ tr.track:hover {
     inset 0 1px 2px rgba(255, 255, 255, 0.15),
     inset 0 -1px 2px rgba(0, 0, 0, 0.4),
     0 2px 4px rgba(0, 0, 0, 0.3);
-    
 }
 .lyrics-meta-structure-content {
   display: flex;
@@ -662,7 +660,7 @@ tr.track:hover {
     0 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
   cursor: pointer;
-  width: calc(40px * var(--repeat-count, 1)); /* Scale width by repeat count */
+  width: calc(40px * var(--repeat-count, 1));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -698,11 +696,9 @@ tr.track:hover {
 .chord-block.past .chord-progress {
   width: 100%;
 }
-
 .chord-block.past { 
   opacity: 0.2;
 }
-
 .chord-progress {
   position: absolute;
   bottom: 0;
@@ -718,7 +714,6 @@ tr.track:hover {
   content: ' (Failed to load)';
   color: #FF3300;
 }
-
 .chord-tooltip {
   position: absolute;
   background: linear-gradient(135deg, #1A2222, #0E1111);
@@ -733,17 +728,14 @@ tr.track:hover {
   opacity: 0;
   transition: opacity 0.2s ease;
 }
-
 .chord-tooltip.visible {
   opacity: 1;
 }
-
 .chord-tooltip-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-
 .chord-tooltip-fretboard {
   font-family: monospace;
   white-space: pre;
@@ -753,8 +745,44 @@ tr.track:hover {
   line-height: 1.2;
   font-size: 10px;
 }
-
-  </style>
+.instrument-states {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+}
+.instrument-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 12px;
+  color: #C0D4EE;
+  background: linear-gradient(135deg, #990000, #660000);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+}
+.instrument-state.none {
+  background: linear-gradient(135deg, #990000, #660000);
+  opacity: 0.8;
+}
+.instrument-state.meh {
+  background: linear-gradient(135deg, #CC4500, #998400);
+  box-shadow: 0 0 8px rgba(255, 165, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+.instrument-state.great {
+  background: linear-gradient(135deg, #009900, #005500);
+  box-shadow: 0 0 8px rgba(0, 200, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+.instrument-state.vocals i::before { content: '\f130'; } /* Microphone icon */
+.instrument-state.sax i::before { content: '\f8c0'; } /* Saxophone icon */
+.instrument-state.guitar1 i::before, .instrument-state.guitar2 i::before { content: '\f7a6'; } /* Guitar icon */
+.instrument-state.bass i::before { content: '\f8c1'; } /* Bass guitar icon */
+.instrument-state.drums i::before { content: '\f569'; } /* Drum icon */
+.instrument-state.else i::before { content: '\f0c1'; } /* Link icon for 'else' */</style>
 </head>
 <body>
   <div class="container">
@@ -811,14 +839,14 @@ tr.track:hover {
     <section id="tracklist">
       <table>
         <thead>
-          <tr>
-            <th><i class="fas fa-hashtag"></i></th>
-            <th><i class="fas fa-music"></i></th>
-            <th><i class="fas fa-tag"></i></th>
-            <th><i class="fas fa-tachometer-alt"></i></th>
-            <th><i class="fas fa-clock"></i></th>
-          </tr>
-        </thead>
+        <tr>
+          <th><i class="fas fa-hashtag"></i></th>
+          <th><i class="fas fa-music"></i></th>
+          <th><i class="fas fa-guitar"></i></th> <!-- New column for instrument states -->
+          <th><i class="fas fa-tachometer-alt"></i></th>
+          <th><i class="fas fa-clock"></i></th>
+        </tr>
+      </thead>
         <tbody id="tracks">
           <!-- Tracks will be inserted here -->
         </tbody>
@@ -1260,7 +1288,6 @@ function formatChordShape(shape) {
 
   return diagram.join('\n');
 }
-
 
 function formatStructure(structure, chordTimings, track) {
   if (!structure || !structure.sections || structure.sections.length === 0) {
@@ -1772,11 +1799,11 @@ async function playTrack(index) {
   lyricsContainer.classList.add('visible');
 
   // Load structure with chord blocks
-structureContainer.innerHTML = `
-  <div class="structure-content-container">
-    ${formatStructure(track.structure, timings.chords, track)}
-  </div>
-`;
+  structureContainer.innerHTML = `
+    <div class="structure-content-container">
+      ${formatStructure(track.structure, timings.chords, track)}
+    </div>
+  `;
   structureContainer.classList.add('visible');
 
   // Add click event listener for lyric rows
@@ -2038,6 +2065,38 @@ lockBtn.addEventListener('click', () => {
   }
 });
 
+// Function to parse instrument labels
+function parseInstrumentLabels(labelString) {
+  if (!labelString || typeof labelString !== 'string') return [];
+  const instruments = ['vocals', 'sax', 'guitar1', 'guitar2', 'bass', 'drums', 'else'];
+  const states = ['none', 'meh', 'great'];
+  const labelEntries = labelString.split(',').map(entry => entry.trim());
+  const parsedLabels = [];
+
+  instruments.forEach(instrument => {
+    const entry = labelEntries.find(e => e.startsWith(instrument + '['));
+    let state = 'none';
+    if (entry) {
+      const stateMatch = entry.match(/\[([^\]]+)\]/);
+      if (stateMatch && states.includes(stateMatch[1].toLowerCase())) {
+        state = stateMatch[1].toLowerCase();
+      }
+    }
+    parsedLabels.push({ instrument, state });
+  });
+
+  return parsedLabels;
+}
+
+// Function to generate HTML for instrument states
+function generateInstrumentStates(labels) {
+  return labels.map(({ instrument, state }) => `
+    <span class="instrument-state ${instrument} ${state}">
+      <i class="fas"></i>
+    </span>
+  `).join('');
+}
+
 fetch('album.json')
   .then(response => {
     if (!response.ok) throw new Error('Failed to load album.json');
@@ -2073,13 +2132,16 @@ fetch('album.json')
       };
 
       const { icon, class: labelClass } = getLabelIcon(track.label);
+      const instrumentLabels = parseInstrumentLabels(track.label);
+      const instrumentStatesHtml = generateInstrumentStates(instrumentLabels);
+
       const tr = document.createElement('tr');
       tr.className = 'track';
       tr.setAttribute('data-id', track.id);
       tr.innerHTML = `
         <td class="track-number">${index + 1}</td>
         <td class="track-title">${track.title}</td>
-        <td class="track-label ${labelClass}">${icon}</td>
+        <td class="instrument-states">${instrumentStatesHtml}</td>
         <td class="track-tempo">${track.tempo || 'N/A'}</td>
         <td class="track-duration"></td>
       `;
@@ -2132,7 +2194,7 @@ fetch('album.json')
       }
     });
 
-      document.addEventListener('mouseover', (event) => {
+    document.addEventListener('mouseover', (event) => {
       const chordBlock = event.target.closest('.chord-block');
       if (chordBlock) {
         // Extract chord name from the first text node, excluding superscript

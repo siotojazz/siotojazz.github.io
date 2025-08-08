@@ -106,7 +106,7 @@
         { "line": "импулс во телото", "barNumber": 58, "barLength": 2, "offset": 0 }
       ],
       "date": "2024-12-06 22:27",
-      "label": "official entry",
+      "label": "guitar1[great], drums[great], bass[great]",
       "tempo": "78",
       "timeSignature": "4/4",
       "structure": {
@@ -203,7 +203,7 @@
         { "line": "јас знам дека ќе ти бидам крајна дестинација", "barNumber": 132, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-03-29 00:58",
-      "label": "accepted",
+      "label": "guitar1[meh], guitar2[meh], drums[meh], bass[meh]",
       "tempo": "117",
       "timeSignature": "4/4",
       "structure": {
@@ -319,7 +319,7 @@
         { "line": "cuz I know the feeling is true", "barNumber": 174, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-01 21:26",
-      "label": "official entry",
+      "label": "drums[meh], guitar1[meh], guitar2[meh], bass[great]",
       "tempo": "174",
       "timeSignature": "4/4",
       "structure": {
@@ -371,7 +371,7 @@
         { "line": "на тој остров во пацификот", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-04-02 00:37",
-      "label": "official entry",
+      "label": "sax[great], guitar1[meh], guitar2[great], bass[great], drums[great]",
       "tempo": "100",
       "timeSignature": "4/4",
       "structure": {
@@ -406,7 +406,7 @@
         { "line": "still you make it feel, so quite unreal", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-04-02 19:58",
-      "label": "needs polishing",
+      "label": "vocals[great], guitar1[meh], guitar2[meh], bass[great]",
       "tempo": "105",
       "timeSignature": "4/4",
       "structure": {
@@ -459,7 +459,7 @@
         { "line": "the cinema", "barNumber": 137, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-03 01:53",
-      "label": "official demo",
+      "label": "vocals[great], guitar1[great], guitar2[meh], bass[great], drums[great], else[meh]",
       "tempo": "118",
       "timeSignature": "4/4",
       "structure": {
@@ -582,7 +582,7 @@
         { "line": "my innocent sea", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-04-04 19:24",
-      "label": "official entry",
+      "label": "vocals[great], guitar1[meh], guitar2[meh], bass[great], drums[meh]",
       "tempo": "92",
       "timeSignature": "6/8",
       "structure": {
@@ -641,7 +641,7 @@
         { "line": "(To the future?)", "barNumber": 106, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-05 00:08",
-      "label": "accepted",
+      "label": "drums[great], guitar1[great], guitar2[meh], bass[great], sax[great], else[great]",
       "tempo": "102",
       "timeSignature": "4/4",
       "structure": {
@@ -690,7 +690,7 @@
         { "line": "A honeymoon's tingle beneath the hands, without end, attend.", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-04-08 18:36",
-      "label": "official entry",
+      "label": "guitar1[meh], guitar2[meh], else[meh], bass[great]",
       "tempo": "120",
       "timeSignature": "4/4",
       "structure": {
@@ -731,7 +731,7 @@
         { "line": "how far could I run away?", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-04-13 22:37",
-      "label": "early demo",
+      "label": "else[meh], bass[meh], guitar1[meh], guitar2[meh]",
       "tempo": "137",
       "timeSignature": "4/4",
       "structure": {
@@ -783,7 +783,7 @@
         { "line": "with an ember in your heart", "barNumber": 70, "barLength": 1, "offset": 0 }
       ],
       "date": "2025-05-16 01:34",
-      "label": "accepted",
+      "label": "vocals[meh], guitar1[great], guitar2[great], drums[great], else[meh], bass[great]",
       "tempo": "84",
       "timeSignature": "4/4",
       "structure": {
@@ -874,7 +874,7 @@
         { "line": "јас имам чувство дека сè се менува", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-05-18 18:46",
-      "label": "needs lyrics",
+      "label": "guitar1[great], guitar2[meh], bass[great], drums[great], else[meh]",
       "tempo": "127",
       "timeSignature": "4/4",
       "structure": {
