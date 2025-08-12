@@ -203,7 +203,7 @@
         { "line": "јас знам дека ќе ти бидам крајна дестинација", "barNumber": 132, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-03-29 00:58",
-      "label": "guitar1[meh], guitar2[meh], drums[meh], bass[meh]",
+      "label": "guitar1[great], guitar2[meh], drums[great], bass[great]",
       "tempo": "117",
       "timeSignature": "4/4",
       "structure": {
@@ -371,7 +371,7 @@
         { "line": "на тој остров во пацификот", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-04-02 00:37",
-      "label": "sax[great], guitar1[meh], guitar2[great], bass[great], drums[great]",
+      "label": "sax[great], guitar1[great], guitar2[great], bass[great], drums[great], else[great]",
       "tempo": "100",
       "timeSignature": "4/4",
       "structure": {
@@ -406,7 +406,7 @@
         { "line": "still you make it feel, so quite unreal", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-04-02 19:58",
-      "label": "vocals[great], guitar1[meh], guitar2[meh], bass[great]",
+      "label": "vocals[great], guitar1[great], guitar2[meh], drums[great], bass[great], sax[great]",
       "tempo": "105",
       "timeSignature": "4/4",
       "structure": {
@@ -690,7 +690,7 @@
         { "line": "A honeymoon's tingle beneath the hands, without end, attend.", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-04-08 18:36",
-      "label": "guitar1[meh], guitar2[meh], else[meh], bass[great]",
+      "label": "guitar1[meh], guitar2[meh], drums[great], else[great], bass[great], sax[great]",
       "tempo": "120",
       "timeSignature": "4/4",
       "structure": {
