@@ -8,7 +8,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 @font-face {
   font-family: 'Garet';
@@ -52,14 +51,14 @@ canvas {
 }
 
 .container {
-  max-width: 500px;
+  width: 570px;
   max-height: 700px;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 6px;
-  background: url(resources/metal.jpg) repeat rgba(0, 0, 0, 0.04);
+  background: url(resources/metal.jpg) repeat rgba(0, 0, 0, 0.2);
   background-blend-mode: darken;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -68,16 +67,13 @@ canvas {
   box-sizing: border-box;
   border: solid #1a1a1f 1px;
   box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3);
-  transform-style: preserve-3d;
   z-index: 1;
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
-  perspective: 1000px;
-  perspective-origin: 50% 50%;
 }
 
 .container::-webkit-scrollbar {
-  width: 1px;
+  width: 8px;
 }
 
 .container::-webkit-scrollbar-track {
@@ -113,9 +109,10 @@ canvas {
 }
 
 .right-panel {
-  background: linear-gradient(135deg, #1a1a1a 0%, #1a1a1a 51%, #000000 52%, #000000 100%);
+  background: linear-gradient(135deg, #0a0a0aee 0%, #0a0a0aee 53%, #000000ee 54%, #000000ee 100%);
   padding: 6px;
-  border: 2px ridge #2b2b2b;
+  border: 2px ridge #1A1A1A;
+  width: 100%;
 }
 
 .display-container {
@@ -236,7 +233,7 @@ canvas {
 .name-bar {
   font-family: Helvetica, Arial, sans-serif;
   padding: 0px 18px;
-  margin: -10px;
+  margin: 0;
 }
 
 .band-name {
@@ -276,7 +273,8 @@ canvas {
 
 .title-bar-controls {
   display: grid;
-  grid-template-columns: repeat(4, 40px) 30px;
+  grid-template-columns: repeat(2, 50px) 60px;
+  grid-template-rows: repeat(3, auto);
   gap: 4px;
   flex: 1;
   align-content: center;
@@ -303,8 +301,8 @@ canvas {
 }
 
 .volume-wrapper {
-  grid-column: 5;
-  grid-row: 1 / span 2;
+  grid-column: 3;
+  grid-row: 1 / span 3;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -323,8 +321,8 @@ canvas {
 .title-bar-btn {
   background: linear-gradient(180deg, #8b8b8b 0%, #222 20%, #0A0A0A 60%, #353535 100%) !important;
   border: 2px solid #000;
-  width: 30px;
-  height: 10px;
+  width: 40px;
+  height: 14px;
   cursor: pointer;
   border-radius: 0;
   display: flex;
@@ -366,18 +364,6 @@ canvas {
 .title-bar-btn.active::before,
 .repeat-btn.repeat-playlist::before,
 .repeat-btn.repeat-song::before,
-.lock-btn.locked::before {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: 25%;
-  width: 50%;
-  height: 5px;
-  background: #d00e1f;
-  box-shadow: 0 0 4px #d00e1f;
-  z-index: 2;
-}
-
 .play-btn.title-bar-btn {
   background: linear-gradient(135deg, #1A1A1A, #0A0A0A);
 }
@@ -424,22 +410,6 @@ canvas {
 
 .shuffle-btn.title-bar-btn:hover {
   background: linear-gradient(135deg, #2a2a2a, #1A1A1A);
-}
-
-.lock-btn.title-bar-btn {
-  background: linear-gradient(135deg, #1A1A1A, #0A0A0A);
-}
-
-.lock-btn.title-bar-btn:hover {
-  background: linear-gradient(135deg, #2a2a2a, #1A1A1A);
-}
-
-.lock-btn.title-bar-btn.locked {
-  background: linear-gradient(135deg, #FF4500, #CC3700);
-}
-
-.lock-btn.title-bar-btn.locked:hover {
-  background: linear-gradient(135deg, #FF6347, #FF4500);
 }
 
 .volume-knob {
@@ -507,39 +477,69 @@ canvas {
 }
 
 .album-section {
-  margin: 4px 0;
+  margin: 0;
   display: flex;
   justify-content: center;
 }
 
 .album-display {
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  width: 0;
+  max-height: 0;
   background: linear-gradient(135deg, #1A222200, #0E111133);
   border: 1px solid #000000;
   border-radius: 0;
   box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 -4px 8px rgba(0, 0, 0, 0.6), 0 6px 12px rgba(0, 0, 0, 0.5), 0 0 15px rgba(126, 187, 233, 0.3);
   position: relative;
   padding: 0;
+  margin: 0;
   box-sizing: border-box;
-  max-height: 0;
   opacity: 0;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
-  overflow: hidden;
+  transform: scale(0.95);
+  transition: width 0.5s ease, max-height 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #7ebbe922 #0e1a4b44;
   align-items: center;
   justify-content: center;
   z-index: 2;
 }
 
+.album-display::-webkit-scrollbar {
+  width: 8px;
+}
+
+.album-display::-webkit-scrollbar-track {
+  background: #0e1a4b;
+  border-radius: 0;
+}
+
+.album-display::-webkit-scrollbar-thumb {
+  background: #7ebbe980;
+  border-radius: 0;
+}
+
+.album-display::-webkit-scrollbar-thumb:hover {
+  background: #7ebbe9cc;
+}
+
 .album-display.visible {
-  max-height: 500px;
+  width: 100%;
+  height: auto;
+  max-height: 800px;
   opacity: 1;
+  transform: scale(1);
   display: flex;
+  padding: 5px;
 }
 
 #album-cover {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: calc(800px - 10px); /* Account for 5px top/bottom padding */
+  object-fit: contain; /* Changed to contain to respect image size */
   padding: 5px;
   display: block;
   border-radius: 0;
@@ -561,16 +561,47 @@ canvas {
 }
 
 #tracklist {
-  padding: 6px;
+  padding: 0;
   margin: 0;
   border-radius: 0;
   background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
-  overflow: hidden;
-  max-height: 1000px;
+  width: 100%;
+  max-height: 0;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: width 0.5s ease, max-height 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #7ebbe922 #0e1a4b44;
+}
+
+#tracklist::-webkit-scrollbar {
+  width: 8px;
+}
+
+#tracklist::-webkit-scrollbar-track {
+  background: #0e1a4b;
+  border-radius: 0;
+}
+
+#tracklist::-webkit-scrollbar-thumb {
+  background: #7ebbe980;
+  border-radius: 0;
+}
+
+#tracklist::-webkit-scrollbar-thumb:hover {
+  background: #7ebbe9cc;
+}
+
+#tracklist.visible {
+  height: auto;
+  max-height: 800px;
   opacity: 1;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
+  transform: scale(1);
+  padding: 6px;
 }
 
 #tracklist:not(.visible) {
@@ -606,6 +637,7 @@ table {
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
   position: relative;
   z-index: 2;
+  max-height: calc(800px - 12px); /* Account for 6px top/bottom padding */
 }
 
 thead {
@@ -718,16 +750,42 @@ tr.track:hover {
 #lyrics-section {
   padding: 0;
   margin: 0;
+  width: 100%;
   max-height: 0;
   opacity: 0;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
-  overflow: hidden;
+  transform: scale(0.95);
+  transition: width 0.5s ease, max-height 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #7ebbe922 #0e1a4b44;
+}
+
+#lyrics-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+#lyrics-section::-webkit-scrollbar-track {
+  background: #0e1a4b;
+  border-radius: 0;
+}
+
+#lyrics-section::-webkit-scrollbar-thumb {
+  background: #7ebbe980;
+  border-radius: 0;
+}
+
+#lyrics-section::-webkit-scrollbar-thumb:hover {
+  background: #7ebbe9cc;
 }
 
 #lyrics-section.visible {
-  max-height: 1000px;
+  height: auto;
+  max-height: 800px;
   opacity: 1;
+  transform: scale(1);
   display: block;
+  padding: 6px;
 }
 
 .lyrics-container {
@@ -737,7 +795,29 @@ tr.track:hover {
   padding: 6px;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #7ebbe922 #0e1a4b44;
+  max-height: calc(800px - 12px); /* Account for 6px top/bottom padding */
+}
+
+.lyrics-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lyrics-container::-webkit-scrollbar-track {
+  background: #0e1a4b;
+  border-radius: 0;
+}
+
+.lyrics-container::-webkit-scrollbar-thumb {
+  background: #7ebbe980;
+  border-radius: 0;
+}
+
+.lyrics-container::-webkit-scrollbar-thumb:hover {
+  background: #7ebbe9cc;
 }
 
 .lyrics-container::after {
@@ -755,7 +835,6 @@ tr.track:hover {
 }
 
 .lyrics-title {
-  font-family: 'VT323', monospace;
   font-size: 14px;
   color: #7ebbe9;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
@@ -770,7 +849,6 @@ tr.track:hover {
 }
 
 .lyrics-content-container .lyric-line {
-  font-family: 'VT323', monospace;
   font-size: 10px;
   color: #7ebbe9;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
@@ -825,7 +903,6 @@ tr.track:hover {
 .lyrics-meta-date,
 .lyrics-meta-tempo,
 .lyrics-meta-timeSignature {
-  font-family: 'VT323', monospace;
   font-size: 8px;
   color: #7ebbe9;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
@@ -849,26 +926,74 @@ tr.track:hover {
 #structure-section {
   padding: 0;
   margin: 0;
+  width: 100%;
   max-height: 0;
   opacity: 0;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
-  overflow: hidden;
+  transform: scale(0.95);
+  transition: width 0.5s ease, max-height 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #7ebbe922 #0e1a4b44;
+}
+
+#structure-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+#structure-section::-webkit-scrollbar-track {
+  background: #0e1a4b;
+  border-radius: 0;
+}
+
+#structure-section::-webkit-scrollbar-thumb {
+  background: #7ebbe980;
+  border-radius: 0;
+}
+
+#structure-section::-webkit-scrollbar-thumb:hover {
+  background: #7ebbe9cc;
 }
 
 #structure-section.visible {
-  max-height: 1000px;
+  height: auto;
+  max-height: 800px;
   opacity: 1;
+  transform: scale(1);
   display: block;
+  padding: 6px;
 }
 
 .structure-container {
   color: #7ebbe9;
   border-radius: 0;
-  padding: 6px;
   background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%);
+  padding: 6px;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #7ebbe922 #0e1a4b44;
+  max-height: calc(800px - 12px); /* Account for 6px top/bottom padding */
+}
+
+.structure-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.structure-container::-webkit-scrollbar-track {
+  background: #0e1a4b;
+  border-radius: 0;
+}
+
+.structure-container::-webkit-scrollbar-thumb {
+  background: #7ebbe980;
+  border-radius: 0;
+}
+
+.structure-container::-webkit-scrollbar-thumb:hover {
+  background: #7ebbe9cc;
 }
 
 .structure-container::after {
@@ -886,7 +1011,6 @@ tr.track:hover {
 }
 
 .structure-title {
-  font-family: 'VT323', monospace;
   font-size: 14px;
   color: #7ebbe9;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
@@ -904,7 +1028,6 @@ tr.track:hover {
 }
 
 .lyrics-meta-structure-section {
-  font-family: 'VT323', monospace;
   font-size: 10px;
   color: #7ebbe9;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
@@ -920,7 +1043,6 @@ tr.track:hover {
 }
 
 .chord-block {
-  font-family: 'VT323', monospace;
   font-size: 8px;
   color: #7ebbe9;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
@@ -1072,37 +1194,19 @@ tr.track:hover {
     <section class="title-bar">
       <div class="panel-container">
         <div class="right-panel">
-        <div class="display-container">
-          <div style="display: flex; align-items: center; gap: 4px;">
-            <span id="current-song">Sioto Jazz - 29</span>
-            <span id="song-times">[00:00 / 00:00]</span>
-          </div>
-          <div id="current-lyric"></div>
-          <div id="current-chord"></div>
-          <div id="button-message"></div>
-          <div class="title-bar-progress"><div class="progress" id="global-progress"></div></div>
-        </div>
-        <div class="container-controls">
-          <div class="button-wrapper">
-              <span class="button-label">ART</span>
-              <button class="title-bar-btn album-btn" id="album-btn" aria-label="Show Album Cover"></button>
+          <div class="display-container">
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <span id="current-song"></span>
+              <span id="song-times">[00:00 / 00:00]</span>
             </div>
-            <div class="button-wrapper">
-              <span class="button-label">LIST</span>
-              <button class="title-bar-btn tracks-btn" id="tracks-btn" aria-label="Show/Hide Tracks"></button>
-            </div>
-            <div class="button-wrapper">
-              <span class="button-label">LYRC</span>
-              <button class="title-bar-btn lyrics-btn" id="lyrics-btn" aria-label="Show/Hide Lyrics"></button>
-            </div>
-            <div class="button-wrapper">
-              <span class="button-label">SONG</span>
-              <button class="title-bar-btn structure-btn" id="structure-btn" aria-label="Show/Hide Structure"></button>
+            <div id="current-lyric"></div>
+            <div id="current-chord"></div>
+            <div id="button-message"></div>
+            <div class="title-bar-progress">
+              <div class="progress" id="global-progress"></div>
             </div>
           </div>
-        </div>
-        <div class="title-bar-controls">
-          <div class="button-row">
+          <div class="container-controls">
             <div class="button-wrapper">
               <span class="button-label">PREV</span>
               <button class="title-bar-btn" id="prev-btn" aria-label="Previous Track"></button>
@@ -1119,26 +1223,44 @@ tr.track:hover {
               <span class="button-label">NEXT</span>
               <button class="title-bar-btn" id="next-btn" aria-label="Next Track"></button>
             </div>
+            <div class="button-wrapper">
+              <span class="button-label">REPEAT</span>
+              <button class="title-bar-btn repeat-btn" id="repeat-btn" aria-label="Repeat"></button>
+            </div>
+            <div class="button-wrapper">
+              <span class="button-label">SHUFFLE</span>
+              <button class="title-bar-btn shuffle-btn" id="shuffle-btn" aria-label="Shuffle"></button>
+            </div>
+          </div>
+        </div>
+        <div class="title-bar-controls">
+            <div class="button-row">
+              <div class="button-wrapper">
+                <span class="button-label">ART</span>
+                <button class="title-bar-btn album-btn" id="album-btn" aria-label="Show Album Cover"></button>
+              </div>
+              <div class="button-wrapper">
+                <span class="button-label">PLAYLIST</span>
+                <button class="title-bar-btn tracks-btn" id="tracks-btn" aria-label="Show/Hide Tracks"></button>
+              </div>
+            </div>
+            <div class="button-row">
+              <div class="button-wrapper">
+                <span class="button-label">LYRICS</span>
+                <button class="title-bar-btn lyrics-btn" id="lyrics-btn" aria-label="Show/Hide Lyrics"></button>
+              </div>
+              <div class="button-wrapper">
+                <span class="button-label">CHORDS</span>
+                <button class="title-bar-btn structure-btn" id="structure-btn" aria-label="Show/Hide Structure"></button>
+              </div>
+            </div>
             <div class="button-wrapper volume-wrapper">
-              <span class="button-label">VOL</span>
+              <span class="button-label">VOLUME</span>
               <div class="volume-knob" id="volume-knob" aria-label="Volume">
                 <input type="range" id="volume-slider" min="0" max="100" value="100" aria-label="Volume">
               </div>
             </div>
-            <div class="button-wrapper">
-              <span class="button-label">RPT</span>
-              <button class="title-bar-btn repeat-btn" id="repeat-btn" aria-label="Repeat"></button>
-            </div>
-            <div class="button-wrapper">
-              <span class="button-label">SHUF</span>
-              <button class="title-bar-btn shuffle-btn" id="shuffle-btn" aria-label="Shuffle"></button>
-            </div>
-            <div class="button-wrapper">
-              <span class="button-label">LOCK</span>
-              <button class="title-bar-btn lock-btn" id="lock-btn" aria-label="Lock Rotation"></button>
-            </div>
           </div>
-        </div>
       </div>
     </section>
     <section class="album-section">
@@ -1521,7 +1643,7 @@ function formatTime(seconds) {
 function updateProgressBar(audio, progressBar) {
   if (!audio || !isFinite(audio.duration)) {
     progressBar.style.width = '0%';
-    document.getElementById('song-times').textContent = "[00:00 / 00:00]";
+    document.getElementById('song-times').textContent = "";
     return;
   }
   const percent = (audio.currentTime / audio.duration) * 100;
@@ -1529,7 +1651,7 @@ function updateProgressBar(audio, progressBar) {
   document.getElementById('song-times').textContent = `[${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}]`;
 }
 
-function updateTitleBar(trackTitle = 'Sioto Jazz - 29') {
+function updateTitleBar(trackTitle = '') {
   document.getElementById('current-song').textContent = trackTitle;
   const playPauseBtn = document.getElementById('play-pause-btn');
   if (playPauseBtn) {
@@ -2054,18 +2176,8 @@ function stopTrack() {
       }
     }
     currentAudio.removeEventListener('timeupdate', currentAudio._timeupdateHandler);
-    const lyricsContentContainer = document.querySelector('.lyrics-content-container');
-    if (lyricsContentContainer) {
-      lyricsContentContainer.removeEventListener('click', lyricsContentContainer._clickHandler);
-    }
-    const structureContentContainer = document.querySelector('.structure-content-container');
-    if (structureContentContainer) {
-      structureContentContainer.removeEventListener('click', structureContentContainer._clickHandler);
-    }
     document.getElementById('global-progress').style.width = '0%';
-    document.getElementById('song-times').textContent = "[00:00 / 00:00]";
-    document.getElementById('lyrics-container').classList.remove('visible');
-    document.getElementById('structure-container').classList.remove('visible');
+    document.getElementById('song-times').textContent = "::::::::::::::::::";
     document.getElementById('current-lyric').textContent = '';
     document.getElementById('current-lyric').classList.remove('visible');
     document.getElementById('current-chord').textContent = '';
@@ -2076,12 +2188,6 @@ function stopTrack() {
     document.querySelectorAll('.chord-progress').forEach(progress => {
       progress.style.width = '0%';
     });
-    document.getElementById('tracklist').classList.add('visible');
-    document.getElementById('tracks-btn').classList.add('active');
-    document.getElementById('lyrics-section').classList.remove('visible');
-    document.getElementById('lyrics-btn').classList.remove('active');
-    document.getElementById('structure-section').classList.remove('visible');
-    document.getElementById('structure-btn').classList.remove('active');
     currentAudio = null;
     currentSource = null;
     currentTrackIndex = -1;
@@ -2194,28 +2300,6 @@ document.addEventListener('touchmove', (e) => {
 
 document.addEventListener('touchend', () => isDragging = false);
 volumeSlider.addEventListener('input', updateVolumeKnob);
-
-// Lock button
-const lockBtn = document.getElementById('lock-btn');
-lockBtn.classList.add('locked'); // Set locked state by default
-if (lockBtn.querySelector('i')) {
-  lockBtn.querySelector('i').className = 'fas fa-lock'; // Set lock icon
-}
-lockBtn.addEventListener('click', () => {
-  isRotationLocked = !isRotationLocked;
-  lockBtn.classList.toggle('locked', isRotationLocked);
-  if (lockBtn.querySelector('i')) {
-    lockBtn.querySelector('i').className = isRotationLocked ? 'fas fa-lock' : 'fas fa-unlock';
-  }
-  lockBtn.setAttribute('aria-label', isRotationLocked ? 'Unlock Rotation' : 'Lock Rotation');
-  if (isRotationLocked) {
-    targetRotateX = 0;
-    targetRotateY = 0;
-    showButtonMessage('Rotation Locked');
-  } else {
-    showButtonMessage('Rotation Unlocked');
-  }
-});
 
 // Instrument labels
 function parseInstrumentLabels(labelString) {
@@ -2487,55 +2571,66 @@ fetch('album.json')
       }
     });
 
-    // Helper function to handle display toggling after transition
-    function toggleSection(section, button, showMessage, hideMessage) {
-      if (section.classList.contains('visible')) {
-        section.classList.remove('visible');
-        section.addEventListener('transitionend', function handler() {
-          section.style.display = 'none';
-          section.removeEventListener('transitionend', handler);
-        }, { once: true });
+    // Define sections and their corresponding buttons
+    const sections = [
+      { element: document.getElementById('album-display'), button: document.getElementById('album-btn'), showMessage: 'Album Cover Shown', hideMessage: 'Album Cover Hidden' },
+      { element: document.getElementById('tracklist'), button: document.getElementById('tracks-btn'), showMessage: 'Tracks Shown', hideMessage: 'Tracks Hidden' },
+      { element: document.getElementById('lyrics-section'), button: document.getElementById('lyrics-btn'), showMessage: 'Lyrics Shown', hideMessage: 'Lyrics Hidden' },
+      { element: document.getElementById('structure-section'), button: document.getElementById('structure-btn'), showMessage: 'Structure Shown', hideMessage: 'Structure Hidden' }
+    ];
+
+    function toggleSection(selectedSection, selectedButton, showMessage, hideMessage) {
+      // Check if the selected section is already visible
+      const isAlreadyVisible = selectedSection.classList.contains('visible');
+
+      // Close all sections
+      sections.forEach(({ element, button, hideMessage: sectionHideMessage }) => {
+        if (element.classList.contains('visible')) {
+          element.classList.remove('visible');
+          element.addEventListener('transitionend', function handler(event) {
+            if (event.propertyName === 'max-height') {
+              element.style.display = 'none';
+              element.removeEventListener('transitionend', handler);
+            }
+          }, { once: true });
+          button.classList.remove('active');
+          showButtonMessage(sectionHideMessage);
+        }
+      });
+
+      // If the selected section was already visible, don't reopen it (toggle off)
+      if (isAlreadyVisible) {
         showButtonMessage(hideMessage);
-      } else {
-        section.style.display = 'block';
-        // Use setTimeout to ensure display: block is applied before transition
-        setTimeout(() => section.classList.add('visible'), 0);
-        showButtonMessage(showMessage);
+        selectedButton.classList.remove('active');
+        return;
       }
-      button.classList.toggle('active');
+
+      // Open the selected section
+      selectedSection.style.display = selectedSection.classList.contains('album-display') ? 'flex' : 'block';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          selectedSection.classList.add('visible');
+          selectedButton.classList.add('active');
+          showButtonMessage(showMessage);
+        });
+      });
     }
 
-    // Album button
-    document.getElementById('album-btn').addEventListener('click', () => {
-      const albumDisplay = document.getElementById('album-display');
-      toggleSection(albumDisplay, document.getElementById('album-btn'), 'Album Cover Shown', 'Album Cover Hidden');
+    // Update event listeners for section buttons
+    sections.forEach(({ element, button, showMessage, hideMessage }) => {
+      button.addEventListener('click', () => toggleSection(element, button, showMessage, hideMessage));
     });
 
-    // Tracks button
-    document.getElementById('tracks-btn').addEventListener('click', () => {
-      const tracklist = document.getElementById('tracklist');
-      toggleSection(tracklist, document.getElementById('tracks-btn'), 'Tracks Shown', 'Tracks Hidden');
-    });
-
-    // Lyrics button
-    document.getElementById('lyrics-btn').addEventListener('click', () => {
-      const lyricsSection = document.getElementById('lyrics-section');
-      toggleSection(lyricsSection, document.getElementById('lyrics-btn'), 'Lyrics Shown', 'Lyrics Hidden');
-    });
-
-    // Structure button
-    document.getElementById('structure-btn').addEventListener('click', () => {
-      const structureSection = document.getElementById('structure-section');
-      toggleSection(structureSection, document.getElementById('structure-btn'), 'Structure Shown', 'Structure Hidden');
+    // Initialize section visibility (all closed)
+    sections.forEach(({ element }) => {
+      element.style.display = 'none';
     });
 
     // Initialize section visibility
-    document.getElementById('tracklist').classList.add('visible');
-    document.getElementById('tracklist').style.display = 'block';
+    document.getElementById('tracklist').style.display = 'none';
     document.getElementById('lyrics-section').style.display = 'none';
     document.getElementById('structure-section').style.display = 'none';
     document.getElementById('album-display').style.display = 'none';
-    document.getElementById('tracks-btn').classList.add('active');
 
     document.querySelector('.title-bar-progress').addEventListener('click', seekToTime);
   })
