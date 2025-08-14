@@ -112,8 +112,8 @@ canvas {
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   align-items: flex-start;
   gap: 2px;
-  width: 50%;
-  height: 105px !important; /* Updated to 105px */
+  width: 100%;
+  height: 70px !important; /* Updated to 105px */
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
@@ -284,15 +284,16 @@ canvas {
   filter: contrast(150%) brightness(120%);
 }
 
-.title-bar-controls {
+.title-bar-controls, .container-controls {
   display: grid;
-  grid-template-columns: repeat(4, 40px) 50px;
-  grid-template-rows: auto auto auto;
+  grid-template-columns: repeat(4, 50px) 30px;
+  grid-template-rows: auto auto;
   gap: 4px;
   flex: 1;
   align-items: center;
+  align-content: center;
   padding: 10px;
-  width: 50%;
+  width: 100%;
 }
 
 .button-row {
@@ -1051,6 +1052,7 @@ tr.track:hover {
     <section class="name-bar"><span class="band-name">SIOTO JAZZ</span><span class="album-name">Demo Tapes</span></section>
     <section class="title-bar">
       <div class="panel-container">
+        <div class="right-panel">
         <div class="display-container">
           <div style="display: flex; align-items: center; gap: 4px;">
             <span id="current-song">Sioto Jazz - 29</span>
@@ -1061,6 +1063,25 @@ tr.track:hover {
           <div id="button-message"></div>
           <div class="visualizer-container" id="visualizer"></div>
           <div class="title-bar-progress"><div class="progress" id="global-progress"></div></div>
+        </div>
+        <div class="container-controls">
+          <div class="button-wrapper">
+              <span class="button-label">COVER</span>
+              <button class="title-bar-btn album-btn" id="album-btn" aria-label="Show Album Cover"></button>
+            </div>
+            <div class="button-wrapper">
+              <span class="button-label">TRACKS</span>
+              <button class="title-bar-btn tracks-btn" id="tracks-btn" aria-label="Show/Hide Tracks"></button>
+            </div>
+            <div class="button-wrapper">
+              <span class="button-label">LYRICS</span>
+              <button class="title-bar-btn lyrics-btn" id="lyrics-btn" aria-label="Show/Hide Lyrics"></button>
+            </div>
+            <div class="button-wrapper">
+              <span class="button-label">STRUCTURE</span>
+              <button class="title-bar-btn structure-btn" id="structure-btn" aria-label="Show/Hide Structure"></button>
+            </div>
+          </div>
         </div>
         <div class="title-bar-controls">
           <div class="button-row">
@@ -1097,22 +1118,6 @@ tr.track:hover {
             <div class="button-wrapper">
               <span class="button-label">LOCK</span>
               <button class="title-bar-btn lock-btn" id="lock-btn" aria-label="Lock Rotation"></button>
-            </div>
-            <div class="button-wrapper">
-              <span class="button-label">COVER</span>
-              <button class="title-bar-btn album-btn" id="album-btn" aria-label="Show Album Cover"></button>
-            </div>
-            <div class="button-wrapper">
-              <span class="button-label">TRACKS</span>
-              <button class="title-bar-btn tracks-btn" id="tracks-btn" aria-label="Show/Hide Tracks"></button>
-            </div>
-            <div class="button-wrapper">
-              <span class="button-label">LYRICS</span>
-              <button class="title-bar-btn lyrics-btn" id="lyrics-btn" aria-label="Show/Hide Lyrics"></button>
-            </div>
-            <div class="button-wrapper">
-              <span class="button-label">STRUCTURE</span>
-              <button class="title-bar-btn structure-btn" id="structure-btn" aria-label="Show/Hide Structure"></button>
             </div>
           </div>
         </div>
