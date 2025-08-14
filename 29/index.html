@@ -46,11 +46,11 @@ canvas {
 .container {
   max-width: 500px;
   max-height: 700px;
-  top: calc(50vh - 350px);
-  margin: 0 auto;
+  position: fixed; /* Changed from relative to fixed */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the container */
   padding: 6px;
-  position: relative;
-  z-index: 1;
   background: url(resources/metal.jpg) repeat rgba(0, 0, 0, 0.04);
   background-blend-mode: darken;
   backdrop-filter: blur(8px);
@@ -61,7 +61,7 @@ canvas {
   border: solid #1a1a1f 1px;
   box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3);
   transform-style: preserve-3d;
-  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  z-index: 1;
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
 }
@@ -1167,7 +1167,7 @@ let targetRotateY = 0;
 let currentRotateX = 0;
 let currentRotateY = 0;
 const lerpSpeed = 0.05; // Increased for smoother transitions
-let isRotationLocked = false;
+let isRotationLocked = true; // Lock rotation by default
 
 // Linear interpolation function
 function lerp(start, end, t) {
@@ -1356,21 +1356,6 @@ const compositeMaterial = new THREE.ShaderMaterial({
 const compositeQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), compositeMaterial);
 compositeScene.add(compositeQuad);
 
-// Function to update camera position based on scroll
-const container = document.querySelector('.container');
-function updateScrollTransform() {
-  const scrollY = container.scrollTop;
-  const scrollMax = container.scrollHeight - container.clientHeight;
-  if (scrollMax > 0) {
-    const scrollFraction = scrollY / scrollMax;
-    const cameraYRange = 80; // Reduced for less drastic movement
-    targetCameraY = baseCameraY + scrollFraction * cameraYRange - cameraYRange / 2;
-  }
-}
-
-// Initialize scroll position
-updateScrollTransform();
-
 // Mouse and touch movement handling
 let mouseX = 0;
 let mouseY = 0;
@@ -1391,8 +1376,6 @@ document.addEventListener('touchmove', (event) => {
   event.preventDefault();
   updateRotation(event, true);
 }, { passive: false });
-
-container.addEventListener('scroll', updateScrollTransform);
 
 // Music player logic
 let currentAudio = null;
@@ -1425,6 +1408,7 @@ function showButtonMessage(message) {
 }
 
 // Animation loop
+const container = document.querySelector('.container');
 let lastFrameTime = performance.now();
 function animate() {
   requestAnimationFrame(animate);
@@ -1469,7 +1453,9 @@ function animate() {
   starGroup.rotation.y += 0.0003; // Slower rotation
   currentRotateX = lerp(currentRotateX, targetRotateX, lerpSpeed * 3);
   currentRotateY = lerp(currentRotateY, targetRotateY, lerpSpeed * 3);
-  container.style.transform = `perspective(1000px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
+  container.style.transform = isRotationLocked
+    ? 'translate(-50%, -50%)' // Keep centered, no rotation
+    : `perspective(1000px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) translate(-50%, -50%)`;
   webGLRenderer.setRenderTarget(sharpRenderTarget);
   webGLRenderer.render(scene, camera);
   webGLRenderer.setRenderTarget(blurRenderTarget);
@@ -2032,7 +2018,7 @@ function stopTrack() {
     if (currentSource) {
       try {
         currentSource.disconnect();
-      } catch (error) {
+      } catch (errorsem) {
         console.error('Error disconnecting source:', error);
       }
     }
@@ -2180,10 +2166,17 @@ volumeSlider.addEventListener('input', updateVolumeKnob);
 
 // Lock button
 const lockBtn = document.getElementById('lock-btn');
+lockBtn.classList.add('locked'); // Set locked state by default
+if (lockBtn.querySelector('i')) {
+  lockBtn.querySelector('i').className = 'fas fa-lock'; // Set lock icon
+}
 lockBtn.addEventListener('click', () => {
   isRotationLocked = !isRotationLocked;
   lockBtn.classList.toggle('locked', isRotationLocked);
-  lockBtn.querySelector('i').className = isRotationLocked ? 'fas fa-lock' : 'fas fa-unlock';
+  if (lockBtn.querySelector('i')) {
+    lockBtn.querySelector('i').className = isRotationLocked ? 'fas fa-lock' : 'fas fa-unlock';
+  }
+  lockBtn.setAttribute('aria-label', isRotationLocked ? 'Unlock Rotation' : 'Lock Rotation');
   if (isRotationLocked) {
     targetRotateX = 0;
     targetRotateY = 0;
