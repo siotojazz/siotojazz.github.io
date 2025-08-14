@@ -58,8 +58,8 @@ canvas {
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
-  border: inset #2a4a9f 1px;
-  box-shadow: 0px 0px 30px rgba(126, 187, 233, 0.3);
+  border: solid #1a1a1f 1px;
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3);
   transform-style: preserve-3d;
   transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
   scrollbar-width: thin;
@@ -98,12 +98,11 @@ canvas {
   display: flex;
   flex-direction: row;
   width: 100%;
-  background: linear-gradient(135deg, #010101, #0A0A0A);
-  border: 1px solid #000000;
+  background: linear-gradient(135deg, #010101 0%, #0A0A0A 50%, #010101 100%);
+  border: 2px inset #1A1A1A;
   box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.6), 
-    0 0 12px rgba(126, 187, 233, 0.3);
-  padding: 4px;
+    inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  padding: 6px;
   position: relative;
 }
 
@@ -253,7 +252,8 @@ canvas {
 
 .name-bar {
   font-family: Helvetica, Arial, sans-serif;
-  padding: 0px 8px;
+  padding: 0px 18px;
+  margin: -10px;
 }
 
 .band-name {
