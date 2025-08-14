@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
 
 @font-face {
   font-family: 'Garet';
@@ -45,13 +45,13 @@ canvas {
 
 .container {
   max-width: 500px;
-  height: 700px;
+  max-height: 700px;
   top: calc(50vh - 350px);
   margin: 0 auto;
   padding: 6px;
   position: relative;
   z-index: 1;
-  background: url(resources/metal.jpg) repeat rgba(0, 0, 0, 0.3);
+  background: url(resources/metal.jpg) repeat rgba(0, 0, 0, 0.2);
   background-blend-mode: darken;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -100,8 +100,7 @@ canvas {
   width: 100%;
   background: linear-gradient(135deg, #010101 0%, #0A0A0A 50%, #010101 100%);
   border: 2px inset #1A1A1A;
-  box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
   padding: 6px;
   position: relative;
 }
@@ -110,19 +109,18 @@ canvas {
   background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%);
   border-radius: 0;
   padding: 6px;
-  box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.5); 
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   align-items: flex-start;
   gap: 2px;
   width: 50%;
-  height: 100px !important;
+  height: 105px !important; /* Updated to 105px */
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
   font-family: 'VT323', monospace;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   z-index: 2;
 }
 
@@ -185,9 +183,7 @@ canvas {
   padding: 2px 4px;
   background: linear-gradient(135deg, #1c3077, #0e1a4b);
   border: 1px solid #2a4a9f;
-  box-shadow: 
-    inset 0 1px 2px rgba(0, 0, 0, 0.5),
-    0 2px 4px rgba(126, 187, 233, 0.2);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(126, 187, 233, 0.2);
   position: absolute;
   right: 4px;
   top: 4px;
@@ -237,8 +233,7 @@ canvas {
   justify-content: center;
   align-items: flex-end;
   height: 12px;
-  margin: 0;
-  margin-bottom: -20px;
+  margin: 4px 0;
   gap: 1px;
   position: relative;
   z-index: 2;
@@ -248,6 +243,7 @@ canvas {
   width: 4px;
   background: linear-gradient(180deg, #7ebbe9, #2a4a9f);
   box-shadow: 0 0 8px rgba(126, 187, 233, 0.6);
+  transition: height 0.1s ease;
 }
 
 .name-bar {
@@ -291,7 +287,7 @@ canvas {
 .title-bar-controls {
   display: grid;
   grid-template-columns: repeat(4, 40px) 50px;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto auto auto;
   gap: 4px;
   flex: 1;
   align-items: center;
@@ -334,10 +330,6 @@ canvas {
   width: 40px;
   height: 12px;
   cursor: pointer;
-  /* box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.4), 
-    0 2px 6px rgba(0, 0, 0, 0.3), 
-    0 0 8px rgba(126, 187, 233, 0.2); */
   border-radius: 0;
   display: flex;
   align-items: center;
@@ -355,7 +347,6 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  /* background: linear-gradient(to bottom, rgba(126, 187, 233, 0.3), transparent); */
   transform: rotate(-10deg);
   transform-origin: top left;
   pointer-events: none;
@@ -364,17 +355,12 @@ canvas {
 
 .title-bar-btn:hover {
   background: linear-gradient(135deg, #2a2a2a, #1A1A1A);
-  box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.4), 
-    0 3px 8px rgba(0, 0, 0, 0.4), 
-    0 0 10px rgba(126, 187, 233, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 3px 8px rgba(0, 0, 0, 0.4), 0 0 10px rgba(126, 187, 233, 0.3);
 }
 
 .title-bar-btn:active {
   transform: translateY(1px);
-  box-shadow: 
-    inset 0 1px 2px rgba(0, 0, 0, 0.5), 
-    0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .title-bar-btn i {
@@ -468,10 +454,6 @@ canvas {
   background: linear-gradient(0deg, #333, #030303);
   border: 1px solid #000000;
   border-radius: 50%;
-  /* box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.4), 
-    0 2px 6px rgba(0, 0, 0, 0.3), 
-    0 0 8px rgba(126, 187, 233, 0.2); */
   cursor: pointer;
   transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
   touch-action: manipulation;
@@ -479,17 +461,12 @@ canvas {
 
 .volume-knob:hover {
   background: linear-gradient(0deg, #333, #1A1A1A);
-  box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.4), 
-    0 3px 8px rgba(0, 0, 0, 0.4), 
-    0 0 10px rgba(126, 187, 233, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 3px 8px rgba(0, 0, 0, 0.4), 0 0 10px rgba(126, 187, 233, 0.3);
 }
 
 .volume-knob:active {
   transform: translateY(1px);
-  box-shadow: 
-    inset 0 1px 2px rgba(0, 0, 0, 0.9), 
-    0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9), 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .volume-knob::before {
@@ -498,9 +475,7 @@ canvas {
   width: 8px;
   height: 8px;
   background: #7ebbe9;
-  box-shadow: 
-    inset 0 1px 2px rgba(0, 0, 0, 0.9), 
-    0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9), 0 1px 3px rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   top: 4px;
   left: 50%;
@@ -526,6 +501,19 @@ canvas {
   border: 1px solid #2a4a9f;
 }
 
+.tracks-btn.title-bar-btn, .lyrics-btn.title-bar-btn, .structure-btn.title-bar-btn {
+  background: linear-gradient(135deg, #1A1A1A, #0A0A0A);
+}
+
+.tracks-btn.title-bar-btn:hover, .lyrics-btn.title-bar-btn:hover, .structure-btn.title-bar-btn:hover {
+  background: linear-gradient(135deg, #2a2a2a, #1A1A1A);
+}
+
+.tracks-btn.title-bar-btn.active, .lyrics-btn.title-bar-btn.active, .structure-btn.title-bar-btn.active {
+  background: linear-gradient(135deg, #2a2a2a, #1A1A1A);
+  border: 1px solid #2a4a9f;
+}
+
 .album-section {
   margin: 4px 0;
   display: flex;
@@ -537,11 +525,7 @@ canvas {
   background: linear-gradient(135deg, #1A222200, #0E111133);
   border: 1px solid #000000;
   border-radius: 0;
-  box-shadow:
-    inset 0 4px 8px rgba(0, 0, 0, 0.6),
-    inset 0 -4px 8px rgba(0, 0, 0, 0.6),
-    0 6px 12px rgba(0, 0, 0, 0.5),
-    0 0 15px rgba(126, 187, 233, 0.3);
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 -4px 8px rgba(0, 0, 0, 0.6), 0 6px 12px rgba(0, 0, 0, 0.5), 0 0 15px rgba(126, 187, 233, 0.3);
   position: relative;
   padding: 0;
   box-sizing: border-box;
@@ -573,21 +557,34 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(0, 0, 0, 0.2) 100%
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.2) 100%);
   z-index: 2;
   mix-blend-mode: overlay;
   pointer-events: none;
 }
 
 #tracklist {
-  padding: 0;
+  padding: 6px;
   margin: 0;
   border-radius: 0;
+  background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%); /* Matches display-container */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+#tracklist::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #1c307722, transparent);
+  transform: rotate(30deg);
+  transform-origin: top left;
+  pointer-events: none;
+  z-index: 1;
 }
 
 table {
@@ -597,8 +594,12 @@ table {
   border: 0;
   box-shadow: none;
   border-radius: 0;
-  font-size: 16px;
+  font-family: 'VT323', monospace; /* Matches display-container */
+  font-size: 10px; /* Matches lyric-line size */
+  color: #7ebbe9;
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
   position: relative;
+  z-index: 2;
 }
 
 thead {
@@ -642,13 +643,14 @@ tr.track:hover {
 }
 
 .track-title {
-  font-family: 'Garet', sans-serif;
+  font-family: 'VT323', monospace; /* Matches display-container */
   color: #7ebbe9;
   cursor: pointer;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
 }
 
 .track-label {
@@ -692,17 +694,20 @@ tr.track:hover {
 .track-tempo {
   color: #7ebbe9;
   text-align: center;
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
 }
 
 .track-duration {
   color: #7ebbe9;
   text-align: center;
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
 }
 
 #total-time {
   color: #7ebbe9;
   text-align: center;
   padding: 3px;
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
 }
 
 #lyrics-section {
@@ -714,21 +719,39 @@ tr.track:hover {
   display: none;
   color: #7ebbe9;
   border-radius: 0;
+  background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%);
+  padding: 6px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
 }
 
 .lyrics-container.visible {
   display: block;
 }
 
+.lyrics-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #1c307722, transparent);
+  transform: rotate(30deg);
+  transform-origin: top left;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .lyrics-title {
-  font-family: 'Garet', sans-serif;
-  font-size: 13px;
-  margin: 0;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(90deg, #1c3077, #0e1a4b);
-  box-shadow: inset 0 2px 4px rgba(126, 187, 233, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: #7ebbe9;
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
   padding: 4px 12px;
   position: relative;
+  z-index: 2;
 }
 
 .lyrics-content-container {
@@ -737,8 +760,12 @@ tr.track:hover {
 }
 
 .lyrics-content-container .lyric-line {
-  margin: 0;
-  padding: 2px 0;
+  font-family: 'VT323', monospace;
+  font-size: 10px;
+  color: #7ebbe9;
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
+  padding: 2px 4px;
+  margin: 2px 0;
   transition: background 0.3s ease, color 0.3s ease;
   cursor: pointer;
 }
@@ -788,15 +815,11 @@ tr.track:hover {
 .lyrics-meta-date,
 .lyrics-meta-tempo,
 .lyrics-meta-timeSignature {
-  font-family: 'Garet', sans-serif;
-  font-size: 11px;
+  font-family: 'VT323', monospace;
+  font-size: 8px;
   color: #7ebbe9;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  padding: 4px 8px;
-  background: rgba(42, 74, 159, 0.3);
-  transition: background 0.2s ease, color 0.2s ease;
-  position: relative;
-  z-index: 2;
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
+  padding: 2px 4px;
 }
 
 .lyrics-meta-date:hover,
@@ -818,20 +841,38 @@ tr.track:hover {
   color: #7ebbe9;
   border-radius: 0;
   padding: 6px;
+  background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
 }
 
 .structure-container.visible {
   display: block;
 }
 
+.structure-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #1c307722, transparent);
+  transform: rotate(30deg);
+  transform-origin: top left;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .structure-title {
-  font-family: 'Garet', sans-serif;
-  font-size: 13px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(90deg, #1c3077, #0e1a4b);
-  box-shadow: inset 0 2px 4px rgba(126, 187, 233, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: #7ebbe9;
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
   padding: 4px 12px;
   position: relative;
+  z-index: 2;
 }
 
 .structure-content-container {
@@ -843,18 +884,12 @@ tr.track:hover {
 }
 
 .lyrics-meta-structure-section {
-  font-family: 'Garet', sans-serif;
-  font-size: 12px;
+  font-family: 'VT323', monospace;
+  font-size: 10px;
   color: #7ebbe9;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(135deg, #1c3077, #0e1a4b);
-  padding: 4px 8px;
-  margin-top: 10px;
-  margin-bottom: 0;
-  box-shadow: 
-    inset 0 1px 2px rgba(126, 187, 233, 0.2),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.4),
-    0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
+  padding: 2px 4px;
+  margin: 2px 0;
 }
 
 .lyrics-meta-structure-content {
@@ -865,17 +900,15 @@ tr.track:hover {
 }
 
 .chord-block {
-  font-family: 'Garet', sans-serif;
-  font-size: 11px;
+  font-family: 'VT323', monospace;
+  font-size: 8px;
   color: #7ebbe9;
-  background: linear-gradient(135deg, #2A3232, #1A2222);
+  text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
+  background: linear-gradient(135deg, #1c3077, #0e1a4b);
   border: 1px solid #2a4a9f;
   border-radius: 0;
-  padding: 4px 8px;
-  box-shadow: 
-    inset 0 1px 2px rgba(126, 187, 233, 0.2),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.5),
-    0 2px 4px rgba(0, 0, 0, 0.3);
+  padding: 2px 4px;
+  box-shadow: inset 0 1px 2px rgba(126, 187, 233, 0.2), inset 0 -1px 2px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
   cursor: pointer;
   width: calc(40px * var(--repeat-count, 1));
@@ -890,21 +923,13 @@ tr.track:hover {
   flex-wrap: wrap;
   gap: 2px;
   margin-bottom: 4px;
-  padding: 4px;
-  background: linear-gradient(135deg, rgba(20, 28, 28, 0.5), rgba(14, 17, 17, 0.5));
-  border: 1px solid #2a4a9f;
-  border-radius: 0;
-  box-shadow: inset 0 1px 2px rgba(126, 187, 233, 0.1), inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+  padding: 2px;
 }
 
 .chord-block.active {
   background: linear-gradient(135deg, #7ebbe9, #2a4a9f);
   color: #FFF;
-  box-shadow: 
-    inset 0 1px 2px rgba(126, 187, 233, 0.5),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.7),
-    0 3px 6px rgba(0, 0, 0, 0.7),
-    0 0 8px rgba(126, 187, 233, 0.6);
+  box-shadow: inset 0 1px 2px rgba(126, 187, 233, 0.5), inset 0 -1px 2px rgba(0, 0, 0, 0.7), 0 3px 6px rgba(0, 0, 0, 0.7), 0 0 8px rgba(126, 187, 233, 0.6);
   transition: 0.2s;
   z-index: 100;
 }
@@ -1023,7 +1048,7 @@ tr.track:hover {
 </head>
 <body>
    <div class="container">
-    <section class="name-bar"><span class="band-name">SIOTO JAZZ</span><span class="album-name">JV - 1080</span></section>
+    <section class="name-bar"><span class="band-name">SIOTO JAZZ</span><span class="album-name">Demo Tapes</span></section>
     <section class="title-bar">
       <div class="panel-container">
         <div class="display-container">
@@ -1055,6 +1080,12 @@ tr.track:hover {
               <span class="button-label">NEXT</span>
               <button class="title-bar-btn" id="next-btn" aria-label="Next Track"></button>
             </div>
+            <div class="button-wrapper volume-wrapper">
+              <span class="button-label">VOLUME</span>
+              <div class="volume-knob" id="volume-knob" aria-label="Volume">
+                <input type="range" id="volume-slider" min="0" max="100" value="100" aria-label="Volume">
+              </div>
+            </div>
             <div class="button-wrapper">
               <span class="button-label">REPEAT</span>
               <button class="title-bar-btn repeat-btn" id="repeat-btn" aria-label="Repeat"></button>
@@ -1071,11 +1102,17 @@ tr.track:hover {
               <span class="button-label">COVER</span>
               <button class="title-bar-btn album-btn" id="album-btn" aria-label="Show Album Cover"></button>
             </div>
-            <div class="button-wrapper volume-wrapper">
-              <span class="button-label">VOLUME</span>
-              <div class="volume-knob" id="volume-knob" aria-label="Volume">
-                <input type="range" id="volume-slider" min="0" max="100" value="100" aria-label="Volume">
-              </div>
+            <div class="button-wrapper">
+              <span class="button-label">TRACKS</span>
+              <button class="title-bar-btn tracks-btn" id="tracks-btn" aria-label="Show/Hide Tracks"></button>
+            </div>
+            <div class="button-wrapper">
+              <span class="button-label">LYRICS</span>
+              <button class="title-bar-btn lyrics-btn" id="lyrics-btn" aria-label="Show/Hide Lyrics"></button>
+            </div>
+            <div class="button-wrapper">
+              <span class="button-label">STRUCTURE</span>
+              <button class="title-bar-btn structure-btn" id="structure-btn" aria-label="Show/Hide Structure"></button>
             </div>
           </div>
         </div>
@@ -1115,6 +1152,7 @@ tr.track:hover {
     </section>
   </div>
 <script>
+  
   // Three.js WebGL setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 4000);
@@ -1416,7 +1454,8 @@ function updateVisualizer() {
   try {
     analyser.getByteFrequencyData(frequencyData);
     bars.forEach((bar, i) => {
-      const height = (frequencyData[i] / 255) * 25; // Adjusted for visual balance
+      const index = Math.floor(i * (frequencyData.length / barCount));
+      const height = (frequencyData[index] / 255) * 25;
       bar.style.height = `${height}px`;
     });
   } catch (error) {
@@ -2061,8 +2100,12 @@ function stopTrack() {
     document.querySelectorAll('.chord-progress').forEach(progress => {
       progress.style.width = '0%';
     });
-    currentLyricIndex = -1;
-    currentChordIndex = -1;
+    document.getElementById('tracklist').style.display = 'block';
+    document.getElementById('tracks-btn').classList.add('active');
+    document.getElementById('lyrics-section').style.display = 'none';
+    document.getElementById('lyrics-btn').classList.remove('active');
+    document.getElementById('structure-section').style.display = 'none';
+    document.getElementById('structure-btn').classList.remove('active');
     document.querySelectorAll('.visualizer-bar').forEach(bar => bar.style.height = '2px');
     currentAudio = null;
     currentSource = null;
@@ -2469,6 +2512,33 @@ fetch('album.json')
       document.getElementById('album-btn').classList.toggle('active');
       showButtonMessage(albumDisplay.classList.contains('visible') ? 'Album Cover Shown' : 'Album Cover Hidden');
     });
+
+    document.getElementById('tracks-btn').addEventListener('click', () => {
+      const tracklist = document.getElementById('tracklist');
+      tracklist.style.display = tracklist.style.display === 'none' ? 'block' : 'none';
+      document.getElementById('tracks-btn').classList.toggle('active');
+      showButtonMessage(tracklist.style.display === 'block' ? 'Tracks Shown' : 'Tracks Hidden');
+    });
+
+    document.getElementById('lyrics-btn').addEventListener('click', () => {
+      const lyricsSection = document.getElementById('lyrics-section');
+      lyricsSection.style.display = lyricsSection.style.display === 'none' ? 'block' : 'none';
+      document.getElementById('lyrics-btn').classList.toggle('active');
+      showButtonMessage(lyricsSection.style.display === 'block' ? 'Lyrics Shown' : 'Lyrics Hidden');
+    });
+
+    document.getElementById('structure-btn').addEventListener('click', () => {
+      const structureSection = document.getElementById('structure-section');
+      structureSection.style.display = structureSection.style.display === 'none' ? 'block' : 'none';
+      document.getElementById('structure-btn').classList.toggle('active');
+      showButtonMessage(structureSection.style.display === 'block' ? 'Structure Shown' : 'Structure Hidden');
+    });
+
+    // Initialize section visibility
+    document.getElementById('tracklist').style.display = 'block';
+    document.getElementById('lyrics-section').style.display = 'none';
+    document.getElementById('structure-section').style.display = 'none';
+    document.getElementById('tracks-btn').classList.add('active');
 
     document.querySelector('.title-bar-progress').addEventListener('click', seekToTime);
   })
