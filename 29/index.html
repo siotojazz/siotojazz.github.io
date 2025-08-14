@@ -7,11 +7,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
 
 @font-face {
   font-family: 'Garet';
   src: url('../fonts/Garet.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Astrella';
+  src: url('../fonts/Astrella.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -44,7 +51,8 @@ canvas {
   padding: 6px;
   position: relative;
   z-index: 1;
-  background: rgba(255, 255, 255, 0.06);
+  background: url(resources/metal.jpg) repeat rgba(0, 0, 0, 0.3);
+  background-blend-mode: darken;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   overflow-y: auto;
@@ -100,13 +108,11 @@ canvas {
 }
 
 .display-container {
-  background: linear-gradient(135deg, #1c3077, #0e1a4b);
-  border: 1px solid #2a4a9f;
+  background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%);
   border-radius: 0;
   padding: 6px;
   box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.6), 
-    0 0 12px rgba(126, 187, 233, 0.4);
+    inset 0 2px 4px rgba(0, 0, 0, 0.5); 
   align-items: flex-start;
   gap: 2px;
   width: 50%;
@@ -128,8 +134,8 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(126, 187, 233, 0.3), transparent);
-  transform: rotate(-10deg);
+  background: linear-gradient(to bottom, #1c307722, transparent);
+  transform: rotate(30deg);
   transform-origin: top left;
   pointer-events: none;
   z-index: 1;
@@ -243,6 +249,21 @@ canvas {
   width: 4px;
   background: linear-gradient(180deg, #7ebbe9, #2a4a9f);
   box-shadow: 0 0 8px rgba(126, 187, 233, 0.6);
+}
+
+.name-bar {
+  font-family: Helvetica, Arial, sans-serif;
+  padding: 0px 8px;
+}
+
+.band-name {
+  font-family: Astrella, sans-serif;
+}
+
+.album-name {
+  font-family: Garet, sans-serif;
+  padding-left: 10px;
+  color: #567bb7;
 }
 
 .title-bar-progress {
@@ -601,14 +622,14 @@ th i {
 }
 
 tr.track:hover {
-  background: linear-gradient(135deg, rgba(126, 187, 233, 0.6), rgba(42, 74, 159, 0.6));
+  background: linear-gradient(135deg, rgba(42, 74, 159, 0.6) 0%, rgba(42, 74, 159, 0.6) 60%, #27199caa 61%, #27199caa 100%);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(126, 187, 233, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
   z-index: 2;
 }
 
 .now-playing {
-  background: linear-gradient(135deg, #7ebbe9, #2a4a9f);
+  background: linear-gradient(135deg, #27199c, #2a4a9f);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(126, 187, 233, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
   z-index: 2;
@@ -1002,6 +1023,7 @@ tr.track:hover {
 </head>
 <body>
    <div class="container">
+    <section class="name-bar"><span class="band-name">SIOTO JAZZ</span><span class="album-name">JV - 1080</span></section>
     <section class="title-bar">
       <div class="panel-container">
         <div class="display-container">
@@ -1022,7 +1044,7 @@ tr.track:hover {
               <button class="title-bar-btn" id="prev-btn" aria-label="Previous Track"></button>
             </div>
             <div class="button-wrapper">
-              <span class="button-label">PLAY/PAUSE</span>
+              <span class="button-label">PLAY</span>
               <button class="title-bar-btn play-btn" id="play-pause-btn" aria-label="Play or Pause"></button>
             </div>
             <div class="button-wrapper">
