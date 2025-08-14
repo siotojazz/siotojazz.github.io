@@ -24,6 +24,13 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Roland';
+  src: url('resources/Roland.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   font-family: 'Garet', sans-serif;
   background: #0A1010;
@@ -123,7 +130,7 @@ canvas {
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
-  font-family: 'VT323', monospace;
+  font-family: 'Garet', monospace;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -145,7 +152,6 @@ canvas {
 }
 
 #current-song {
-  font-family: 'VT323', monospace;
   font-size: 14px;
   color: #7ebbe9;
   text-align: left;
@@ -159,7 +165,6 @@ canvas {
 }
 
 #current-lyric {
-  font-family: 'VT323', monospace;
   font-size: 10px;
   color: #7ebbe9;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
@@ -180,7 +185,6 @@ canvas {
 }
 
 #current-chord {
-  font-family: 'VT323', monospace;
   font-size: 10px;
   color: #7ebbe9;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
@@ -200,8 +204,7 @@ canvas {
 }
 
 #song-times {
-  font-family: 'VT323', monospace;
-  font-size: 12px;
+  font-size: 10px;
   color: #7ebbe9;
   text-align: left;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
@@ -210,8 +213,7 @@ canvas {
 }
 
 #button-message {
-  font-family: 'VT323', monospace;
-  font-size: 6px;
+  font-size: 10px;
   color: #7ebbe9;
   text-align: right;
   opacity: 0;
@@ -310,7 +312,7 @@ canvas {
 }
 
 .button-label {
-  font-family: 'VT323', monospace;
+  font-family: 'Roland', monospace;
   font-size: 12px;
   color: #FFFC;
   width: 40px;
