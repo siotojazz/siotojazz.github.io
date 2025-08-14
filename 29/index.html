@@ -8,6 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 @font-face {
   font-family: 'Garet';
@@ -46,10 +47,10 @@ canvas {
 .container {
   max-width: 500px;
   max-height: 700px;
-  position: fixed; /* Changed from relative to fixed */
+  position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Center the container */
+  transform: translate(-50%, -50%);
   padding: 6px;
   background: url(resources/metal.jpg) repeat rgba(0, 0, 0, 0.04);
   background-blend-mode: darken;
@@ -64,6 +65,8 @@ canvas {
   z-index: 1;
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
 }
 
 .container::-webkit-scrollbar {
@@ -116,7 +119,7 @@ canvas {
   align-items: flex-start;
   gap: 2px;
   width: 100%;
-  height: 70px !important; /* Updated to 105px */
+  height: 70px !important;
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
@@ -279,13 +282,13 @@ canvas {
   padding: 10px;
 }
 
- .container-controls {
-    display: flex;
-    gap: 20px;
-    flex: 1;
-    align-content: center;
-    padding: 10px;
- }
+.container-controls {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  align-content: center;
+  padding: 10px;
+}
 
 .button-row {
   display: contents;
@@ -353,7 +356,6 @@ canvas {
 
 .title-bar-btn:active {
   transform: translateY(1px);
-  /* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3); */
 }
 
 .title-bar-btn i {
@@ -518,13 +520,18 @@ canvas {
   position: relative;
   padding: 0;
   box-sizing: border-box;
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.5s ease;
+  overflow: hidden;
   align-items: center;
   justify-content: center;
   z-index: 2;
 }
 
 .album-display.visible {
+  max-height: 500px;
+  opacity: 1;
   display: flex;
 }
 
@@ -556,9 +563,18 @@ canvas {
   padding: 6px;
   margin: 0;
   border-radius: 0;
-  background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%); /* Matches display-container */
+  background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
+  overflow: hidden;
+  max-height: 1000px;
+  opacity: 1;
+  transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+#tracklist:not(.visible) {
+  max-height: 0;
+  opacity: 0;
   overflow: hidden;
 }
 
@@ -583,8 +599,8 @@ table {
   border: 0;
   box-shadow: none;
   border-radius: 0;
-  font-family: 'VT323', monospace; /* Matches display-container */
-  font-size: 10px; /* Matches lyric-line size */
+  font-family: 'VT323', monospace;
+  font-size: 10px;
   color: #7ebbe9;
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
   position: relative;
@@ -632,7 +648,7 @@ tr.track:hover {
 }
 
 .track-title {
-  font-family: 'VT323', monospace; /* Matches display-container */
+  font-family: 'VT323', monospace;
   color: #7ebbe9;
   cursor: pointer;
   text-align: left;
@@ -702,10 +718,19 @@ tr.track:hover {
 #lyrics-section {
   padding: 0;
   margin: 0;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.5s ease;
+  overflow: hidden;
+}
+
+#lyrics-section.visible {
+  max-height: 1000px;
+  opacity: 1;
+  display: block;
 }
 
 .lyrics-container {
-  display: none;
   color: #7ebbe9;
   border-radius: 0;
   background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%);
@@ -713,10 +738,6 @@ tr.track:hover {
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
   overflow: hidden;
-}
-
-.lyrics-container.visible {
-  display: block;
 }
 
 .lyrics-container::after {
@@ -825,8 +846,22 @@ tr.track:hover {
   color: #7ebbe9;
 }
 
+#structure-section {
+  padding: 0;
+  margin: 0;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.5s ease;
+  overflow: hidden;
+}
+
+#structure-section.visible {
+  max-height: 1000px;
+  opacity: 1;
+  display: block;
+}
+
 .structure-container {
-  display: none;
   color: #7ebbe9;
   border-radius: 0;
   padding: 6px;
@@ -834,10 +869,6 @@ tr.track:hover {
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
   overflow: hidden;
-}
-
-.structure-container.visible {
-  display: block;
 }
 
 .structure-container::after {
@@ -1421,7 +1452,7 @@ function animate() {
   const pos = starsGeometry.attributes.position;
   const posArr = pos.array;
   for (let i = 2; i < pos.count * 3; i += 3) {
-    posArr[i] -= 0.08; // Slower movement
+    posArr[i] -= 0.08;
     if (posArr[i] < -2000) posArr[i] += 4000;
   }
   pos.needsUpdate = true;
@@ -1444,18 +1475,18 @@ function animate() {
     posAttr.needsUpdate = true;
   });
   comets.forEach((comet, index) => {
-    comet.position.z -= 8; // Slower comet speed
+    comet.position.z -= 8;
     if (comet.position.z < -2000) {
       starGroup.remove(comet);
       comets.splice(index, 1);
     }
   });
-  starGroup.rotation.y += 0.0003; // Slower rotation
+  starGroup.rotation.y += 0.0003;
   currentRotateX = lerp(currentRotateX, targetRotateX, lerpSpeed * 3);
   currentRotateY = lerp(currentRotateY, targetRotateY, lerpSpeed * 3);
   container.style.transform = isRotationLocked
     ? 'translate(-50%, -50%)' // Keep centered, no rotation
-    : `perspective(1000px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) translate(-50%, -50%)`;
+    : `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) translate(-50%, -50%)`; // Removed perspective
   webGLRenderer.setRenderTarget(sharpRenderTarget);
   webGLRenderer.render(scene, camera);
   webGLRenderer.setRenderTarget(blurRenderTarget);
@@ -2018,7 +2049,7 @@ function stopTrack() {
     if (currentSource) {
       try {
         currentSource.disconnect();
-      } catch (errorsem) {
+      } catch (error) {
         console.error('Error disconnecting source:', error);
       }
     }
@@ -2045,11 +2076,11 @@ function stopTrack() {
     document.querySelectorAll('.chord-progress').forEach(progress => {
       progress.style.width = '0%';
     });
-    document.getElementById('tracklist').style.display = 'block';
+    document.getElementById('tracklist').classList.add('visible');
     document.getElementById('tracks-btn').classList.add('active');
-    document.getElementById('lyrics-section').style.display = 'none';
+    document.getElementById('lyrics-section').classList.remove('visible');
     document.getElementById('lyrics-btn').classList.remove('active');
-    document.getElementById('structure-section').style.display = 'none';
+    document.getElementById('structure-section').classList.remove('visible');
     document.getElementById('structure-btn').classList.remove('active');
     currentAudio = null;
     currentSource = null;
@@ -2456,38 +2487,54 @@ fetch('album.json')
       }
     });
 
+    // Helper function to handle display toggling after transition
+    function toggleSection(section, button, showMessage, hideMessage) {
+      if (section.classList.contains('visible')) {
+        section.classList.remove('visible');
+        section.addEventListener('transitionend', function handler() {
+          section.style.display = 'none';
+          section.removeEventListener('transitionend', handler);
+        }, { once: true });
+        showButtonMessage(hideMessage);
+      } else {
+        section.style.display = 'block';
+        // Use setTimeout to ensure display: block is applied before transition
+        setTimeout(() => section.classList.add('visible'), 0);
+        showButtonMessage(showMessage);
+      }
+      button.classList.toggle('active');
+    }
+
+    // Album button
     document.getElementById('album-btn').addEventListener('click', () => {
       const albumDisplay = document.getElementById('album-display');
-      albumDisplay.classList.toggle('visible');
-      document.getElementById('album-btn').classList.toggle('active');
-      showButtonMessage(albumDisplay.classList.contains('visible') ? 'Album Cover Shown' : 'Album Cover Hidden');
+      toggleSection(albumDisplay, document.getElementById('album-btn'), 'Album Cover Shown', 'Album Cover Hidden');
     });
 
+    // Tracks button
     document.getElementById('tracks-btn').addEventListener('click', () => {
       const tracklist = document.getElementById('tracklist');
-      tracklist.style.display = tracklist.style.display === 'none' ? 'block' : 'none';
-      document.getElementById('tracks-btn').classList.toggle('active');
-      showButtonMessage(tracklist.style.display === 'block' ? 'Tracks Shown' : 'Tracks Hidden');
+      toggleSection(tracklist, document.getElementById('tracks-btn'), 'Tracks Shown', 'Tracks Hidden');
     });
 
+    // Lyrics button
     document.getElementById('lyrics-btn').addEventListener('click', () => {
       const lyricsSection = document.getElementById('lyrics-section');
-      lyricsSection.style.display = lyricsSection.style.display === 'none' ? 'block' : 'none';
-      document.getElementById('lyrics-btn').classList.toggle('active');
-      showButtonMessage(lyricsSection.style.display === 'block' ? 'Lyrics Shown' : 'Lyrics Hidden');
+      toggleSection(lyricsSection, document.getElementById('lyrics-btn'), 'Lyrics Shown', 'Lyrics Hidden');
     });
 
+    // Structure button
     document.getElementById('structure-btn').addEventListener('click', () => {
       const structureSection = document.getElementById('structure-section');
-      structureSection.style.display = structureSection.style.display === 'none' ? 'block' : 'none';
-      document.getElementById('structure-btn').classList.toggle('active');
-      showButtonMessage(structureSection.style.display === 'block' ? 'Structure Shown' : 'Structure Hidden');
+      toggleSection(structureSection, document.getElementById('structure-btn'), 'Structure Shown', 'Structure Hidden');
     });
 
     // Initialize section visibility
+    document.getElementById('tracklist').classList.add('visible');
     document.getElementById('tracklist').style.display = 'block';
     document.getElementById('lyrics-section').style.display = 'none';
     document.getElementById('structure-section').style.display = 'none';
+    document.getElementById('album-display').style.display = 'none';
     document.getElementById('tracks-btn').classList.add('active');
 
     document.querySelector('.title-bar-progress').addEventListener('click', seekToTime);
