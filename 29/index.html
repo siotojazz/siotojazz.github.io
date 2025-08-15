@@ -50,9 +50,14 @@ canvas {
   z-index: -1;
 }
 
+section:not(.name-bar):not(.title-bar)::after {
+  box-sizing: border-box;
+  border: 10px solid #000;
+}
+
 .container {
   width: 570px;
-  max-height: 700px;
+  max-height: 750px;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -570,7 +575,6 @@ canvas {
   width: 100%;
   max-height: 0;
   opacity: 0;
-  transform: scale(0.95);
   transition: width 0.5s ease, max-height 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
   overflow-y: auto;
   overflow-x: hidden;
@@ -641,8 +645,6 @@ table {
 }
 
 thead {
-  background: linear-gradient(90deg, #1c3077, #0e1a4b);
-  box-shadow: inset 0 2px 4px rgba(126, 187, 233, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
   z-index: 2;
 }
@@ -661,15 +663,15 @@ th i {
 }
 
 tr.track:hover {
-  background: linear-gradient(135deg, rgba(42, 74, 159, 0.6) 0%, rgba(42, 74, 159, 0.6) 60%, #27199caa 61%, #27199caa 100%);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(126, 187, 233, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+  background: #2a4a9f;
+  color: #80d3f7;
   position: relative;
   z-index: 2;
 }
 
 .now-playing {
-  background: linear-gradient(135deg, #27199c, #2a4a9f);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(126, 187, 233, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+  background: #3b64d6;
+  color: #80d3f7;
   position: relative;
   z-index: 2;
 }
@@ -799,7 +801,7 @@ tr.track:hover {
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
-  max-height: calc(800px - 12px); /* Account for 6px top/bottom padding */
+  max-height: 500px; /* Account for 6px top/bottom padding */
 }
 
 .lyrics-container::-webkit-scrollbar {
@@ -975,7 +977,7 @@ tr.track:hover {
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
-  max-height: calc(800px - 12px); /* Account for 6px top/bottom padding */
+  max-height: 500px;
 }
 
 .structure-container::-webkit-scrollbar {
