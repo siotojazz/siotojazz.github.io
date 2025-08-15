@@ -705,7 +705,7 @@
     {
       "id": 10,
       "title": "Колку далеку?",
-      "mp3": "audio/the_color_of_your_car.mp3",
+      "mp3": "audio/kolku_daleku.mp3",
       "lyrics": [
         { "line": "чувај ги тајно, овој филм и овој миг", "barNumber": null, "barLength": null, "offset": null },
         { "line": "само така, во мислите постојам", "barNumber": null, "barLength": null, "offset": null },
@@ -735,7 +735,7 @@
         { "line": "по иста патека", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true }
       ],
       "date": "2025-08-14 22:34",
-      "label": "bass[no]",
+      "label": "bass[good], guitar1[meh], guitar2[good]",
       "tempo": "137",
       "timeSignature": "4/4",
       "structure": {
