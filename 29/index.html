@@ -41,22 +41,118 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
-canvas {
+/* Starry field CSS */
+.starry-field {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: -1;
+  overflow: hidden;
+  background: #000;
 }
 
+.star-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0;
+  animation: twinkle 5s infinite ease-in-out;
+}
+
+.star-layer:nth-child(1) .star {
+  width: 1px;
+  height: 1px;
+  animation-duration: 3s;
+}
+
+.star-layer:nth-child(2) .star {
+  width: 2px;
+  height: 2px;
+  animation-duration: 4s;
+  animation-delay: -1s;
+}
+
+.star-layer:nth-child(3) .star {
+  width: 3px;
+  height: 3px;
+  animation-duration: 5s;
+  animation-delay: -2s;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.8; }
+}
+
+.comet {
+  position: absolute;
+  width: 3px;
+  height: 3px MHD;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 25px rgba(255, 255, 255, 0.6);
+  animation: comet 8s ease-in-out infinite;
+  z-index: 0;
+  --tail-length: 50px;
+  --hue: 0;
+  background: hsl(var(--hue), 100%, 100%);
+  box-shadow: 0 0 15px hsl(var(--hue), 100%, 90%), 0 0 25px hsl(var(--hue), 100%, 60%);
+}
+
+.comet::after {
+  content: '';
+  position: absolute;
+  width: 50px; /* Length of the tail */
+  height: 2px;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+  transform: rotate(45deg); /* Align tail with initial movement direction */
+  top: 50%;
+  left: 100%;
+  transform-origin: left center;
+  z-index: -1;
+  width: var(--tail-length);
+  background: linear-gradient(to left, hsl(var(--hue), 100%, 90%), transparent);
+}
+
+@keyframes comet {
+  0% {
+    transform: translate(100vw, -100vh) rotate(0deg);
+    opacity: 0.9;
+  }
+  25% {
+    transform: translate(50vw, -20vh) rotate(10deg); /* Curve upward slightly */
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(0vw, 0vh) rotate(0deg); /* Peak of the curve */
+    opacity: 0.7;
+  }
+  75% {
+    transform: translate(-50vw, 20vh) rotate(-10deg); /* Curve downward */
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-100vw, 100vh) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+/* Original styles retained below */
 section:not(.name-bar):not(.title-bar)::after {
   box-sizing: border-box;
 }
 
 .container {
-  width: 570px;
-  max-height: 750px;
+  width: min(570px, calc(100vw - 16px));
+  max-height: min(750px, calc(100vh - 16px));
   position: fixed;
   top: 50%;
   left: 50%;
@@ -542,8 +638,8 @@ section:not(.name-bar):not(.title-bar)::after {
 #album-cover {
   width: 100%;
   height: auto;
-  max-height: calc(800px - 10px); /* Account for 5px top/bottom padding */
-  object-fit: contain; /* Changed to contain to respect image size */
+  max-height: calc(800px - 10px);
+  object-fit: contain;
   padding: 5px;
   display: block;
   border-radius: 0;
@@ -570,6 +666,7 @@ section:not(.name-bar):not(.title-bar)::after {
   border-radius: 0;
   background: linear-gradient(135deg, #1c3077 0%, #1c3077 60%, #0e1a4b 61%, #0e1a4b 100%);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
   position: relative;
   width: 100%;
   max-height: 0;
@@ -640,7 +737,7 @@ table {
   text-shadow: 0 0 6px rgba(126, 187, 233, 0.6);
   position: relative;
   z-index: 2;
-  max-height: calc(800px - 12px); /* Account for 6px top/bottom padding */
+  max-height: calc(800px - 12px);
 }
 
 thead {
@@ -760,6 +857,7 @@ tr.track:hover {
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
+  box-sizing: border-box;
 }
 
 #lyrics-section::-webkit-scrollbar {
@@ -800,7 +898,7 @@ tr.track:hover {
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
-  max-height: 500px; /* Account for 6px top/bottom padding */
+  max-height: 500px;
 }
 
 .lyrics-container::-webkit-scrollbar {
@@ -936,6 +1034,7 @@ tr.track:hover {
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
+  box-sizing: border-box;
 }
 
 #structure-section::-webkit-scrollbar {
@@ -1187,10 +1286,104 @@ tr.track:hover {
 .instrument-state.bass i::before { content: '\f8c1'; }
 .instrument-state.drums i::before { content: '\f569'; }
 .instrument-state.else i::before { content: '\f0c1'; }
+
+@media (max-width: 600px) {
+  .container {
+    width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+  }
+
+  .panel-container {
+    flex-direction: column;
+  }
+
+  .title-bar-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px 0;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    gap: 8px;
+  }
+
+  .button-row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .button-wrapper {
+    margin: 5px;
+  }
+
+  .volume-wrapper {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .container-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .button-label {
+    font-size: 10px;
+  }
+
+  .title-bar-btn {
+    width: 35px;
+    height: 20px;
+  }
+
+  .volume-knob {
+    width: 40px;
+    height: 40px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  #current-song {
+    font-size: 12px;
+  }
+
+  #current-lyric, #current-chord, #song-times {
+    font-size: 9px;
+  }
+
+  .display-container {
+    height: 60px !important;
+  }
+
+  .name-bar {
+    font-size: 14px;
+    padding: 0px 5px;
+    margin: -10px 0px;
+  }
+
+  .chord-block {
+    font-size: 7px;
+    padding: 1px 3px;
+    width: calc(30px * var(--repeat-count, 1));
+  }
+
+  .lyrics-content-container .lyric-line {
+    font-size: 9px;
+  }
+}
   </style>
 </head>
 <body>
-   <div class="container">
+<div class="starry-field">
+    <div class="star-layer"></div>
+    <div class="star-layer"></div>
+    <div class="star-layer"></div>
+  </div>
+  <div class="container">
     <section class="name-bar"><span class="band-name">SIOTO JAZZ</span><span class="album-name">Demo Tapes</span></section>
     <section class="title-bar">
       <div class="panel-container">
@@ -1298,240 +1491,6 @@ tr.track:hover {
     </section>
   </div>
 <script>
-  
-  // Three.js WebGL setup
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 4000);
-const webGLRenderer = new THREE.WebGLRenderer({ antialias: true });
-webGLRenderer.setSize(window.innerWidth, window.innerHeight);
-webGLRenderer.setClearColor(0x000000);
-document.body.appendChild(webGLRenderer.domElement);
-
-// Fix camera position
-camera.position.set(0, 50, 0);
-camera.rotation.x = -Math.PI / 6.5;
-const basePitch = camera.rotation.y;
-const baseCameraY = camera.position.y;
-
-// Variables for linear interpolation
-let targetCameraY = baseCameraY;
-let currentCameraY = baseCameraY;
-let targetRotateX = 0;
-let targetRotateY = 0;
-let currentRotateX = 0;
-let currentRotateY = 0;
-const lerpSpeed = 0.05; // Increased for smoother transitions
-let isRotationLocked = true; // Lock rotation by default
-
-// Linear interpolation function
-function lerp(start, end, t) {
-  return start + (end - start) * t;
-}
-
-function smoothstep(edge0, edge1, x) {
-  x = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-  return x * x * (3 - 2 * x);
-}
-
-// Starry field setup
-const starsCount = 5000; // Reduced for performance
-const starsGeometry = new THREE.BufferGeometry();
-const posArray = new Float32Array(starsCount * 3);
-for (let i = 0; i < starsCount * 3; i++) {
-  posArray[i] = (Math.random() - 0.5) * 4000;
-}
-starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-const starMaterial = new THREE.ShaderMaterial({
-  uniforms: {
-    pointSize: { value: 2.0 },
-  },
-  vertexShader: `
-    uniform float pointSize;
-    varying vec3 vPosition;
-    void main() {
-      vPosition = position;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      gl_PointSize = pointSize;
-    }
-  `,
-  fragmentShader: `
-    varying vec3 vPosition;
-    void main() {
-      vec2 coord = gl_PointCoord - vec2(0.5);
-      float dist = length(coord);
-      float intensity = smoothstep(0.5, 0.0, dist);
-      float fade = 1.0 - smoothstep(500.0, 1500.0, abs(vPosition.z));
-      gl_FragColor = vec4(1.0, 1.0, 1.0, intensity * fade);
-    }
-  `,
-  blending: THREE.AdditiveBlending,
-  transparent: true,
-  depthWrite: false,
-});
-const stars = new THREE.Points(starsGeometry, starMaterial);
-
-// Connect stars with lines
-const starGroup = new THREE.Group();
-starGroup.add(stars);
-const linesGroup = new THREE.Group();
-starGroup.add(linesGroup);
-scene.add(starGroup);
-const baseLineMaterial = new THREE.LineBasicMaterial({ color: 0x777777, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
-const connections = [];
-const numLines = 30; // Reduced for performance
-let tries = 0;
-while (connections.length < numLines && tries < 100000) {
-  const idx1 = Math.floor(Math.random() * starsCount);
-  const idx2 = Math.floor(Math.random() * starsCount);
-  if (idx1 !== idx2) {
-    const dx = posArray[idx1*3] - posArray[idx2*3];
-    const dy = posArray[idx1*3+1] - posArray[idx2*3+1];
-    const dz = posArray[idx1*3+2] - posArray[idx2*3+2];
-    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-    if (dist < 500 && dist > 50) {
-      const geometry = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(posArray[idx1*3], posArray[idx1*3+1], posArray[idx1*3+2]),
-        new THREE.Vector3(posArray[idx2*3], posArray[idx2*3+1], posArray[idx2*3+2])
-      ]);
-      const line = new THREE.Line(geometry, baseLineMaterial.clone());
-      linesGroup.add(line);
-      connections.push({line, idx1, idx2});
-    }
-  }
-  tries++;
-}
-
-// Comet setup
-let comets = [];
-function createComet() {
-  const cometGeometry = new THREE.BufferGeometry();
-  const cometPositions = [];
-  const tailLength = 15; // Reduced for performance
-  for (let i = 0; i < tailLength; i++) {
-    cometPositions.push(0, 0, -i * 5);
-  }
-  cometGeometry.setAttribute('position', new THREE.Float32BufferAttribute(cometPositions, 3));
-  const cometMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
-  const comet = new THREE.Line(cometGeometry, cometMaterial);
-
-  comet.position.set((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, 1000 + Math.random() * 500);
-  comet.rotation.set(Math.random() * Math.PI * 2, Math.random() * Math.PI * 2, Math.random() * Math.PI * 2);
-  starGroup.add(comet);
-  return comet;
-}
-
-setInterval(() => {
-  if (Math.random() < 0.03) { // Reduced frequency
-    comets.push(createComet());
-  }
-}, 1000);
-
-// Render targets
-const sharpRenderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
-  minFilter: THREE.LinearFilter,
-  magFilter: THREE.LinearFilter,
-  format: THREE.RGBAFormat
-});
-const blurRenderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
-  minFilter: THREE.LinearFilter,
-  magFilter: THREE.LinearFilter,
-  format: THREE.RGBAFormat
-});
-
-// Blur scene
-const blurScene = new THREE.Scene();
-const blurCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-const blurMaterial = new THREE.ShaderMaterial({
-  vertexShader: `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    uniform sampler2D tDiffuse;
-    uniform vec2 resolution;
-    varying vec2 vUv;
-    void main() {
-      vec4 color = vec4(0.0);
-      float blurSize = 2.0; // Reduced for performance
-      float sigma = 3.0;
-      float totalWeight = 0.0;
-      for (float i = -4.0; i <= 4.0; i += 1.0) {
-        for (float j = -4.0; j <= 4.0; j += 1.0) {
-          vec2 offset = vec2(i, j) * blurSize / resolution;
-          float weight = exp(-(i * i + j * j) / (2.0 * sigma * sigma));
-          color += texture2D(tDiffuse, vUv + offset) * weight;
-          totalWeight += weight;
-        }
-      }
-      color /= totalWeight;
-      gl_FragColor = color;
-    }
-  `,
-  uniforms: {
-    tDiffuse: { value: sharpRenderTarget.texture },
-    resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-  },
-  transparent: true
-});
-const blurQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), blurMaterial);
-blurScene.add(blurQuad);
-
-// Composite scene
-const compositeScene = new THREE.Scene();
-const compositeCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-const compositeMaterial = new THREE.ShaderMaterial({
-  vertexShader: `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    uniform sampler2D sharpTexture;
-    uniform sampler2D blurTexture;
-    varying vec2 vUv;
-    void main() {
-      vec4 blurColor = texture2D(blurTexture, vUv);
-      vec4 sharpColor = texture2D(sharpTexture, vUv);
-      vec4 color = blurColor * 1.2 + sharpColor * 1.0; // Adjusted for better visuals
-      gl_FragColor = color;
-    }
-  `,
-  uniforms: {
-    sharpTexture: { value: sharpRenderTarget.texture },
-    blurTexture: { value: blurRenderTarget.texture },
-  },
-  transparent: true
-});
-const compositeQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), compositeMaterial);
-compositeScene.add(compositeQuad);
-
-// Mouse and touch movement handling
-let mouseX = 0;
-let mouseY = 0;
-function updateRotation(event, isTouch = false) {
-  if (!isRotationLocked) {
-    const clientX = isTouch ? event.touches[0].clientX : event.clientX;
-    const clientY = isTouch ? event.touches[0].clientY : event.clientY;
-    mouseX = (clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(clientY / window.innerHeight) * 2 + 1;
-    const maxRotate = 25; // Reduced for subtler effect
-    targetRotateX = -mouseY * maxRotate;
-    targetRotateY = mouseX * maxRotate;
-  }
-}
-
-document.addEventListener('mousemove', (event) => updateRotation(event));
-document.addEventListener('touchmove', (event) => {
-  event.preventDefault();
-  updateRotation(event, true);
-}, { passive: false });
-
-// Music player logic
 let currentAudio = null;
 let currentTrackIndex = -1;
 let tracks = [];
@@ -1543,15 +1502,47 @@ let currentSource = null;
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 let gainNode = audioContext.createGain();
 let analyser = audioContext.createAnalyser();
-const barCount = 32; // Reduced for performance
+const barCount = 32;
 let frequencyData = new Uint8Array(barCount);
 let currentLyricIndex = -1;
 let currentChordIndex = -1;
 let chordData = {};
 
 // Initialize analyser
-analyser.fftSize = 64; // Reduced for performance
+analyser.fftSize = 64;
 gainNode.gain.value = 1.0;
+
+// Generate stars dynamically
+const starLayers = document.querySelectorAll('.star-layer');
+starLayers.forEach((layer, index) => {
+  const starCount = index === 0 ? 100 : index === 1 ? 50 : 30;
+  for (let i = 0; i < starCount; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.animationDelay = `${-Math.random() * 5}s`;
+    layer.appendChild(star);
+  }
+});
+
+// Replace the comet generation code with the following
+const starryField = document.querySelector('.starry-field');
+for (let i = 0; i < 5; i++) {
+  const comet = document.createElement('div');
+  comet.className = 'comet';
+  // Randomize starting position
+  comet.style.left = `${Math.random() * 100}%`;
+  comet.style.top = `${Math.random() * -20 - 20}%`; // Start above viewport
+  // Randomize animation duration (6s to 12s)
+  const duration = 6 + Math.random() * 6;
+  comet.style.animationDuration = `${duration}s`;
+  // Randomize animation delay
+  comet.style.animationDelay = `${-Math.random() * duration}s`;
+  comet.style.setProperty('--tail-length', `${30 + Math.random() * 40}px`); // Random tail length between 30px and 70px
+  comet.style.setProperty('--hue', `${Math.random() * 30}`); // Slight hue variation (0-30 degrees)
+  starryField.appendChild(comet);
+}
 
 // Function to show button action message
 function showButtonMessage(message) {
@@ -1560,79 +1551,6 @@ function showButtonMessage(message) {
   messageElement.classList.add('visible');
   setTimeout(() => messageElement.classList.remove('visible'), 2000);
 }
-
-// Animation loop
-const container = document.querySelector('.container');
-let lastFrameTime = performance.now();
-function animate() {
-  requestAnimationFrame(animate);
-  const currentTime = performance.now();
-  const deltaTime = (currentTime - lastFrameTime) / 1000;
-  lastFrameTime = currentTime;
-
-  currentCameraY = lerp(currentCameraY, targetCameraY, lerpSpeed);
-  camera.position.y = currentCameraY;
-  const pos = starsGeometry.attributes.position;
-  const posArr = pos.array;
-  for (let i = 2; i < pos.count * 3; i += 3) {
-    posArr[i] -= 0.08;
-    if (posArr[i] < -2000) posArr[i] += 4000;
-  }
-  pos.needsUpdate = true;
-  connections.forEach(({line, idx1, idx2}) => {
-    const off1 = idx1 * 3;
-    const off2 = idx2 * 3;
-    const p1z = posArr[off1 + 2];
-    const p2z = posArr[off2 + 2];
-    const avgZ = (p1z + p2z) / 2;
-    const absAvg = Math.abs(avgZ);
-    let fade = smoothstep(500, 1500, absAvg);
-    line.material.opacity = 0.8 * fade;
-    const posAttr = line.geometry.attributes.position;
-    posAttr.array[0] = posArr[off1];
-    posAttr.array[1] = posArr[off1 + 1];
-    posAttr.array[2] = p1z;
-    posAttr.array[3] = posArr[off2];
-    posAttr.array[4] = posArr[off2 + 1];
-    posAttr.array[5] = p2z;
-    posAttr.needsUpdate = true;
-  });
-  comets.forEach((comet, index) => {
-    comet.position.z -= 8;
-    if (comet.position.z < -2000) {
-      starGroup.remove(comet);
-      comets.splice(index, 1);
-    }
-  });
-  starGroup.rotation.y += 0.0003;
-  currentRotateX = lerp(currentRotateX, targetRotateX, lerpSpeed * 3);
-  currentRotateY = lerp(currentRotateY, targetRotateY, lerpSpeed * 3);
-  container.style.transform = isRotationLocked
-    ? 'translate(-50%, -50%)' // Keep centered, no rotation
-    : `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) translate(-50%, -50%)`; // Removed perspective
-  webGLRenderer.setRenderTarget(sharpRenderTarget);
-  webGLRenderer.render(scene, camera);
-  webGLRenderer.setRenderTarget(blurRenderTarget);
-  webGLRenderer.clear();
-  webGLRenderer.render(blurScene, blurCamera);
-  webGLRenderer.setRenderTarget(null);
-  webGLRenderer.clear();
-  webGLRenderer.render(compositeScene, compositeCamera);
-  if (currentAudio && !currentAudio.paused && currentTrackIndex >= 0) {
-    updateLyricAndChordHighlight(currentAudio, tracks[currentTrackIndex].timings);
-  }
-}
-animate();
-
-// Handle window resize
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  webGLRenderer.setSize(window.innerWidth, window.innerHeight);
-  sharpRenderTarget.setSize(window.innerWidth, window.innerHeight);
-  blurRenderTarget.setSize(window.innerWidth, window.innerHeight);
-  blurMaterial.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
-});
 
 function formatTime(seconds) {
   if (!isFinite(seconds)) return "00:00";
@@ -2224,10 +2142,10 @@ function getNextShuffledIndex() {
   if (playedIndices.length >= tracks.length) {
     playedIndices = [currentTrackIndex];
     shuffledIndices = shuffleArray([...Array(tracks.length).keys()].filter(i => i !== currentTrackIndex));
-    shuffledIndices.unshift(currentTrackIndex);
   }
-  const remaining = shuffledIndices.filter(i => !playedIndices.includes(i));
-  return remaining.length > 0 ? remaining[0] : currentTrackIndex;
+  const nextIndex = shuffledIndices.shift();
+  playedIndices.push(nextIndex);
+  return nextIndex;
 }
 
 function getPrevShuffledIndex() {
@@ -2329,7 +2247,16 @@ function generateInstrumentStates(labels) {
   `).join('');
 }
 
-// Fetch album data
+// Animation loop for lyric and chord updates
+function animate() {
+  requestAnimationFrame(animate);
+  if (currentAudio && !currentAudio.paused && currentTrackIndex >= 0) {
+    updateLyricAndChordHighlight(currentAudio, tracks[currentTrackIndex].timings);
+  }
+}
+animate();
+
+// Fetch album data and set up event listeners
 fetch('album.json')
   .then(response => {
     if (!response.ok) throw new Error('Failed to load album.json');
@@ -2581,10 +2508,7 @@ fetch('album.json')
     ];
 
     function toggleSection(selectedSection, selectedButton, showMessage, hideMessage) {
-      // Check if the selected section is already visible
       const isAlreadyVisible = selectedSection.classList.contains('visible');
-
-      // Close all sections
       sections.forEach(({ element, button, hideMessage: sectionHideMessage }) => {
         if (element.classList.contains('visible')) {
           element.classList.remove('visible');
@@ -2599,14 +2523,12 @@ fetch('album.json')
         }
       });
 
-      // If the selected section was already visible, don't reopen it (toggle off)
       if (isAlreadyVisible) {
         showButtonMessage(hideMessage);
         selectedButton.classList.remove('active');
         return;
       }
 
-      // Open the selected section
       selectedSection.style.display = selectedSection.classList.contains('album-display') ? 'flex' : 'block';
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -2617,28 +2539,19 @@ fetch('album.json')
       });
     }
 
-    // Update event listeners for section buttons
     sections.forEach(({ element, button, showMessage, hideMessage }) => {
       button.addEventListener('click', () => toggleSection(element, button, showMessage, hideMessage));
     });
 
-    // Initialize section visibility (all closed)
     sections.forEach(({ element }) => {
       element.style.display = 'none';
     });
-
-    // Initialize section visibility
-    document.getElementById('tracklist').style.display = 'none';
-    document.getElementById('lyrics-section').style.display = 'none';
-    document.getElementById('structure-section').style.display = 'none';
-    document.getElementById('album-display').style.display = 'none';
 
     document.querySelector('.title-bar-progress').addEventListener('click', seekToTime);
   })
   .catch(error => {
     console.error('Error loading album data:', error);
     showButtonMessage('Failed to Load Album');
-  });
-</script>
+  });</script>
 </body>
 </html>
