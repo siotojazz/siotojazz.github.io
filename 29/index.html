@@ -57,6 +57,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
+  animation: rotateStars 600s linear infinite; /* Slowed rotation to 600s (10 minutes) */
 }
 
 .star {
@@ -87,6 +88,11 @@ body {
   animation-delay: -2s;
 }
 
+@keyframes rotateStars {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @keyframes twinkle {
   0%, 100% { opacity: 0; }
   50% { opacity: 0.8; }
@@ -95,57 +101,61 @@ body {
 .comet {
   position: absolute;
   width: 3px;
-  height: 3px MHD;
-  background: #fff;
+  height: 3px;
+  background: hsl(var(--hue), 100%, 100%);
   border-radius: 50%;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 25px rgba(255, 255, 255, 0.6);
-  animation: comet 8s ease-in-out infinite;
+  box-shadow: 0 0 15px hsl(var(--hue), 100%, 90%), 0 0 25px hsl(var(--hue), 100%, 60%);
+  animation: comet 3s ease-in-out infinite;
   z-index: 0;
   --tail-length: 50px;
   --hue: 0;
-  background: hsl(var(--hue), 100%, 100%);
-  box-shadow: 0 0 15px hsl(var(--hue), 100%, 90%), 0 0 25px hsl(var(--hue), 100%, 60%);
 }
 
 .comet::after {
   content: '';
   position: absolute;
-  width: 50px; /* Length of the tail */
+  width: var(--tail-length);
   height: 2px;
-  background: linear-gradient(to left, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
-  transform: rotate(45deg); /* Align tail with initial movement direction */
+  background: linear-gradient(to left, hsl(var(--hue), 100%, 90%), transparent);
   top: 50%;
   left: 100%;
   transform-origin: left center;
   z-index: -1;
-  width: var(--tail-length);
-  background: linear-gradient(to left, hsl(var(--hue), 100%, 90%), transparent);
+  animation: cometTail 3s ease-in-out infinite;
 }
 
 @keyframes comet {
   0% {
-    transform: translate(100vw, -100vh) rotate(0deg);
+    transform: translate(100vw, -100vh);
     opacity: 0.9;
   }
   25% {
-    transform: translate(50vw, -20vh) rotate(10deg); /* Curve upward slightly */
+    transform: translate(50vw, -20vh);
     opacity: 0.8;
   }
   50% {
-    transform: translate(0vw, 0vh) rotate(0deg); /* Peak of the curve */
+    transform: translate(0vw, 0vh);
     opacity: 0.7;
   }
   75% {
-    transform: translate(-50vw, 20vh) rotate(-10deg); /* Curve downward */
+    transform: translate(-50vw, 20vh);
     opacity: 0.5;
   }
   100% {
-    transform: translate(-100vw, 100vh) rotate(0deg);
+    transform: translate(-100vw, 100vh);
     opacity: 0;
   }
 }
 
-/* Original styles retained below */
+@keyframes cometTail {
+  0% { transform: rotate(135deg); }
+  25% { transform: rotate(145deg); }
+  50% { transform: rotate(135deg); }
+  75% { transform: rotate(125deg); }
+  100% { transform: rotate(135deg); }
+}
+
+/* Original styles retained below with fixed borders */
 section:not(.name-bar):not(.title-bar)::after {
   box-sizing: border-box;
 }
@@ -165,7 +175,7 @@ section:not(.name-bar):not(.title-bar)::after {
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
-  border: solid #1a1a1f 1px;
+  border: 1px solid #000; /* Explicit black border */
   box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3);
   z-index: 1;
   scrollbar-width: thin;
@@ -232,6 +242,7 @@ section:not(.name-bar):not(.title-bar)::after {
   flex-direction: column;
   justify-content: flex-start;
   z-index: 2;
+  border: 1px solid #000; /* Explicit black border */
 }
 
 .display-container::after {
@@ -387,6 +398,7 @@ section:not(.name-bar):not(.title-bar)::after {
   flex: 1;
   align-content: center;
   padding: 10px;
+  justify-content: center;
 }
 
 .button-row {
@@ -519,18 +531,10 @@ section:not(.name-bar):not(.title-bar)::after {
   border: 1px solid #000000;
   border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+  transition: transform 0.1s ease;
   touch-action: manipulation;
-}
-
-.volume-knob:hover {
-  background: linear-gradient(0deg, #333, #1A1A1A);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 3px 8px rgba(0, 0, 0, 0.4), 0 0 10px rgba(126, 187, 233, 0.3);
-}
-
-.volume-knob:active {
-  transform: translateY(1px);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9), 0 1px 3px rgba(0, 0, 0, 0.5);
+  position: relative;
+  box-sizing: border-box;
 }
 
 .volume-knob::before {
@@ -539,13 +543,42 @@ section:not(.name-bar):not(.title-bar)::after {
   width: 8px;
   height: 8px;
   background: #7ebbe9;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9), 0 1px 3px rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   top: 4px;
   left: 50%;
   transform: translateX(-50%);
   transform-origin: center 18px;
   z-index: 2;
+  transition: transform 0.1s ease;
+}
+
+.volume-knob::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.volume-knob:hover {
+  background: linear-gradient(0deg, #333, #1A1A1A);
+}
+
+.volume-knob:hover::after {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6), 0 3px 6px rgba(0, 0, 0, 0.5), 0 0 8px rgba(126, 187, 233, 0.3);
+}
+
+.volume-knob:active {
+  transform: translateY(1px);
+}
+
+.volume-knob:active::after {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 #volume-slider {
@@ -588,7 +621,7 @@ section:not(.name-bar):not(.title-bar)::after {
   width: 0;
   max-height: 0;
   background: linear-gradient(135deg, #1A222200, #0E111133);
-  border: 1px solid #000000;
+  border: 1px solid #000; /* Explicit black border */
   border-radius: 0;
   box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 -4px 8px rgba(0, 0, 0, 0.6), 0 6px 12px rgba(0, 0, 0, 0.5), 0 0 15px rgba(126, 187, 233, 0.3);
   position: relative;
@@ -676,6 +709,7 @@ section:not(.name-bar):not(.title-bar)::after {
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
+  border: 1px solid #000; /* Explicit black border */
 }
 
 #tracklist::-webkit-scrollbar {
@@ -858,6 +892,7 @@ tr.track:hover {
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
   box-sizing: border-box;
+  border: 1px solid #000; /* Explicit black border */
 }
 
 #lyrics-section::-webkit-scrollbar {
@@ -899,6 +934,7 @@ tr.track:hover {
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
   max-height: 500px;
+  border: 1px solid #000; /* Explicit black border for inner container */
 }
 
 .lyrics-container::-webkit-scrollbar {
@@ -1035,6 +1071,7 @@ tr.track:hover {
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
   box-sizing: border-box;
+  border: 1px solid #000; /* Explicit black border */
 }
 
 #structure-section::-webkit-scrollbar {
@@ -1076,6 +1113,7 @@ tr.track:hover {
   scrollbar-width: thin;
   scrollbar-color: #7ebbe922 #0e1a4b44;
   max-height: 500px;
+  border: 1px solid #000; /* Explicit black border for inner container */
 }
 
 .structure-container::-webkit-scrollbar {
@@ -1301,32 +1339,36 @@ tr.track:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 10px 0;
-    grid-template-columns: none;
-    grid-template-rows: none;
+    align-items: center;
+    padding: 8px;
     gap: 8px;
-  }
-
-  .button-row {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .button-wrapper {
-    margin: 5px;
-  }
-
-  .volume-wrapper {
-    grid-column: auto !important;
-    grid-row: auto !important;
   }
 
   .container-controls {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    padding: 10px 0;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .button-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .button-wrapper {
+    margin: 0;
+    flex: 0 0 auto;
+  }
+
+  .volume-wrapper {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    margin: 0;
   }
 
   .button-label {
@@ -1382,8 +1424,8 @@ tr.track:hover {
     <div class="star-layer"></div>
     <div class="star-layer"></div>
     <div class="star-layer"></div>
-  </div>
-  <div class="container">
+</div>
+<div class="container">
     <section class="name-bar"><span class="band-name">SIOTO JAZZ</span><span class="album-name">Demo Tapes</span></section>
     <section class="title-bar">
       <div class="panel-container">
@@ -1489,9 +1531,9 @@ tr.track:hover {
     <section id="structure-section">
       <div class="structure-container" id="structure-container"></div>
     </section>
-  </div>
+</div>
 <script>
-let currentAudio = null;
+  let currentAudio = null;
 let currentTrackIndex = -1;
 let tracks = [];
 let repeatMode = 0;
@@ -1526,18 +1568,15 @@ starLayers.forEach((layer, index) => {
   }
 });
 
-// Replace the comet generation code with the following
+// Generate comets dynamically
 const starryField = document.querySelector('.starry-field');
 for (let i = 0; i < 5; i++) {
   const comet = document.createElement('div');
   comet.className = 'comet';
-  // Randomize starting position
   comet.style.left = `${Math.random() * 100}%`;
   comet.style.top = `${Math.random() * -20 - 20}%`; // Start above viewport
-  // Randomize animation duration (6s to 12s)
-  const duration = 6 + Math.random() * 6;
+  const duration = 3 + Math.random() * 3; // Random duration between 3s and 6s
   comet.style.animationDuration = `${duration}s`;
-  // Randomize animation delay
   comet.style.animationDelay = `${-Math.random() * duration}s`;
   comet.style.setProperty('--tail-length', `${30 + Math.random() * 40}px`); // Random tail length between 30px and 70px
   comet.style.setProperty('--hue', `${Math.random() * 30}`); // Slight hue variation (0-30 degrees)
@@ -1588,7 +1627,7 @@ function updateTitleBar(trackTitle = '') {
 }
 
 function getLabelIcon(label) {
-  const normalizedLabel = label.toLowerCase().replace(/\s+/g, '-');
+  const normalizedLabel = label.toLowerCase().replace(/[ \t\r\n]+/g, '-');
   switch (normalizedLabel) {
     case 'official-entry':
       return { icon: '<i class="fas fa-trophy"></i>', class: 'official-entry' };
@@ -2552,6 +2591,7 @@ fetch('album.json')
   .catch(error => {
     console.error('Error loading album data:', error);
     showButtonMessage('Failed to Load Album');
-  });</script>
+  });  
+</script>
 </body>
 </html>
