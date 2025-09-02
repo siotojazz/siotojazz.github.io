@@ -70,7 +70,7 @@
     { "F#maj7": "243322" },
     { "F#m7": "242222" },
     { "F#5": "244xxx" },
-    { "G": "320003" },
+    { "G": "320033" },
     { "Gm": "355333" },
     { "G7": "320001" },
     { "Gmaj7": "320002" },
@@ -551,7 +551,65 @@
         "sections": [
           {
             "label": "Intro",
-            "chords": ["A"]
+            "chords": ["G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", 
+            "G", "G", "G", "G", "Am", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "G", "G", "G", "Am", 
+            "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "G", "G", "G", "Am" ]
+          },
+          {
+            "label": "Verse 1",
+            "chords": ["Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "G", "G", "G", "Am",
+          "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "𝄽", "𝄽", "𝄽", "𝄽"  ]
+          },
+          {
+            "label": "Refrain 1",
+            "chords": ["Em", "Em", "Em", "Em", "Em", "Em", "Em", "Em", "G", "G", "G", "G", "G", "G", "G", "G",
+          "Em", "Em", "Em", "Em", "Em", "Em", "Em", "Em", "G", "G", "G", "G", "G", "G", "G", "G"  ]
+          },
+          {
+            "label": "Chorus 1",
+            "chords": ["D", "D", "D", "D", "D", "D", "D", "D", "G", "G", "G", "G", "G", "G", "G", "Am"]
+          },
+          {
+            "label": "Post-chorus",
+            "chords": ["Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "G", "G", "G", "Am",
+          "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "𝄽", "𝄽", "𝄽", "𝄽"  ]
+          },
+          {
+            "label": "Verse 2",
+            "chords": ["Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "G", "G", "G", "Am",
+          "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "𝄽", "𝄽", "𝄽", "D"  ]
+          },
+          {
+            "label": "Refrain 2",
+            "chords": ["Em", "Em", "Em", "Em", "Em", "Em", "Em", "D", "G", "G", "G", "C", "G", "G", "G", "D",
+          "Em", "Em", "Em", "Em", "Em", "Em", "Em", "D", "G", "G", "G", "C", "G", "G", "G", "Am"  ]
+          },
+          {
+            "label": "Chorus 2",
+            "chords": ["D", "D", "D", "D", "D", "D", "D", "D", "G", "G", "G", "C", "G", "G", "G", "Am"]
+          },
+          {
+            "label": "Solo",
+            "chords": ["Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "G", "G", "G", "Am",
+          "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "G", "G", "G", "G"  ]
+          },
+          {
+            "label": "Verse 3",
+            "chords": ["Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "G", "G", "G", "Am",
+          "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Am", "G", "G", "G", "G", "𝄽", "𝄽", "𝄽", "D"  ]
+          },
+          {
+            "label": "Refrain 3",
+            "chords": ["Em", "Em", "Em", "Em", "Em", "Em", "Em", "D", "G", "G", "G", "C", "G", "G", "G", "D",
+          "Em", "Em", "Em", "Em", "Em", "Em", "Em", "D", "G", "G", "G", "C", "G", "G", "G", "Am"  ]
+          },
+          {
+            "label": "Chorus 3",
+            "chords": ["D", "D", "D", "D", "D", "D", "D", "D", "G", "G", "G", "C", "G", "G", "G", "Am"]
+          },
+          {
+            "label": "Outro",
+            "chords": ["D", "D", "D", "D", "D", "D", "D", "D", "G", "G", "G", "G", "G", "G", "G", "G" ]
           }
         ]
       }
@@ -699,40 +757,85 @@
       "title": "My Innocent Sea",
       "mp3": "audio/my_innocent_sea.mp3",
       "lyrics": [
-        { "line": "there is a light", "barNumber": 1, "barLength": 1, "offset": -2 },
-        { "line": "where you once would stand", "barNumber": 1, "barLength": 2, "offset": 0 },
-        { "line": "a heavy feeling I can't pretend", "barNumber": 3, "barLength": 2, "offset": 0 },
-        { "line": "it's in the way you lit up the room", "barNumber": 5, "barLength": 2, "offset": 0 },
-        { "line": "the way you made all the flowers bloom", "barNumber": 7, "barLength": 3, "offset": 0, "stanzaEnd": true },
-        { "line": "I will drive where the sun will set", "barNumber": 14, "barLength": 2, "offset": 0.5 },
-        { "line": "let's not talk, let's just forget", "barNumber": 16, "barLength": 2, "offset": 0.5 },
-        { "line": "despite the things you said to me", "barNumber": 18, "barLength": 2, "offset": 0.5 },
-        { "line": "a right of passage in my innocent sea", "barNumber": 20, "barLength": 3, "offset": 0.5, "stanzaEnd": true },
-        { "line": "my innocent sea", "barNumber": 24, "barLength": 2, "offset": 0, "stanzaEnd": true },
-        { "line": "there is a place", "barNumber": 34, "barLength": 1, "offset": 0 },
-        { "line": "inside my heart where you spend my days", "barNumber": 35, "barLength": 2, "offset": 0 },
-        { "line": "laughing in so many ways", "barNumber": 37, "barLength": 2, "offset": 0 },
-        { "line": "watching our favourite tv shows", "barNumber": 39, "barLength": 2, "offset": 0 },
-        { "line": "outside the snow just simply snows", "barNumber": 41, "barLength": 2, "offset": 0, "stanzaEnd": true },
-        { "line": "there's a shadow where we used to dance", "barNumber": 48, "barLength": 2, "offset": 0.5 },
-        { "line": "a fleeting moment, my only chance", "barNumber": 50, "barLength": 2, "offset": 0.5 },
-        { "line": "it's just the way the world moves on", "barNumber": 52, "barLength": 2, "offset": 0.5 },
-        { "line": "despite the fact, your light is never gone", "barNumber": 54, "barLength": 3, "offset": 0.5, "stanzaEnd": true },
-        { "line": "you're never gone", "barNumber": 58, "barLength": 1, "offset": 0 },
-        { "line": "I walk the quay", "barNumber": 60, "barLength": 1, "offset": 0 },
-        { "line": "a yearning plea", "barNumber": 62, "barLength": 1, "offset": 0 },
-        { "line": "for you to sail", "barNumber": 64, "barLength": 1, "offset": 0 },
-        { "line": "my innocent sea", "barNumber": 66, "barLength": 1, "offset": 0 }
+        { "line": "there is a light", "barNumber": 1, "barLength": 3, "offset": -2 },
+        { "line": "where you once would stand", "barNumber": 2, "barLength": 4, "offset": 0 },
+        { "line": "a heavy feeling I can't pretend", "barNumber": 6, "barLength": 4, "offset": 0 },
+        { "line": "it's in the way you lit up the room", "barNumber": 10, "barLength": 4, "offset": 0 },
+        { "line": "the way you made all the flowers bloom", "barNumber": 14, "barLength": 6, "offset": 0, "stanzaEnd": true },
+        { "line": "I will drive where the sun will set", "barNumber": 28, "barLength": 4, "offset": 0.5 },
+        { "line": "let's not talk, let's just forget", "barNumber": 32, "barLength": 4, "offset": 0.5 },
+        { "line": "despite the things you said to me", "barNumber": 36, "barLength": 4, "offset": 0.5 },
+        { "line": "a right of passage in my innocent sea", "barNumber": 40, "barLength": 6, "offset": 0.5, "stanzaEnd": true },
+        { "line": "my innocent sea", "barNumber": 47, "barLength": 4, "offset": 0, "stanzaEnd": true },
+        { "line": "there is a place", "barNumber": 67, "barLength": 2, "offset": 0 },
+        { "line": "inside my heart where you spend my days", "barNumber": 69, "barLength": 4, "offset": 0 },
+        { "line": "laughing in so many ways", "barNumber": 73, "barLength": 4, "offset": 0 },
+        { "line": "watching our favourite tv shows", "barNumber": 77, "barLength": 4, "offset": 0 },
+        { "line": "outside the snow just simply snows", "barNumber": 81, "barLength": 4, "offset": 0, "stanzaEnd": true },
+        { "line": "there's a shadow where we used to dance", "barNumber": 95, "barLength": 4, "offset": 0.5 },
+        { "line": "a fleeting moment, my only chance", "barNumber": 99, "barLength": 4, "offset": 0.5 },
+        { "line": "it's just the way the world moves on", "barNumber": 103, "barLength": 4, "offset": 0.5 },
+        { "line": "despite the fact, your light is never gone", "barNumber": 107, "barLength": 6, "offset": 0.5, "stanzaEnd": true },
+        { "line": "you're never gone", "barNumber": 114, "barLength": 2, "offset": 0 },
+        { "line": "I walk the quay", "barNumber": 118, "barLength": 2, "offset": 0 },
+        { "line": "a yearning plea", "barNumber": 122, "barLength": 2, "offset": 0 },
+        { "line": "for you to sail", "barNumber": 126, "barLength": 2, "offset": 0 },
+        { "line": "my innocent sea", "barNumber": 130, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-04 19:24",
       "label": "vocals[great], guitar1[meh], guitar2[meh], bass[great], drums[meh]",
-      "tempo": "92",
+      "tempo": "181",
       "timeSignature": "6/8",
       "structure": {
         "sections": [
           {
             "label": "Intro",
-            "chords": ["A"]
+            "chords": ["𝄽", "𝄽"]
+          },
+          {
+            "label": "Verse 1",
+            "chords": ["C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G",
+          "C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G"]
+          },
+          {
+            "label": "Interlude 1",
+            "chords": ["C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "Am", "Am", "Am", "Am",
+          "Am", "Am", "Am", "Am", "Am", "Am", "Am", "Am"]
+          },
+          {
+            "label": "Chorus 1",
+            "chords": ["F", "F", "F", "F", "G", "G", "G", "G", "Em", "Em", "Em", "Em", "Am", "Am", "G", "G",
+          "C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G"]
+          },
+          {
+            "label": "Post-Chorus",
+            "chords": ["C", "C", "C", "C", "G", "G", "G", "G", "C", "C", "C", "C", "G", "G", "G", "G"]
+          },
+          {
+            "label": "Solo",
+            "chords": ["C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G",
+          "C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G"]
+          },
+          {
+            "label": "Verse 2",
+            "chords": ["C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G",
+          "C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G"]
+          },
+          {
+            "label": "Interlude 2",
+            "chords": ["C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "Am", "Am", "Am", "Am",
+          "Am", "Am", "Am", "Am", "Am", "Am", "Am", "Am"]
+          },
+          {
+            "label": "Chorus 2",
+            "chords": ["F", "F", "F", "F", "G", "G", "G", "G", "Em", "Em", "Em", "Em", "Am", "Am", "G", "G",
+          "C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G"]
+          },
+          {
+            "label": "Outro",
+            "chords": ["C", "C", "C", "C", "G", "G", "G", "G", "C", "C", "C", "C", "G", "G", "G", "G",
+          "C", "C", "C", "C", "G", "G", "G", "G", "C", "C", "C", "C", "G", "G", "G", "G",
+        "C", "C", "C", "C", "G", "G", "G", "G", "C", "C", "C", "C"]
           }
         ]
       }
