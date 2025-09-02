@@ -393,6 +393,60 @@
         audio {
             display: none;
         }
+        .current-section {
+            color: #00017b;
+            font-weight: bold;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+       .context-menu {
+            position: fixed;
+            background: #c0c0c0;
+            border: 2px outset #fff;
+            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #000;
+            display: none;
+            z-index: 1000;
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            min-width: 150px;
+        }
+
+        .menu-item {
+            padding: 4px 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #00017b;
+            color: #fff;
+            border: 1px solid #000;
+        }
+
+        .menu-divider {
+            border: none;
+            border-top: 1px solid #808080;
+            border-bottom: 1px solid #fff;
+            margin: 2px 0;
+            height: 0;
+        }
+
+        @media (max-width: 600px) {
+            .context-menu {
+                font-size: 14px;
+                max-height: 300px;
+            }
+            .menu-item {
+                padding: 3px 6px;
+            }
+            .menu-divider {
+                margin: 1px 0;
+            }
+        }
+
         @media (max-width: 600px) {
             body {
                 padding: 4px;
@@ -561,6 +615,7 @@
             <div class="current-info">
                 <span class="current-lyric"></span>
                 <span class="current-chord"></span>
+                <span class="current-section"></span>
                 <span class="chord-instructions"></span>
             </div>
             <span class="player-timeline">0:00 / 0:00</span>
@@ -579,378 +634,850 @@
                 <div class="structure-content"></div>
             </div>
         </div>
+        <div id="context-menu" class="context-menu">
+            <!-- Lyrics Actions -->
+            <div class="menu-item" data-action="copy-verse">Copy Verse</div>
+            <div class="menu-item" data-action="copy-stanza">Copy Stanza</div>
+            <div class="menu-item" data-action="copy-lyrics">Copy All Lyrics</div>
+            <div class="menu-item" data-action="copy-verse-link">Copy Verse Link</div>
+            <div class="menu-item" data-action="copy-stanza-link">Copy Stanza Link</div>
+            <div class="menu-item" data-action="next-verse">Next Verse</div>
+            <div class="menu-item" data-action="prev-verse">Previous Verse</div>
+            <div class="menu-item" data-action="next-stanza">Next Stanza</div>
+            <div class="menu-item" data-action="prev-stanza">Previous Stanza</div>
+            <hr class="menu-divider">
+            <!-- Chord Actions -->
+            <div class="menu-item" data-action="copy-chord">Copy Chord Diagram</div>
+            <div class="menu-item" data-action="copy-chords">Copy All Chords</div>
+            <div class="menu-item" data-action="next-section">Next Section</div>
+            <div class="menu-item" data-action="prev-section">Previous Section</div>
+            <hr class="menu-divider">
+            <!-- Playback Actions -->
+            <div class="menu-item" data-action="play-song">Play Song</div>
+            <div class="menu-item" data-action="next-song">Next Song</div>
+            <div class="menu-item" data-action="prev-song">Previous Song</div>
+            <div class="menu-item" data-action="seek-song">Seek to Position</div>
+            <div class="menu-item" data-action="copy-song-link">Copy Song Link</div>
+            <div class="menu-item" data-action="copy-time-link">Copy Current Time Link</div>
+            <hr class="menu-divider">
+            <!-- Display and Export Actions -->
+            <div class="menu-item" data-action="toggle-lyrics">Toggle Lyrics</div>
+            <div class="menu-item" data-action="toggle-structure">Toggle Structure</div>
+            <div class="menu-item" data-action="export-song">Export Lyrics & Chords</div>
+        </div>
     </section>
 
     <script>
-    fetch('album.json')
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('album-title').textContent = data.album.title;
-        document.getElementById('album-band').textContent = data.album.band;
+        fetch('album.json')
+.then(response => response.json())
+.then(data => {
+    document.getElementById('album-title').textContent = data.album.title;
+    document.getElementById('album-band').textContent = data.album.band;
 
-        const chordMap = new Map(data.chords.map(chordObj => {
-            const chordName = Object.keys(chordObj)[0];
-            const tab = chordObj[chordName]; // e.g., "x32010"
-            // Generate ASCII chord diagram with finger placements
-            const diagram = generateChordDiagram(chordName, tab);
-            return [chordName, { instructions: tab, diagram }];
-        }));
+    const chordMap = new Map(data.chords.map(chordObj => {
+        const chordName = Object.keys(chordObj)[0];
+        const tab = chordObj[chordName];
+        const diagram = generateChordDiagram(chordName, tab);
+        return [chordName, { instructions: tab, diagram }];
+    }));
 
-        function generateChordDiagram(chordName, tab) {
-            // Fallback for invalid or missing tab (wrong length or non-parsable values)
-            if (!tab || tab.length !== 6 || tab.split('').some(f => f !== 'x' && isNaN(parseInt(f)))) {
-                return `    01 02 03 04 05
+    function generateChordDiagram(chordName, tab) {
+        if (!tab || tab.length !== 6 || tab.split('').some(f => f !== 'x' && isNaN(parseInt(f)))) {
+            return `    01 02 03 04 05
         e |              
         B |              
         G |              
         D |              
         A |              
         E |              `;
-            }
-
-            const strings = ['e', 'B', 'G', 'D', 'A', 'E']; // High e at top, low E at bottom
-
-            // Parse frets, reversing to match display order (tab: low E to high e; display: high e to low E)
-            let frets = tab.split('').map(f => f.toLowerCase() === 'x' ? 'x' : parseInt(f)).reverse();
-
-            // Determine fret range, ignoring open strings (0) and muted strings ('x')
-            let minFret = Infinity;
-            let maxFret = 0;
-            frets.forEach(f => {
-                if (f !== 'x' && f > 0) {
-                    minFret = Math.min(minFret, f);
-                    maxFret = Math.max(maxFret, f);
-                }
-            });
-
-            // Default to frets 1–5 if no fretted notes (all open or muted)
-            if (minFret === Infinity) {
-                minFret = 1;
-                maxFret = 5;
-            }
-
-            // Fixed 5-fret range, centered around fretted notes
-            const fretRange = 5;
-            let startFret = Math.max(1, minFret - 1); // Place minFret at position 2 for centering
-            if (startFret + fretRange - 1 < maxFret) {
-                startFret = maxFret - fretRange + 2; // Place maxFret at position 4 for centering
-            }
-
-            // Generate fret numbers in ascending order (length 14 chars)
-            const fretNumbers = Array.from(
-                { length: fretRange },
-                (_, i) => (startFret + i).toString().padStart(2, '0')
-            ).join(' ');
-            let diagram = `    ${fretNumbers}\n`;
-
-            // Build each string line with fixed alignment (total line length: 18 chars)
-            for (let i = 0; i < 6; i++) {
-                const fret = frets[i];
-                let stringLine = `${strings[i]} | `; // Prefix length 4 (e.g., 'e | ')
-
-                if (fret === 'x') {
-                    stringLine += 'x             '; // 13 spaces after 'x'
-                } else if (fret === 0) {
-                    stringLine += '              '; // 14 spaces for open string
-                } else {
-                    let content = '              '; // 14 spaces
-                    const relativeFret = fret - startFret;
-                    if (relativeFret >= 0 && relativeFret < fretRange) {
-                        const pos = 1 + relativeFret * 3; // Align • under second digit of fret number
-                        content = content.substring(0, pos) + '•' + content.substring(pos + 1);
-                    }
-                    stringLine += content;
-                }
-                diagram += stringLine + '\n';
-            }
-
-            return diagram;
         }
 
-const songList = document.getElementById('song-list');
-        const player = document.getElementById('player');
-        const audio = document.getElementById('audio-player');
-        const playBtn = player.querySelector('.play-btn');
-        const pauseBtn = player.querySelector('.pause-btn');
-        const timeline = player.querySelector('.player-timeline');
-        const seekBar = player.querySelector('.seek-bar');
-        const lyricsContent = player.querySelector('.lyrics-content');
-        const structureContent = player.querySelector('.structure-content');
-        const currentLyricDisplay = player.querySelector('.current-lyric');
-        const currentChordDisplay = player.querySelector('.current-chord');
-        const chordInstructionsDisplay = player.querySelector('.chord-instructions');
-        let currentTrack = null;
-        let lastUpdateTime = 0;
-
-        seekBar.addEventListener('input', () => {
-            seekBar.style.setProperty('--value', seekBar.value);
-            if (currentTrack) {
-                const duration = audio.duration || 0;
-                audio.currentTime = (seekBar.value / 100) * duration;
+        const strings = ['e', 'B', 'G', 'D', 'A', 'E'];
+        let frets = tab.split('').map(f => f.toLowerCase() === 'x' ? 'x' : parseInt(f)).reverse();
+        let minFret = Infinity;
+        let maxFret = 0;
+        frets.forEach(f => {
+            if (f !== 'x' && f > 0) {
+                minFret = Math.min(minFret, f);
+                maxFret = Math.max(maxFret, f);
             }
         });
 
-        data.tracks.forEach(track => {
-            const songItem = document.createElement('div');
-            songItem.className = 'song-item';
-            songItem.textContent = track.title;
-            songItem.addEventListener('click', () => {
-                if (currentTrack) {
-                    audio.pause();
-                    audio.currentTime = 0;
+        if (minFret === Infinity) {
+            minFret = 1;
+            maxFret = 5;
+        }
+
+        const fretRange = 5;
+        let startFret = Math.max(1, minFret - 1);
+        if (startFret + fretRange - 1 < maxFret) {
+            startFret = maxFret - fretRange + 2;
+        }
+
+        const fretNumbers = Array.from(
+            { length: fretRange },
+            (_, i) => (startFret + i).toString().padStart(2, '0')
+        ).join(' ');
+        let diagram = `    ${fretNumbers}\n`;
+
+        for (let i = 0; i < 6; i++) {
+            const fret = frets[i];
+            let stringLine = `${strings[i]} | `;
+            if (fret === 'x') {
+                stringLine += 'x             ';
+            } else if (fret === 0) {
+                stringLine += '              ';
+            } else {
+                let content = '              ';
+                const relativeFret = fret - startFret;
+                if (relativeFret >= 0 && relativeFret < fretRange) {
+                    const pos = 1 + relativeFret * 3;
+                    content = content.substring(0, pos) + '•' + content.substring(pos + 1);
                 }
-                document.querySelectorAll('.song-item').forEach(item => item.classList.remove('active'));
-                songItem.classList.add('active');
-                playBtn.disabled = true;
-                pauseBtn.disabled = false;
+                stringLine += content;
+            }
+            diagram += stringLine + '\n';
+        }
 
-                audio.src = track.mp3;
-                if (!audio.src) {
-                    console.error('Invalid audio source for track:', track.title);
-                    return;
+        return diagram;
+    }
+
+    const songList = document.getElementById('song-list');
+    const player = document.getElementById('player');
+    const audio = document.getElementById('audio-player');
+    const playBtn = player.querySelector('.play-btn');
+    const pauseBtn = player.querySelector('.pause-btn');
+    const timeline = player.querySelector('.player-timeline');
+    const seekBar = player.querySelector('.seek-bar');
+    const lyricsContent = player.querySelector('.lyrics-content');
+    const structureContent = player.querySelector('.structure-content');
+    const currentLyricDisplay = player.querySelector('.current-lyric');
+    const currentChordDisplay = player.querySelector('.current-chord');
+    const currentSectionDisplay = player.querySelector('.current-section');
+    const chordInstructionsDisplay = player.querySelector('.chord-instructions');
+    const contextMenu = document.getElementById('context-menu');
+    let currentTrack = null;
+    let lastUpdateTime = 0;
+    let contextTarget = null;
+
+    function generateSongLink(trackIndex, time = null) {
+        const baseUrl = window.location.origin + window.location.pathname;
+        let url = `${baseUrl}?song=${trackIndex}`;
+        if (time !== null) {
+            url += `&time=${Math.floor(time)}`;
+        }
+        return url;
+    }
+
+    function selectSong(track, trackIndex, startTime = 0) {
+        console.log(`Selecting song: ${track.title} (index: ${trackIndex}, startTime: ${startTime})`);
+        if (currentTrack) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+        document.querySelectorAll('.song-item').forEach(item => item.classList.remove('active'));
+        const songItem = songList.children[trackIndex];
+        if (!songItem) {
+            console.error(`No song item found for index: ${trackIndex}`);
+            return;
+        }
+        songItem.classList.add('active');
+        playBtn.disabled = true;
+        pauseBtn.disabled = false;
+
+        audio.src = track.mp3;
+        if (!audio.src) {
+            console.error('Invalid audio source for track:', track.title);
+            return;
+        }
+        lyricsContent.innerHTML = '';
+        structureContent.innerHTML = '';
+        currentLyricDisplay.textContent = '';
+        currentChordDisplay.textContent = '';
+        chordInstructionsDisplay.textContent = '';
+        currentSectionDisplay.textContent = '';
+        currentTrack = track;
+
+        const tempoInfo = document.createElement('div');
+        tempoInfo.className = 'tempo-info';
+        tempoInfo.textContent = `Tempo: ${track.tempo} BPM | Time Signature: ${track.timeSignature}`;
+        structureContent.appendChild(tempoInfo);
+
+        track.lyrics.forEach((line, index) => {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'lyrics-line';
+            lineDiv.dataset.index = index;
+            lineDiv.dataset.bar = line.barNumber || 1;
+            lineDiv.dataset.length = line.barLength || 1;
+            lineDiv.dataset.offset = line.offset || 0;
+            if (line.stanzaEnd) lineDiv.classList.add('stanza-end');
+            lineDiv.textContent = line.line || ' ';
+            lineDiv.addEventListener('click', () => {
+                if (currentTrack === track) {
+                    const bpm = parseInt(track.tempo) || 120;
+                    const isSixEight = track.timeSignature === '6/8';
+                    const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+                    const bar = parseInt(lineDiv.dataset.bar) || 1;
+                    const offset = parseFloat(lineDiv.dataset.offset) || 0;
+                    const beatsPerBar = isSixEight ? 2 : 4;
+                    const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                    audio.currentTime = startTime;
+                    audio.play().catch(err => console.error('Audio play error:', err));
+                    playBtn.disabled = true;
+                    pauseBtn.disabled = false;
                 }
-                lyricsContent.innerHTML = '';
-                structureContent.innerHTML = '';
-                currentLyricDisplay.textContent = '';
-                currentChordDisplay.textContent = '';
-                chordInstructionsDisplay.textContent = '';
-                currentTrack = track;
-
-                // Add tempo and time signature information
-                const tempoInfo = document.createElement('div');
-                tempoInfo.className = 'tempo-info';
-                tempoInfo.textContent = `Tempo: ${track.tempo} BPM | Time Signature: ${track.timeSignature}`;
-                structureContent.appendChild(tempoInfo);
-
-                track.lyrics.forEach((line, index) => {
-                    const lineDiv = document.createElement('div');
-                    lineDiv.className = 'lyrics-line';
-                    lineDiv.dataset.index = index;
-                    lineDiv.dataset.bar = line.barNumber || 1;
-                    lineDiv.dataset.length = line.barLength || 1;
-                    lineDiv.dataset.offset = line.offset || 0;
-                    if (line.stanzaEnd) lineDiv.classList.add('stanza-end');
-                    lineDiv.textContent = line.line || ' ';
-                    lineDiv.addEventListener('click', () => {
-                        if (currentTrack === track) {
-                            const bpm = parseInt(track.tempo) || 120;
-                            const isSixEight = track.timeSignature === '6/8';
-                            const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-                            const bar = parseInt(lineDiv.dataset.bar) || 1;
-                            const offset = parseFloat(lineDiv.dataset.offset) || 0;
-                            const beatsPerBar = isSixEight ? 2 : 4;
-                            const startTime = (bar * beatsPerBar * beatDuration) + offset;
-                            audio.currentTime = startTime;
-                            audio.play().catch(err => console.error('Audio play error:', err));
-                            playBtn.disabled = true;
-                            pauseBtn.disabled = false;
-                        }
-                    });
-                    lyricsContent.appendChild(lineDiv);
-                });
-
-                let beatIndex = 0;
-                track.structure.sections.forEach(section => {
-                    const sectionLabel = document.createElement('div');
-                    sectionLabel.className = 'section-label';
-                    sectionLabel.textContent = section.label;
-                    structureContent.appendChild(sectionLabel);
-
-                    for (let i = 0; i < section.chords.length; i += 8) {
-                        const blockChords = section.chords.slice(i, i + 8);
-                        const blockDiv = document.createElement('div');
-                        blockDiv.className = 'structure-block';
-                        blockDiv.dataset.bar = i / 4 + 1;
-
-                        for (let barOffset = 0; barOffset < blockChords.length; barOffset += 4) {
-                            const barChords = blockChords.slice(barOffset, barOffset + 4);
-                            let j = 0;
-                            while (j < barChords.length) {
-                                let chord = barChords[j];
-                                let chordSpanLength = 1;
-                                while (j + chordSpanLength < barChords.length && barChords[j + chordSpanLength] === chord) {
-                                    chordSpanLength++;
-                                }
-
-                                const chordContainer = document.createElement('div');
-                                chordContainer.className = 'chord-container';
-                                chordContainer.style.flex = chordSpanLength;
-                                const chordSpan = document.createElement('span');
-                                chordSpan.className = 'structure-chord';
-                                chordSpan.dataset.beat = beatIndex + 1;
-                                chordSpan.dataset.span = chordSpanLength;
-                                const chordData = chordMap.get(chord) || { instructions: 'N/A', diagram: '' };
-                                chordSpan.innerHTML = `
-                                    <span class="chord">${chord || 'N/A'}</span>
-                                    <span class="chord-value">${chordData.instructions}</span>
-                                    <span class="chord-diagram">${chordData.diagram}</span>
-                                `;
-                                const progressDiv = document.createElement('div');
-                                progressDiv.className = 'chord-progress';
-                                progressDiv.dataset.beat = beatIndex + 1;
-                                progressDiv.dataset.span = chordSpanLength;
-
-                                chordSpan.addEventListener('click', () => {
-                                    if (currentTrack === track) {
-                                        const bpm = parseInt(track.tempo) || 120;
-                                        const isSixEight = track.timeSignature === '6/8';
-                                        const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-                                        const beat = parseInt(chordSpan.dataset.beat);
-                                        const startTime = (beat - 1) * beatDuration;
-                                        audio.currentTime = startTime;
-                                        audio.play().catch(err => console.error('Audio play error:', err));
-                                        playBtn.disabled = true;
-                                        pauseBtn.disabled = false;
-                                    }
-                                });
-
-                                chordContainer.appendChild(chordSpan);
-                                chordContainer.appendChild(progressDiv);
-                                blockDiv.appendChild(chordContainer);
-
-                                beatIndex += chordSpanLength;
-                                j += chordSpanLength;
-                            }
-                        }
-                        structureContent.appendChild(blockDiv);
-                    }
-                });
-
-                seekBar.value = 0;
-                seekBar.style.setProperty('--value', 0);
-                lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
-                    line.classList.remove('active');
-                    line.classList.remove('passed');
-                });
-                structureContent.querySelectorAll('.structure-chord').forEach(chord => {
-                    chord.classList.remove('active');
-                    chord.classList.remove('passed');
-                });
-                structureContent.querySelectorAll('.chord-progress').forEach(progress => progress.style.setProperty('--progress', 0));
-                audio.play().catch(err => console.error('Audio play error:', err));
-                requestAnimationFrame(updateProgressBars);
             });
-            songList.appendChild(songItem);
+            lineDiv.addEventListener('contextmenu', (e) => {
+                showContextMenu(e, 'lyrics-line', lineDiv, track, trackIndex);
+            });
+            lyricsContent.appendChild(lineDiv);
         });
 
-        playBtn.addEventListener('click', () => {
+        let beatIndex = 0;
+        track.structure.sections.forEach(section => {
+            const sectionLabel = document.createElement('div');
+            sectionLabel.className = 'section-label';
+            sectionLabel.textContent = section.label;
+            sectionLabel.dataset.beatStart = beatIndex + 1;
+            sectionLabel.dataset.beatEnd = beatIndex + section.chords.length;
+            structureContent.appendChild(sectionLabel);
+
+            for (let i = 0; i < section.chords.length; i += 8) {
+                const blockChords = section.chords.slice(i, i + 8);
+                const blockDiv = document.createElement('div');
+                blockDiv.className = 'structure-block';
+                blockDiv.dataset.bar = i / 4 + 1;
+
+                for (let barOffset = 0; barOffset < blockChords.length; barOffset += 4) {
+                    const barChords = blockChords.slice(barOffset, barOffset + 4);
+                    let j = 0;
+                    while (j < barChords.length) {
+                        let chord = barChords[j];
+                        let chordSpanLength = 1;
+                        while (j + chordSpanLength < barChords.length && barChords[j + chordSpanLength] === chord) {
+                            chordSpanLength++;
+                        }
+
+                        const chordContainer = document.createElement('div');
+                        chordContainer.className = 'chord-container';
+                        chordContainer.style.flex = chordSpanLength;
+                        const chordSpan = document.createElement('span');
+                        chordSpan.className = 'structure-chord';
+                        chordSpan.dataset.beat = beatIndex + 1;
+                        chordSpan.dataset.span = chordSpanLength;
+                        const chordData = chordMap.get(chord) || { instructions: 'N/A', diagram: '' };
+                        chordSpan.innerHTML = `
+                            <span class="chord">${chord || 'N/A'}</span>
+                            <span class="chord-value">${chordData.instructions}</span>
+                            <span class="chord-diagram">${chordData.diagram}</span>
+                        `;
+                        const progressDiv = document.createElement('div');
+                        progressDiv.className = 'chord-progress';
+                        progressDiv.dataset.beat = beatIndex + 1;
+                        progressDiv.dataset.span = chordSpanLength;
+
+                        chordSpan.addEventListener('click', () => {
+                            if (currentTrack === track) {
+                                const bpm = parseInt(track.tempo) || 120;
+                                const isSixEight = track.timeSignature === '6/8';
+                                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+                                const beat = parseInt(chordSpan.dataset.beat);
+                                const startTime = (beat - 1) * beatDuration;
+                                audio.currentTime = startTime;
+                                audio.play().catch(err => console.error('Audio play error:', err));
+                                playBtn.disabled = true;
+                                pauseBtn.disabled = false;
+                            }
+                        });
+                        chordSpan.addEventListener('contextmenu', (e) => {
+                            showContextMenu(e, 'structure-chord', chordSpan, track, trackIndex);
+                        });
+
+                        chordContainer.appendChild(chordSpan);
+                        chordContainer.appendChild(progressDiv);
+                        blockDiv.appendChild(chordContainer);
+
+                        beatIndex += chordSpanLength;
+                        j += chordSpanLength;
+                    }
+                }
+                structureContent.appendChild(blockDiv);
+            }
+        });
+
+        seekBar.value = 0;
+        seekBar.style.setProperty('--value', 0);
+        lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
+            line.classList.remove('active');
+            line.classList.remove('passed');
+        });
+        structureContent.querySelectorAll('.structure-chord').forEach(chord => {
+            chord.classList.remove('active');
+            chord.classList.remove('passed');
+        });
+        structureContent.querySelectorAll('.chord-progress').forEach(progress => progress.style.setProperty('--progress', 0));
+
+        audio.addEventListener('loadedmetadata', () => {
+            if (startTime < audio.duration) {
+                audio.currentTime = startTime;
+            }
             audio.play().catch(err => console.error('Audio play error:', err));
             playBtn.disabled = true;
             pauseBtn.disabled = false;
             requestAnimationFrame(updateProgressBars);
-        });
-        pauseBtn.addEventListener('click', () => {
-            audio.pause();
-            playBtn.disabled = false;
-            pauseBtn.disabled = true;
-        });
+        }, { once: true });
+    }
 
-        function updateProgressBars(timestamp) {
-            if (!currentTrack || audio.paused) return;
+    function handleQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        const songIndex = parseInt(params.get('song'));
+        const time = parseFloat(params.get('time'));
+        let songItem = null;
 
-            if (timestamp - lastUpdateTime < 16) {
-                requestAnimationFrame(updateProgressBars);
-                return;
-            }
-            lastUpdateTime = timestamp;
-
-            const currentTime = audio.currentTime;
-            const duration = audio.duration || 0;
-            timeline.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-            seekBar.value = duration ? (currentTime / duration) * 100 : 0;
-            seekBar.style.setProperty('--value', seekBar.value);
-
-            const bpm = parseInt(currentTrack.tempo) || 120;
-            const isSixEight = currentTrack.timeSignature === '6/8';
-            const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-            const currentBeat = Math.floor(currentTime / beatDuration);
-
-            let currentLyric = '';
-            lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
-                const bar = parseInt(line.dataset.bar) || 1;
-                const length = parseFloat(line.dataset.length) || 1;
-                const offset = parseFloat(line.dataset.offset) || 0;
-                const beatsPerBar = isSixEight ? 2 : 4;
-                const startTime = (bar * beatsPerBar * beatDuration) + offset;
-                const endTime = startTime + (length * beatsPerBar * beatDuration);
-                line.classList.toggle('active', currentTime >= startTime && currentTime < endTime);
-                line.classList.toggle('passed', currentTime >= endTime);
-                if (currentTime >= startTime && currentTime < endTime) {
-                    currentLyric = line.textContent;
-                }
-            });
-            currentLyricDisplay.textContent = currentLyric;
-
-            let currentChord = '';
-            structureContent.querySelectorAll('.structure-chord').forEach(chord => {
-                const startBeat = parseInt(chord.dataset.beat) - 1;
-                const spanLength = parseInt(chord.dataset.span) || 1;
-                const endBeat = startBeat + spanLength - 1;
-                chord.classList.toggle('active', currentBeat >= startBeat && currentBeat <= endBeat);
-                chord.classList.toggle('passed', currentBeat > endBeat);
-                if (currentBeat >= startBeat && currentBeat <= endBeat) {
-                    currentChord = chord.querySelector('.chord').textContent;
-                    const chordData = chordMap.get(currentChord) || { instructions: 'N/A' };
-                    currentChordDisplay.textContent = currentChord;
-                    chordInstructionsDisplay.textContent = chordData.instructions ? `${chordData.instructions}` : '';
-                }
-            });
-
-            structureContent.querySelectorAll('.chord-progress').forEach(progress => {
-                const progressBeat = parseInt(progress.dataset.beat) - 1;
-                const spanLength = parseInt(progress.dataset.span) || 1;
-                const beatStartTime = progressBeat * beatDuration;
-                const beatEndTime = beatStartTime + (beatDuration * spanLength);
-                let progressValue = 0;
-
-                if (currentTime >= beatEndTime) {
-                    progressValue = 100;
-                } else if (currentTime >= beatStartTime && currentTime < beatEndTime) {
-                    progressValue = Math.min(100, ((currentTime - beatStartTime) / (beatDuration * spanLength)) * 100);
-                }
-
-                progress.style.setProperty('--progress', progressValue);
-            });
-
-            requestAnimationFrame(updateProgressBars);
+        if (!isNaN(songIndex) && songIndex >= 0 && songIndex < data.tracks.length) {
+            songItem = songList.children[songIndex];
+        } else if (data.tracks.length > 0) {
+            songItem = songList.children[0];
         }
 
-        audio.addEventListener('timeupdate', () => {
-            if (!audio.paused) {
-                requestAnimationFrame(updateProgressBars);
+        if (songItem) {
+            const trackIndex = parseInt(songItem.dataset.trackIndex);
+            const track = data.tracks[trackIndex];
+            selectSong(track, trackIndex, !isNaN(time) && time >= 0 ? time : 0);
+        }
+    }
+
+    function showContextMenu(e, targetType, targetElement, targetTrack = currentTrack, targetTrackIndex = data.tracks.findIndex(t => t === currentTrack)) {
+        e.preventDefault();
+        contextTarget = { type: targetType, element: targetElement, track: targetTrack, trackIndex: targetTrackIndex };
+        const menuItems = contextMenu.querySelectorAll('.menu-item');
+        const currentTrackIndex = currentTrack ? data.tracks.findIndex(t => t === currentTrack) : -1;
+
+        menuItems.forEach(item => {
+            const action = item.dataset.action;
+            item.style.display = 'block';
+            if (
+                (action === 'copy-verse' && targetType !== 'lyrics-line') ||
+                (action === 'copy-stanza' && targetType !== 'lyrics-line') ||
+                (action === 'copy-lyrics' && !targetTrack) ||
+                (action === 'copy-chord' && targetType !== 'structure-chord') ||
+                (action === 'copy-chords' && targetType !== 'structure-chord') ||
+                (action === 'play-song' && targetType !== 'song-item') ||
+                (action === 'next-song' && (currentTrackIndex === -1 || currentTrackIndex >= data.tracks.length - 1)) ||
+                (action === 'prev-song' && (currentTrackIndex === -1 || currentTrackIndex <= 0)) ||
+                (action === 'seek-song' && targetType !== 'seek-bar') ||
+                (action === 'copy-song-link' && !targetTrack) ||
+                (action === 'copy-verse-link' && targetType !== 'lyrics-line') ||
+                (action === 'copy-stanza-link' && targetType !== 'lyrics-line') ||
+                (action === 'copy-time-link' && !targetTrack) ||
+                (action === 'next-verse' && targetType !== 'lyrics-line') ||
+                (action === 'prev-verse' && targetType !== 'lyrics-line') ||
+                (action === 'next-stanza' && targetType !== 'lyrics-line') ||
+                (action === 'prev-stanza' && targetType !== 'lyrics-line') ||
+                (action === 'next-section' && targetType !== 'structure-chord') ||
+                (action === 'prev-section' && targetType !== 'structure-chord') ||
+                (action === 'export-song' && !targetTrack)
+            ) {
+                item.style.display = 'none';
             }
         });
 
-        audio.addEventListener('ended', () => {
-            playBtn.disabled = false;
-            pauseBtn.disabled = true;
-            seekBar.value = 0;
-            seekBar.style.setProperty('--value', 0);
-            currentLyricDisplay.textContent = '';
-            currentChordDisplay.textContent = '';
-            chordInstructionsDisplay.textContent = '';
-            lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
-                line.classList.remove('active');
-                line.classList.add('passed');
-            });
-            structureContent.querySelectorAll('.structure-chord').forEach(chord => {
-                chord.classList.remove('active');
-                chord.classList.add('passed');
-            });
-            structureContent.querySelectorAll('.chord-progress').forEach(progress => progress.style.setProperty('--progress', 0));
-        });
+        if (targetType === 'lyrics-line' && targetTrack) {
+            const lines = lyricsContent.querySelectorAll('.lyrics-line');
+            let currentIndex = parseInt(contextTarget.element.dataset.index);
+            let hasNextStanza = false;
+            let hasPrevStanza = false;
+            let hasNextVerse = currentIndex < lines.length - 1;
+            let hasPrevVerse = currentIndex > 0;
 
-        audio.addEventListener('error', () => {
-            console.error('Audio error:', audio.error);
-        });
-    })
-    .catch(error => console.error('Error loading JSON:', error));
+            for (let i = currentIndex + 1; i < lines.length; i++) {
+                if (lines[i].classList.contains('stanza-end')) {
+                    hasNextStanza = i < lines.length - 1;
+                    break;
+                }
+            }
 
-    function formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+            for (let i = currentIndex - 1; i >= 0; i--) {
+                if (lines[i].classList.contains('stanza-end') || i === 0) {
+                    hasPrevStanza = true;
+                    break;
+                }
+            }
+
+            if (!hasNextStanza) contextMenu.querySelector('[data-action="next-stanza"]').style.display = 'none';
+            if (!hasPrevStanza) contextMenu.querySelector('[data-action="prev-stanza"]').style.display = 'none';
+            if (!hasNextVerse) contextMenu.querySelector('[data-action="next-verse"]').style.display = 'none';
+            if (!hasPrevVerse) contextMenu.querySelector('[data-action="prev-verse"]').style.display = 'none';
+        }
+
+        // Constrain menu to viewport
+        const menuRect = contextMenu.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        let menuX = e.clientX;
+        let menuY = e.clientY;
+
+        if (menuX + menuRect.width > viewportWidth - 10) {
+            menuX = viewportWidth - menuRect.width - 10;
+        }
+        if (menuY + menuRect.height > viewportHeight - 10) {
+            menuY = viewportHeight - menuRect.height - 10;
+        }
+        if (menuX < 10) menuX = 10;
+        if (menuY < 10) menuY = 10;
+
+        contextMenu.style.top = `${menuY}px`;
+        contextMenu.style.left = `${menuX}px`;
+        contextMenu.style.display = 'block';
     }
+
+    function hideContextMenu() {
+        contextMenu.style.display = 'none';
+        contextTarget = null;
+    }
+
+    document.addEventListener('click', hideContextMenu);
+    document.addEventListener('contextmenu', (e) => {
+        if (!e.target.closest('.song-item, .lyrics-line, .structure-chord, .seek-bar')) {
+            hideContextMenu();
+        }
+    });
+
+    contextMenu.addEventListener('click', (e) => {
+        const menuItem = e.target.closest('.menu-item');
+        if (!menuItem || menuItem.style.display === 'none') return;
+
+        const action = menuItem.dataset.action;
+        const targetTrack = contextTarget.track;
+        const targetTrackIndex = contextTarget.trackIndex;
+        const currentTrackIndex = currentTrack ? data.tracks.findIndex(t => t === currentTrack) : -1;
+
+        if (action === 'copy-verse' && contextTarget.type === 'lyrics-line') {
+            const line = contextTarget.element.textContent;
+            navigator.clipboard.writeText(line);
+        } else if (action === 'copy-stanza' && contextTarget.type === 'lyrics-line') {
+            const lines = contextTarget.element.parentElement.querySelectorAll('.lyrics-line');
+            let stanza = '';
+            let inStanza = false;
+            for (const line of lines) {
+                if (line === contextTarget.element) inStanza = true;
+                if (inStanza) {
+                    stanza += line.textContent + '\n';
+                    if (line.classList.contains('stanza-end')) break;
+                }
+            }
+            navigator.clipboard.writeText(stanza.trim());
+        } else if (action === 'copy-lyrics' && targetTrack) {
+            const lyrics = targetTrack.lyrics.map(l => l.line || '').join('\n');
+            navigator.clipboard.writeText(lyrics);
+        } else if (action === 'copy-chord' && contextTarget.type === 'structure-chord') {
+            const chord = contextTarget.element.querySelector('.chord').textContent;
+            const chordData = chordMap.get(chord) || { diagram: '' };
+            navigator.clipboard.writeText(`${chord}\n${chordData.diagram}`);
+        } else if (action === 'copy-chords' && contextTarget.type === 'structure-chord') {
+            let chordsText = '';
+            targetTrack.structure.sections.forEach(section => {
+                chordsText += `${section.label}:\n`;
+                section.chords.forEach((chord, i) => {
+                    chordsText += chord || 'N/A';
+                    if ((i + 1) % 4 === 0) chordsText += '\n';
+                    else chordsText += ' | ';
+                });
+                chordsText += '\n';
+            });
+            navigator.clipboard.writeText(chordsText.trim());
+        } else if (action === 'play-song' && contextTarget.type === 'song-item') {
+            selectSong(targetTrack, targetTrackIndex);
+        } else if (action === 'next-song' && currentTrackIndex !== -1) {
+            if (currentTrackIndex < data.tracks.length - 1) {
+                selectSong(data.tracks[currentTrackIndex + 1], currentTrackIndex + 1);
+            }
+        } else if (action === 'prev-song' && currentTrackIndex !== -1) {
+            if (currentTrackIndex > 0) {
+                selectSong(data.tracks[currentTrackIndex - 1], currentTrackIndex - 1);
+            }
+        } else if (action === 'seek-song' && contextTarget.type === 'seek-bar') {
+            const rect = contextTarget.element.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            const duration = audio.duration || 0;
+            audio.currentTime = pos * duration;
+            audio.play().catch(err => console.error('Audio play error:', err));
+            playBtn.disabled = true;
+            pauseBtn.disabled = false;
+        } else if (action === 'copy-song-link' && targetTrack) {
+            const link = generateSongLink(targetTrackIndex);
+            navigator.clipboard.writeText(link);
+        } else if (action === 'copy-verse-link' && contextTarget.type === 'lyrics-line' && targetTrack) {
+            const bar = parseInt(contextTarget.element.dataset.bar) || 1;
+            const offset = parseFloat(contextTarget.element.dataset.offset) || 0;
+            const bpm = parseInt(targetTrack.tempo) || 120;
+            const isSixEight = targetTrack.timeSignature === '6/8';
+            const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+            const beatsPerBar = isSixEight ? 2 : 4;
+            const startTime = (bar * beatsPerBar * beatDuration) + offset;
+            const link = generateSongLink(targetTrackIndex, startTime);
+            navigator.clipboard.writeText(link);
+        } else if (action === 'copy-stanza-link' && contextTarget.type === 'lyrics-line' && targetTrack) {
+            const lines = contextTarget.element.parentElement.querySelectorAll('.lyrics-line');
+            let firstLine = null;
+            for (const line of lines) {
+                if (line === contextTarget.element) {
+                    firstLine = line;
+                    break;
+                }
+                if (line.classList.contains('stanza-end')) {
+                    firstLine = lines[lines.length - 1].nextElementSibling || firstLine;
+                }
+            }
+            if (firstLine) {
+                const bar = parseInt(firstLine.dataset.bar) || 1;
+                const offset = parseFloat(firstLine.dataset.offset) || 0;
+                const bpm = parseInt(targetTrack.tempo) || 120;
+                const isSixEight = targetTrack.timeSignature === '6/8';
+                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+                const beatsPerBar = isSixEight ? 2 : 4;
+                const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                const link = generateSongLink(targetTrackIndex, startTime);
+                navigator.clipboard.writeText(link);
+            }
+        } else if (action === 'copy-time-link' && targetTrack) {
+            const link = generateSongLink(targetTrackIndex, audio.currentTime);
+            navigator.clipboard.writeText(link);
+        } else if (action === 'next-verse' && contextTarget.type === 'lyrics-line' && targetTrack) {
+            const lines = lyricsContent.querySelectorAll('.lyrics-line');
+            const currentIndex = parseInt(contextTarget.element.dataset.index);
+            if (currentIndex < lines.length - 1) {
+                const nextLine = lines[currentIndex + 1];
+                const bar = parseInt(nextLine.dataset.bar) || 1;
+                const offset = parseFloat(nextLine.dataset.offset) || 0;
+                const bpm = parseInt(targetTrack.tempo) || 120;
+                const isSixEight = targetTrack.timeSignature === '6/8';
+                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+                const beatsPerBar = isSixEight ? 2 : 4;
+                const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                if (currentTrack !== targetTrack) {
+                    selectSong(targetTrack, targetTrackIndex, startTime);
+                } else {
+                    audio.currentTime = startTime;
+                    audio.play().catch(err => console.error('Audio play error:', err));
+                    playBtn.disabled = true;
+                    pauseBtn.disabled = false;
+                }
+            }
+        } else if (action === 'prev-verse' && contextTarget.type === 'lyrics-line' && targetTrack) {
+            const lines = lyricsContent.querySelectorAll('.lyrics-line');
+            const currentIndex = parseInt(contextTarget.element.dataset.index);
+            if (currentIndex > 0) {
+                const prevLine = lines[currentIndex - 1];
+                const bar = parseInt(prevLine.dataset.bar) || 1;
+                const offset = parseFloat(prevLine.dataset.offset) || 0;
+                const bpm = parseInt(targetTrack.tempo) || 120;
+                const isSixEight = targetTrack.timeSignature === '6/8';
+                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+                const beatsPerBar = isSixEight ? 2 : 4;
+                const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                if (currentTrack !== targetTrack) {
+                    selectSong(targetTrack, targetTrackIndex, startTime);
+                } else {
+                    audio.currentTime = startTime;
+                    audio.play().catch(err => console.error('Audio play error:', err));
+                    playBtn.disabled = true;
+                    pauseBtn.disabled = false;
+                }
+            }
+        } else if (action === 'next-stanza' && contextTarget.type === 'lyrics-line' && targetTrack) {
+            const lines = lyricsContent.querySelectorAll('.lyrics-line');
+            let currentIndex = parseInt(contextTarget.element.dataset.index);
+            let nextStanzaLine = null;
+            for (let i = currentIndex + 1; i < lines.length; i++) {
+                if (lines[i].classList.contains('stanza-end')) {
+                    if (i + 1 < lines.length) {
+                        nextStanzaLine = lines[i + 1];
+                    }
+                    break;
+                }
+            }
+            if (nextStanzaLine) {
+                const bar = parseInt(nextStanzaLine.dataset.bar) || 1;
+                const offset = parseFloat(nextStanzaLine.dataset.offset) || 0;
+                const bpm = parseInt(targetTrack.tempo) || 120;
+                const isSixEight = targetTrack.timeSignature === '6/8';
+                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+                const beatsPerBar = isSixEight ? 2 : 4;
+                const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                if (currentTrack !== targetTrack) {
+                    selectSong(targetTrack, targetTrackIndex, startTime);
+                } else {
+                    audio.currentTime = startTime;
+                    audio.play().catch(err => console.error('Audio play error:', err));
+                    playBtn.disabled = true;
+                    pauseBtn.disabled = false;
+                }
+            }
+        } else if (action === 'prev-stanza' && contextTarget.type === 'lyrics-line' && targetTrack) {
+            const lines = lyricsContent.querySelectorAll('.lyrics-line');
+            let currentIndex = parseInt(contextTarget.element.dataset.index);
+            let prevStanzaLine = null;
+            for (let i = currentIndex - 1; i >= 0; i--) {
+                if (lines[i].classList.contains('stanza-end') || i === 0) {
+                    prevStanzaLine = lines[i === 0 ? 0 : i + 1];
+                    break;
+                }
+            }
+            if (prevStanzaLine) {
+                const bar = parseInt(prevStanzaLine.dataset.bar) || 1;
+                const offset = parseFloat(prevStanzaLine.dataset.offset) || 0;
+                const bpm = parseInt(targetTrack.tempo) || 120;
+                const isSixEight = targetTrack.timeSignature === '6/8';
+                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+                const beatsPerBar = isSixEight ? 2 : 4;
+                const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                if (currentTrack !== targetTrack) {
+                    selectSong(targetTrack, targetTrackIndex, startTime);
+                } else {
+                    audio.currentTime = startTime;
+                    audio.play().catch(err => console.error('Audio play error:', err));
+                    playBtn.disabled = true;
+                    pauseBtn.disabled = false;
+                }
+            }
+        } else if (action === 'next-section' && contextTarget.type === 'structure-chord' && targetTrack) {
+            const currentTime = audio.currentTime;
+            const bpm = parseInt(targetTrack.tempo) || 120;
+            const isSixEight = targetTrack.timeSignature === '6/8';
+            const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+            const currentBeat = Math.floor(currentTime / beatDuration);
+            let nextSectionTime = null;
+            let beatIndex = 0;
+            for (const section of targetTrack.structure.sections) {
+                const sectionBeats = section.chords.length;
+                if (currentBeat < beatIndex + sectionBeats) {
+                    nextSectionTime = (beatIndex + sectionBeats) * beatDuration;
+                    break;
+                }
+                beatIndex += sectionBeats;
+            }
+            if (nextSectionTime && nextSectionTime < audio.duration) {
+                if (currentTrack !== targetTrack) {
+                    selectSong(targetTrack, targetTrackIndex, nextSectionTime);
+                } else {
+                    audio.currentTime = nextSectionTime;
+                    audio.play().catch(err => console.error('Audio play error:', err));
+                    playBtn.disabled = true;
+                    pauseBtn.disabled = false;
+                }
+            }
+        } else if (action === 'prev-section' && contextTarget.type === 'structure-chord' && targetTrack) {
+            const currentTime = audio.currentTime;
+            const bpm = parseInt(targetTrack.tempo) || 120;
+            const isSixEight = targetTrack.timeSignature === '6/8';
+            const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+            const currentBeat = Math.floor(currentTime / beatDuration);
+            let prevSectionTime = 0;
+            let beatIndex = 0;
+            for (const section of targetTrack.structure.sections) {
+                if (currentBeat < beatIndex + section.chords.length) {
+                    break;
+                }
+                prevSectionTime = beatIndex * beatDuration;
+                beatIndex += section.chords.length;
+            }
+            if (currentTrack !== targetTrack) {
+                selectSong(targetTrack, targetTrackIndex, prevSectionTime);
+            } else {
+                audio.currentTime = prevSectionTime;
+                audio.play().catch(err => console.error('Audio play error:', err));
+                playBtn.disabled = true;
+                pauseBtn.disabled = false;
+            }
+        } else if (action === 'toggle-lyrics') {
+            const lyrics = document.querySelector('.lyrics');
+            lyrics.style.display = lyrics.style.display === 'none' ? 'block' : 'none';
+        } else if (action === 'toggle-structure') {
+            const structure = document.querySelector('.structure');
+            structure.style.display = structure.style.display === 'none' ? 'block' : 'none';
+        } else if (action === 'export-song' && targetTrack) {
+            const lyrics = targetTrack.lyrics.map(l => l.line || '').join('\n');
+            let chordsText = '';
+            targetTrack.structure.sections.forEach(section => {
+                chordsText += `${section.label}:\n`;
+                section.chords.forEach((chord, i) => {
+                    chordsText += chord || 'N/A';
+                    if ((i + 1) % 4 === 0) chordsText += '\n';
+                    else chordsText += ' | ';
+                });
+                chordsText += '\n';
+            });
+            const exportText = `Title: ${targetTrack.title}\n\nLyrics:\n${lyrics}\n\nChords:\n${chordsText}`;
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${targetTrack.title}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        hideContextMenu();
+    });
+
+    seekBar.addEventListener('input', () => {
+        seekBar.style.setProperty('--value', seekBar.value);
+        if (currentTrack) {
+            const duration = audio.duration || 0;
+            audio.currentTime = (seekBar.value / 100) * duration;
+        }
+    });
+
+    seekBar.addEventListener('contextmenu', (e) => {
+        showContextMenu(e, 'seek-bar', seekBar);
+    });
+
+    data.tracks.forEach((track, trackIndex) => {
+        const songItem = document.createElement('div');
+        songItem.className = 'song-item';
+        songItem.textContent = track.title;
+        songItem.dataset.trackIndex = trackIndex;
+        songItem.addEventListener('contextmenu', (e) => {
+            showContextMenu(e, 'song-item', songItem, track, trackIndex);
+        });
+        songItem.addEventListener('click', () => {
+            selectSong(track, trackIndex);
+        });
+        songList.appendChild(songItem);
+    });
+
+    handleQueryParams();
+
+    playBtn.addEventListener('click', () => {
+        audio.play().catch(err => console.error('Audio play error:', err));
+        playBtn.disabled = true;
+        pauseBtn.disabled = false;
+        requestAnimationFrame(updateProgressBars);
+    });
+    pauseBtn.addEventListener('click', () => {
+        audio.pause();
+        playBtn.disabled = false;
+        pauseBtn.disabled = true;
+    });
+
+    function updateProgressBars(timestamp) {
+        if (!currentTrack || audio.paused) return;
+
+        if (timestamp - lastUpdateTime < 16) {
+            requestAnimationFrame(updateProgressBars);
+            return;
+        }
+        lastUpdateTime = timestamp;
+
+        const currentTime = audio.currentTime;
+        const duration = audio.duration || 0;
+        timeline.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+        seekBar.value = duration ? (currentTime / duration) * 100 : 0;
+        seekBar.style.setProperty('--value', seekBar.value);
+
+        const bpm = parseInt(currentTrack.tempo) || 120;
+        const isSixEight = currentTrack.timeSignature === '6/8';
+        const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+        const currentBeat = Math.floor(currentTime / beatDuration);
+
+        let currentSection = '';
+        let beatIndex = 0;
+        currentTrack.structure.sections.forEach(section => {
+            const sectionBeats = section.chords.length;
+            if (currentBeat >= beatIndex && currentBeat < beatIndex + sectionBeats) {
+                currentSection = section.label;
+            }
+            beatIndex += sectionBeats;
+        });
+        currentSectionDisplay.textContent = currentSection;
+
+        let currentLyric = '';
+        lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
+            const bar = parseInt(line.dataset.bar) || 1;
+            const length = parseFloat(line.dataset.length) || 1;
+            const offset = parseFloat(line.dataset.offset) || 0;
+            const beatsPerBar = isSixEight ? 2 : 4;
+            const startTime = (bar * beatsPerBar * beatDuration) + offset;
+            const endTime = startTime + (length * beatsPerBar * beatDuration);
+            line.classList.toggle('active', currentTime >= startTime && currentTime < endTime);
+            line.classList.toggle('passed', currentTime >= endTime);
+            if (currentTime >= startTime && currentTime < endTime) {
+                currentLyric = line.textContent;
+            }
+        });
+        currentLyricDisplay.textContent = currentLyric;
+
+        let currentChord = '';
+        structureContent.querySelectorAll('.structure-chord').forEach(chord => {
+            const startBeat = parseInt(chord.dataset.beat) - 1;
+            const spanLength = parseInt(chord.dataset.span) || 1;
+            const endBeat = startBeat + spanLength - 1;
+            chord.classList.toggle('active', currentBeat >= startBeat && currentBeat <= endBeat);
+            chord.classList.toggle('passed', currentBeat > endBeat);
+            if (currentBeat >= startBeat && currentBeat <= endBeat) {
+                currentChord = chord.querySelector('.chord').textContent;
+                const chordData = chordMap.get(currentChord) || { instructions: 'N/A' };
+                currentChordDisplay.textContent = currentChord;
+                chordInstructionsDisplay.textContent = chordData.instructions ? `${chordData.instructions}` : '';
+            }
+        });
+
+        structureContent.querySelectorAll('.chord-progress').forEach(progress => {
+            const progressBeat = parseInt(progress.dataset.beat) - 1;
+            const spanLength = parseInt(progress.dataset.span) || 1;
+            const beatStartTime = progressBeat * beatDuration;
+            const beatEndTime = beatStartTime + (beatDuration * spanLength);
+            let progressValue = 0;
+
+            if (currentTime >= beatEndTime) {
+                progressValue = 100;
+            } else if (currentTime >= beatStartTime && currentTime < beatEndTime) {
+                progressValue = Math.min(100, ((currentTime - beatStartTime) / (beatDuration * spanLength)) * 100);
+            }
+
+            progress.style.setProperty('--progress', progressValue);
+        });
+
+        requestAnimationFrame(updateProgressBars);
+    }
+
+    audio.addEventListener('timeupdate', () => {
+        if (!audio.paused) {
+            requestAnimationFrame(updateProgressBars);
+        }
+    });
+
+    audio.addEventListener('ended', () => {
+        playBtn.disabled = false;
+        pauseBtn.disabled = true;
+        seekBar.value = 0;
+        seekBar.style.setProperty('--value', 0);
+        currentLyricDisplay.textContent = '';
+        currentChordDisplay.textContent = '';
+        chordInstructionsDisplay.textContent = '';
+        currentSectionDisplay.textContent = '';
+        lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
+            line.classList.remove('active');
+            line.classList.add('passed');
+        });
+        structureContent.querySelectorAll('.structure-chord').forEach(chord => {
+            chord.classList.remove('active');
+            chord.classList.add('passed');
+        });
+        structureContent.querySelectorAll('.chord-progress').forEach(progress => progress.style.setProperty('--progress', 0));
+    });
+
+    audio.addEventListener('error', () => {
+        console.error('Audio error:', audio.error);
+    });
+})
+.catch(error => console.error('Error loading JSON:', error));
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+}
     </script>
 </body>
 </html>
