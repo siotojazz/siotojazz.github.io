@@ -594,74 +594,78 @@
             return [chordName, { instructions: tab, diagram }];
         }));
 
-        function generateChordDiagram(chordName, tab) {
-            if (!tab || tab.length !== 6) {
-                return `
-${chordName}
-e|-------|
-B|-------|
-G|-------|
-D|-------|
-A|-------|
-E|-------|`;
-            }
+function generateChordDiagram(chordName, tab) {
+    // Fallback for invalid or missing tab (wrong length or non-parsable values)
+    if (!tab || tab.length !== 6 || tab.split('').some(f => f !== 'x' && isNaN(parseInt(f)))) {
+        return `    01 02 03 04 05
+e |              
+B |              
+G |              
+D |              
+A |              
+E |              `;
+    }
 
-            const strings = ['E', 'A', 'D', 'G', 'B', 'e'];
-            const frets = tab.split('').map(f => f.toLowerCase() === 'x' ? 'x' : parseInt(f));
-            let minFret = Infinity;
-            let maxFret = 0;
+    const strings = ['e', 'B', 'G', 'D', 'A', 'E']; // High e at top, low E at bottom
 
-            // Determine the range of frets used
-            frets.forEach(f => {
-                if (f !== 'x' && f > 0) {
-                    minFret = Math.min(minFret, f);
-                    maxFret = Math.max(maxFret, f);
-                }
-            });
+    // Parse frets, reversing to match display order (tab: low E to high e; display: high e to low E)
+    let frets = tab.split('').map(f => f.toLowerCase() === 'x' ? 'x' : parseInt(f)).reverse();
 
-            // Set the fret range to display (minimum 4 frets, or more if needed)
-            const fretRange = Math.max(4, maxFret - minFret + 1);
-            const startFret = minFret === Infinity || minFret < 1 ? 1 : minFret;
-
-            // Start building the diagram
-            let diagram = `${chordName}\n`;
-
-            // Add fret number if starting above fret 1
-            if (startFret > 1) {
-                diagram += `${startFret}fr\n`;
-            } else {
-                diagram += `nut\n`;
-            }
-
-            // Generate strings from high e to low E (reverse order for display)
-            for (let i = 5; i >= 0; i--) {
-                const fret = frets[i];
-                let stringLine = `${strings[i]}|`;
-
-                if (fret === 'x') {
-                    stringLine += ' x ';
-                } else if (fret === 0) {
-                    stringLine += ' o ';
-                } else {
-                    // Calculate position relative to startFret
-                    const fretPos = fret - startFret + 1;
-                    for (let f = 1; f <= fretRange; f++) {
-                        if (f === fretPos) {
-                            // Use finger numbers (1-4) or a dot for the fret position
-                            stringLine += ` ${fret % 4 || 1} `;
-                        } else {
-                            stringLine += ' - ';
-                        }
-                    }
-                }
-                stringLine += '|';
-                diagram += stringLine + '\n';
-            }
-
-            return diagram;
+    // Determine fret range, ignoring open strings (0) and muted strings ('x')
+    let minFret = Infinity;
+    let maxFret = 0;
+    frets.forEach(f => {
+        if (f !== 'x' && f > 0) {
+            minFret = Math.min(minFret, f);
+            maxFret = Math.max(maxFret, f);
         }
+    });
 
-        const songList = document.getElementById('song-list');
+    // Default to frets 1–5 if no fretted notes (all open or muted)
+    if (minFret === Infinity) {
+        minFret = 1;
+        maxFret = 5;
+    }
+
+    // Fixed 5-fret range, centered around fretted notes
+    const fretRange = 5;
+    let startFret = Math.max(1, minFret - 1); // Place minFret at position 2 for centering
+    if (startFret + fretRange - 1 < maxFret) {
+        startFret = maxFret - fretRange + 2; // Place maxFret at position 4 for centering
+    }
+
+    // Generate fret numbers in ascending order (length 14 chars)
+    const fretNumbers = Array.from(
+        { length: fretRange },
+        (_, i) => (startFret + i).toString().padStart(2, '0')
+    ).join(' ');
+    let diagram = `    ${fretNumbers}\n`;
+
+    // Build each string line with fixed alignment (total line length: 18 chars)
+    for (let i = 0; i < 6; i++) {
+        const fret = frets[i];
+        let stringLine = `${strings[i]} | `; // Prefix length 4 (e.g., 'e | ')
+
+        if (fret === 'x') {
+            stringLine += 'x             '; // 13 spaces after 'x'
+        } else if (fret === 0) {
+            stringLine += '              '; // 14 spaces for open string
+        } else {
+            let content = '              '; // 14 spaces
+            const relativeFret = fret - startFret;
+            if (relativeFret >= 0 && relativeFret < fretRange) {
+                const pos = 1 + relativeFret * 3; // Align • under second digit of fret number
+                content = content.substring(0, pos) + '•' + content.substring(pos + 1);
+            }
+            stringLine += content;
+        }
+        diagram += stringLine + '\n';
+    }
+
+    return diagram;
+}
+
+const songList = document.getElementById('song-list');
         const player = document.getElementById('player');
         const audio = document.getElementById('audio-player');
         const playBtn = player.querySelector('.play-btn');
