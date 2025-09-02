@@ -396,17 +396,14 @@
         @media (max-width: 600px) {
             body {
                 padding: 4px;
+                margin: 20px;
             }
             header {
                 padding: 4px;
                 max-width: 100%;
             }
-            header h1 {
-                font-size: 16px;
-            }
-            header p {
-                font-size: 14px;
-                line-height: 18px;
+            .title-container {
+                font-size: 20px !important;
             }
             header img {
                 max-width: 50px;
@@ -414,45 +411,50 @@
             }
             .song-list {
                 max-width: 100%;
-                padding: 6px 0;
-                margin: 6px 0;
+                padding: 10px;
+                margin: 6px 0px;
                 gap: 3px;
             }
             .song-item {
+                text-align: left;
                 flex: 1 1 100%;
-                font-size: 12px;
+                font-size: 18px;
                 line-height: 20px;
-                padding: 5px 0;
+                padding: 2px 15px;
             }
             .player {
                 max-width: 100%;
                 padding: 4px;
             }
             .player-controls {
+                font-size: 16px;
                 gap: 4px;
             }
             .player-controls button {
-                width: 32px;
-                height: 20px;
+                width: 100px;
+                height: 30px;
                 padding: 3px 5px;
                 font-size: 12px;
             }
             .player-controls button .icon {
                 font-size: 14px;
             }
+            .current-lyric {
+                display: none;
+            }
             .player-timeline {
-                font-size: 12px;
+                font-size: 16px;
                 padding-right: 4px;
             }
             .seek-bar-container {
-                margin: 4px 0;
+                margin: 2px 0;
             }
             .seek-bar {
-                height: 8px;
+                height: 12px;
             }
             .seek-bar::-webkit-slider-runnable-track,
             .seek-bar::-moz-range-track {
-                height: 8px;
+                height: 12px;
             }
             .seek-bar[value]::-webkit-slider-runnable-track {
                 background: linear-gradient(
@@ -460,34 +462,34 @@
                     repeating-linear-gradient(
                         to right,
                         #00017b 0%,
-                        #00017b 5px,
-                        #c0c0c0 5px,
-                        #c0c0c0 6px
+                        #00017b 10px,
+                        #c0c0c0 10px,
+                        #c0c0c0 12px
                     ) 0% / calc(var(--value) * 1%) 100% no-repeat,
                     #fff
                 );
             }
             .seek-bar[value]::-moz-range-progress {
-                height: 8px;
+                height: 12px;
                 background: repeating-linear-gradient(
                     to right,
                     #00017b 0%,
-                    #00017b 5px,
-                    #c0c0c0 5px,
-                    #c0c0c0 6px
+                    #00017b 10px,
+                    #c0c0c0 10px,
+                    #c0c0c0 12px
                 );
             }
             .seek-bar::-ms-fill-lower {
                 background: repeating-linear-gradient(
                     to right,
                     #00017b 0%,
-                    #00017b 5px,
-                    #c0c0c0 5px,
-                    #c0c0c0 6px
+                    #00017b 10px,
+                    #c0c0c0 10px,
+                    #c0c0c0 12px
                 );
             }
             .current-info {
-                font-size: 11px;
+                font-size: 14px;
                 gap: 6px;
             }
             .content-container {
@@ -495,26 +497,26 @@
                 gap: 6px;
             }
             .lyrics, .structure {
-                font-size: 10px;
+                font-size: 18px;
             }
             .lyrics h4, .structure h4 {
-                font-size: 11px;
+                font-size: 20px;
                 margin-bottom: 2px;
             }
             .tempo-info {
-                font-size: 11px;
+                font-size: 12px;
                 margin-bottom: 4px;
             }
             .section-label {
-                font-size: 11px;
+                font-size: 20px;
                 margin: 6px 0 3px;
             }
             .structure-chord {
-                font-size: 10px;
+                font-size: 18px;
                 padding: 1px 2px;
             }
             .chord-value, .chord-diagram {
-                font-size: 9px;
+                font-size: 16px;
                 padding: 2px;
             }
             .chord-progress {
@@ -594,76 +596,76 @@
             return [chordName, { instructions: tab, diagram }];
         }));
 
-function generateChordDiagram(chordName, tab) {
-    // Fallback for invalid or missing tab (wrong length or non-parsable values)
-    if (!tab || tab.length !== 6 || tab.split('').some(f => f !== 'x' && isNaN(parseInt(f)))) {
-        return `    01 02 03 04 05
-e |              
-B |              
-G |              
-D |              
-A |              
-E |              `;
-    }
-
-    const strings = ['e', 'B', 'G', 'D', 'A', 'E']; // High e at top, low E at bottom
-
-    // Parse frets, reversing to match display order (tab: low E to high e; display: high e to low E)
-    let frets = tab.split('').map(f => f.toLowerCase() === 'x' ? 'x' : parseInt(f)).reverse();
-
-    // Determine fret range, ignoring open strings (0) and muted strings ('x')
-    let minFret = Infinity;
-    let maxFret = 0;
-    frets.forEach(f => {
-        if (f !== 'x' && f > 0) {
-            minFret = Math.min(minFret, f);
-            maxFret = Math.max(maxFret, f);
-        }
-    });
-
-    // Default to frets 1–5 if no fretted notes (all open or muted)
-    if (minFret === Infinity) {
-        minFret = 1;
-        maxFret = 5;
-    }
-
-    // Fixed 5-fret range, centered around fretted notes
-    const fretRange = 5;
-    let startFret = Math.max(1, minFret - 1); // Place minFret at position 2 for centering
-    if (startFret + fretRange - 1 < maxFret) {
-        startFret = maxFret - fretRange + 2; // Place maxFret at position 4 for centering
-    }
-
-    // Generate fret numbers in ascending order (length 14 chars)
-    const fretNumbers = Array.from(
-        { length: fretRange },
-        (_, i) => (startFret + i).toString().padStart(2, '0')
-    ).join(' ');
-    let diagram = `    ${fretNumbers}\n`;
-
-    // Build each string line with fixed alignment (total line length: 18 chars)
-    for (let i = 0; i < 6; i++) {
-        const fret = frets[i];
-        let stringLine = `${strings[i]} | `; // Prefix length 4 (e.g., 'e | ')
-
-        if (fret === 'x') {
-            stringLine += 'x             '; // 13 spaces after 'x'
-        } else if (fret === 0) {
-            stringLine += '              '; // 14 spaces for open string
-        } else {
-            let content = '              '; // 14 spaces
-            const relativeFret = fret - startFret;
-            if (relativeFret >= 0 && relativeFret < fretRange) {
-                const pos = 1 + relativeFret * 3; // Align • under second digit of fret number
-                content = content.substring(0, pos) + '•' + content.substring(pos + 1);
+        function generateChordDiagram(chordName, tab) {
+            // Fallback for invalid or missing tab (wrong length or non-parsable values)
+            if (!tab || tab.length !== 6 || tab.split('').some(f => f !== 'x' && isNaN(parseInt(f)))) {
+                return `    01 02 03 04 05
+        e |              
+        B |              
+        G |              
+        D |              
+        A |              
+        E |              `;
             }
-            stringLine += content;
-        }
-        diagram += stringLine + '\n';
-    }
 
-    return diagram;
-}
+            const strings = ['e', 'B', 'G', 'D', 'A', 'E']; // High e at top, low E at bottom
+
+            // Parse frets, reversing to match display order (tab: low E to high e; display: high e to low E)
+            let frets = tab.split('').map(f => f.toLowerCase() === 'x' ? 'x' : parseInt(f)).reverse();
+
+            // Determine fret range, ignoring open strings (0) and muted strings ('x')
+            let minFret = Infinity;
+            let maxFret = 0;
+            frets.forEach(f => {
+                if (f !== 'x' && f > 0) {
+                    minFret = Math.min(minFret, f);
+                    maxFret = Math.max(maxFret, f);
+                }
+            });
+
+            // Default to frets 1–5 if no fretted notes (all open or muted)
+            if (minFret === Infinity) {
+                minFret = 1;
+                maxFret = 5;
+            }
+
+            // Fixed 5-fret range, centered around fretted notes
+            const fretRange = 5;
+            let startFret = Math.max(1, minFret - 1); // Place minFret at position 2 for centering
+            if (startFret + fretRange - 1 < maxFret) {
+                startFret = maxFret - fretRange + 2; // Place maxFret at position 4 for centering
+            }
+
+            // Generate fret numbers in ascending order (length 14 chars)
+            const fretNumbers = Array.from(
+                { length: fretRange },
+                (_, i) => (startFret + i).toString().padStart(2, '0')
+            ).join(' ');
+            let diagram = `    ${fretNumbers}\n`;
+
+            // Build each string line with fixed alignment (total line length: 18 chars)
+            for (let i = 0; i < 6; i++) {
+                const fret = frets[i];
+                let stringLine = `${strings[i]} | `; // Prefix length 4 (e.g., 'e | ')
+
+                if (fret === 'x') {
+                    stringLine += 'x             '; // 13 spaces after 'x'
+                } else if (fret === 0) {
+                    stringLine += '              '; // 14 spaces for open string
+                } else {
+                    let content = '              '; // 14 spaces
+                    const relativeFret = fret - startFret;
+                    if (relativeFret >= 0 && relativeFret < fretRange) {
+                        const pos = 1 + relativeFret * 3; // Align • under second digit of fret number
+                        content = content.substring(0, pos) + '•' + content.substring(pos + 1);
+                    }
+                    stringLine += content;
+                }
+                diagram += stringLine + '\n';
+            }
+
+            return diagram;
+        }
 
 const songList = document.getElementById('song-list');
         const player = document.getElementById('player');
