@@ -668,6 +668,7 @@
     </section>
 
     <script>
+        
         fetch('album.json')
 .then(response => response.json())
 .then(data => {
@@ -760,20 +761,22 @@
     let lastUpdateTime = 0;
     let contextTarget = null;
 
-    function generateSongLink(trackIndex, time = null) {
+    function generateSongLink(trackIndex) {
         const baseUrl = window.location.origin + window.location.pathname;
-        let url = `${baseUrl}?song=${trackIndex}`;
-        if (time !== null) {
-            url += `&time=${Math.floor(time)}`;
-        }
-        return url;
+        return `${baseUrl}?song=${trackIndex}`;
     }
 
-    function selectSong(track, trackIndex, startTime = 0) {
-        console.log(`Selecting song: ${track.title} (index: ${trackIndex}, startTime: ${startTime})`);
+    function updateURL(trackIndex) {
+        const url = generateSongLink(trackIndex);
+        history.replaceState({ song: trackIndex }, '', url);
+    }
+
+    function selectSong(track, trackIndex, startTime = 0, autoPlay = true) {
+        console.log(`Selecting song: ${track.title} (index: ${trackIndex}, startTime: ${startTime}, autoPlay: ${autoPlay})`);
         if (currentTrack) {
             audio.pause();
             audio.currentTime = 0;
+            audio.src = ''; // Clear current source to reset audio element
         }
         document.querySelectorAll('.song-item').forEach(item => item.classList.remove('active'));
         const songItem = songList.children[trackIndex];
@@ -782,12 +785,14 @@
             return;
         }
         songItem.classList.add('active');
-        playBtn.disabled = true;
-        pauseBtn.disabled = false;
+        playBtn.disabled = !autoPlay; // Enable play button if autoplay is not requested
+        pauseBtn.disabled = true;
 
         audio.src = track.mp3;
         if (!audio.src) {
             console.error('Invalid audio source for track:', track.title);
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
             return;
         }
         lyricsContent.innerHTML = '';
@@ -797,6 +802,8 @@
         chordInstructionsDisplay.textContent = '';
         currentSectionDisplay.textContent = '';
         currentTrack = track;
+
+        updateURL(trackIndex);
 
         const tempoInfo = document.createElement('div');
         tempoInfo.className = 'tempo-info';
@@ -822,7 +829,11 @@
                     const beatsPerBar = isSixEight ? 2 : 4;
                     const startTime = (bar * beatsPerBar * beatDuration) + offset;
                     audio.currentTime = startTime;
-                    audio.play().catch(err => console.error('Audio play error:', err));
+                    audio.play().catch(err => {
+                        console.error('Audio play error:', err);
+                        playBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                    });
                     playBtn.disabled = true;
                     pauseBtn.disabled = false;
                 }
@@ -884,7 +895,11 @@
                                 const beat = parseInt(chordSpan.dataset.beat);
                                 const startTime = (beat - 1) * beatDuration;
                                 audio.currentTime = startTime;
-                                audio.play().catch(err => console.error('Audio play error:', err));
+                                audio.play().catch(err => {
+                                    console.error('Audio play error:', err);
+                                    playBtn.disabled = false;
+                                    pauseBtn.disabled = true;
+                                });
                                 playBtn.disabled = true;
                                 pauseBtn.disabled = false;
                             }
@@ -921,9 +936,15 @@
             if (startTime < audio.duration) {
                 audio.currentTime = startTime;
             }
-            audio.play().catch(err => console.error('Audio play error:', err));
-            playBtn.disabled = true;
-            pauseBtn.disabled = false;
+            if (autoPlay) {
+                audio.play().catch(err => {
+                    console.error('Audio play error:', err);
+                    playBtn.disabled = false;
+                    pauseBtn.disabled = true;
+                });
+                playBtn.disabled = true;
+                pauseBtn.disabled = false;
+            }
             requestAnimationFrame(updateProgressBars);
         }, { once: true });
     }
@@ -943,7 +964,8 @@
         if (songItem) {
             const trackIndex = parseInt(songItem.dataset.trackIndex);
             const track = data.tracks[trackIndex];
-            selectSong(track, trackIndex, !isNaN(time) && time >= 0 ? time : 0);
+            const startTime = !isNaN(time) && time >= 0 ? time : 0;
+            selectSong(track, trackIndex, startTime, true);
         }
     }
 
@@ -1010,7 +1032,6 @@
             if (!hasPrevVerse) contextMenu.querySelector('[data-action="prev-verse"]').style.display = 'none';
         }
 
-        // Constrain menu to viewport
         const menuRect = contextMenu.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
@@ -1101,7 +1122,11 @@
             const pos = (e.clientX - rect.left) / rect.width;
             const duration = audio.duration || 0;
             audio.currentTime = pos * duration;
-            audio.play().catch(err => console.error('Audio play error:', err));
+            audio.play().catch(err => {
+                console.error('Audio play error:', err);
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+            });
             playBtn.disabled = true;
             pauseBtn.disabled = false;
         } else if (action === 'copy-song-link' && targetTrack) {
@@ -1115,7 +1140,7 @@
             const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
             const beatsPerBar = isSixEight ? 2 : 4;
             const startTime = (bar * beatsPerBar * beatDuration) + offset;
-            const link = generateSongLink(targetTrackIndex, startTime);
+            const link = generateSongLink(targetTrackIndex) + `&time=${Math.floor(startTime)}`;
             navigator.clipboard.writeText(link);
         } else if (action === 'copy-stanza-link' && contextTarget.type === 'lyrics-line' && targetTrack) {
             const lines = contextTarget.element.parentElement.querySelectorAll('.lyrics-line');
@@ -1137,11 +1162,11 @@
                 const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
                 const beatsPerBar = isSixEight ? 2 : 4;
                 const startTime = (bar * beatsPerBar * beatDuration) + offset;
-                const link = generateSongLink(targetTrackIndex, startTime);
+                const link = generateSongLink(targetTrackIndex) + `&time=${Math.floor(startTime)}`;
                 navigator.clipboard.writeText(link);
             }
         } else if (action === 'copy-time-link' && targetTrack) {
-            const link = generateSongLink(targetTrackIndex, audio.currentTime);
+            const link = generateSongLink(targetTrackIndex) + `&time=${Math.floor(audio.currentTime)}`;
             navigator.clipboard.writeText(link);
         } else if (action === 'next-verse' && contextTarget.type === 'lyrics-line' && targetTrack) {
             const lines = lyricsContent.querySelectorAll('.lyrics-line');
@@ -1159,7 +1184,11 @@
                     selectSong(targetTrack, targetTrackIndex, startTime);
                 } else {
                     audio.currentTime = startTime;
-                    audio.play().catch(err => console.error('Audio play error:', err));
+                    audio.play().catch(err => {
+                        console.error('Audio play error:', err);
+                        playBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                    });
                     playBtn.disabled = true;
                     pauseBtn.disabled = false;
                 }
@@ -1180,7 +1209,11 @@
                     selectSong(targetTrack, targetTrackIndex, startTime);
                 } else {
                     audio.currentTime = startTime;
-                    audio.play().catch(err => console.error('Audio play error:', err));
+                    audio.play().catch(err => {
+                        console.error('Audio play error:', err);
+                        playBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                    });
                     playBtn.disabled = true;
                     pauseBtn.disabled = false;
                 }
@@ -1209,7 +1242,11 @@
                     selectSong(targetTrack, targetTrackIndex, startTime);
                 } else {
                     audio.currentTime = startTime;
-                    audio.play().catch(err => console.error('Audio play error:', err));
+                    audio.play().catch(err => {
+                        console.error('Audio play error:', err);
+                        playBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                    });
                     playBtn.disabled = true;
                     pauseBtn.disabled = false;
                 }
@@ -1236,7 +1273,11 @@
                     selectSong(targetTrack, targetTrackIndex, startTime);
                 } else {
                     audio.currentTime = startTime;
-                    audio.play().catch(err => console.error('Audio play error:', err));
+                    audio.play().catch(err => {
+                        console.error('Audio play error:', err);
+                        playBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                    });
                     playBtn.disabled = true;
                     pauseBtn.disabled = false;
                 }
@@ -1262,7 +1303,11 @@
                     selectSong(targetTrack, targetTrackIndex, nextSectionTime);
                 } else {
                     audio.currentTime = nextSectionTime;
-                    audio.play().catch(err => console.error('Audio play error:', err));
+                    audio.play().catch(err => {
+                        console.error('Audio play error:', err);
+                        playBtn.disabled = false;
+                        pauseBtn.disabled = true;
+                    });
                     playBtn.disabled = true;
                     pauseBtn.disabled = false;
                 }
@@ -1286,7 +1331,11 @@
                 selectSong(targetTrack, targetTrackIndex, prevSectionTime);
             } else {
                 audio.currentTime = prevSectionTime;
-                audio.play().catch(err => console.error('Audio play error:', err));
+                audio.play().catch(err => {
+                    console.error('Audio play error:', err);
+                    playBtn.disabled = false;
+                    pauseBtn.disabled = true;
+                });
                 playBtn.disabled = true;
                 pauseBtn.disabled = false;
             }
@@ -1349,15 +1398,46 @@
     handleQueryParams();
 
     playBtn.addEventListener('click', () => {
-        audio.play().catch(err => console.error('Audio play error:', err));
+        audio.play().catch(err => {
+            console.error('Audio play error:', err);
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+        });
         playBtn.disabled = true;
         pauseBtn.disabled = false;
         requestAnimationFrame(updateProgressBars);
     });
+
     pauseBtn.addEventListener('click', () => {
         audio.pause();
         playBtn.disabled = false;
         pauseBtn.disabled = true;
+    });
+
+    audio.addEventListener('ended', () => {
+        const currentTrackIndex = data.tracks.findIndex(t => t === currentTrack);
+        if (currentTrackIndex < data.tracks.length - 1) {
+            selectSong(data.tracks[currentTrackIndex + 1], currentTrackIndex + 1, 0, true);
+        } else {
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+            seekBar.value = 0;
+            seekBar.style.setProperty('--value', 0);
+            currentLyricDisplay.textContent = '';
+            currentChordDisplay.textContent = '';
+            chordInstructionsDisplay.textContent = '';
+            currentSectionDisplay.textContent = '';
+            lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
+                line.classList.remove('active');
+                line.classList.add('passed');
+            });
+            structureContent.querySelectorAll('.structure-chord').forEach(chord => {
+                chord.classList.remove('active');
+                chord.classList.add('passed');
+            });
+            structureContent.querySelectorAll('.chord-progress').forEach(progress => progress.style.setProperty('--progress', 0));
+            updateURL(currentTrackIndex);
+        }
     });
 
     function updateProgressBars(timestamp) {
@@ -1447,28 +1527,10 @@
         }
     });
 
-    audio.addEventListener('ended', () => {
-        playBtn.disabled = false;
-        pauseBtn.disabled = true;
-        seekBar.value = 0;
-        seekBar.style.setProperty('--value', 0);
-        currentLyricDisplay.textContent = '';
-        currentChordDisplay.textContent = '';
-        chordInstructionsDisplay.textContent = '';
-        currentSectionDisplay.textContent = '';
-        lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
-            line.classList.remove('active');
-            line.classList.add('passed');
-        });
-        structureContent.querySelectorAll('.structure-chord').forEach(chord => {
-            chord.classList.remove('active');
-            chord.classList.add('passed');
-        });
-        structureContent.querySelectorAll('.chord-progress').forEach(progress => progress.style.setProperty('--progress', 0));
-    });
-
     audio.addEventListener('error', () => {
         console.error('Audio error:', audio.error);
+        playBtn.disabled = false;
+        pauseBtn.disabled = true;
     });
 })
 .catch(error => console.error('Error loading JSON:', error));
@@ -1478,6 +1540,7 @@ function formatTime(seconds) {
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
 }
+
     </script>
 </body>
 </html>
