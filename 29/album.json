@@ -95,6 +95,7 @@
       "id": 1,
       "title": "Импулс",
       "mp3": "audio/impuls.mp3",
+      "backingmp3": "audio/impuls_backing.mp3",
       "lyrics": [
         { "line": "твојот глас е сосема доволен", "barNumber": 8, "barLength": 2, "offset": 0 },
         { "line": "краток импулс во воздухот оооо", "barNumber": 10, "barLength": 2, "offset": 0 },
@@ -113,7 +114,9 @@
         { "line": "импулс во телото", "barNumber": 64, "barLength": 2, "offset": 0 }
       ],
       "date": "2024-12-06 22:27",
-      "label": "guitar1[great], drums[great], bass[great]",
+      "written": "lyrics[5], vocals[5], guitar1[3], guitar2[0], samplers[5], bass[5], synths[4], backingvocals[0]",
+      "recorded": "samplers[3]",
+      "notes": "Samplers are waiting approval. Sax?",
       "tempo": "78",
       "timeSignature": "4/4",
       "structure": {
@@ -211,7 +214,8 @@
         { "line": "да сум твоја дестинација", "barNumber": 120, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-03-29 00:58",
-      "label": "guitar1[great], guitar2[meh], drums[great], bass[great]",
+      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[5], drums[3], bass[5], backingvocals[0]",
+      "notes": "Key change?",
       "tempo": "117",
       "timeSignature": "4/4",
       "structure": {
@@ -325,7 +329,9 @@
         { "line": "cuz I know the feeling is true", "barNumber": 174, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-01 21:26",
-      "label": "drums[meh], guitar1[meh], guitar2[meh], bass[great]",
+      "written": "lyrics[5], vocals[3], samplers[5], guitar1[5], guitar2[3], drums[4], bass[5], backingvocals[0]",
+      "recorded": "samplers[5]",
+      "notes": "Sax? Key Change?",
       "tempo": "174",
       "timeSignature": "4/4",
       "structure": {
@@ -466,7 +472,8 @@
         { "line": "на тој остров во пацификот", "barNumber": 86, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-02 00:37",
-      "label": "sax[great], guitar1[great], guitar2[great], bass[great], drums[great], else[great]",
+      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[5], bass[5], samplers[3], drums[3], synths[3], sax[5], backingvocals[0]",
+      "notes": "The buildup should be shortened. Use samplers or drums? Key change? Should Eva sing? Should we use real strings or synths?",
       "tempo": "100",
       "timeSignature": "4/4",
       "structure": {
@@ -551,7 +558,8 @@
         { "line": "still you make it feel, so quite unreal", "barNumber": 91, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-02 19:58",
-      "label": "vocals[great], guitar1[great], guitar2[meh], drums[great], bass[great], sax[great]",
+      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[3], drums[5], bass[5], sax[5], violin[0], cello[0], backingvocals[0]",
+      "notes": "Do we need back vocals?",
       "tempo": "105",
       "timeSignature": "4/4",
       "structure": {
@@ -665,7 +673,8 @@
         { "line": "the cinema", "barNumber": 129, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-03 01:53",
-      "label": "vocals[great], guitar1[great], guitar2[meh], bass[great], drums[great], else[meh]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], drums[5], synths[4], backingvocals[5], violin[0], cello[0]",
+      "notes": "Sax?",
       "tempo": "118",
       "timeSignature": "4/4",
       "structure": {
@@ -790,7 +799,8 @@
         { "line": "my innocent sea", "barNumber": 130, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-04 19:24",
-      "label": "vocals[great], guitar1[meh], guitar2[meh], bass[great], drums[meh]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], drums[5], violin[0], cello[0], synths[4], backingvocals[0]",
+      "notes": "Strings should enter later maybe?",
       "tempo": "181",
       "timeSignature": "6/8",
       "structure": {
@@ -894,7 +904,8 @@
         { "line": "(To the future?)", "barNumber": 106, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-05 00:08",
-      "label": "drums[great], guitar1[great], guitar2[meh], bass[great], sax[great], else[great]",
+      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[5], bass[5], sax[5], drums[5], samplers[0], chimes[5], backingvocals[4], brass[1]",
+      "notes": "Should we use samplers? Key change?",
       "tempo": "102",
       "timeSignature": "4/4",
       "structure": {
@@ -1042,7 +1053,8 @@
         { "line": "I'll wait for you", "barNumber": 116, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
       "date": "2025-04-08 18:36",
-      "label": "guitar1[meh], guitar2[meh], drums[great], else[great], bass[great], sax[great]",
+      "written": "lyrics[5], vocals[4], guitar1[3], guitar2[3], drums[5], sax[5], bass[5], synths[2], backingvocals[0], trumpet[1]",
+      "notes": "Trumpet solo at the end. Make the synths less corny.",
       "tempo": "120",
       "timeSignature": "4/4",
       "structure": {
@@ -1160,7 +1172,8 @@
         { "line": "колку далеку?", "barNumber": 156, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
       "date": "2025-08-14 22:34",
-      "label": "bass[great], guitar1[meh], guitar2[great]",
+      "written": "lyrics[5], vocals[3], guitar1[4], guitar2[2], bass[5], samplers[4], backingvocals[0]",
+      "notes": "Needs transitions on the samplers between sections.",
       "tempo": "144",
       "timeSignature": "4/4",
       "structure": {
@@ -1263,7 +1276,8 @@
         { "line": "with an ember in your heart", "barNumber": 70, "barLength": 1, "offset": 0 }
       ],
       "date": "2025-05-16 01:34",
-      "label": "vocals[meh], guitar1[great], guitar2[great], drums[great], else[meh], bass[great]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[4], bass[5], samplers[5], drums[5], synths[5], backingvocals[0]",
+      "notes": "Perfect.",
       "tempo": "84",
       "timeSignature": "4/4",
       "structure": {
@@ -1354,7 +1368,8 @@
         { "line": "јас имам чувство дека сè се менува", "barNumber": null, "barLength": null, "offset": null }
       ],
       "date": "2025-05-18 18:46",
-      "label": "guitar1[great], guitar2[meh], bass[great], drums[great], else[meh]",
+      "written": "lyrics[1], vocals[0], guitar1[5], guitar2[2], bass[5], samplers[1], backingvocals[0]",
+      "notes": "Needs lyrics for the RAP part, we need to find someone to do the rap vocals.",
       "tempo": "127",
       "timeSignature": "4/4",
       "structure": {
