@@ -179,6 +179,7 @@
       "id": 2,
       "title": "Дестинација",
       "mp3": "audio/destinacija.mp3",
+      "backingmp3": "audio/destinacija_backing.mp3",
       "lyrics": [
         { "line": "повторно се заљубив", "barNumber": 8, "barLength": 2, "offset": 0 },
         { "line": "јас неразумно се заљубив", "barNumber": 10, "barLength": 2, "offset": 0 },
@@ -285,6 +286,7 @@
       "id": 3,
       "title": "Magic",
       "mp3": "audio/magic.mp3",
+      "backingmp3": "audio/magic_backing.mp3",
       "lyrics": [
         { "line": "Hey, you gotta know", "barNumber": 16, "barLength": 2, "offset": 0 },
         { "line": "it's our past I've been longing for", "barNumber": 19, "barLength": 4, "offset": 0 },
@@ -457,6 +459,7 @@
       "id": 4,
       "title": "Нов Зеланд",
       "mp3": "audio/nov_zeland.mp3",
+      "backingmp3": "audio/nov_zeland_backing.mp3",
       "lyrics":[
         { "line": "знам, има план за бегство негде далеку", "barNumber": 8, "barLength": 4, "offset": 0 },
         { "line": "знам, јас и ти заминати под екваторот", "barNumber": 12, "barLength": 4, "offset": 0, "stanzaEnd": true },
@@ -539,6 +542,7 @@
       "id": 5,
       "title": "Quite Unreal",
       "mp3": "audio/quite_unreal.mp3",
+      "backingmp3": "audio/quite_unreal_backing.mp3",
       "lyrics": [
         { "line": "we never went, there by the lake", "barNumber": 15, "barLength": 4, "offset": 0.5 },
         { "line": "it's on me, that you had to flee", "barNumber": 19, "barLength": 4, "offset": 0 },
@@ -633,6 +637,7 @@
       "id": 6,
       "title": "Cinema",
       "mp3": "audio/cinema.mp3",
+      "backingmp3": "audio/cinema_backing.mp3",
       "lyrics": [
         { "line": "the city's a total bore", "barNumber": 16, "barLength": 2, "offset": 0 },
         { "line": "but I don't care anymore", "barNumber": 18, "barLength": 2, "offset": 0 },
@@ -772,6 +777,7 @@
       "id": 7,
       "title": "My Innocent Sea",
       "mp3": "audio/my_innocent_sea.mp3",
+      "backingmp3": "audio/my_innocent_sea_backing.mp3",
       "lyrics": [
         { "line": "there is a light", "barNumber": 1, "barLength": 3, "offset": -2 },
         { "line": "where you once would stand", "barNumber": 2, "barLength": 4, "offset": 0 },
@@ -861,6 +867,7 @@
       "id": 8,
       "title": "Time Machine",
       "mp3": "audio/time_machine.mp3",
+      "backingmp3": "audio/time_machine_backing.mp3",
       "lyrics": [
         { "line": "your eyes at a screen", "barNumber": 12, "barLength": 2, "offset": 0 },
         { "line": "of a time machine", "barNumber": 14, "barLength": 2, "offset": 0 },
@@ -1014,6 +1021,7 @@
       "id": 9,
       "title": "Roots Apart",
       "mp3": "audio/roots_apart.mp3",
+      "backingmp3": "audio/roots_apart_backing.mp3",
       "lyrics": [
         { "line": "I took a train that does the waltz,", "barNumber": 8, "barLength": 2, "offset": 0 },
         { "line": "to the city of lights, a promise call,", "barNumber": 10, "barLength": 2, "offset": 0 },
@@ -1138,6 +1146,7 @@
       "id": 10,
       "title": "Колку далеку?",
       "mp3": "audio/kolku_daleku.mp3",
+      "backingmp3": "audio/kolku_daleku_backing.mp3",
       "lyrics": [
         { "line": "чувај ги тајно, овој филм и овој миг", "barNumber": 16, "barLength": 6, "offset": 0 },
         { "line": "само така, во мислите постојам", "barNumber": 22, "barLength": 2, "offset": 0 },
@@ -1240,6 +1249,7 @@
       "id": 11,
       "title": "Higher Ground",
       "mp3": "audio/higher_ground.mp3",
+      "backingmp3": "audio/higher_ground_backing.mp3",
       "lyrics": [
         { "line": "I wanna take you down", "barNumber": 1, "barLength": 2, "offset": -1.5 },
         { "line": "to a place we've known forever", "barNumber": 2, "barLength": 1, "offset": 0 },
@@ -1362,6 +1372,7 @@
       "id": 12,
       "title": "Промена",
       "mp3": "audio/promena.mp3",
+      "backingmp3": "audio/promena_backing.mp3",
       "lyrics": [
         { "line": "јас имам чувство дека нов ден изгрева", "barNumber": null, "barLength": null, "offset": null },
         { "line": "јас имам чувство дека сè се менува", "barNumber": null, "barLength": null, "offset": null }
