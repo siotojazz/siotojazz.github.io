@@ -1282,81 +1282,80 @@
       "timeSignature": "4/4",
       "structure": {
         "sections": [
-          {
-            "label": "Intro",
-            "chords": ["𝄽", "𝄽", "𝄽", "𝄽"]
-          },
-           {
-            "label": "Verse 1",
-            "chords": ["G", "G", "D", "D", "A", "A", "A", "A", 
-          "G", "G", "D", "D", "A", "A", "A", "A",
-        "G", "G", "D", "D", "A", "A", "A", "A",
-      "G", "G", "D", "D", "A", "A", "A", "A"]
-          },
-           {
-            "label": "Interlude 1",
-            "chords": ["Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-          "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-        "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-      "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G" ]
-          },
-           {
-            "label": "Verse 2",
-            "chords": ["G", "G", "D", "D", "A", "A", "A", "A", 
-          "G", "G", "D", "D", "A", "A", "A", "A",
-        "G", "G", "D", "D", "A", "A", "A", "A",
-      "G", "G", "D", "D", "A", "A", "A", "A"]
-          },
-           {
-            "label": "Interlude 2",
-            "chords": ["Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-          "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-        "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-      "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G" ]
-          },
-           {
-            "label": "Solo",
-            "chords": ["G", "G", "D", "D", "A", "A", "A", "A", 
-          "G", "G", "D", "D", "A", "A", "A", "A",
-        "G", "G", "D", "D", "A", "A", "A", "A",
-      "G", "G", "D", "D", "A", "A", "A", "A"]
-          },
-           {
-            "label": "Interlude / Solo",
-            "chords": ["Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-          "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-        "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-      "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm", "Bm" ]
-          },
-           {
-            "label": "Bridge",
-            "chords": ["C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
-            "C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
-            "C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
-            "C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
-            "C5", "G5", "G5", "G5", "D5", "D5", "D5", "D5",
-            "C5", "C5", "C5", "C5", "C5", "C5", "C5", "C5"
-           ]
-          },
-          {
-            "label": "Pause",
-            "chords": ["𝄽", "𝄽", "𝄽", "𝄽", "𝄽", "𝄽", "𝄽", "𝄽"]
-          },
-           {
-            "label": "Verse 3",
-            "chords": ["G", "G", "D", "D", "A", "A", "A", "A", 
-          "G", "G", "D", "D", "A", "A", "A", "A",
-        "G", "G", "D", "D", "A", "A", "A", "A",
-      "G", "G", "D", "D", "A", "A", "A", "A"]
-          },
-           {
-            "label": "Outro",
-            "chords": ["Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-          "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-        "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G",
-      "Bm", "Bm", "Bm", "Bm", "G", "G", "G", "G" ]
-          }
-        ]
+        {
+          "label": "Intro",
+          "chords": ["𝄽", "𝄽", "𝄽", "𝄽"]
+        },
+        {
+          "label": "Verse 1",
+          "chords": ["G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5"]
+        },
+        {
+          "label": "Interlude 1",
+          "chords": ["Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G"]
+        },
+        {
+          "label": "Verse 2",
+          "chords": ["G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5"]
+        },
+        {
+          "label": "Interlude 2",
+          "chords": ["Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G"]
+        },
+        {
+          "label": "Solo",
+          "chords": ["G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5"]
+        },
+        {
+          "label": "Interlude / Solo",
+          "chords": ["Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "Bm7", "Bm7", "Bm7", "Bm7"]
+        },
+        {
+          "label": "Bridge",
+          "chords": ["C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
+                    "C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
+                    "C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
+                    "C5", "G5", "G5", "G5", "D5", "D5", "D5", "E5",
+                    "C5", "G5", "G5", "G5", "D5", "D5", "D5", "D5",
+                    "C5", "C5", "C5", "C5", "C5", "C5", "C5", "C5"]
+        },
+        {
+          "label": "Pause",
+          "chords": ["𝄽", "𝄽", "𝄽", "𝄽", "𝄽", "𝄽", "𝄽", "𝄽"]
+        },
+        {
+          "label": "Verse 3",
+          "chords": ["G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5",
+                    "G5", "G5", "D5", "D5", "A5", "A5", "A5", "A5"]
+        },
+        {
+          "label": "Outro",
+          "chords": ["Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G",
+                    "Bm7", "Bm7", "Bm7", "Bm7", "G", "G", "G", "G"]
+        }
+      ]
       }
     },
     {
