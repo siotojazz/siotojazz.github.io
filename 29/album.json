@@ -1374,11 +1374,23 @@
       "mp3": "audio/promena.mp3",
       "backingmp3": "audio/promena_backing.mp3",
       "lyrics": [
-        { "line": "јас имам чувство дека нов ден изгрева", "barNumber": null, "barLength": null, "offset": null },
-        { "line": "јас имам чувство дека сè се менува", "barNumber": null, "barLength": null, "offset": null }
+        { "line": "јас имам чувство дека нов ден изгрева", "barNumber": 24, "barLength": 4, "offset": 0 },
+        { "line": "јас имам чувство дека сè се менува", "barNumber": 28, "barLength": 4, "offset": 0, "stanzaEnd": true },
+        { "line": "јас имам чувство дека нов ден изгрева", "barNumber": 48, "barLength": 4, "offset": 0 },
+        { "line": "јас имам чувство дека сè се менува", "barNumber": 52, "barLength": 4, "offset": 0 },
+        { "line": "јас имам чувство дека нов ден изгрева", "barNumber": 56, "barLength": 4, "offset": 0 },
+        { "line": "јас имам чувство дека сè се менува", "barNumber": 60, "barLength": 4, "offset": 0, "stanzaEnd": true },
+        { "line": "јас имам чувство дека нов ден изгрева", "barNumber": 72, "barLength": 4, "offset": 0 },
+        { "line": "јас имам чувство дека сè се менува", "barNumber": 76, "barLength": 4, "offset": 0 },
+        { "line": "јас имам чувство дека нов ден изгрева", "barNumber": 80, "barLength": 4, "offset": 0 },
+        { "line": "јас имам чувство дека сè се менува", "barNumber": 84, "barLength": 4, "offset": 0 },
+        { "line": "јас имам чувство дека нов ден изгрева", "barNumber": 88, "barLength": 4, "offset": 0 } ,
+        { "line": "јас имам чувство дека сè се менува", "barNumber": 92, "barLength": 4, "offset": 0, "stanzaEnd": true },
+        { "line": "јас имам чувство дека нов ден изгрева", "barNumber": 96, "barLength": 4, "offset": 0 },
+        { "line": "јас имам чувство дека сè се менува", "barNumber": 100, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-05-18 18:46",
-      "written": "lyrics[1], vocals[0], guitar1[5], guitar2[2], bass[5], samplers[1], backingvocals[0]",
+      "written": "lyrics[1], vocals[1], guitar1[5], guitar2[2], bass[5], samplers[4], backingvocals[0]",
       "notes": "Needs lyrics for the RAP part, we need to find someone to do the rap vocals.",
       "tempo": "127",
       "timeSignature": "4/4",
@@ -1386,7 +1398,59 @@
         "sections": [
           {
             "label": "Intro",
-            "chords": ["A"]
+            "chords": ["D5", "D5", "D5", "A5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+          "D5", "D5", "D5", "A5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+        "D5", "D5", "D5", "A5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5"]
+          },
+          {
+            "label": "Interlude 1",
+            "chords": ["D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5"]
+          },
+          {
+            "label": "Verse 1",
+            "chords": ["D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5",
+          "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5"]
+          },
+          {
+            "label": "Chorus 1",
+            "chords": ["D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+          "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5"]
+          },
+          {
+            "label": "Interlude 2",
+            "chords": ["D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5"]
+          },
+          {
+            "label": "Verse 2",
+            "chords": ["D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5",
+          "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5",
+        "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5", "D5", "D5", "C5", "C5"]
+          },
+          {
+            "label": "Chorus 2",
+            "chords": ["D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+          "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+        "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+          "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5"]
+          },
+          {
+            "label": "Bridge",
+            "chords": ["B5", "B5", "B5", "B5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+          "B5", "B5", "B5", "B5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5"]
+          },
+          {
+            "label": "Chorus 3",
+            "chords": ["D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+          "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+        "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+          "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+        "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+          "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5"]
+          },
+          {
+            "label": "Outro",
+            "chords": ["D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5",
+          "D5", "D5", "D5", "D5", "A5", "A5", "A5", "A5", "G5", "G5", "G5", "G5", "A5", "A5", "A5", "A5"]
           }
         ]
       }
