@@ -563,7 +563,7 @@
       ],
       "date": "2025-04-02 19:58",
       "written": "lyrics[5], vocals[4], guitar1[5], guitar2[3], drums[5], bass[5], sax[5], violin[0], cello[0], backingvocals[0]",
-      "recorded":"lyrics[5], drums[4]",
+      "recorded":"lyrics[5], drums[0]",
       "notes": "Do we need back vocals?",
       "tempo": "105",
       "timeSignature": "4/4",
@@ -805,7 +805,7 @@
         { "line": "my innocent sea", "barNumber": 130, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-04 19:24",
-      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], drums[0], violin[0], cello[0], synths[4], backingvocals[0]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], drums[4], violin[0], cello[0], synths[4], backingvocals[0]",
       "notes": "Strings should enter later maybe?",
       "tempo": "181",
       "timeSignature": "6/8",
@@ -1061,7 +1061,7 @@
         { "line": "I'll wait for you", "barNumber": 116, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
       "date": "2025-04-08 18:36",
-      "written": "lyrics[5], vocals[4], guitar1[3], guitar2[3], drums[0], sax[5], bass[5], synths[2], backingvocals[0], trumpet[1]",
+      "written": "lyrics[5], vocals[4], guitar1[3], guitar2[3], drums[4], sax[5], bass[5], synths[2], backingvocals[0], trumpet[1]",
       "notes": "Trumpet solo at the end. Make the synths less corny.",
       "tempo": "120",
       "timeSignature": "4/4",
@@ -1181,7 +1181,7 @@
         { "line": "колку далеку?", "barNumber": 156, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
       "date": "2025-08-14 22:34",
-      "written": "lyrics[5], vocals[3], guitar1[4], guitar2[2], bass[5], samplers[4], backingvocals[0]",
+      "written": "lyrics[5], vocals[3], guitar1[4], guitar2[2], bass[5], samplers[4], drums[4], backingvocals[0]",
       "notes": "Needs transitions on the samplers between sections.",
       "tempo": "144",
       "timeSignature": "4/4",
@@ -1286,7 +1286,7 @@
         { "line": "with an ember in your heart", "barNumber": 70, "barLength": 1, "offset": 0 }
       ],
       "date": "2025-05-16 01:34",
-      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[4], bass[5], samplers[5], drums[0], synths[5], backingvocals[0]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[4], bass[5], samplers[5], drums[3], synths[5], backingvocals[0]",
       "notes": "Perfect.",
       "tempo": "84",
       "timeSignature": "4/4",
@@ -1391,7 +1391,7 @@
       ],
       "date": "2025-05-18 18:46",
       "written": "lyrics[1], vocals[1], guitar1[5], guitar2[2], bass[5], samplers[4], backingvocals[0]",
-      "recorded":"lyrics[5], samplers[4], drums[3]",
+      "recorded":"lyrics[0], samplers[4], drums[3]",
       "notes": "Needs lyrics for the RAP part, we need to find someone to do the rap vocals.",
       "tempo": "127",
       "timeSignature": "4/4",
