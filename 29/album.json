@@ -331,7 +331,7 @@
         { "line": "cuz I know the feeling is true", "barNumber": 174, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-01 21:26",
-      "written": "lyrics[5], vocals[3], samplers[5], guitar1[5], guitar2[3], drums[0], bass[5], backingvocals[0]",
+      "written": "lyrics[5], vocals[3], samplers[5], guitar1[5], guitar2[3], drums[3], bass[5], backingvocals[0]",
       "recorded": "samplers[5]",
       "notes": "Sax? Key Change?",
       "tempo": "174",
@@ -562,7 +562,7 @@
         { "line": "still you make it feel, so quite unreal", "barNumber": 91, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-02 19:58",
-      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[3], drums[5], bass[5], sax[5], violin[0], cello[0], backingvocals[0]",
+      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[3], acoustic[5], drums[5], bass[5], sax[5], violin[0], cello[0], backingvocals[0]",
       "recorded":"lyrics[5], drums[0]",
       "notes": "Do we need back vocals?",
       "tempo": "105",
@@ -828,7 +828,7 @@
           {
             "label": "Chorus 1",
             "chords": ["F", "F", "F", "F", "G", "G", "G", "G", "Em", "Em", "Em", "Em", "Am", "Am", "G", "G",
-          "C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G"]
+          "F", "F", "F", "F", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G"]
           },
           {
             "label": "Post-Chorus",
@@ -852,7 +852,7 @@
           {
             "label": "Chorus 2",
             "chords": ["F", "F", "F", "F", "G", "G", "G", "G", "Em", "Em", "Em", "Em", "Am", "Am", "G", "G",
-          "C", "C", "C", "C", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G"]
+          "F", "F", "F", "F", "G", "G", "G", "G", "Am", "Am", "Am", "Am", "F", "F", "G", "G"]
           },
           {
             "label": "Outro",
@@ -911,7 +911,7 @@
         { "line": "(To the future?)", "barNumber": 106, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-05 00:08",
-      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[5], bass[5], sax[5], drums[0], samplers[0], chimes[5], backingvocals[4], brass[1]",
+      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[5], bass[5], sax[5], drums[3], samplers[0], chimes[5], backingvocals[4], brass[1]",
       "notes": "Should we use samplers? Key change?",
       "tempo": "102",
       "timeSignature": "4/4",
