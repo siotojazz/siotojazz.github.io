@@ -1,3 +1,4 @@
+/* Reset and Global Styles */
 * {
     padding: 0;
     margin: 0;
@@ -18,57 +19,65 @@ body {
     margin: 0 auto;
     width: 100%;
     max-width: 800px;
-    background-color: #f4ebdd;
-    font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    padding: 5px 20px;
-    font-size: clamp(16px, 2.5vw, 18px);
+    background-color: #E6F3FF;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIklEQVQI12N0i5/39/f39/f39/f39/f39/f39/f39/f3twUAj3kO3xWdakgAAAAASUVORK5CYII=');
+    background-repeat: repeat;
+    font-family: 'MS Sans Serif', 'Garet', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 12px;
+    font-size: clamp(12px, 1.6vw, 14px);
+    line-height: 1.4;
     scroll-behavior: smooth;
+    color: #000080;
 }
 
+/* Main Layout */
 main {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     align-items: center;
+    gap: 16px;
 }
 
+/* Title Section */
 .titleContainer {
     text-align: center;
-    margin: 2vw 0 20px;
+    margin: 16px 0;
     position: relative;
-    z-index: 1000;
+    z-index: 10;
 }
 
 .bandName {
-    font-family: 'Astrella', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: clamp(60px, 15vw, 100px);
-    color: #111;
+    font-family: 'Astrella', sans-serif;
+    font-size: clamp(48px, 9vw, 64px);
+    color: #000080;
     line-height: 1.1;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    animation: zoomInTitle 1.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    animation: fadeInTitle 0.6s ease-out forwards;
 }
 
 .bandNameLink {
     text-decoration: none;
     color: inherit;
-    display: inline-block;
-    transition: transform 0.4s ease-in-out;
+    transition: transform 0.2s ease;
 }
 
 .bandNameLink:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
 }
 
 .bandDescription {
-    margin-top: 10px;
-    letter-spacing: 4px;
-    color: #777;
-    font-size: clamp(12px, 2.5vw, 14px);
+    margin-top: 8px;
+    margin-bottom: 48px; /* Doubled space */
+    letter-spacing: 1px;
+    font-size: clamp(10px, 1.6vw, 12px);
     text-transform: uppercase;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    animation: zoomInSubtitle 2s cubic-bezier(0.5, 0, 0.5, 1.2);
+    font-weight: 600;
+    color: #000080;
+    animation: fadeInSubtitle 0.8s ease-out forwards;
 }
 
+/* Button Wrapper */
 .buttonWrapper {
     display: flex;
     justify-content: center;
@@ -81,114 +90,137 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
     width: 100%;
 }
 
-.linkButton {
-    display: flex;
-    align-items: center;
-    width: 400px;
-    padding: 15px 30px;
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 3px solid #111;
-    border-radius: 0;
-    text-decoration: none;
-    color: #111;
-    font-size: clamp(18px, 3vw, 20px);
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
+/* Gradient Border for Non-Button Elements */
+.merchItem, .audioItem, .extraTable, .merchNote, .paymentNote, .audioControls, .progressBar, .volumeSlider, .equipmentType, .photosContainer img, .logoImage, .bannerImage {
     position: relative;
-    transition: transform 0.4s, background 0.4s, color 0.4s, box-shadow 0.4s ease-in-out;
-    margin-top: 20px;
+    border: none;
 }
 
-.linkButton::before {
+.merchItem::before, .audioItem::before, .extraTable::before, .merchNote::before, .paymentNote::before, .audioControls::before, .progressBar::before, .volumeSlider::before, .equipmentType::before, .photosContainer img::before, .logoImage::before, .bannerImage::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.05);
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
     z-index: -1;
-    transition: transform 0.4s;
+}
+
+/* Blue Gradient Border for Details */
+details {
+    position: relative;
+    border: none;
+}
+
+details::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(90deg, #03007a 80%, #0403ed);
+    z-index: -1;
+}
+
+/* General Button Styles */
+.linkButton, .copyButton, .merchButton, .backButton {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 360px;
+    padding: 8px 16px;
+    background: linear-gradient(90deg, #03007a 80%, #0403ed);
+    border: none;
+    border-radius: 0;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: clamp(14px, 2vw, 15px);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.linkButton::before, .copyButton::before, .merchButton::before, .backButton::before {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 4px; /* Thicker border */
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
+    z-index: -1;
+    transition: width 0.3s ease;
+}
+
+.linkButton:hover::before, .copyButton:hover::before, .merchButton:hover::before, .backButton:hover::before {
+    width: 100%;
+}
+
+.linkButton:hover, .copyButton:hover, .merchButton:hover, .backButton:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #0403ed 80%, #03007a);
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .linkButton i {
-    margin-right: 10px;
-    font-size: clamp(18px, 3vw, 20px);
-    transition: transform 0.4s;
-}
-
-.linkButton .linkDesc {
-    color: #999;
-    font-size: clamp(12px, 2vw, 13px);
-    font-weight: normal;
-    margin-left: auto;
-    transition: transform 0.4s, color 0.4s;
-}
-
-.linkButton:nth-child(1) { --index: 1; }
-.linkButton:nth-child(2) { --index: 2; }
-.linkButton:nth-child(3) { --index: 3; }
-.linkButton:nth-child(4) { --index: 4; }
-.linkButton:nth-child(5) { --index: 5; }
-.linkButton:nth-child(6) { --index: 6; }
-
-.linkButton:hover {
-    transform: perspective(800px) translateZ(30px) rotateY(5deg) scale(1.05) skewY(2deg);
-    background: #000000 radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
-    color: #f4ebdd;
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.linkButton:hover::before {
-    transform: translateZ(-15px);
-    animation: hoverPulse 1.5s infinite ease-in-out;
+    margin-right: 8px;
+    font-size: clamp(15px, 2vw, 16px);
+    transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .linkButton:hover i {
-    transform: translateZ(5px);
+    transform: translateX(3px);
+    color: #FFA500;
 }
 
-.linkButton:hover .linkDesc {
-    transform: translateZ(3px);
-    color: #bbb;
+.linkButton .linkDesc {
+    font-size: clamp(10px, 1.6vw, 11px);
+    font-weight: 400;
+    margin-left: auto;
 }
 
-.copyButton {
-    width: auto;
-    padding: 10px 20px;
-    font-size: clamp(14px, 2.2vw, 16px);
-    margin-top: 15px;
-}
-
+/* Album Button */
 .albumButton {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 360px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 0;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: clamp(15px, 2.2vw, 16px);
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     position: relative;
-    width: 400px;
-    padding: 15px 30px;
-    background-color: rgba(0, 0, 0, 1);
-    color: #ffffff;
-    font-size: clamp(20px, 3.5vw, 22px);
-    font-weight: 900;
-    text-shadow: -1px 0 #000, 1px 0 #000, 0 -1px #000, 0 1px #000, 3px 3px 6px rgba(0, 0, 0, 0.8);
-    opacity: 1;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
-    animation: bounceIn 1s cubic-bezier(0.7, -0.3, 0.3, 1.3) forwards;
-    transition: transform 0.4s, background-color 0.4s, box-shadow 0.4s ease-in-out;
+    overflow: hidden;
+    background: none;
 }
 
 .albumButton::before {
     content: '';
     position: absolute;
-    top: 0;
+    bottom: -4px;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.50);
+    width: 0;
+    height: 4px; /* Thicker border */
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
     z-index: -1;
+    transition: width 0.3s ease;
+}
+
+.albumButton:hover::before {
+    width: 100%;
 }
 
 .albumButton::after {
@@ -200,74 +232,75 @@ main {
     height: 100%;
     background-image: url('truestate/sioto_jazz_album_cover_small.png');
     background-size: cover;
-    background-position: center 10%;
+    background-position: center;
     opacity: 1;
     z-index: -2;
-    transition: opacity 0.4s;
+}
+
+.albumButton::before {
+    content: '';
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #0403ed;
+    opacity: 0.5;
+    z-index: -1;
+    transition: opacity 0.2s ease;
 }
 
 .liveCover::after {
     background-image: url('livecover.png') !important;
     background-size: cover !important;
-    background-position: center 30% !important;
-}
-
-.albumButton i {
-    color: #ffffff;
-    font-weight: 900;
-    opacity: 1;
-    margin-right: 10px;
-    font-size: clamp(20px, 3.5vw, 22px);
-    transition: transform 0.4s;
-    text-shadow: -1px 0 #000, 1px 0 #000, 0 -1px #000, 0 1px #000, 3px 3px 6px rgba(0, 0, 0, 0.8);
-}
-
-.albumButton .linkDesc {
-    color: #ffffff;
-    font-size: clamp(12px, 2vw, 13px);
-    font-weight: normal;
-    margin-left: auto;
-    opacity: 1;
-    transition: transform 0.4s;
-    text-shadow: -1px 0 #000, 1px 0 #000, 0 -1px #000, 0 1px #000, 3px 3px 6px rgba(0, 0, 0, 0.8);
-}
-
-.albumButton:hover {
-    background-color: rgba(0, 0, 0, 0.98);
-    transform: perspective(800px) translateZ(30px) rotateY(5deg) scale(1.05) skewY(2deg);
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(3px);
+    background-position: center !important;
 }
 
 .albumButton:hover::before {
-    transform: translateZ(-15px);
-    animation: hoverPulse 1.5s infinite ease-in-out;
-}
-
-.albumButton:hover::after {
     opacity: 0.7;
 }
 
+.albumButton:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.albumButton i, .albumButton .linkDesc {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    color: #FFFFFF;
+}
+
+.albumButton i {
+    transition: color 0.2s ease;
+}
+
 .albumButton:hover i {
-    transform: translateZ(5px);
+    color: #FFA500;
 }
 
-.albumButton:hover .linkDesc {
-    transform: translateZ(3px);
+.albumButton .linkDesc {
+    font-size: clamp(10px, 1.6vw, 11px);
+    font-weight: 400;
+    margin-left: auto;
 }
 
+/* Specific Button Styles */
+.copyButton {
+    width: auto;
+    padding: 6px 12px;
+    font-size: clamp(12px, 1.8vw, 13px);
+}
+
+/* Social Links */
 .socialLinks {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 400px;
+    width: 100%;
+    max-width: 360px;
     max-height: 0;
     overflow-y: auto;
-    transition: max-height 0.7s ease-in-out;
+    transition: max-height 0.2s ease-in-out;
 }
 
 .socialLinks.active {
-    max-height: 400px;
+    max-height: 250px;
 }
 
 .socialLink {
@@ -275,36 +308,48 @@ main {
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 10px 30px;
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 3px solid #111;
+    padding: 8px 16px;
+    background: linear-gradient(90deg, #03007a 80%, #0403ed);
+    border: none;
     border-radius: 0;
     text-decoration: none;
-    color: #111;
-    font-size: 24px;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+    font-size: clamp(15px, 2.2vw, 16px);
+    font-weight: 600;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     position: relative;
-    transition: transform 0.4s, background 0.4s, color 0.4s, box-shadow 0.4s ease-in-out;
-    animation: flipIn 0.7s cubic-bezier(0.8, -0.4, 0.2, 1.5) forwards;
-    animation-delay: calc(0.1s * var(--index));
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .socialLink::before {
     content: '';
     position: absolute;
-    top: 0;
+    bottom: -4px;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.05);
+    width: 0;
+    height: 4px; /* Thicker border */
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
     z-index: -1;
-    animation: parallaxFlip 0.7s cubic-bezier(0.8, -0.4, 0.2, 1.5) forwards;
-    animation-delay: calc(0.1s * var(--index));
-    transition: transform 0.4s;
+    transition: width 0.3s ease;
+}
+
+.socialLink:hover::before {
+    width: 100%;
+}
+
+.socialLink:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #0403ed 80%, #03007a);
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .socialLink i {
-    transition: transform 0.4s;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.socialLink:hover i {
+    transform: translateX(3px);
+    color: #FFA500;
 }
 
 .socialLink:nth-child(1) { --index: 1; }
@@ -313,165 +358,17 @@ main {
 .socialLink:nth-child(4) { --index: 4; }
 .socialLink:nth-child(5) { --index: 5; }
 
-.socialLink:hover {
-    transform: perspective(800px) translateZ(30px) rotateY(5deg) scale(1.05) skewY(2deg);
-    background: #000000 radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
-    color: #f4ebdd;
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.socialLink:hover::before {
-    transform: translateZ(-15px);
-    animation: hoverPulse 1.5s infinite ease-in-out;
-}
-
-.socialLink:hover i {
-    transform: translateZ(5px);
-}
-
-/* Merchandise Page Styles */
-.merchContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    gap: 30px;
-    margin-top: clamp(30px, 5vw, 40px);
-}
-
-.merchNote {
-    font-size: clamp(14px, 2.2vw, 16px);
-    color: #555;
-    text-align: center;
-    max-width: 600px;
-    margin-bottom: 20px;
-}
-
-.paymentNote {
-    font-size: clamp(16px, 2.5vw, 18px);
-    color: #111;
-    text-align: center;
-    max-width: 600px;
-    margin-bottom: 20px;
-    font-weight: bold;
-    background: linear-gradient(to bottom, #e8e0d1, #d8d0c1);
-    padding: 15px;
-    border: 3px solid #111;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
-}
-
-.merchItem {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-    max-width: 600px;
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 3px solid #111;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
-    padding: 20px;
-    transition: transform 0.4s, box-shadow 0.4s ease-in-out;
-}
-
-.merchItem:hover {
-    transform: perspective(800px) translateZ(20px) scale(1.02);
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3);
-}
-
-.merchImage {
-    width: 150px;
-    height: 150px;
-    background-size: cover;
-    background-position: center;
-    border: 2px solid #111;
-    margin-right: 20px;
-    flex-shrink: 0;
-}
-
-.merchDetails {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.merchDetails h3 {
-    font-family: 'Garet', sans-serif;
-    font-size: clamp(18px, 3vw, 20px);
-    color: #111;
-    font-weight: bold;
-}
-
-.merchDetails p {
-    font-size: clamp(14px, 2.2vw, 15px);
-    color: #333;
-}
-
-.merchButton {
-    width: 100%;
-    max-width: 200px;
-    justify-content: center;
-    padding: 10px 20px;
-    font-size: clamp(16px, 2.5vw, 18px);
-}
-
-.backButton {
-    width: 100%;
-    max-width: 200px;
-    justify-content: center;
-    margin Wetlands: 20px;
-}
-
-.optionGroup {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.optionGroup label {
-    font-size: clamp(14px, 2.2vw, 15px);
-    color: #111;
-    font-weight: bold;
-}
-
-.optionGroup select {
-    padding: 5px 10px;
-    font-size: clamp(14px, 2.2vw, 15px);
-    font-family: 'Garet', sans-serif;
-    background: #f0e8d9;
-    border: 2px solid #111;
-    color: #111;
-    cursor: pointer;
-    transition: background 0.4s, border-color 0.4s;
-}
-
-.optionGroup select:focus {
-    outline: none;
-    border-color: #555;
-    background: #e8e0d1;
-}
-
-/* Extras Page Styles */
-.category {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    gap: 30px;
-    margin-top: clamp(30px, 5vw, 40px);
-}
-
+/* Navigation Bar */
 .extraNav {
     position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 200px;
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 3px solid #111;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
-    padding: 15px;
+    top: 12px;
+    left: 12px;
+    width: 160px;
+    background: none;
+    border: none;
+    padding: 10px;
     z-index: 1000;
-    max-height: calc(100vh - 40px);
+    max-height: calc(100vh - 24px);
     overflow-y: auto;
 }
 
@@ -479,7 +376,8 @@ main {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
+    background: none;
 }
 
 .extraNav li {
@@ -489,105 +387,219 @@ main {
 .extraNav a {
     display: flex;
     align-items: center;
-    padding: 8px 15px;
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 2px solid #111;
+    padding: 8px 16px;
+    background: linear-gradient(90deg, #03007a 80%, #0403ed);
+    border: none;
+    border-radius: 0;
     text-decoration: none;
-    color: #111;
-    font-size: clamp(14px, 2.2vw, 16px);
-    font-weight: bold;
-    transition: transform 0.4s, background 0.4s, color 0.4s;
+    color: #FFFFFF;
+    font-size: clamp(14px, 2vw, 15px);
+    font-weight: 600;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.extraNav a::before {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 4px; /* Thicker border */
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
+    z-index: -1;
+    transition: width 0.3s ease;
+}
+
+.extraNav a:hover::before {
+    width: 100%;
 }
 
 .extraNav a:hover {
-    transform: perspective(800px) translateZ(10px) scale(1.05);
-    background: #000000 radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
-    color: #f4ebdd;
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #0403ed 80%, #03007a);
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .extraNav a i {
     margin-right: 8px;
+    transition: color 0.2s ease;
+}
+
+.extraNav a:hover i {
+    color: #FFA500;
+}
+
+/* Merchandise Page Styles */
+.merchContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+    margin-top: clamp(16px, 2.5vw, 20px);
+}
+
+.merchNote, .paymentNote {
+    font-size: clamp(12px, 1.8vw, 13px);
+    color: #000080;
+    text-align: center;
+    max-width: 500px;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #C0C0C0; /* Static */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.paymentNote {
+    font-weight: 600;
+}
+
+.merchItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    background: #C0C0C0; /* Static */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+}
+
+.merchImage {
+    width: 100px;
+    height: 100px;
+    background-size: cover;
+    background-position: center;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.merchDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.merchDetails h3 {
+    font-family: 'MS Sans Serif', 'Garet', sans-serif;
+    font-size: clamp(14px, 2.2vw, 15px);
+    color: #000080;
+    font-weight: 700;
+}
+
+.merchDetails p {
+    font-size: clamp(11px, 1.6vw, 12px);
+    color: #000080;
+}
+
+.optionGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.optionGroup label {
+    font-size: clamp(11px, 1.6vw, 12px);
+    color: #000080;
+    font-weight: 600;
+}
+
+.optionGroup select {
+    padding: 6px 8px;
+    font-size: clamp(11px, 1.6vw, 12px);
+    font-family: 'MS Sans Serif', 'Garet', sans-serif;
+    background: #C0C0C0;
+    border: none;
+    color: #000080;
+    cursor: pointer;
+}
+
+.optionGroup select::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
+    z-index: -1;
+}
+
+.optionGroup select:focus {
+    outline: none;
+}
+
+.optionGroup select:focus::before {
+    background: #FFA500;
+}
+
+/* Extras Page Styles */
+.category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px; /* Match other content */
+    gap: 16px;
+    margin-top: clamp(16px, 2.5vw, 20px);
 }
 
 details {
     width: 100%;
-    max-width: 600px;
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 3px solid #111;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
-    padding: 15px;
-    transition: transform 0.4s, box-shadow 0.4s;
-}
-
-details:hover {
-    transform: perspective(800px) translateZ(20px) scale(1.02);
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4);
+    max-width: 500px;
+    background: #F5F6F5; /* Static */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 10px;
 }
 
 summary {
-    font-family: 'Garet', sans-serif;
-    font-size: clamp(18px, 3vw, 20px);
-    font-weight: bold;
-    color: #111;
+    font-family: 'MS Sans Serif', 'Garet', sans-serif;
+    font-size: clamp(14px, 2.2vw, 15px);
+    font-weight: 700;
+    color: #000080;
     cursor: pointer;
-    padding: 10px;
+    padding: 6px;
     display: flex;
     align-items: center;
 }
 
 summary i {
-    margin-right: 10px;
+    margin-right: 8px;
+    color: #000080;
+    transition: color 0.2s ease;
+}
+
+summary:hover i {
+    color: #FFA500;
 }
 
 .detailsContent {
-    padding: 20px;
-    color: #333;
-    font-size: clamp(14px, 2.2vw, 16px);
+    padding: 10px;
+    color: #000080;
+    font-size: clamp(11px, 1.6vw, 12px);
 }
 
 .bandLongDescription p {
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 .audioContainer {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 12px;
     width: 100%;
 }
 
 .audioItem {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 3px solid #111;
-    padding: 20px;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
-    position: relative;
-    transition: transform 0.4s, box-shadow 0.4s ease-in-out;
-}
-
-.audioItem:hover {
-    transform: perspective(800px) translateZ(20px) scale(1.02);
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3);
-}
-
-.audioItem::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.05);
-    z-index: -1;
-    transition: transform 0.4s;
-}
-
-.audioItem:hover::before {
-    transform: translateZ(-10px);
-    animation: hoverPulse 1.5s infinite ease-in-out;
+    gap: 8px;
+    background: #C0C0C0; /* Static */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 0 #808080, inset 2px 2px 0 #FFFFFF; /* Beveled effect */
+    padding: 10px;
 }
 
 .audioItem .customAudio {
@@ -597,209 +609,243 @@ summary i {
 .audioControls {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 8px;
     flex-wrap: wrap;
-    background: linear-gradient(to bottom, #e8e0d1, #d8d0c1);
-    padding: 10px;
-    border: 2px solid #111;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
+    background: #C0C0C0; /* Static */
+    padding: 6px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 0 #808080, inset 2px 2px 0 #FFFFFF; /* Beveled effect */
 }
 
 .audioControlBtn {
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 2px solid #111;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    background: #C0C0C0;
+    border: none;
+    border-radius: 2px; /* Slight rounding for Win98 buttons */
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), -1px -1px 1px #808080, 1px 1px 1px #FFFFFF; /* Raised effect */
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.audioControlBtn::before {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 4px; /* Thicker border */
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
+    z-index: -1;
+    transition: width 0.3s ease;
+}
+
+.audioControlBtn:hover::before {
+    width: 100%;
 }
 
 .audioControlBtn:hover {
-    transform: perspective(400px) translateZ(10px) scale(1.1);
-    background: #000000 radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .audioControlBtn i {
-    color: #111;
-    font-size: clamp(16px, 2.5vw, 18px);
+    color: #000080;
+    font-size: clamp(13px, 1.8vw, 14px);
+    transition: color 0.2s ease;
+    filter: contrast(1.2); /* Pixelated effect */
 }
 
 .audioControlBtn:hover i {
-    color: #f4ebdd;
+    color: #FFA500;
 }
 
 .progressContainer {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     flex-grow: 1;
-    max-width: 300px;
+    max-width: 240px;
 }
 
 .currentTime, .duration {
-    font-size: clamp(12px, 2vw, 14px);
-    color: #111;
-    min-width: 40px;
+    font-size: clamp(10px, 1.6vw, 11px);
+    color: #000080;
+    min-width: 32px;
 }
 
 .progressBar {
     width: 100%;
-    height: 10px;
-    background: #f4ebdd;
-    border: 2px solid #111;
-    border-radius: 5px;
+    height: 6px;
+    background: #C0C0C0;
+    border: none;
+    border-radius: 0;
     cursor: pointer;
+    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF; /* Sunken effect */
 }
 
 .progressBar::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    background: #111;
-    border: 2px solid #f4ebdd;
-    border-radius: 50%;
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    width: 10px;
+    height: 10px;
+    background: #FFA500;
+    border: 2px solid #0000FF;
+    border-radius: 2px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .progressBar::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    background: #111;
-    border: 2px solid #f4ebdd;
-    border-radius: 50%;
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    width: 10px;
+    height: 10px;
+    background: #FFA500;
+    border: 2px solid #0000FF;
+    border-radius: 2px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .volumeContainer {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .volumeContainer i {
-    color: #111;
-    font-size: clamp(16px, 2.5vw, 18px);
+    color: #000080;
+    font-size: clamp(13px, 1.8vw, 14px);
+    transition: color 0.2s ease;
+    filter: contrast(1.2);
+}
+
+.volumeContainer:hover i {
+    color: #FFA500;
 }
 
 .volumeSlider {
-    width: 80px;
-    height: 8px;
-    background: #f4ebdd;
-    border: 2px solid #111;
-    border-radius: 4px;
+    width: 60px;
+    height: 6px;
+    background: #C0C0C0;
+    border: none;
+    border-radius: 0;
     cursor: pointer;
+    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF; /* Sunken effect */
 }
 
 .volumeSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    background: #111;
-    border: 2px solid #f4ebdd;
-    border-radius: 50%;
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    width: 10px;
+    height: 10px;
+    background: #FFA500;
+    border: 2px solid #0000FF;
+    border-radius: 2px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .volumeSlider::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    background: #111;
-    border: 2px solid #f4ebdd;
-    border-radius: 50%;
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    width: 10px;
+    height: 10px;
+    background: #FFA500;
+    border: 2px solid #0000FF;
+    border-radius: 2px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .audioDetails {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
 }
 
 .audioTitle {
-    font-family: 'Garet', sans-serif;
-    font-weight: bold;
-    font-size: clamp(18px, 3vw, 20px);
-    color: #111;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    font-family: 'MS Sans Serif', 'Garet', sans-serif;
+    font-weight: 800; /* Bolder for Win98 */
+    font-size: clamp(14px, 2.2vw, 15px);
+    color: #000080;
+    letter-spacing: 0.5px;
 }
 
 .audioIntensity {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: clamp(14px, 2.2vw, 16px);
-    color: #333;
+    gap: 8px;
+    font-size: clamp(11px, 1.6vw, 12px);
+    color: #000080;
 }
 
 .audioIntensity progress {
     width: 100%;
-    max-width: 200px;
-    height: 12px;
-    background: #f4ebdd;
-    border: 2px solid #111;
-    border-radius: 5px;
+    max-width: 160px;
+    height: 6px;
+    background: #C0C0C0;
+    border: none;
+    border-radius: 0;
+    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF;
+}
+
+.audioIntensity progress::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
+    z-index: -1;
 }
 
 .audioIntensity progress::-webkit-progress-bar {
-    background: #f4ebdd;
-    border-radius: 3px;
+    background: #C0C0C0;
 }
 
 .audioIntensity progress::-webkit-progress-value {
-    background: var(--progress-color, #111);
-    border-radius: 3px;
+    background: #FFA500;
 }
 
 .audioIntensity progress::-moz-progress-bar {
-    background: var(--progress-color, #111);
-    border-radius: 3px;
+    background: #FFA500;
 }
 
 .audioItem .linkButton {
     width: auto;
-    padding: 10px 20px;
-    font-size: clamp(14px, 2.2vw, 16px);
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 3px solid #111;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
-    transition: transform 0.4s, background 0.4s, color 0.4s;
-}
-
-.audioItem .linkButton:hover {
-    transform: perspective(800px) translateZ(10px) scale(1.05);
-    background: #000000 radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
-    color: #f4ebdd;
+    padding: 6px 12px;
+    font-size: clamp(11px, 1.6vw, 12px);
 }
 
 .extraTable {
     width: 100%;
     border-collapse: collapse;
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 2px solid #111;
+    background: #C0C0C0; /* Static */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .extraTable th, .extraTable td {
-    padding: 12px;
+    padding: 8px;
     text-align: left;
-    border: 1px solid #111;
+    border: none;
     vertical-align: middle;
 }
 
+.extraTable th::before, .extraTable td::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
+    z-index: -1;
+}
+
 .extraTable th {
-    background: #d8d0c1;
-    font-weight: bold;
-    color: #111;
+    background: #C0C0C0;
+    font-weight: 700;
+    color: #000080;
 }
 
 .extraTable td {
-    color: #333;
+    color: #000080;
 }
 
 .techRiderTable {
@@ -808,92 +854,87 @@ summary i {
 
 .techRiderTable th, .techRiderTable td {
     width: 25%;
-    padding: 10px;
-    font-size: clamp(12px, 2vw, 14px);
+    padding: 6px;
+    font-size: clamp(10px, 1.6vw, 11px);
 }
 
 .photosContainer {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
 }
 
 .photosContainer img {
     width: 100%;
     height: auto;
-    border: 2px solid #111;
-    transition: transform 0.4s;
-}
-
-.photosContainer img:hover {
-    transform: scale(1.05);
 }
 
 .externalLinks {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 8px;
+    width: 100%;
+    max-width: 500px; /* Match parent */
 }
 
 .externalLinks a {
     width: 100%;
-    max-width: 200px;
+    max-width: none; /* Fit parent area */
     justify-content: center;
 }
 
 .logoImage {
-    max-width: 200px;
+    max-width: 100%; /* Fit column */
     height: auto;
-    border: 2px solid #111;
 }
 
 .bannerImage {
     max-width: 100%;
     height: auto;
-    border: 2px solid #111;
 }
 
 .fontLinks {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    font-size: clamp(20px, 4vw, 24px);
+    gap: 8px;
+    font-size: clamp(15px, 2.5vw, 16px);
+    color: #000080;
 }
 
 .interviewSection {
-    margin-bottom: 25px;
+    margin-bottom: 16px;
 }
 
 .question {
-    font-weight: bold;
-    font-size: clamp(16px, 2.5vw, 18px);
-    color: #111;
-    margin-bottom: 15px;
+    font-weight: 700;
+    font-size: clamp(12px, 2vw, 13px);
+    color: #000080;
+    margin-bottom: 8px;
 }
 
 .answer p {
-    margin-bottom: 15px;
+    margin-bottom: 8px;
+    color: #000080;
 }
 
 .speaker {
-    font-weight: bold;
-    color: #111;
-    margin-right: 5px;
+    font-weight: 700;
+    color: #000080;
+    margin-right: 4px;
 }
 
 .equipmentTypes {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 12px;
     justify-content: center;
 }
 
 .equipmentList {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 12px;
     width: 100%;
 }
 
@@ -904,66 +945,57 @@ summary i {
 .equipmentItem {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    background: linear-gradient(to bottom, #f0e8d9, #e8e0d1);
-    border: 3px solid #111;
-    padding: 20px;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.2);
-    margin-bottom: 20px;
-    transition: transform 0.4s, box-shadow 0.4s ease-in-out;
-}
-
-.equipmentItem:hover {
-    transform: perspective(800px) translateZ(20px) scale(1.02);
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.3);
+    gap: 6px;
+    background: #C0C0C0; /* Static */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 10px;
 }
 
 .equipmentField {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: clamp(14px, 2.2vw, 16px);
-    color: #333;
+    gap: 6px;
+    font-size: clamp(11px, 1.6vw, 12px);
+    color: #000080;
     flex-wrap: wrap;
 }
 
 .equipmentLabel {
-    font-weight: bold;
-    color: #111;
-    min-width: 100px;
+    font-weight: 700;
+    color: #000080;
+    min-width: 80px;
 }
 
 .equipmentType {
-    padding: 5px 10px;
-    border: 2px solid #111;
-    font-size: clamp(12px, 2vw, 14px);
-    color: #fff;
+    padding: 5px 8px;
+    font-size: clamp(10px, 1.6vw, 11px);
+    color: #000080;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     white-space: nowrap;
 }
 
 .equipmentType.preferred {
-    background: #ff6200;
+    background: #FFD700;
 }
 
 .equipmentType.required {
-    background: #ff0000;
+    background: #FFA500;
 }
 
 .equipmentType.info {
-    background: #00b7eb;
+    background: #0403ed;
+    color: #FFFFFF;
 }
 
 .equipmentType.optional {
-    background: #00f7ff;
-    color: #111;
+    background: #87CEFA;
 }
 
 .minorDesc {
-    font-size: clamp(10px, 1.8vw, 12px);
-    color: #fff;
+    font-size: clamp(9px, 1.4vw, 10px);
+    color: #000080;
     white-space: normal;
     max-width: 100%;
 }
@@ -973,566 +1005,167 @@ summary i {
 }
 
 .note {
-    margin-top: 20px;
+    margin-top: 12px;
 }
 
 .note h3 {
-    font-family: 'Garet', sans-serif;
-    font-size: clamp(16px, 2.5vw, 18px);
-    color: #111;
-    margin-bottom: 15px;
+    font-family: 'MS Sans Serif', 'Garet', sans-serif;
+    font-size: clamp(12px, 2vw, 13px);
+    color: #000080;
+    margin-bottom: 8px;
 }
 
 .footer {
     text-align: center;
-    color: #777;
-    font-size: clamp(12px, 2vw, 14px);
-    margin-top: 30px;
-    padding: 15px 0;
+    color: #000080;
+    font-size: clamp(10px, 1.6vw, 11px);
+    margin-top: 16px;
+    padding: 8px 0;
     width: 100%;
 }
 
 #scrollToTopBtn {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 12px;
+    right: 12px;
     width: auto;
-    padding: 10px 20px;
-    font-size: clamp(14px, 2.2vw, 16px);
+    padding: 6px 12px;
+    font-size: clamp(11px, 1.6vw, 12px);
     display: none;
+    background: linear-gradient(90deg, #03007a 80%, #0403ed);
+    border: none;
+    color: #FFFFFF;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+#scrollToTopBtn::before {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 4px; /* Thicker border */
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
+    z-index: -1;
+    transition: width 0.3s ease;
+}
+
+#scrollToTopBtn:hover::before {
+    width: 100%;
+}
+
+#scrollToTopBtn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #0403ed 80%, #03007a);
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #scrollToTopBtn.visible {
     display: flex;
 }
 
-@keyframes hoverPulse {
-    0% { opacity: 0.5; transform: translateZ(-15px) scale(1); }
-    50% { opacity: 0.3; transform: translateZ(-15px) scale(1.02); }
-    100% { opacity: 0.5; transform: translateZ(-15px) scale(1); }
+/* Animations */
+@keyframes fadeInTitle {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes zoomInTitle {
-    0% { transform: scale(0.2) translateY(20px); opacity: 0; }
-    60% { transform: scale(1.1) translateY(-5px) rotateZ(3deg); opacity: 0.8; }
-    80% { transform: scale(0.95) translateY(2px) rotateZ(-2deg); opacity: 0.9; }
-    100% { transform: scale(1) translateY(0) rotateZ(0); opacity: 1; }
+@keyframes fadeInSubtitle {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes zoomInSubtitle {
-    0% { transform: scale(0.4) translateY(30px) translateX(10px); opacity: 0; }
-    50% { transform: scale(0.8) translateY(5px) translateX(-5px); opacity: 0.5; }
-    80% { transform: scale(1.05) translateY(-2px) translateX(2px); opacity: 0.8; }
-    100% { transform: scale(1) translateY(0) translateX(0); opacity: 1; }
+@keyframes slideIn {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes bounceIn {
-    0% { transform: translateY(50px) scale(0.8); opacity: 0; }
-    50% { transform: translateY(-15px) scale(1.15) rotate(5deg); opacity: 0.7; }
-    70% { transform: translateY(10px) scale(0.95) rotate(-3deg); opacity: 0.9; }
-    100% { transform: scale(1) translateY(0) rotate(0); opacity: 1; }
-}
-
-@keyframes parallaxBounce {
-    0% { transform: translateY(60px) translateX(10px); }
-    50% { transform: translateY(-20px) translateX(-5px); }
-    70% { transform: translateY(15px) translateX(3px); }
-    100% { transform: translateY(0) translateX(0); }
-}
-
-@keyframes flipIn {
-    0% { transform: perspective(500px) rotateX(-90deg) skewX(10deg); opacity: 0; }
-    40% { transform: perspective(500px) rotateX(20deg) skewX(-5deg); opacity: 0.5; }
-    60% { transform: perspective(500px) rotateX(-10deg) skewX(3deg); opacity: 0.8; }
-    100% { transform: perspective(500px) rotateX(0) skewX(0); opacity: 1; }
-}
-
-@keyframes parallaxFlip {
-    0% { transform: perspective(500px) rotateX(-90deg) translateZ(-15px) rotateY(10deg); opacity: 0; }
-    40% { transform: perspective(500px) rotateX(30deg) translateZ(-5px) rotateY(-5deg); opacity: 0.4; }
-    60% { transform: perspective(500px) rotateX(-15deg) translateZ(0) rotateY(3deg); opacity: 0.6; }
-    100% { transform: perspective(500px) rotateX(0) translateZ(0) rotateY(0); opacity: 0.5; }
-}
-
+/* Media Queries */
 @media screen and (max-width: 768px) {
     body {
-        padding: 10px 20px;
-        font-size: clamp(18px, 3vw, 20px);
-    }
-
-    main {
-        margin-left: 0;
+        padding: 8px;
+        font-size: clamp(11px, 1.8vw, 13px);
     }
 
     .titleContainer {
-        margin: 5vw 0 20px;
+        margin: 12px 0;
     }
 
     .bandName {
-        font-size: clamp(60px, 14vw, 90px);
+        font-size: clamp(40px, 8vw, 56px);
     }
 
     .bandDescription {
-        font-size: clamp(14px, 2.8vw, 16px);
-    }
-
-    .buttonWrapper {
-        margin-top: 0;
+        font-size: clamp(9px, 1.6vw, 11px);
+        margin-bottom: 48px;
     }
 
     .merchContainer, .category {
-        margin-top: clamp(30px, 5vw, 40px);
-        gap: 35px;
+        margin-top: clamp(12px, 2vw, 16px);
+        gap: 12px;
     }
 
-    .linkButton {
-        width: 100%;
-        padding: 18px 30px;
-        font-size: clamp(20px, 3.5vw, 22px);
+    .linkButton, .albumButton, .extraNav a {
+        max-width: none;
+        padding: 6px 12px;
+        font-size: clamp(13px, 2vw, 14px);
     }
 
-    .copyButton {
-        padding: 12px 24px;
-        font-size: clamp(16px, 2.5vw, 18px);
-    }
-
-    .albumButton {
-        width: 100%;
-        padding: 18px 30px;
-        font-size: clamp(22px, 3.8vw, 24px);
-    }
-
-    .socialLinks {
-        width: 100%;
-    }
-
-    .socialLink {
-        padding: 12px 30px;
-        font-size: clamp(22px, 4.5vw, 26px);
-    }
-
-    .linkDesc {
-        font-size: clamp(13px, 2.2vw, 15px);
+    .socialLinks, .socialLink {
+        max-width: none;
     }
 
     .merchItem {
         flex-direction: column;
         align-items: flex-start;
-        padding: 24px;
+        padding: 8px;
     }
 
     .merchImage {
         width: 100%;
-        height: 250px;
-        margin-right: 0;
-        margin-bottom: 20px;
-    }
-
-    .merchButton, .backButton {
-        width: 100%;
-        max-width: none;
-        padding: 15px 30px;
-        font-size: clamp(20px, 3.5vw, 22px);
-    }
-
-    .optionGroup {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .optionGroup label {
-        font-size: clamp(16px, 2.5vw, 18px);
-    }
-
-    .optionGroup select {
-        width: 100%;
-        max-width: 250px;
-        padding: 10px 15px;
-        font-size: clamp(16px, 2.5vw, 18px);
+        height: 120px;
+        margin-bottom: 8px;
     }
 
     .extraNav {
         position: static;
         width: 100%;
         max-width: none;
-        margin: 20px 0;
-        max-height: none;
-        padding: 20px;
-    }
-
-    .extraNav ul {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 15px;
+        margin: 8px 0;
+        padding: 8px;
     }
 
     .extraNav a {
-        width: 100%;
-        font-size: clamp(18px, 3vw, 20px);
-        padding: 12px 24px;
+        font-size: clamp(13px, 2vw, 14px);
     }
 
-    .extraNav a i {
-        font-size: clamp(18px, 3vw, 20px);
-    }
-
-    details {
-        max-width: none;
-        padding: 20px;
-    }
-
-    summary {
-        font-size: clamp(20px, 3.5vw, 22px);
-    }
-
-    summary i {
-        font-size: clamp(20px, 3.5vw, 22px);
-    }
-
-    .detailsContent {
-        padding: 24px;
-        font-size: clamp(16px, 2.5vw, 18px);
-    }
-
-    .audioItem {
-        padding: 24px;
-    }
-
-    .audioControls {
-        padding: 15px;
-        gap: 18px;
-    }
-
-    .audioControlBtn {
-        width: 50px;
-        height: 50px;
-    }
-
-    .audioControlBtn i {
-        font-size: clamp(20px, 3.5vw, 22px);
-    }
-
-    .progressContainer {
-        max-width: none;
-    }
-
-    .progressBar {
-        height: 14px;
-    }
-
-    .progressBar::-webkit-slider-thumb,
-    .progressBar::-moz-range-thumb {
-        width: 20px;
-        height: 20px;
-    }
-
-    .volumeSlider {
-        width: 100px;
-        height: 12px;
-    }
-
-    .volumeSlider::-webkit-slider-thumb,
-    .volumeSlider::-moz-range-thumb {
-        width: 18px;
-        height: 18px;
-    }
-
-    .currentTime, .duration {
-        font-size: clamp(14px, 2.5vw, 16px);
-        min-width: 50px;
-    }
-
-    .audioTitle {
-        font-size: clamp(20px, 3.5vw, 22px);
-    }
-
-    .audioIntensity {
-        font-size: clamp(16px, 2.5vw, 18px);
-    }
-
-    .audioIntensity progress {
-        max-width: none;
-        height: 14px;
-    }
-
-    .audioItem .linkButton {
-        padding: 12px 24px;
-        font-size: clamp(16px, 2.5vw, 18px);
-    }
-
-    .photosContainer {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-
-    .externalLinks a {
-        max-width: none;
-        padding: 15px 30px;
-        font-size: clamp(18px, 3vw, 20px);
-    }
-
-    .logoImage {
-        max-width: 250px;
-    }
-
-    .bannerImage {
-        max-width: 100%;
-    }
-
-    .fontLinks {
-        font-size: clamp(22px, 4.5vw, 26px);
-    }
-
-    .question {
-        font-size: clamp(18px, 3vw, 20px);
-    }
-
-    .extraTable th, .extraTable td {
-        padding: 15px;
-        font-size: clamp(14px, 2.5vw, 16px);
-    }
-
-    .techRiderTable {
-        display: none;
-    }
-
-    .techRiderList {
-        display: flex;
-    }
-
-    .equipmentType {
-        font-size: clamp(14px, 2.5vw, 16px);
-        padding: 8px 15px;
-    }
-
-    .minorDesc {
-        font-size: clamp(12px, 2vw, 14px);
-    }
-
-    .equipmentItem {
-        padding: 24px;
-    }
-
-    .equipmentField {
-        font-size: clamp(16px, 2.5vw, 18px);
-    }
-
-    .equipmentLabel {
-        min-width: 100px;
-    }
-
-    .footer {
-        font-size: clamp(14px, 2.5vw, 16px);
-        margin-top: 35px;
-        padding: 20px 0;
-    }
-
-    #scrollToTopBtn {
-        padding: 12px 24px;
-        font-size: clamp(16px, 2.5vw, 18px);
+    .externalLinks {
+        grid-template-columns: 1fr; /* Single column for smaller screens */
     }
 }
 
 @media screen and (max-width: 480px) {
     body {
-        padding: 8px 15px;
-        font-size: clamp(20px, 3.5vw, 22px);
-    }
-
-    .titleContainer {
-        margin: 7vw 0 15px;
+        padding: 6px;
+        font-size: clamp(10px, 1.6vw, 12px);
     }
 
     .bandName {
-        font-size: clamp(50px, 12vw, 75px);
+        font-size: clamp(36px, 7vw, 48px);
     }
 
     .bandDescription {
-        font-size: clamp(15px, 3vw, 17px);
+        font-size: clamp(8px, 1.6vw, 10px);
+        margin-bottom: 48px;
     }
 
-    .merchContainer, .category {
-        margin-top: clamp(25px, 4vw, 35px);
-        gap: 30px;
-    }
-
-    .linkContainer {
-        gap: 20px;
-    }
-
-    .linkButton {
-        padding: 15px 25px;
-        font-size: clamp(18px, 3.2vw, 20px);
-    }
-
-    .copyButton {
-        padding: 10px 20px;
-        font-size: clamp(15px, 2.5vw, 17px);
-    }
-
-    .albumButton {
-        padding: 15px 25px;
-        font-size: clamp(20px, 3.5vw, 22px);
-    }
-
-    .socialLink {
-        padding: 15px 25px;
-        font-size: clamp(24px, 5vw, 28px);
-    }
-
-    .merchNote {
-        font-size: clamp(15px, 2.5vw, 17px);
-    }
-
-    .paymentNote {
-        font-size: clamp(17px, 3vw, 19px);
-    }
-
-    .merchItem {
-        padding: 20px;
+    .linkButton, .albumButton, .extraNav a {
+        padding: 5px 10px;
+        font-size: clamp(12px, 2vw, 13px);
     }
 
     .merchImage {
-        height: 200px;
-    }
-
-    .merchDetails h3 {
-        font-size: clamp(20px, 3.5vw, 22px);
-    }
-
-    .merchDetails p {
-        font-size: clamp(15px, 2.5vw, 17px);
-    }
-
-    .optionGroup label {
-        font-size: clamp(15px, 2.5vw, 17px);
-    }
-
-    .optionGroup select {
-        font-size: clamp(15px, 2.5vw, 17px);
-        padding: 8px 12px;
-    }
-
-    .extraNav {
-        margin: 15px 0;
-        padding: 15px;
-    }
-
-    .extraNav a {
-        font-size: clamp(16px, 3vw, 18px);
-        padding: 10px 20px;
-    }
-
-    .extraNav a i {
-        font-size: clamp(16px, 3vw, 18px);
-    }
-
-    details {
-        padding: 18px;
-    }
-
-    summary {
-        font-size: clamp(18px, 3.2vw, 20px);
-    }
-
-    summary i {
-        font-size: clamp(18px, 3.2vw, 20px);
-    }
-
-    .detailsContent {
-        font-size: clamp(15px, 2.5vw, 17px);
-        padding: 20px;
-    }
-
-    .audioItem {
-        padding: 20px;
-    }
-
-    .audioControls {
-        padding: 12px;
-        gap: 15px;
-    }
-
-    .audioControlBtn {
-        width: 45px;
-        height: 45px;
-    }
-
-    .audioControlBtn i {
-        font-size: clamp(18px, 3.2vw, 20px);
-    }
-
-    .progressBar {
-        height: 12px;
-    }
-
-    .progressBar::-webkit-slider-thumb,
-    .progressBar::-moz-range-thumb {
-        width: 18px;
-        height: 18px;
-    }
-
-    .volumeSlider {
-        width: 80px;
-        height: 10px;
-    }
-
-    .volumeSlider::-webkit-slider-thumb,
-    .volumeSlider::-moz-range-thumb {
-        width: 16px;
-        height: 16px;
-    }
-
-    .currentTime, .duration {
-        font-size: clamp(13px, 2.2vw, 15px);
-    }
-
-    .audioIntensity progress {
-        height: 12px;
-    }
-
-    .audioItem .linkButton {
-        padding: 10px 20px;
-        font-size: clamp(15px, 2.5vw, 17px);
-    }
-
-    .extraTable th, .extraTable td {
-        padding: 12px;
-        font-size: clamp(13px, 2.2vw, 15px);
-    }
-
-    .equipmentType {
-        font-size: clamp(13px, 2.2vw, 15px);
-        padding: 6px 12px;
-    }
-
-    .minorDesc {
-        font-size: clamp(11px, 2vw, 13px);
-    }
-
-    .equipmentItem {
-        padding: 20px;
-    }
-
-    .equipmentField {
-        font-size: clamp(15px, 2.5vw, 17px);
-    }
-
-    .equipmentLabel {
-        min-width: 90px;
-    }
-
-    .question {
-        font-size: clamp(17px, 3vw, 19px);
-    }
-
-    .footer {
-        margin-top: 30px;
-        padding: 15px 0;
-        font-size: clamp(15px, 2.5vw, 17px);
-    }
-
-    #scrollToTopBtn {
-        padding: 10px 20px;
-        font-size: clamp(15px, 2.5vw, 17px);
+        height: 100px;
     }
 }
