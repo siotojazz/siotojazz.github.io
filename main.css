@@ -68,8 +68,24 @@ main {
     transform: translateY(-2px);
 }
 
-.bandDescription {
-    margin-top: 8px;
+/* .bandDescription {
+    margin-bottom: 0px !important;
+} */
+
+.nameDesc {
+    margin-top: 50px;
+    font-size: 6px !important;
+    color: #FFF3 !important;
+    display: inline-block   !important;
+    font-weight: 600 !important;
+}
+
+.nameDesc .emp {
+    font-style: italic !important;
+    color: #FFCC4444 !important;
+}
+
+.bandDescription, .nameDesc {
     margin-bottom: 48px;
     letter-spacing: 1px;
     font-size: clamp(10px, 1.6vw, 12px);
