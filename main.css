@@ -16,35 +16,37 @@
 }
 
 body {
-    margin: 0 auto;
+    margin: 0;
     width: 100%;
-
-    background-image: url(extra/photos/SJ_12_BW.JPG);
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center top 60%;
-    background-attachment: fixed;
-
-    font-family: 'MS Sans Serif', 'Arial', sans-serif; 
-    padding: 16px;
-    font-size: clamp(14px, 1.8vw, 16px); 
+    font-family: 'MS Sans Serif', 'Arial', sans-serif;
+    padding: 48px;
+    font-size: clamp(14px, 1.8vw, 16px);
     line-height: 1.6;
     scroll-behavior: smooth;
     color: #FFFFFF;
+    min-height: 100vh; /* Ensures full viewport height */
+    
+    /* Combine background image and vertical gradient */
+    background-image: url(extra/photos/SJ_12_BW.JPG);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: left 20% top 40%;
+    background-size: 120%;
+    background-attachment: fixed;
+    background-blend-mode: darken; /* Ensures gradient darkens the image */
 }
 
-/* Main Layout */
 main {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    align-items: center;
+    align-items: flex-end; /* Left alignment */
     gap: 16px;
 }
 
 /* Title Section */
 .titleContainer {
-    text-align: center;
+    text-align: left; /* Changed from center to left */
     margin: 16px 0;
     position: relative;
     z-index: 10;
@@ -53,7 +55,7 @@ main {
 .bandName {
     margin-top: 50px;
     font-family: 'Astrella', sans-serif;
-    font-size: clamp(88px, 12vw, 120px);
+    font-size: 68px;
     line-height: 1.1;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
@@ -80,8 +82,8 @@ main {
 /* Button Wrapper */
 .buttonWrapper {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start; /* Changed from center to flex-start */
+    align-items: flex-start; /* Changed from center to flex-start */
     width: 100%;
     margin-top: 0;
 }
@@ -89,7 +91,7 @@ main {
 .linkContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start; /* Changed from center to flex-start */
     gap: 12px;
     width: 100%;
 }
@@ -305,7 +307,7 @@ details::before {
 
 .socialLink {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Changed from center to flex-start */
     align-items: center;
     width: 100%;
     padding: 8px 16px;
@@ -435,7 +437,7 @@ details::before {
 .merchContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start; /* Changed from center to flex-start */
     width: 100%;
     gap: 16px;
     margin-top: clamp(16px, 2.5vw, 20px);
@@ -444,7 +446,7 @@ details::before {
 .merchNote, .paymentNote {
     font-size: clamp(12px, 1.8vw, 13px);
     color: #000080;
-    text-align: center;
+    text-align: left; /* Changed from center to left */
     max-width: 500px;
     margin-bottom: 12px;
     padding: 10px;
@@ -459,7 +461,7 @@ details::before {
 .merchItem {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start; /* Changed from center to flex-start */
     width: 100%;
     max-width: 500px;
     background: #C0C0C0; /* Static */
@@ -540,7 +542,7 @@ details::before {
 .category {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start; /* Changed from center to flex-start */
     width: 100%;
     max-width: 500px; /* Match other content */
     gap: 16px;
@@ -870,8 +872,8 @@ summary:hover i {
 }
 
 .externalLinks {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    display: flex;
+    flex-direction: column; /* Changed from grid to flex column for left alignment */
     gap: 8px;
     width: 100%;
     max-width: 500px; /* Match parent */
@@ -880,7 +882,7 @@ summary:hover i {
 .externalLinks a {
     width: 100%;
     max-width: none; /* Fit parent area */
-    justify-content: center;
+    justify-content: flex-start; /* Changed from center to flex-start */
 }
 
 .logoImage {
@@ -928,7 +930,7 @@ summary:hover i {
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 12px;
-    justify-content: center;
+    justify-content: flex-start; /* Changed from center to flex-start */
 }
 
 .equipmentList {
@@ -1016,7 +1018,7 @@ summary:hover i {
 }
 
 .footer {
-    text-align: center;
+    text-align: left; /* Changed from center to left */
     color: #000080;
     font-size: clamp(10px, 1.6vw, 11px);
     margin-top: 16px;
@@ -1081,43 +1083,57 @@ summary:hover i {
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Media Queries */
 @media screen and (max-width: 768px) {
     body {
         padding: 8px;
         font-size: clamp(11px, 1.8vw, 13px);
+        text-align: center; /* Center text content in the body */
+        background-size: auto;
+        background-position: center center;
     }
 
     .titleContainer {
-        margin: 12px 0;
+        margin: 12px auto; /* Center horizontally with auto margins */
+        max-width: 100%; /* Ensure it doesn't exceed container width */
+        display: flex; /* Use flexbox for centering children */
+        flex-direction: column;
+        align-items: center; /* Center children horizontally */
     }
 
     .bandName {
         font-size: 60px;
+        text-align: center; /* Center band name text */
     }
 
     .bandDescription {
         font-size: 12px;
         margin-bottom: 48px;
+        text-align: center; /* Center description text */
     }
 
     .merchContainer, .category {
         margin-top: clamp(12px, 2vw, 16px);
         gap: 12px;
+        display: flex; /* Ensure flexbox is active */
+        justify-content: center; /* Center flex items horizontally */
+        flex-wrap: wrap; /* Allow wrapping for multiple items */
     }
 
     .linkButton, .albumButton, .extraNav a {
         max-width: none;
         font-size: 22px;
+        text-align: center; /* Center text inside buttons */
     }
 
     .socialLinks, .socialLink {
         max-width: none;
+        display: flex; /* Use flexbox for centering */
+        justify-content: center; /* Center social links horizontally */
     }
 
     .merchItem {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center; /* Center items vertically and horizontally */
         padding: 8px;
     }
 
@@ -1125,21 +1141,30 @@ summary:hover i {
         width: 100%;
         height: 120px;
         margin-bottom: 8px;
+        display: block; /* Ensure image is block for centering */
+        margin-left: auto; /* Center image horizontally */
+        margin-right: auto;
     }
 
     .extraNav {
         position: static;
         width: 100%;
         max-width: none;
-        margin: 8px 0;
+        margin: 8px auto; /* Center horizontally */
         padding: 8px;
+        display: flex; /* Use flexbox for links */
+        justify-content: center; /* Center nav links */
+        flex-wrap: wrap; /* Allow wrapping */
     }
 
     .extraNav a {
         font-size: clamp(13px, 2vw, 14px);
+        text-align: center; /* Center link text */
     }
 
     .externalLinks {
-        grid-template-columns: 1fr; /* Single column for smaller screens */
+        flex-direction: column; /* Keep single column for smaller screens */
+        align-items: center; /* Center items in column */
+        justify-content: center; /* Center vertically if needed */
     }
 }
