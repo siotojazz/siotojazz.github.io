@@ -7,53 +7,51 @@
 
 @font-face {
     font-family: 'Astrella';
-    src: url('truestate/Astrella.ttf') format('truetype');
+    src: url('fonts/Astrella.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Garet';
-    src: url('Garet.ttf') format('truetype');
+    src: url('fonts/Garet.ttf') format('truetype');
 }
 
 body {
     margin: 0;
     width: 100%;
-    font-family: 'MS Sans Serif', 'Arial', sans-serif;
+    font-family: 'Garet', 'MS Sans Serif', 'Arial', sans-serif;
     padding: 48px;
+    padding-top: 80px; /* Offset for fixed nav */
     font-size: clamp(14px, 1.8vw, 16px);
     line-height: 1.6;
     scroll-behavior: smooth;
     color: #FFFFFF;
-    min-height: 100vh; /* Ensures full viewport height */
-    
-    /* Combine background image and vertical gradient */
+    min-height: 100vh;
     background-image: url(extra/photos/SJ_12_BW.JPG);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: left 20% top 40%;
     background-size: 120%;
     background-attachment: fixed;
-    background-blend-mode: darken; /* Ensures gradient darkens the image */
+    background-blend-mode: darken;
 }
 
 main {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    align-items: flex-end; /* Left alignment */
+    align-items: flex-end; /* Left alignment for main content */
     gap: 16px;
 }
 
 /* Title Section */
 .titleContainer {
-    text-align: left; /* Changed from center to left */
+    text-align: left;
     margin: 16px 0;
     position: relative;
     z-index: 10;
 }
 
 .bandName {
-    margin-top: 50px;
     font-family: 'Astrella', sans-serif;
     font-size: 68px;
     line-height: 1.1;
@@ -72,18 +70,115 @@ main {
 
 .bandDescription {
     margin-top: 8px;
-    margin-bottom: 48px; /* Doubled space */
+    margin-bottom: 48px;
     letter-spacing: 1px;
     font-size: clamp(10px, 1.6vw, 12px);
     text-transform: uppercase;
     animation: fadeInSubtitle 0.4s ease-out forwards;
 }
 
+/* Navigation Bar */
+.extraNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #0009; /* Semi-transparent black */
+    backdrop-filter: blur(5px); /* Add blur effect */
+    -webkit-backdrop-filter: blur(5px); /* For older WebKit browsers */
+}
+
+.navContainer {
+    margin: 0 auto;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align all content to the left */
+}
+
+.extraNav ul {
+    list-style: none;
+    display: flex;
+    flex-direction: row; /* Horizontal layout */
+    justify-content: flex-start; /* Align items to the left */
+    gap: 4px;
+    background: none;
+    flex-wrap: wrap; /* Keep buttons in one row */
+    width: 100%; /* Ensure ul takes full container width */
+}
+
+.extraNav li {
+    flex: 1 0 0; /* Equal width for all buttons */
+    min-width: 80px; /* Prevent buttons from becoming too narrow */
+}
+
+.extraNav a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align text/icons to the left */
+    padding: 2px 0px; /* Adjusted padding for balance */
+    border: none;
+    border-radius: 0;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-family: 'Garet', sans-serif;
+    position: relative;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    width: 100%; /* Ensure anchor fills list item */
+    box-sizing: border-box;
+}
+
+.extraNav a::before {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
+    z-index: -1;
+    transition: width 0.3s ease;
+}
+
+.extraNav a:hover::before {
+    width: 100%;
+}
+
+.extraNav a:hover {
+    transform: translateY(-2px);
+}
+
+.extraNav a i {
+    margin-right: 8px;
+    transition: color 0.2s ease;
+}
+
+.extraNav a:hover i {
+    color: #FFA500;
+}
+
+.hamburger {
+    display: none;
+    background: linear-gradient(90deg, #03007a 80%, #0403ed);
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin-right: 10px; /* Space between hamburger and menu */
+}
+
+.hamburger i {
+    color: #FFFFFF;
+    font-size: clamp(16px, 2.2vw, 18px);
+}
+
 /* Button Wrapper */
 .buttonWrapper {
     display: flex;
-    justify-content: flex-start; /* Changed from center to flex-start */
-    align-items: flex-start; /* Changed from center to flex-start */
+    justify-content: flex-start;
+    align-items: flex-start;
     width: 100%;
     margin-top: 0;
 }
@@ -91,7 +186,7 @@ main {
 .linkContainer {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Changed from center to flex-start */
+    align-items: flex-start;
     gap: 12px;
     width: 100%;
 }
@@ -156,7 +251,7 @@ details::before {
     bottom: -4px;
     left: 0;
     width: 0;
-    height: 4px; /* Thicker border */
+    height: 4px;
     background: linear-gradient(90deg, #FFA500 50%, #FF4500);
     z-index: -1;
     transition: width 0.3s ease;
@@ -215,7 +310,7 @@ details::before {
     bottom: -4px;
     left: 0;
     width: 0;
-    height: 4px; /* Thicker border */
+    height: 4px;
     background: linear-gradient(90deg, #FFA500 50%, #FF4500);
     z-index: -1;
     transition: width 0.3s ease;
@@ -307,7 +402,7 @@ details::before {
 
 .socialLink {
     display: flex;
-    justify-content: flex-start; /* Changed from center to flex-start */
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
     padding: 8px 16px;
@@ -329,7 +424,7 @@ details::before {
     bottom: -4px;
     left: 0;
     width: 0;
-    height: 4px; /* Thicker border */
+    height: 4px;
     background: linear-gradient(90deg, #FFA500 50%, #FF4500);
     z-index: -1;
     transition: width 0.3s ease;
@@ -360,84 +455,11 @@ details::before {
 .socialLink:nth-child(4) { --index: 4; }
 .socialLink:nth-child(5) { --index: 5; }
 
-/* Navigation Bar */
-.extraNav {
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    width: 160px;
-    background: none;
-    border: none;
-    padding: 10px;
-    z-index: 1000;
-    max-height: calc(100vh - 24px);
-    overflow-y: auto;
-}
-
-.extraNav ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    background: none;
-}
-
-.extraNav li {
-    width: 100%;
-}
-
-.extraNav a {
-    display: flex;
-    align-items: center;
-    padding: 8px 16px;
-    background: linear-gradient(90deg, #03007a 80%, #0403ed);
-    border: none;
-    border-radius: 0;
-    text-decoration: none;
-    color: #FFFFFF;
-    font-size: clamp(14px, 2vw, 15px);
-    font-weight: 600;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    position: relative;
-    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-
-.extraNav a::before {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 4px; /* Thicker border */
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
-    transition: width 0.3s ease;
-}
-
-.extraNav a:hover::before {
-    width: 100%;
-}
-
-.extraNav a:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(90deg, #0403ed 80%, #03007a);
-    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.extraNav a i {
-    margin-right: 8px;
-    transition: color 0.2s ease;
-}
-
-.extraNav a:hover i {
-    color: #FFA500;
-}
-
 /* Merchandise Page Styles */
 .merchContainer {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Changed from center to flex-start */
+    align-items: flex-start;
     width: 100%;
     gap: 16px;
     margin-top: clamp(16px, 2.5vw, 20px);
@@ -446,11 +468,11 @@ details::before {
 .merchNote, .paymentNote {
     font-size: clamp(12px, 1.8vw, 13px);
     color: #000080;
-    text-align: left; /* Changed from center to left */
+    text-align: left;
     max-width: 500px;
     margin-bottom: 12px;
     padding: 10px;
-    background: #C0C0C0; /* Static */
+    background: #C0C0C0;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -461,10 +483,10 @@ details::before {
 .merchItem {
     display: flex;
     flex-direction: row;
-    align-items: flex-start; /* Changed from center to flex-start */
+    align-items: flex-start;
     width: 100%;
     max-width: 500px;
-    background: #C0C0C0; /* Static */
+    background: #C0C0C0;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     padding: 10px;
 }
@@ -485,7 +507,6 @@ details::before {
 }
 
 .merchDetails h3 {
-    font-family: 'MS Sans Serif', 'Garet', sans-serif;
     font-size: clamp(14px, 2.2vw, 15px);
     color: #000080;
     font-weight: 700;
@@ -512,7 +533,6 @@ details::before {
 .optionGroup select {
     padding: 6px 8px;
     font-size: clamp(11px, 1.6vw, 12px);
-    font-family: 'MS Sans Serif', 'Garet', sans-serif;
     background: #C0C0C0;
     border: none;
     color: #000080;
@@ -542,9 +562,9 @@ details::before {
 .category {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Changed from center to flex-start */
+    align-items: flex-start;
     width: 100%;
-    max-width: 500px; /* Match other content */
+    max-width: 500px;
     gap: 16px;
     margin-top: clamp(16px, 2.5vw, 20px);
 }
@@ -552,13 +572,12 @@ details::before {
 details {
     width: 100%;
     max-width: 500px;
-    background: #F5F6F5; /* Static */
+    background: #F5F6F5;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     padding: 10px;
 }
 
 summary {
-    font-family: 'MS Sans Serif', 'Garet', sans-serif;
     font-size: clamp(14px, 2.2vw, 15px);
     font-weight: 700;
     color: #000080;
@@ -599,8 +618,8 @@ summary:hover i {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background: #C0C0C0; /* Static */
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 0 #808080, inset 2px 2px 0 #FFFFFF; /* Beveled effect */
+    background: #C0C0C0;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 0 #808080, inset 2px 2px 0 #FFFFFF;
     padding: 10px;
 }
 
@@ -613,22 +632,22 @@ summary:hover i {
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-    background: #C0C0C0; /* Static */
+    background: #C0C0C0;
     padding: 6px;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 0 #808080, inset 2px 2px 0 #FFFFFF; /* Beveled effect */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 0 #808080, inset 2px 2px 0 #FFFFFF;
 }
 
 .audioControlBtn {
     background: #C0C0C0;
     border: none;
-    border-radius: 2px; /* Slight rounding for Win98 buttons */
+    border-radius: 2px;
     width: 32px;
     height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), -1px -1px 1px #808080, 1px 1px 1px #FFFFFF; /* Raised effect */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), -1px -1px 1px #808080, 1px 1px 1px #FFFFFF;
     position: relative;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -639,7 +658,7 @@ summary:hover i {
     bottom: -4px;
     left: 0;
     width: 0;
-    height: 4px; /* Thicker border */
+    height: 4px;
     background: linear-gradient(90deg, #FFA500 50%, #FF4500);
     z-index: -1;
     transition: width 0.3s ease;
@@ -658,7 +677,7 @@ summary:hover i {
     color: #000080;
     font-size: clamp(13px, 1.8vw, 14px);
     transition: color 0.2s ease;
-    filter: contrast(1.2); /* Pixelated effect */
+    filter: contrast(1.2);
 }
 
 .audioControlBtn:hover i {
@@ -686,7 +705,7 @@ summary:hover i {
     border: none;
     border-radius: 0;
     cursor: pointer;
-    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF; /* Sunken effect */
+    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF;
 }
 
 .progressBar::-webkit-slider-thumb {
@@ -732,7 +751,7 @@ summary:hover i {
     border: none;
     border-radius: 0;
     cursor: pointer;
-    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF; /* Sunken effect */
+    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF;
 }
 
 .volumeSlider::-webkit-slider-thumb {
@@ -761,8 +780,7 @@ summary:hover i {
 }
 
 .audioTitle {
-    font-family: 'MS Sans Serif', 'Garet', sans-serif;
-    font-weight: 800; /* Bolder for Win98 */
+    font-weight: 800;
     font-size: clamp(14px, 2.2vw, 15px);
     color: #000080;
     letter-spacing: 0.5px;
@@ -818,7 +836,7 @@ summary:hover i {
 .extraTable {
     width: 100%;
     border-collapse: collapse;
-    background: #C0C0C0; /* Static */
+    background: #C0C0C0;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -873,20 +891,20 @@ summary:hover i {
 
 .externalLinks {
     display: flex;
-    flex-direction: column; /* Changed from grid to flex column for left alignment */
+    flex-direction: column;
     gap: 8px;
     width: 100%;
-    max-width: 500px; /* Match parent */
+    max-width: 500px;
 }
 
 .externalLinks a {
     width: 100%;
-    max-width: none; /* Fit parent area */
-    justify-content: flex-start; /* Changed from center to flex-start */
+    max-width: none;
+    justify-content: flex-start;
 }
 
 .logoImage {
-    max-width: 100%; /* Fit column */
+    max-width: 100%;
     height: auto;
 }
 
@@ -930,7 +948,7 @@ summary:hover i {
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 12px;
-    justify-content: flex-start; /* Changed from center to flex-start */
+    justify-content: flex-start;
 }
 
 .equipmentList {
@@ -948,7 +966,7 @@ summary:hover i {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    background: #C0C0C0; /* Static */
+    background: #C0C0C0;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     padding: 10px;
 }
@@ -1011,14 +1029,13 @@ summary:hover i {
 }
 
 .note h3 {
-    font-family: 'MS Sans Serif', 'Garet', sans-serif;
     font-size: clamp(12px, 2vw, 13px);
     color: #000080;
     margin-bottom: 8px;
 }
 
 .footer {
-    text-align: left; /* Changed from center to left */
+    text-align: left;
     color: #000080;
     font-size: clamp(10px, 1.6vw, 11px);
     margin-top: 16px;
@@ -1047,7 +1064,7 @@ summary:hover i {
     bottom: -4px;
     left: 0;
     width: 0;
-    height: 4px; /* Thicker border */
+    height: 4px;
     background: linear-gradient(90deg, #FFA500 50%, #FF4500);
     z-index: -1;
     transition: width 0.3s ease;
@@ -1083,57 +1100,86 @@ summary:hover i {
     100% { opacity: 1; transform: translateY(0); }
 }
 
+/* Responsive Design */
 @media screen and (max-width: 768px) {
     body {
         padding: 8px;
+        padding-top: 60px; /* Adjusted for smaller nav height */
         font-size: clamp(11px, 1.8vw, 13px);
-        text-align: center; /* Center text content in the body */
+        text-align: left;
         background-size: auto;
         background-position: center center;
     }
 
+     .extraNav {
+        padding: 8px;
+    }
+
+    .extraNav ul {
+        display: none;
+        flex-direction: column; /* Stack vertically on mobile */
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: #0009; /* Match nav background */
+        backdrop-filter: blur(5px); /* Maintain blur effect */
+        -webkit-backdrop-filter: blur(5px);
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .extraNav ul.active {
+        display: flex;
+    }
+
+    .extraNav li {
+        flex: none; /* Remove equal sizing for vertical stack */
+        width: 100%; /* Full width for each item */
+    }
+
+    .extraNav a {
+        font-size: clamp(13px, 2vw, 14px);
+        justify-content: flex-start; /* Left-align text/icons */
+        width: 100%; /* Full width to fit available space */
+        box-sizing: border-box;
+        padding: 10px 16px; /* Slightly larger padding for mobile */
+    }
+
+    .hamburger {
+        display: block; /* Show hamburger on mobile */
+    }
+
     .titleContainer {
-        margin: 12px auto; /* Center horizontally with auto margins */
-        max-width: 100%; /* Ensure it doesn't exceed container width */
-        display: flex; /* Use flexbox for centering children */
-        flex-direction: column;
-        align-items: center; /* Center children horizontally */
+        margin: 12px 0;
     }
 
     .bandName {
         font-size: 60px;
-        text-align: center; /* Center band name text */
     }
 
     .bandDescription {
         font-size: 12px;
         margin-bottom: 48px;
-        text-align: center; /* Center description text */
     }
 
     .merchContainer, .category {
         margin-top: clamp(12px, 2vw, 16px);
         gap: 12px;
-        display: flex; /* Ensure flexbox is active */
-        justify-content: center; /* Center flex items horizontally */
-        flex-wrap: wrap; /* Allow wrapping for multiple items */
     }
 
-    .linkButton, .albumButton, .extraNav a {
+    .linkButton, .albumButton {
         max-width: none;
         font-size: 22px;
-        text-align: center; /* Center text inside buttons */
     }
 
     .socialLinks, .socialLink {
         max-width: none;
-        display: flex; /* Use flexbox for centering */
-        justify-content: center; /* Center social links horizontally */
     }
 
     .merchItem {
         flex-direction: column;
-        align-items: center; /* Center items vertically and horizontally */
+        align-items: flex-start;
         padding: 8px;
     }
 
@@ -1141,30 +1187,10 @@ summary:hover i {
         width: 100%;
         height: 120px;
         margin-bottom: 8px;
-        display: block; /* Ensure image is block for centering */
-        margin-left: auto; /* Center image horizontally */
-        margin-right: auto;
-    }
-
-    .extraNav {
-        position: static;
-        width: 100%;
-        max-width: none;
-        margin: 8px auto; /* Center horizontally */
-        padding: 8px;
-        display: flex; /* Use flexbox for links */
-        justify-content: center; /* Center nav links */
-        flex-wrap: wrap; /* Allow wrapping */
-    }
-
-    .extraNav a {
-        font-size: clamp(13px, 2vw, 14px);
-        text-align: center; /* Center link text */
     }
 
     .externalLinks {
-        flex-direction: column; /* Keep single column for smaller screens */
-        align-items: center; /* Center items in column */
-        justify-content: center; /* Center vertically if needed */
+        flex-direction: column;
+        align-items: flex-start;
     }
 }

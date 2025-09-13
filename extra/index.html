@@ -52,26 +52,31 @@
     <title>Sioto Jazz - Extras</title>
 </head>
 <body id="top">
+    <nav class="extraNav">
+        <div class="navContainer">
+            <button class="hamburger" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul>
+                <li><a href="#ShortMusicPreviews"><i class="fas fa-music"></i>Previews</a></li>
+                <li><a href="#Links"><i class="fas fa-link"></i>Links</a></li>
+                <li><a href="#ShortDescription"><i class="fas fa-align-left"></i>ShortDesc</a></li>
+                <li><a href="#LongDescription"><i class="fas fa-align-left"></i>LongDesc</a></li>
+                <li><a href="#LineUp"><i class="fas fa-users"></i>LineUp</a></li>
+                <li><a href="#Photos"><i class="fas fa-image"></i>Photos</a></li>
+                <li><a href="#LogoAndBanners"><i class="fas fa-stamp"></i>Logo</a></li>
+                <li><a href="#Fonts"><i class="fas fa-font"></i>Fonts</a></li>
+                <li><a href="#GettingToKnowUs"><i class="fas fa-info-circle"></i>Interview</a></li>
+                <li><a href="#PastPerformances"><i class="fas fa-guitar"></i>Performances</a></li>
+                <li><a href="#TechRider"><i class="fas fa-file-alt"></i>TechRider</a></li>
+                <li><a href="#BandContact"><i class="fas fa-envelope"></i>Contact</a></li>
+            </ul>
+        </div>
+    </nav>
     <div class="titleContainer">
         <a href="../index.html" class="bandNameLink"><div class="bandName">SIOTO JAZZ</div></a>
         <div class="bandDescription">Promo Kit</div>
     </div>
-    <nav class="extraNav">
-        <ul>
-            <li><a href="#ShortMusicPreviews"><i class="fas fa-music"></i> Previews</a></li>
-            <li><a href="#Links"><i class="fas fa-link"></i> Links</a></li>
-            <li><a href="#ShortDescription"><i class="fas fa-align-left"></i> Short Desc</a></li>
-            <li><a href="#LongDescription"><i class="fas fa-align-left"></i> Long Desc</a></li>
-            <li><a href="#LineUp"><i class="fas fa-users"></i> Line Up</a></li>
-            <li><a href="#Photos"><i class="fas fa-image"></i> Photos</a></li>
-            <li><a href="#LogoAndBanners"><i class="fas fa-stamp"></i> Logo</a></li>
-            <li><a href="#Fonts"><i class="fas fa-font"></i> Fonts</a></li>
-            <li><a href="#GettingToKnowUs"><i class="fas fa-info-circle"></i> Interview</a></li>
-            <li><a href="#PastPerformances"><i class="fas fa-guitar"></i> Performances</a></li>
-            <li><a href="#TechRider"><i class="fas fa-file-alt"></i> Tech Rider</a></li>
-            <li><a href="#BandContact"><i class="fas fa-envelope"></i> Contact</a></li>
-        </ul>
-    </nav>
     <main>
         <div class="buttonWrapper">
             <div class="category">
@@ -358,17 +363,10 @@
                         </section>
                     </div>
                 </details>
-                <details open id="PastPerformances">
+                   <details open id="PastPerformances">
                     <summary><i class="fas fa-guitar"></i> Past Performances</summary>
                     <div class="detailsContent">
                         <p>Full list available on <a href="https://www.bandsintown.com/a/15585479" class="linkButton">bandsintown.com</a></p>
-                    </div>
-                </details>
-                <details open id="TechRider">
-                    <summary><i class="fas fa-file-alt"></i> Technical Rider</summary>
-                    <div class="detailsContent">
-                        <p>View our detailed technical rider for equipment and setup requirements.</p>
-                        <a href="tr.html" class="linkButton fancyLink">THE Technical Rider <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </details>
                 <details open id="BandContact">
@@ -410,6 +408,28 @@
             } else {
                 scrollBtn.classList.remove('visible');
             }
+        });
+
+        // Hamburger menu toggle
+        document.querySelector('.hamburger').addEventListener('click', () => {
+            document.querySelector('.extraNav ul').classList.toggle('active');
+        });
+
+        // Smooth scrolling for nav links
+        document.querySelectorAll('.extraNav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, // Adjust for fixed nav height
+                        behavior: 'smooth'
+                    });
+                }
+                // Close mobile menu after clicking
+                document.querySelector('.extraNav ul').classList.remove('active');
+            });
         });
 
         // Custom audio controls with intensity-based progress bar color
