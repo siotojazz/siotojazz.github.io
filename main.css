@@ -18,16 +18,19 @@
 body {
     margin: 0 auto;
     width: 100%;
-    max-width: 800px;
-    background-color: #E6F3FF;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIklEQVQI12N0i5/39/f39/f39/f39/f39/f39/f39/f3twUAj3kO3xWdakgAAAAASUVORK5CYII=');
-    background-repeat: repeat;
-    font-family: 'MS Sans Serif', 'Garet', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    padding: 12px;
-    font-size: clamp(12px, 1.6vw, 14px);
-    line-height: 1.4;
+
+    background-image: url(extra/photos/SJ_12_BW.JPG);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center top 60%;
+    background-attachment: fixed;
+
+    font-family: 'MS Sans Serif', 'Arial', sans-serif; 
+    padding: 16px;
+    font-size: clamp(14px, 1.8vw, 16px); 
+    line-height: 1.6;
     scroll-behavior: smooth;
-    color: #000080;
+    color: #FFFFFF;
 }
 
 /* Main Layout */
@@ -48,12 +51,11 @@ main {
 }
 
 .bandName {
+    margin-top: 50px;
     font-family: 'Astrella', sans-serif;
-    font-size: clamp(48px, 9vw, 64px);
-    color: #000080;
+    font-size: clamp(88px, 12vw, 120px);
     line-height: 1.1;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-    animation: fadeInTitle 0.6s ease-out forwards;
 }
 
 .bandNameLink {
@@ -72,9 +74,7 @@ main {
     letter-spacing: 1px;
     font-size: clamp(10px, 1.6vw, 12px);
     text-transform: uppercase;
-    font-weight: 600;
-    color: #000080;
-    animation: fadeInSubtitle 0.8s ease-out forwards;
+    animation: fadeInSubtitle 0.4s ease-out forwards;
 }
 
 /* Button Wrapper */
@@ -1093,11 +1093,11 @@ summary:hover i {
     }
 
     .bandName {
-        font-size: clamp(40px, 8vw, 56px);
+        font-size: 60px;
     }
 
     .bandDescription {
-        font-size: clamp(9px, 1.6vw, 11px);
+        font-size: 12px;
         margin-bottom: 48px;
     }
 
@@ -1108,8 +1108,7 @@ summary:hover i {
 
     .linkButton, .albumButton, .extraNav a {
         max-width: none;
-        padding: 6px 12px;
-        font-size: clamp(13px, 2vw, 14px);
+        font-size: 22px;
     }
 
     .socialLinks, .socialLink {
@@ -1142,30 +1141,5 @@ summary:hover i {
 
     .externalLinks {
         grid-template-columns: 1fr; /* Single column for smaller screens */
-    }
-}
-
-@media screen and (max-width: 480px) {
-    body {
-        padding: 6px;
-        font-size: clamp(10px, 1.6vw, 12px);
-    }
-
-    .bandName {
-        font-size: clamp(36px, 7vw, 48px);
-    }
-
-    .bandDescription {
-        font-size: clamp(8px, 1.6vw, 10px);
-        margin-bottom: 48px;
-    }
-
-    .linkButton, .albumButton, .extraNav a {
-        padding: 5px 10px;
-        font-size: clamp(12px, 2vw, 13px);
-    }
-
-    .merchImage {
-        height: 100px;
     }
 }
