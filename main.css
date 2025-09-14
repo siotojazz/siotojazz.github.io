@@ -665,22 +665,19 @@ summary:hover i {
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-    background: #C0C0C0;
+    background: #EEE;
     padding: 6px;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 0 #808080, inset 2px 2px 0 #FFFFFF;
 }
 
 .audioControlBtn {
-    background: #C0C0C0;
+    background: #DDD;
     border: none;
-    border-radius: 2px;
     width: 32px;
     height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), -1px -1px 1px #808080, 1px 1px 1px #FFFFFF;
     position: relative;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
