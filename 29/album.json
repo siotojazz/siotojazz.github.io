@@ -114,9 +114,9 @@
         { "line": "импулс во телото", "barNumber": 64, "barLength": 2, "offset": 0 }
       ],
       "date": "2024-12-06 22:27",
-      "written": "lyrics[5], vocals[5], guitar1[3], guitar2[0], acoustic[5], samplers[5], bass[5], synths[4], backingvocals[0]",
-      "recorded": "samplers[3]",
-      "notes": "Samplers are waiting approval. Sax?",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[3], acoustic[5], samplers[5], bass[5], synths[4], backingvocals[0], chimes[5]",
+      "recorded": "lyrics[5], samplers[3], vocals[4], synths[3], chimes[3]",
+      "notes": "Sax?",
       "tempo": "78",
       "timeSignature": "4/4",
       "structure": {
@@ -215,7 +215,7 @@
         { "line": "да сум твоја дестинација", "barNumber": 120, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-03-29 00:58",
-      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[5], drums[0], bass[5], backingvocals[0]",
+      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[5], drums[3], bass[5], backingvocals[0]",
       "notes": "Key change?",
       "tempo": "117",
       "timeSignature": "4/4",
@@ -331,8 +331,8 @@
         { "line": "cuz I know the feeling is true", "barNumber": 174, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-01 21:26",
-      "written": "lyrics[5], vocals[3], samplers[5], guitar1[5], guitar2[3], drums[3], bass[5], backingvocals[0]",
-      "recorded": "samplers[5]",
+      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[3], drums[3], bass[5], backingvocals[0]",
+      "recorded": "",
       "notes": "Sax? Key Change?",
       "tempo": "174",
       "timeSignature": "4/4",
@@ -475,7 +475,7 @@
         { "line": "на тој остров во пацификот", "barNumber": 86, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-02 00:37",
-      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[5], bass[5], samplers[3], drums[0], synths[3], sax[5], backingvocals[0]",
+      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[5], bass[5], samplers[4], synths[3], sax[5], backingvocals[0]",
       "notes": "The buildup should be shortened. Use samplers or drums? Key change? Should Eva sing? Should we use real strings or synths?",
       "tempo": "100",
       "timeSignature": "4/4",
@@ -563,7 +563,7 @@
       ],
       "date": "2025-04-02 19:58",
       "written": "lyrics[5], vocals[4], guitar1[5], guitar2[3], acoustic[5], drums[5], bass[5], sax[5], violin[0], cello[0], backingvocals[0]",
-      "recorded":"lyrics[5], drums[0]",
+      "recorded":"lyrics[5], vocals[4], drums[4]",
       "notes": "Do we need back vocals?",
       "tempo": "105",
       "timeSignature": "4/4",
@@ -806,6 +806,7 @@
       ],
       "date": "2025-04-04 19:24",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], bass[5], drums[4], violin[0], cello[0], synths[4], backingvocals[0]",
+      "recorded": "lyrics[5], vocals[4], drums[4], synths[4]",
       "notes": "Strings should enter later maybe?",
       "tempo": "181",
       "timeSignature": "6/8",
@@ -911,7 +912,7 @@
         { "line": "(To the future?)", "barNumber": 106, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-05 00:08",
-      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[5], bass[5], sax[5], drums[3], samplers[0], chimes[5], backingvocals[4], brass[1]",
+      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[5], bass[5], sax[5], drums[3], chimes[5], backingvocals[4], brass[1]",
       "notes": "Should we use samplers? Key change?",
       "tempo": "102",
       "timeSignature": "4/4",
@@ -1061,7 +1062,7 @@
         { "line": "I'll wait for you", "barNumber": 116, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
       "date": "2025-04-08 18:36",
-      "written": "lyrics[5], vocals[4], guitar1[3], guitar2[3], drums[4], sax[5], bass[5], synths[2], backingvocals[0], trumpet[1]",
+      "written": "lyrics[5], vocals[4], guitar1[3], guitar2[3], drums[4], sax[5], bass[5], synths[2], backingvocals[0], trumpet[1], acoustic[0]",
       "notes": "Trumpet solo at the end. Make the synths less corny.",
       "tempo": "120",
       "timeSignature": "4/4",
@@ -1181,7 +1182,7 @@
         { "line": "колку далеку?", "barNumber": 156, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
       "date": "2025-08-14 22:34",
-      "written": "lyrics[5], vocals[3], guitar1[4], guitar2[2], bass[5], samplers[4], drums[4], backingvocals[0]",
+      "written": "lyrics[5], vocals[3], guitar1[4], guitar2[2], bass[5], samplers[4], drums[4], synths[3], backingvocals[0]",
       "notes": "Needs transitions on the samplers between sections.",
       "tempo": "144",
       "timeSignature": "4/4",
@@ -1287,7 +1288,8 @@
       ],
       "date": "2025-05-16 01:34",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[4], acoustic[5], bass[5], samplers[5], drums[3], synths[5], backingvocals[0]",
-      "notes": "Perfect.",
+      "recorded":"lyrics[5], samplers[4], vocals[4], synths[4]",
+      "notes": "The bridge should be more powerful.",
       "tempo": "84",
       "timeSignature": "4/4",
       "structure": {
@@ -1370,7 +1372,7 @@
     },
     {
       "id": 12,
-      "title": "Промена",
+      "title": "Нема ден",
       "mp3": "audio/promena.mp3",
       "backingmp3": "audio/promena_backing.mp3",
       "lyrics": [
@@ -1390,9 +1392,8 @@
         { "line": "јас имам чувство дека сè се менува", "barNumber": 100, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-05-18 18:46",
-      "written": "lyrics[1], vocals[1], guitar1[5], guitar2[2], bass[5], samplers[4], backingvocals[0]",
-      "recorded":"lyrics[0], samplers[4], drums[3]",
-      "notes": "Needs lyrics for the RAP part, we need to find someone to do the rap vocals.",
+      "written": "lyrics[5], vocals[0], backingvocals[0], guitar1[5], guitar2[0], bass[5], acoustic[5]",
+      "notes": "Draft.",
       "tempo": "127",
       "timeSignature": "4/4",
       "structure": {
