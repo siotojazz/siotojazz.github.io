@@ -114,8 +114,8 @@
         { "line": "импулс во телото", "barNumber": 64, "barLength": 2, "offset": 0 }
       ],
       "date": "2024-12-06 22:27",
-      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[3], acoustic[5], samplers[5], bass[5], synths[4], backingvocals[0], chimes[5]",
-      "recorded": "lyrics[5], samplers[3], vocals[4], synths[3], chimes[3]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], samplers[5], bass[5], synths[5], backingvocals[0], chimes[5]",
+      "recorded": "lyrics[5], samplers[5], vocals[5], synths[4], chimes[5], guitar1[5], guitar2[5]",
       "notes": "Sax?",
       "tempo": "78",
       "timeSignature": "4/4",
@@ -176,113 +176,6 @@
       }
     },
     {
-      "id": 2,
-      "title": "Дестинација",
-      "mp3": "audio/destinacija.mp3",
-      "backingmp3": "audio/destinacija_backing.mp3",
-      "lyrics": [
-        { "line": "повторно се заљубив", "barNumber": 8, "barLength": 2, "offset": 0 },
-        { "line": "јас неразумно се заљубив", "barNumber": 10, "barLength": 2, "offset": 0 },
-        { "line": "само во идејата", "barNumber": 12, "barLength": 2, "offset": 0 },
-        { "line": "во идејата за тебе", "barNumber": 14, "barLength": 2, "offset": 0, "stanzaEnd": true },
-        { "line": "ако можев да го откупам", "barNumber": 16, "barLength": 2, "offset": 0 },
-        { "line": "ако можев да платам за", "barNumber": 18, "barLength": 2, "offset": 0 },
-        { "line": "разумот, да заборавам", "barNumber": 20, "barLength": 2, "offset": 0 },
-        { "line": "ќе платев за да го изгубам", "barNumber": 22, "barLength": 2, "offset": 0, "stanzaEnd": true },
-        { "line": "јас вечно копнеам", "barNumber": 28, "barLength": 4, "offset": 0 },
-        { "line": "да сум твоја дестинација", "barNumber": 32, "barLength": 4, "offset": 0 },
-        { "line": "јас вечно копнеам", "barNumber": 36, "barLength": 4, "offset": 0 },
-        { "line": "да сум твоја дестинација", "barNumber": 40, "barLength": 4, "offset": 0, "stanzaEnd": true },
-        { "line": "љубезно се променив", "barNumber": 52, "barLength": 2, "offset": 0 },
-        { "line": "не знам дали се променив", "barNumber": 54, "barLength": 2, "offset": 0 },
-        { "line": "дождот падна предоцна", "barNumber": 56, "barLength": 2, "offset": 0 },
-        { "line": "за да ги измие трагите", "barNumber": 58, "barLength": 2, "offset": 0, "stanzaEnd": true },
-        { "line": "некогаш пред да заспијам", "barNumber": 60, "barLength": 2, "offset": 0 },
-        { "line": "мислам дали размислуваш", "barNumber": 62, "barLength": 2, "offset": 0 },
-        { "line": "дали уште се сеќавам", "barNumber": 64, "barLength": 2, "offset": 0 },
-        { "line": "дали за тебе размислувам", "barNumber": 66, "barLength": 2, "offset": 0, "stanzaEnd": true },
-        { "line": "јас вечно копнеам", "barNumber": 68, "barLength": 4, "offset": 0 },
-        { "line": "да сум твоја дестинација", "barNumber": 72, "barLength": 4, "offset": 0 },
-        { "line": "јас вечно копнеам", "barNumber": 76, "barLength": 4, "offset": 0 },
-        { "line": "да сум твоја дестинација", "barNumber": 80, "barLength": 4, "offset": 0, "stanzaEnd": true },
-        { "line": "јас знам дека ќе те најдам пак", "barNumber": 92, "barLength": 4, "offset": 0 },
-        { "line": "јас знам негде ќе те најдам пак", "barNumber": 96, "barLength": 4, "offset": 0 },
-        { "line": "јас знам дека ќе те наjдам пак", "barNumber": 100, "barLength": 4, "offset": 0 },
-        { "line": "јас знам негде ќе те наjдам пак", "barNumber": 104, "barLength": 4, "offset": 0, "stanzaEnd": true },
-        { "line": "јас вечно копнеам", "barNumber": 108, "barLength": 4, "offset": 0 },
-        { "line": "да сум твоја дестинација", "barNumber": 112, "barLength": 4, "offset": 0 },
-        { "line": "јас вечно копнеам", "barNumber": 116, "barLength": 4, "offset": 0 },
-        { "line": "да сум твоја дестинација", "barNumber": 120, "barLength": 4, "offset": 0 }
-      ],
-      "date": "2025-03-29 00:58",
-      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[5], drums[3], bass[5], backingvocals[0]",
-      "notes": "Key change?",
-      "tempo": "117",
-      "timeSignature": "4/4",
-      "structure": {
-        "sections": [
-          {
-            "label": "Intro",
-            "chords": ["B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5",
-            "B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5" ]
-          },
-          {
-            "label": "Verse 1",
-            "chords": ["B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5",
-            "B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5",
-          "B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5",
-            "B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5"  ]
-          },
-          {
-            "label": "Pre-chorus",
-            "chords": ["B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5" ]
-          },
-          {
-            "label": "Chorus 1",
-            "chords": ["F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "B5", "B5", "B5", "B5","B5","B5","B5>C#5","B5>C#5",
-             "E5", "E5", "E5", "E5", "E5", "E5", "G#5", "G#5", "G#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5",
-            "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "B5", "B5", "B5", "B5","B5","B5","B5>C#5","B5>C#5",
-             "E5", "E5", "E5", "E5", "E5", "E5", "G#5", "G#5", "G#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5" ]
-          },
-          {
-            "label": "Riff 1",
-            "chords": ["B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5",
-            "B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5" ]
-          },
-          {
-            "label": "Verse 2",
-            "chords": ["B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5",
-            "B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5",
-          "B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5",
-            "B5", "B5", "B5", "B5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "G#5", "G#5", "E5", "E5", "E5", "E5"  ]
-          },
-          {
-            "label": "Chorus 2",
-            "chords": ["F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "B5", "B5", "B5", "B5","B5","B5","B5>C#5","B5>C#5",
-             "E5", "E5", "E5", "E5", "E5", "E5", "G#5", "G#5", "G#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5",
-            "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "B5", "B5", "B5", "B5","B5","B5","B5>C#5","B5>C#5",
-             "E5", "E5", "E5", "E5", "E5", "E5", "G#5", "G#5", "G#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5" ]
-          },
-           {
-            "label": "Bridge",
-            "chords": ["F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E5", "E5", "E5", "E5","B5","B5","B5","B5",
-          "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E5", "E5", "E5", "E5","B5","B5","B5","B5",
-        "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E5", "E5", "E5", "E5","B5","B5","B5","B5",
-      "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E5", "E5", "E5", "E5","B5","B5","B5","B5",
-    "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E5", "E5", "E5", "E5","B5","B5","B5","B5",
-  "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "E5", "E5", "E5", "E5","B5","B5","B5","B5" ]
-          },
-          {
-            "label": "Chorus 3",
-            "chords": ["F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "B5", "B5", "B5", "B5","B5","B5","B5>C#5","B5>C#5",
-             "E5", "E5", "E5", "E5", "E5", "E5", "G#5", "G#5", "G#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5",
-            "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "G#5", "G#5", "B5", "B5", "B5", "B5","B5","B5","B5>C#5","B5>C#5",
-             "E5", "E5", "E5", "E5", "E5", "E5", "G#5", "G#5", "G#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5", "F#5" ]
-          }
-        ]
-      }
-    },
-    {
       "id": 3,
       "title": "Magic",
       "mp3": "audio/magic.mp3",
@@ -331,9 +224,9 @@
         { "line": "cuz I know the feeling is true", "barNumber": 174, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-01 21:26",
-      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[3], drums[3], bass[5], backingvocals[0]",
-      "recorded": "",
-      "notes": "Sax? Key Change?",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], drums[3], bass[5], backingvocals[0]",
+      "recorded": "lyrics[5], vocals[5], guitar1[5], guitar2[5], drums[0], bass[0], backingvocals[0]",
+      "notes": "Sax?",
       "tempo": "174",
       "timeSignature": "4/4",
       "structure": {
@@ -475,8 +368,8 @@
         { "line": "на тој остров во пацификот", "barNumber": 86, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-02 00:37",
-      "written": "lyrics[5], vocals[3], guitar1[5], guitar2[5], bass[5], samplers[4], synths[3], sax[5], backingvocals[0]",
-      "recorded": "lyrics[5], vocals[5], samplers[5], synths[2]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], samplers[5], synths[5], sax[5], backingvocals[0]",
+      "recorded": "lyrics[5], vocals[5], samplers[5], synths[5], guitar1[5], guitar2[5], bass[0], sax[0], backingvocals[0]",
       "notes": "The buildup should be shortened. Use samplers or drums? Key change? Should Eva sing? Should we use real strings or synths?",
       "tempo": "100",
       "timeSignature": "4/4",
@@ -563,8 +456,8 @@
         { "line": "still you make it feel, so quite unreal", "barNumber": 91, "barLength": 4, "offset": 0 }
       ],
       "date": "2025-04-02 19:58",
-      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[3], acoustic[5], drums[5], bass[5], sax[5], violin[0], cello[0], backingvocals[0]",
-      "recorded":"lyrics[5], vocals[4], drums[4]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], drums[5], bass[5], sax[5], violin[0], cello[0], backingvocals[0]",
+      "recorded":"lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[0], drums[5], bass[0], sax[0], violin[0], cello[0], backingvocals[0]",
       "notes": "Do we need back vocals?",
       "tempo": "105",
       "timeSignature": "4/4",
@@ -680,8 +573,8 @@
         { "line": "the cinema", "barNumber": 129, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-03 01:53",
-      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], drums[5], synths[4], backingvocals[5], violin[0], cello[0]",
-      "recorded": "lyrics[5], vocals[4], synths[4], backingvocals[4]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], drums[5], synths[5], backingvocals[5], violin[0], cello[0], acoustic[5]",
+      "recorded": "lyrics[5], vocals[5], synths[5], backingvocals[5], guitar1[5], guitar2[5], bass[0], drums[2], violin[0], cello[0], acoustic[0]", 
       "notes": "Sax?",
       "tempo": "118",
       "timeSignature": "4/4",
@@ -806,8 +699,8 @@
         { "line": "my innocent sea", "barNumber": 130, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-04 19:24",
-      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], bass[5], drums[4], violin[0], cello[0], synths[4], backingvocals[0]",
-      "recorded": "lyrics[5], vocals[4], drums[4], synths[4]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], bass[5], drums[5], violin[0], cello[0], synths[5], backingvocals[0]",
+      "recorded": "lyrics[5], vocals[5], drums[5], synths[5], guitar1[5], guitar2[5], acoustic[0], bass[0], violin[0], cello[0], backingvocals[0]",
       "notes": "Strings should enter later maybe?",
       "tempo": "184",
       "timeSignature": "6/8",
@@ -913,7 +806,8 @@
         { "line": "(To the future?)", "barNumber": 106, "barLength": 2, "offset": 0 }
       ],
       "date": "2025-04-05 00:08",
-      "written": "lyrics[5], vocals[4], guitar1[5], guitar2[5], bass[5], sax[5], drums[3], chimes[5], backingvocals[4], brass[1]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], sax[5], drums[3], chimes[5], backingvocals[4], brass[1]",
+      "recorded": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[0], sax[5], drums[0], chimes[5], backingvocals[4], brass[0]",
       "notes": "Should we use samplers? Key change?",
       "tempo": "102",
       "timeSignature": "4/4",
@@ -1063,8 +957,8 @@
         { "line": "I'll wait for you", "barNumber": 116, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
       "date": "2025-04-08 18:36",
-      "written": "lyrics[5], vocals[4], guitar1[3], guitar2[3], drums[4], sax[5], bass[5], synths[2], backingvocals[0], trumpet[1], acoustic[0]",
-      "recorded":"lyrics[5], vocals[4], synths[2]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], drums[5], sax[5], bass[5], synths[4], backingvocals[0], trumpet[1], acoustic[0]",
+      "recorded":"lyrics[5], vocals[5], synths[5] , guitar1[5], guitar2[5], drums[0], bass[0], sax[0], backingvocals[0], trumpet[0], acoustic[0]",
       "notes": "Trumpet solo at the end. Make the synths less corny.",
       "tempo": "120",
       "timeSignature": "4/4",
@@ -1184,7 +1078,8 @@
         { "line": "колку далеку?", "barNumber": 156, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
       "date": "2025-08-14 22:34",
-      "written": "lyrics[5], vocals[3], guitar1[4], guitar2[2], bass[5], samplers[4], drums[4], synths[3], backingvocals[0]",
+      "written": "lyrics[5], vocals[5], guitar1[5], bass[5], samplers[5], drums[5], synths[5], backingvocals[0], piano[5]",
+      "recorded":"lyrics[5], vocals[5], guitar1[5], bass[0], samplers[3], drums[5], synths[3], backingvocals[0], piano[3]",
       "notes": "Needs transitions on the samplers between sections.",
       "tempo": "144",
       "timeSignature": "4/4",
@@ -1289,8 +1184,8 @@
         { "line": "with an ember in your heart", "barNumber": 70, "barLength": 1, "offset": 0 }
       ],
       "date": "2025-05-16 01:34",
-      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[4], acoustic[5], bass[5], samplers[5], drums[3], synths[5], backingvocals[0]",
-      "recorded":"lyrics[5], samplers[4], vocals[4], synths[4]",
+      "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], bass[5], samplers[5], drums[3], synths[5], backingvocals[0]",
+      "recorded": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[0], bass[0], samplers[5], drums[0], synths[5], backingvocals[0]",
       "notes": "The bridge should be more powerful.",
       "tempo": "84",
       "timeSignature": "4/4",
@@ -1416,6 +1311,7 @@
       ],
       "date": "2025-08-15 23:48",
       "written": "lyrics[5], vocals[5], acoustic[5]",
+      "recorded": "lyrics[5]",
       "notes": "",
       "tempo": "127",
       "timeSignature": "4/4",
