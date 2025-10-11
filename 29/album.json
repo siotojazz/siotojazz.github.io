@@ -807,7 +807,7 @@
       ],
       "date": "2025-04-05 00:08",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], sax[5], drums[3], chimes[5], backingvocals[4], brass[1]",
-      "recorded": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[0], sax[5], drums[0], chimes[5], backingvocals[4], brass[0]",
+      "recorded": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[0], sax[0], drums[0], chimes[5], backingvocals[4], brass[0]",
       "notes": "Should we use samplers? Key change?",
       "tempo": "102",
       "timeSignature": "4/4",
