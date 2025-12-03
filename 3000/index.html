@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sioto Jazz - 3000</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <style>
         @font-face {
             font-family: 'Astrella';
@@ -18,14 +19,18 @@
             font-style: normal;
         }
         body {
-            font-family: 'MS Sans Serif', Arial, sans-serif;
-            background: #007c7e;
+            font-family: 'Garet', Arial, sans-serif;
+            letter-spacing: -0.5px;
+            background: url('resources/background.png') center center / cover no-repeat fixed;
+            background-color: #007c7e;
             color: #000;
             padding: 10px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-end;
             -webkit-text-size-adjust: 100%;
+            --right-margin: 60px;
+            margin-right: var(--right-margin);
         }
         * {
             margin: 0;
@@ -36,29 +41,28 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to right,#03007a 0%, #03007a 50%, #0403ed 80%, #03007a 100%);
-            border: 2px outset #fff;
-            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #000;
+            /* backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px); */
             margin: 0;
             width: 100%;
             max-width: 600px;
+            /* border: 5px #FFF solid; */
+            position: relative;
         }
         header .title-container {
-            padding: 4px 18px;
             background: transparent;
-            font-size: 60px;
+            font-size: 40px;
+            margin: 10px 0px;
         }
         span#album-title {
             font-weight: 100;
             color: #fff;
-            text-shadow: 1px 1px 0 #000;
-            font-family: "MS Sans Serif", "Microsoft Sans Serif", "Arial", sans-serif;
+            font-family: "Garet", sans-serif;
             display: inline-block !important;
             margin-left: 10px;
         }
         span#album-band {
-            color: #dfdfdf;
-            text-shadow: 1px 1px 0 #000;
+            color: #fff;
             font-family: 'Astrella', cursive;
             text-transform: uppercase;
             line-height: 22px;
@@ -68,8 +72,6 @@
             height: 100%;
             width: auto;
             max-width: 80px;
-            border: none;
-            box-shadow: none;
             padding: 0;
             margin: 0;
             object-fit: cover;
@@ -78,67 +80,100 @@
             -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%); /* Reversed gradient direction */
         }
         .song-list {
+            background-color: #FFF1;
             max-width: 600px;
             width: 100%;
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
-            padding: 8px;
-            background: #c0c0c0;
-            border: 2px outset #fff;
         }
+
         .song-item {
-            flex: 1 1 calc(33.33% - 4px);
-            padding: 0;
-            background: #c0c0c0;
-            border: 2px outset #fff;
-            text-align: center;
+            color: white;
+            flex: 1 1 100%;
+            padding: 2px 8px;
+            text-align: left;
             cursor: pointer;
             font-size: 12px;
-            line-height: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: stretch;
+            line-height: 22px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            column-gap: 8px;
+            align-items: center;
         }
         .song-title {
             padding: 2px 4px;
+            text-transform: lowercase;
         }
         .song-meta {
             display: block;
-            background: #c0c0c0;
-            border-top: 2px inset #fff;
-            color: #000;
             font-size: 11px;
             line-height: 18px;
             padding: 2px 4px;
+            opacity: 0.3;
+            text-align: right;
+        }
+        .song-length {
+            display: block;
+            font-size: 11px;
+            line-height: 18px;
+            padding: 2px 4px;
+            text-align: right;
+            opacity: 0.85;
         }
         .song-item:hover {
-            background: #d3d3d3;
+            background: #FFF6;
+            color: #000;
         }
         .song-item.active {
-            background: #00017b;
-            color: #fff;
-            border: 2px inset #fff;
+            background: #FFF;
+            color: #000;
         }
         .player {
+            background-color: #FFF;
             max-width: 600px;
             width: 100%;
             padding: 8px;
-            background: #c0c0c0;
-            border: 2px outset #fff;
+        }
+        .player-basic {
+            background-color: #FFF;
+            max-width: 600px;
+            width: 100%;
+            padding: 8px;
+            transition: all 0.3s ease;
+        }
+        .player.collapsed {
+            display: none;
+        }
+
+        .controls-bar {
+            max-width: 600px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-align: center;
+        }
+        .toggle-player-btn {
+            width: 100%;
+            background: #fff;
+            color: #000;
+            border: 0;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0;
+            padding: 12px 0;
         }
         .player-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
             flex-wrap: nowrap;
         }
         .player-controls button {
             padding: 4px 8px;
-            background: #c0c0c0;
-            border: 2px outset #fff;
             cursor: pointer;
             font-size: 12px;
             display: flex;
@@ -147,39 +182,46 @@
             width: 40px;
             height: 24px;
             line-height: 1;
+            border-radius: 0px !important;
+            border: 0px;
         }
         .player-controls button:disabled {
             color: #808080;
-            border: 2px inset #fff;
             cursor: default;
         }
-        .player-controls button .icon {
+        .player-controls button i {
             font-size: 14px;
             line-height: 1;
         }
         .player-timeline {
             font-size: 12px;
             text-align: right;
-            padding-right: 8px;
+            padding-right: 12px;
         }
         .current-info {
             font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 20px;
             flex: 1;
             min-width: 0;
+            transition: all 0.25s ease;
         }
+        .player-basic.playing .current-info { gap: 28px; }
+        .player-timeline { transition: all 0.25s ease; }
+        .player-basic.playing .player-timeline { padding-right: 18px; }
         .current-lyric {
             color: #00017b;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             flex: 1;
+            transition: opacity 0.2s ease;
         }
         .current-chord {
             color: #00017b;
             font-weight: bold;
+            transition: opacity 0.2s ease;
         }
         .chord-instructions {
             color: #555;
@@ -188,81 +230,90 @@
         .seek-bar-container {
             width: 100%;
             margin: 6px 0;
-            border: 2px inset #AAA;
-            background: #fff;
         }
         .seek-bar {
             width: 100%;
             height: 12px;
             -webkit-appearance: none;
             appearance: none;
-            background: #fff;
-            border: none;
             outline: none;
             cursor: pointer;
+            background: #fff;
+            border: 1px solid #000;
+            border-radius: 0;
+            box-sizing: border-box;
         }
         .seek-bar::-webkit-slider-runnable-track {
-            height: 12px;
+            height: 10px;
             background: #fff;
+            border: none;
+            border-radius: 0;
         }
         .seek-bar::-moz-range-track {
-            height: 12px;
+            height: 10px;
             background: #fff;
+            border: none;
+            border-radius: 0;
+        }
+        .seek-bar::-ms-track {
+            height: 10px;
+            background: #fff;
+            border: none;
+            color: transparent;
+            border-radius: 0;
         }
         .seek-bar::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 0;
-            height: 0;
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
+            width: 10px;
+            height: 10px;
+            background: #000;
+            border: none;
+            margin-top: 0px;
+            border-radius: 0;
+            transition: transform 0.1s ease;
+        }
+        .seek-bar:active::-webkit-slider-thumb {
+            transform: scale(1.2);
         }
         .seek-bar::-moz-range-thumb {
-            width: 0;
-            height: 0;
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
+            width: 10px;
+            height: 10px;
+            background: #000;
+            border: none;
+            border-radius: 0;
+            transition: transform 0.1s ease;
+        }
+        .seek-bar:active::-moz-range-thumb {
+            transform: scale(1.2);
         }
         .seek-bar::-ms-thumb {
-            width: 0;
-            height: 0;
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
+            width: 10px;
+            height: 10px;
+            background: #000;
+            border: none;
+            border-radius: 0;
+            transition: transform 0.1s ease;
         }
+        .seek-bar:active::-ms-thumb {
+            transform: scale(1.2);
+        }
+
+        /* Fill passed area in black */
         .seek-bar[value]::-webkit-slider-runnable-track {
-            background: linear-gradient(
-                to right,
-                repeating-linear-gradient(
-                    to right,
-                    #00017b 0%,
-                    #00017b 8px,
-                    #c0c0c0 8px,
-                    #c0c0c0 10px
-                ) 0% / calc(var(--value) * 1%) 100% no-repeat,
-                #fff
-            );
+            background: linear-gradient(to right, #000 0%, #000 var(--value), #fff var(--value), #fff 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
         }
         .seek-bar[value]::-moz-range-progress {
-            height: 12px;
-            background: repeating-linear-gradient(
-                to right,
-                #00017b 0%,
-                #00017b 8px,
-                #c0c0c0 8px,
-                #c0c0c0 10px
-            );
+            height: 10px;
+            background: #000;
+        }
+        .seek-bar[value]::-moz-range-track {
+            background: #fff;
         }
         .seek-bar::-ms-fill-lower {
-            background: repeating-linear-gradient(
-                to right,
-                #00017b 0%,
-                #00017b 8px,
-                #c0c0c0 8px,
-                #c0c0c0 10px
-            );
+            background: #000;
         }
         .seek-bar::-ms-fill-upper {
             background: #fff;
@@ -274,8 +325,6 @@
         .lyrics, .structure {
             flex: 1;
             padding: 6px;
-            background: #fff;
-            border: 2px inset #AAA;
             font-size: 12px;
         }
         .lyrics {
@@ -308,25 +357,22 @@
             padding: 1px 5px;
         }
         .lyrics-line.active {
-            background: #00017b;
-            color: #fff;
+            background: #fff;
+            color: #000;
         }
         .lyrics-line.passed {
             opacity: 0.5;
         }
         .structure-chord {
             display: block;
-            background: #d3d3d3;
             padding: 2px 4px;
             font-size: 11px;
             cursor: pointer;
             position: relative;
-            border: 2px outset #fff;
         }
         .structure-chord.active {
-            background: #00017b;
+            background: #000;
             color: #fff;
-            border: 2px inset #AAA;
             padding: 2px 4px;
         }
         .structure-chord.passed {
@@ -361,7 +407,6 @@
             padding: 2px 4px;
             font-size: 10px;
             z-index: 10;
-            border: 1px solid #fff;
             white-space: nowrap;
         }
         .chord-diagram {
@@ -375,8 +420,6 @@
             padding: 4px;
             font-size: 10px;
             z-index: 11;
-            border: 1px solid #fff;
-            font-family: 'Courier New', Courier, monospace;
             white-space: pre;
             line-height: 1.2;
             text-align: center;
@@ -384,8 +427,7 @@
         .chord-progress {
             width: 100%;
             height: 6px;
-            background: #c0c0c0;
-            border: 1px inset #fff;
+            background: #fff;
             margin-top: 2px;
             position: relative;
             overflow: hidden;
@@ -418,12 +460,9 @@
 
        .context-menu {
             position: fixed;
-            background: #c0c0c0;
-            border: 2px outset #fff;
-            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #000;
+            background: #fff;
             display: none;
             z-index: 1000;
-            font-family: 'MS Sans Serif', Arial, sans-serif;
             font-size: 12px;
             max-height: 400px;
             overflow-y: auto;
@@ -433,19 +472,14 @@
         .menu-item {
             padding: 4px 8px;
             cursor: pointer;
-            border: 1px solid transparent;
         }
 
         .menu-item:hover {
             background: #00017b;
             color: #fff;
-            border: 1px solid #000;
         }
 
         .menu-divider {
-            border: none;
-            border-top: 1px solid #808080;
-            border-bottom: 1px solid #fff;
             margin: 2px 0;
             height: 0;
         }
@@ -467,6 +501,7 @@
             body {
                 padding: 4px;
                 margin: 20px;
+                align-items: flex-end;
             }
             header {
                 padding: 4px;
@@ -484,14 +519,19 @@
                 padding: 10px;
                 margin: 6px 0px;
                 gap: 3px;
+                flex-wrap: wrap;
             }
             .song-item {
                 text-align: left;
                 flex: 1 1 100%;
                 font-size: 18px;
-                line-height: 20px;
-                padding: 0;
+                line-height: 22px;
+                padding: 0 6px;
+                grid-template-columns: 1fr auto auto;
+                column-gap: 6px;
             }
+            .song-title { font-size: 18px; }
+            .song-meta, .song-length { font-size: 14px; }
             .song-title { padding: 4px 12px; }
             .song-meta { font-size: 14px; padding: 3px 12px; }
             .player {
@@ -619,17 +659,18 @@
 </head>
 <body>
     <header>
-        <img id="album-cover" src="album_cover.png" alt="Album Cover">
+        <!-- <img id="album-cover" src="album_cover.png" alt="Album Cover"> -->
         <div class="title-container">
             <span id="album-band"></span><span id="album-title"></span>
         </div>
     </header>
 
     <section class="song-list" id="song-list"></section>
-    <section class="player" id="player">
+
+    <div class="player-basic" id="player-basic">
         <div class="player-controls">
-            <button class="play-btn" disabled aria-label="Play audio"><span class="icon">▶</span></button>
-            <button class="pause-btn" disabled aria-label="Pause audio"><span class="icon">||</span></button>
+            <button class="play-btn" disabled aria-label="Play audio"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+            <button class="pause-btn" disabled aria-label="Pause audio"><i class="fa-solid fa-pause" aria-hidden="true"></i></button>
             <div class="current-info">
                 <span class="current-section"></span>
                 <span class="current-lyric"></span>
@@ -642,6 +683,11 @@
             <input type="range" class="seek-bar" min="0" max="100" value="0" style="--value: 0;">
         </div>
         <audio id="audio-player"></audio>
+    </div>
+    <div class="controls-bar">
+        <button class="toggle-player-btn" id="toggle-player" aria-label="Toggle player"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+    </div>
+    <section class="player collapsed" id="player">
         <div class="content-container">
             <div class="lyrics">
                 <h4>Lyrics</h4>
@@ -763,17 +809,19 @@
 
     const songList = document.getElementById('song-list');
     const player = document.getElementById('player');
+    const playerBasic = document.getElementById('player-basic');
+    const togglePlayerBtn = document.getElementById('toggle-player');
     const audio = document.getElementById('audio-player');
-    const playBtn = player.querySelector('.play-btn');
-    const pauseBtn = player.querySelector('.pause-btn');
-    const timeline = player.querySelector('.player-timeline');
-    const seekBar = player.querySelector('.seek-bar');
+    const playBtn = playerBasic.querySelector('.play-btn');
+    const pauseBtn = playerBasic.querySelector('.pause-btn');
+    const timeline = playerBasic.querySelector('.player-timeline');
+    const seekBar = playerBasic.querySelector('.seek-bar');
     const lyricsContent = player.querySelector('.lyrics-content');
     const structureContent = player.querySelector('.structure-content');
-    const currentLyricDisplay = player.querySelector('.current-lyric');
-    const currentChordDisplay = player.querySelector('.current-chord');
-    const currentSectionDisplay = player.querySelector('.current-section');
-    const chordInstructionsDisplay = player.querySelector('.chord-instructions');
+    const currentLyricDisplay = playerBasic.querySelector('.current-lyric');
+    const currentChordDisplay = playerBasic.querySelector('.current-chord');
+    const currentSectionDisplay = playerBasic.querySelector('.current-section');
+    const chordInstructionsDisplay = playerBasic.querySelector('.chord-instructions');
     const contextMenu = document.getElementById('context-menu');
     let currentTrack = null;
     let lastUpdateTime = 0;
@@ -783,6 +831,19 @@
         const baseUrl = window.location.origin + window.location.pathname;
         return `${baseUrl}?song=${trackIndex}`;
     }
+
+    // Expand/Collapse player
+    togglePlayerBtn.addEventListener('click', () => {
+        const isCollapsed = player.classList.toggle('collapsed');
+        const icon = togglePlayerBtn.querySelector('i');
+        if (isCollapsed) {
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        } else {
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        }
+    });
 
     function updateURL(trackIndex) {
         const url = generateSongLink(trackIndex);
@@ -939,7 +1000,7 @@
         });
 
         seekBar.value = 0;
-        seekBar.style.setProperty('--value', 0);
+        seekBar.style.setProperty('--value', '0%');
         lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
             line.classList.remove('active');
             line.classList.remove('passed');
@@ -1388,7 +1449,7 @@
     });
 
     seekBar.addEventListener('input', () => {
-        seekBar.style.setProperty('--value', seekBar.value);
+        seekBar.style.setProperty('--value', seekBar.value + '%');
         if (currentTrack) {
             const duration = audio.duration || 0;
             audio.currentTime = (seekBar.value / 100) * duration;
@@ -1406,14 +1467,19 @@
 
         const songTitle = document.createElement('div');
         songTitle.className = 'song-title';
-        songTitle.textContent = track.title;
+        songTitle.textContent = `${trackIndex + 1} ${track.title}`;
 
         const songMeta = document.createElement('div');
         songMeta.className = 'song-meta';
-        songMeta.textContent = '…';
+        songMeta.textContent = 'modified: …';
+
+        const songLength = document.createElement('div');
+        songLength.className = 'song-length';
+        songLength.textContent = '0:00';
 
         songItem.appendChild(songTitle);
         songItem.appendChild(songMeta);
+        songItem.appendChild(songLength);
         songItem.addEventListener('contextmenu', (e) => {
             showContextMenu(e, 'song-item', songItem, track, trackIndex);
         });
@@ -1441,8 +1507,24 @@
             } catch {
                 songMeta.textContent = 'modified: unavailable';
             }
+            // Compute track length using Audio metadata
+            try {
+                const tempAudio = new Audio();
+                tempAudio.preload = 'metadata';
+                tempAudio.src = track.mp3;
+                tempAudio.addEventListener('loadedmetadata', () => {
+                    if (!isNaN(tempAudio.duration) && tempAudio.duration > 0) {
+                        const mins = Math.floor(tempAudio.duration / 60);
+                        const secs = Math.floor(tempAudio.duration % 60).toString().padStart(2, '0');
+                        songLength.textContent = `${mins}:${secs}`;
+                    }
+                }, { once: true });
+            } catch {
+                songLength.textContent = '0:00';
+            }
         } else {
             songMeta.textContent = 'modified: unavailable';
+            songLength.textContent = '0:00';
         }
     });
 
@@ -1456,13 +1538,17 @@
         });
         playBtn.disabled = true;
         pauseBtn.disabled = false;
-        requestAnimationFrame(updateProgressBars);
+        playerBasic.classList.add('playing');
+        // ensure seeker starts at 0 with no offset
+        seekBar.value = 0;
+        seekBar.style.setProperty('--value', '0%');
     });
 
     pauseBtn.addEventListener('click', () => {
         audio.pause();
         playBtn.disabled = false;
         pauseBtn.disabled = true;
+        playerBasic.classList.remove('playing');
     });
 
     audio.addEventListener('ended', () => {
@@ -1473,7 +1559,7 @@
             playBtn.disabled = false;
             pauseBtn.disabled = true;
             seekBar.value = 0;
-            seekBar.style.setProperty('--value', 0);
+            seekBar.style.setProperty('--value', '0%');
             currentLyricDisplay.textContent = '';
             currentChordDisplay.textContent = '';
             chordInstructionsDisplay.textContent = '';
@@ -1494,17 +1580,12 @@
     function updateProgressBars(timestamp) {
         if (!currentTrack || audio.paused) return;
 
-        if (timestamp - lastUpdateTime < 16) {
-            requestAnimationFrame(updateProgressBars);
-            return;
-        }
-        lastUpdateTime = timestamp;
-
         const currentTime = audio.currentTime;
         const duration = audio.duration || 0;
         timeline.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-        seekBar.value = duration ? (currentTime / duration) * 100 : 0;
-        seekBar.style.setProperty('--value', seekBar.value);
+        const progressPercent = duration ? (currentTime / duration) * 100 : 0;
+        seekBar.value = progressPercent;
+        seekBar.style.setProperty('--value', progressPercent + '%');
 
         const bpm = parseInt(currentTrack.tempo) || 120;
         const isSixEight = currentTrack.timeSignature === '6/8';
@@ -1572,9 +1653,30 @@
         requestAnimationFrame(updateProgressBars);
     }
 
-    audio.addEventListener('timeupdate', () => {
+    let animationFrameId = null;
+    
+    function smoothUpdateLoop() {
+        if (!audio.paused && currentTrack) {
+            updateProgressBars();
+            animationFrameId = requestAnimationFrame(smoothUpdateLoop);
+        }
+    }
+    
+    audio.addEventListener('play', () => {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        smoothUpdateLoop();
+    });
+    
+    audio.addEventListener('pause', () => {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+    });
+    
+    audio.addEventListener('seeking', () => {
         if (!audio.paused) {
-            requestAnimationFrame(updateProgressBars);
+            updateProgressBars();
         }
     });
 
