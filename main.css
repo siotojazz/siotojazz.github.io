@@ -28,10 +28,9 @@ body {
     min-height: 100vh;
     background-color: #000;
     background-image: url(extra/photos/SJ_12_BW.jpg);
-    background-size: cover;
     background-repeat: no-repeat;
-    background-position: left 20% top 40%;
-    background-size: 120%;
+    background-position: center center;
+    background-size: cover; /* Fill available area proportionally */
     background-attachment: fixed;
 }
 

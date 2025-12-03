@@ -1,6 +1,6 @@
 {
   "album": {
-    "title": "29",
+    "title": "3000",
     "band": "Sioto Jazz",
     "releaseDate": "TBD",
     "coverImage": "album_cover.png"
@@ -1270,8 +1270,8 @@
     {
       "id": 12,
       "title": "Одмор",
-      "mp3": "audio/promena.mp3",
-      "backingmp3": "audio/promena_backing.mp3",
+      "mp3": "audio/odmor.mp3",
+      "backingmp3": "audio/odmor_backing.mp3",
       "lyrics": [
         { "line": "знаеш мене ми треба", "barNumber": 24, "barLength": 4, "offset": 0 },
         { "line": "малку одмор од сите вас", "barNumber": 28, "barLength": 4, "offset": 0 },
