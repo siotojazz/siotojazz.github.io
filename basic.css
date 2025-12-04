@@ -15,13 +15,14 @@
 }
 
 body {
-    margin: 0 auto;
+    margin: 0;
     width: 100%;
-    max-width: 1200px;
     background-color: #f4ebdd;
     font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif !important;
-    padding: 0 15px;
-    font-size: clamp(12px, calc(32px - 0.5vw), 32px);
+    padding: 48px 16px;
+    padding-top: 80px;
+    font-size: clamp(14px, 1.8vw, 16px);
+    line-height: 1.6;
     scroll-behavior: smooth;
 }
 
@@ -68,8 +69,8 @@ summary:hover, details[open] {
 }
 
 nav {
-    padding: 40px 0px;
-    margin: 40px 0px;
+    padding: 10px 0;
+    margin: 0 0 20px 0;
     border-top:  1px solid #0003;
     border-bottom: 1px solid #0003;
 }
@@ -79,27 +80,30 @@ nav ul {
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 4px;
     width: 100%;
 }
 
 nav li {
-    flex: 1 1 300px;
-    min-width: 300px;
+    flex: 1 0 0;
+    min-width: 80px;
 }
 
 nav a {
     text-decoration: none !important;
     color: #111 !important; 
-    display: block; 
-    padding: 15px 20px;
-    border: 1px solid #AAA; 
-    box-shadow: 0 px 5px #000;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border: none; 
+    box-shadow: none;
     transition: transform 0.2s, box-shadow 0.2s;
     text-align: left;
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+    font-size: 10px;
 }
 
 nav a:hover {
@@ -137,9 +141,9 @@ nav a:active {
     font-family: 'Astrella', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     width: 100%;
     text-align: center;
-    font-size: clamp(170px, calc(50px - 0.5vw), 50px);
+    font-size: clamp(48px, 6vw, 68px);
     color: #000;
-    line-height: 1;
+    line-height: 1.1;
 }
 
 .bandNameSmall {
@@ -423,6 +427,44 @@ a:hover img {
 
 .fancyLink:hover i {
     transform: translateX(5px); /* Arrow moves slightly right on hover */
+}
+
+/* Harmonization overrides to align with main.css across devices */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 8px !important;
+        padding-top: 60px !important;
+        font-size: clamp(12px, 2vw, 14px) !important;
+        line-height: 1.6 !important;
+    }
+    nav {
+        padding: 8px 0 !important;
+        margin: 12px 0 !important;
+    }
+    nav ul { gap: 8px !important; }
+    nav li { flex: none !important; width: 100% !important; }
+    nav a { padding: 10px 16px !important; font-size: clamp(13px, 2vw, 14px) !important; }
+    .bandName { font-size: clamp(40px, 8vw, 60px) !important; }
+    .menu { font-size: clamp(18px, 3.5vw, 22px) !important; margin-top: 8vw !important; }
+    .menuItem { font-size: clamp(14px, 2.3vw, 16px) !important; padding: 12px 16px !important; margin: 12px 0 !important; border-width: 2px !important; }
+    .menuLink { font-size: clamp(16px, 2.5vw, 18px) !important; padding: 12px !important; }
+    .menuDesc { font-size: clamp(12px, 2vw, 14px) !important; }
+    details { padding: 16px !important; margin-bottom: 16px !important; }
+    summary { font-size: clamp(14px, 2.5vw, 16px) !important; padding: 12px !important; margin: -12px !important; }
+    h1 { font-size: clamp(22px, 3vw, 26px) !important; }
+    h2, h3 { font-size: clamp(18px, 2.5vw, 22px) !important; padding-bottom: 10px !important; }
+    h4, h5 { font-size: clamp(16px, 2.2vw, 18px) !important; }
+    th, td { font-size: clamp(12px, 2.2vw, 14px) !important; padding: 10px 16px !important; }
+    #scrollToTopBtn { font-size: clamp(12px, 2.2vw, 14px) !important; padding: 10px !important; bottom: 12px !important; right: 12px !important; border-width: 1px !important; }
+    .subtitle { font-size: clamp(12px, 2vw, 14px) !important; }
+    .bandDescription { font-size: clamp(12px, 2vw, 14px) !important; margin-top: 40px !important; }
+    .bandLongDescription p { font-size: clamp(12px, 2.2vw, 14px) !important; margin: 16px 0 !important; }
+    #externalLinks { font-size: clamp(16px, 2.5vw, 18px) !important; }
+    .categoryTitle { font-size: clamp(18px, 2.5vw, 22px) !important; }
+    .albumsList { font-size: clamp(14px, 2.2vw, 16px) !important; }
+    .minorDesc { font-size: clamp(10px, 2vw, 12px) !important; }
+    .question { font-size: clamp(14px, 2.2vw, 16px) !important; padding: 12px !important; }
+    .answer { font-size: clamp(14px, 2.2vw, 16px) !important; padding-left: 16px !important; }
 }
 
 @media screen and (max-width: 768px) {

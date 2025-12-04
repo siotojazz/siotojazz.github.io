@@ -25,6 +25,7 @@
             background-color: #007c7e;
             color: #000;
             padding: 10px 10px 10px 10px;
+            padding-bottom: 48px; /* extra bottom margin from viewport */
             display: flex;
             flex-direction: column;
             align-items: flex-end;
@@ -88,22 +89,66 @@
             width: 100%;
             display: flex;
             flex-wrap: wrap;
+            overflow: hidden;
+            --row-h: 34px;
+            max-height: var(--row-h); /* exactly one row */
+            transition: max-height 0.75s ease-in-out, opacity 0.75s ease-in-out;
+            opacity: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Animated collapse/expand of list items using fixed row height */
+        .song-item {
+            overflow: hidden;
+            height: 0;
+            opacity: 0;
+            transition: height 0.6s ease, opacity 0.3s ease;
+        }
+        /* When collapsed, only the active item is visible */
+        .song-list:not(:hover) .song-item.active {
+            height: var(--row-h);
+            opacity: 1;
+            background: #000;
+            color: #fff;
+        }
+        /* When expanded (hover), show all items */
+        .song-list:hover { max-height: 1000px; }
+        .song-list:hover .song-item {
+            height: var(--row-h);
+            opacity: 1;
         }
 
         .song-item {
             color: white;
             flex: 1 1 100%;
-            padding: 2px 8px;
+            padding: 0 8px;
             text-align: left;
             cursor: pointer;
-            font-size: 12px;
-            line-height: 22px;
+            font-size: 16px;
             display: grid;
             grid-template-columns: 1fr auto auto;
             column-gap: 8px;
             align-items: center;
             position: relative;
             overflow: hidden;
+        }
+        /* Set consistent row line-height for inner cells */
+        .song-title, .song-meta, .song-length { line-height: var(--row-h); }
+        .song-section {
+            font-size: 14px;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 10px;
+            line-height: var(--row-h);
+            display: none;
+        }
+        .song-list:not(:hover) .song-item.active .song-section {
+            display: inline-block;
+        }
+        .song-list:hover .song-section {
+            display: none;
         }
         .song-item::before {
             content: '';
@@ -127,14 +172,22 @@
             z-index: 2;
         }
         .song-title {
-            padding: 2px 4px;
-            text-transform: lowercase;
+            padding: 0;
+            font-size: 12px;
+            text-transform: capitalize;
+            transition: font-size 0.2s ease, letter-spacing 0.2s ease;
+        }
+        /* Active track larger + caps only when collapsed */
+        .song-list:not(:hover) .song-item.active .song-title {
+            text-transform: uppercase;
+            font-size: 18px; /* 50% larger than base 12px */
+            letter-spacing: 0.5px;
         }
         .song-meta {
             display: block;
             font-size: 11px;
             line-height: 18px;
-            padding: 2px 4px;
+            padding: 0;
             opacity: 0.3;
             text-align: right;
         }
@@ -142,7 +195,7 @@
             display: block;
             font-size: 11px;
             line-height: 18px;
-            padding: 2px 4px;
+            padding: 0;
             text-align: right;
             opacity: 0.85;
         }
@@ -157,6 +210,11 @@
         .song-item.active {
             background: #FFF;
             color: #000;
+        }
+        /* Hide meta for active song ONLY when list is collapsed */
+        .song-list:not(:hover):not(.expanded) .song-item.active .song-meta,
+        .song-list:not(:hover):not(.expanded) .song-item.active .song-length {
+            display: none;
         }
         .player {
             background-color: #FFF;
@@ -174,6 +232,35 @@
             width: 100%;
             padding: 8px;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .player-wrap {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+        /* Player details collapsed by default; expand on hover over base */
+        .player {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.35s ease, opacity 0.25s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        /* Hover on base player expands details */
+        .player-wrap:hover .player,
+        .player:hover {
+            max-height: var(--player-max, 80vh); /* computed via JS, fallback */
+            opacity: 1;
+            pointer-events: auto;
+            overflow-y: auto; /* allow scrolling when expanded */
+            -webkit-overflow-scrolling: touch;
         }
         .controls-bar {
             max-width: 600px;
@@ -232,29 +319,31 @@
             opacity: 0.4;
             cursor: default;
         }
+
         .player-controls button i {
             font-size: 14px;
             line-height: 1;
             color: #fff;
         }
         .player-timeline {
-            font-size: 12px;
+            font-size: 14px;
             text-align: right;
-            padding-right: 12px;
-            margin-left: auto;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .current-info {
-            font-size: 12px;
+            font-size: 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             flex: 1;
             min-width: 0;
             transition: all 0.25s ease;
+            justify-content: flex-start;
         }
-        .player-basic.playing .current-info { gap: 28px; }
+        .player-basic.playing .current-info { gap: 8px; }
         .player-timeline { transition: all 0.25s ease; }
-        .player-basic.playing .player-timeline { padding-right: 18px; }
+        .player-basic.playing .player-timeline { }
         .current-lyric {
             color: #00017b;
             white-space: nowrap;
@@ -262,16 +351,31 @@
             text-overflow: ellipsis;
             flex: 1;
             transition: opacity 0.4s ease, transform 0.4s ease;
+            display: block;
+            text-align: left;
+            font-size: 14px;
+            opacity: 0.8;
+            min-width: 0;
         }
         .current-chord {
             color: #00017b;
             font-weight: bold;
             transition: opacity 0.4s ease, transform 0.4s ease;
+            font-size: 12px;
+            opacity: 0.5;
+            white-space: nowrap;
+            flex-shrink: 0;
+            line-height: 1;
         }
         .chord-instructions {
             color: #555;
             font-style: italic;
             transition: opacity 0.4s ease, transform 0.4s ease;
+            font-size: 12px;
+            opacity: 0.5;
+            white-space: nowrap;
+            flex-shrink: 0;
+            line-height: 1;
         }
         .seek-bar-container {
             width: 100%;
@@ -355,7 +459,9 @@
         .structure-chord {
             display: block;
             padding: 2px 4px;
-            font-size: 11px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #00017b;
             cursor: pointer;
             position: relative;
             overflow: hidden;
@@ -377,7 +483,7 @@
             pointer-events: none;
             z-index: 1;
         }
-        .structure-chord:hover::before {
+        .structure-chord:not(.passed):hover::before {
             left: 100%;
             transition: left 0.4s ease;
         }
@@ -385,20 +491,14 @@
             background: #000000;
             color: #fff;
         }
-        .structure-chord.passed:hover {
-            background: #FFFFFF;
-            color: #000;
-        }
+        /* Passed chords should look like passed verses (faded only) */
         .structure-chord.active {
             background: transparent; /* avoid instant black pop */
             color: #000;
             outline: 1px solid #00017b;
             padding: 2px 4px;
         }
-        .structure-chord.passed {
-            background-color: #000;
-            color: #fff;
-        }
+        .structure-chord.passed { opacity: 0.5; background: transparent !important; color: inherit; }
         .structure-chord:hover .chord-value,
         .structure-chord:hover .chord-diagram {
             display: block;
@@ -469,10 +569,7 @@
             display: none;
         }
         .current-section {
-            color: #00017b;
-            font-weight: bold;
-            font-size: 12px;
-            white-space: nowrap;
+            display: none;
         }
 
        .context-menu {
@@ -524,176 +621,81 @@
             height: 0;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            body {
+                margin-right: 0;
+                padding: 10px;
+                align-items: center;
+                height: auto;
+                overflow-y: auto;
+            }
+            header, .song-list, .player-wrap, .player-basic, .player {
+                max-width: 100%;
+                width: 100%;
+            }
+            header {
+                margin-bottom: 10px;
+            }
+            .title-container {
+                font-size: 24px;
+            }
+            header img {
+                max-width: 60px;
+            }
+            .song-list {
+                margin-bottom: 0;
+            }
+            .song-list.expanded {
+                max-height: 1200px;
+            }
+            .song-list.expanded .song-item {
+                height: var(--row-h);
+                opacity: 1;
+                padding: 0 8px;
+            }
+            
+            .player-wrap.expanded .player {
+                max-height: var(--player-max, 85vh);
+                opacity: 1;
+                pointer-events: auto;
+                overflow-y: auto;
+            }
+
+            .player-controls button {
+                width: 44px;
+                height: 36px;
+            }
+            .content-container {
+                flex-direction: column;
+            }
             .context-menu {
-                font-size: 14px;
+                font-size: 18px;
                 max-height: 300px;
             }
             .menu-item {
-                padding: 3px 6px;
+                padding: 6px 10px;
             }
             .menu-divider {
                 margin: 1px 0;
             }
-        }
 
-        @media (max-width: 600px) {
-            body {
-                padding: 4px;
-                margin: 20px;
-                align-items: flex-end;
+            .structure-chord .chord {
+                font-size: 28px;
+                font-weight: bold;
             }
-            header {
-                padding: 4px;
-                max-width: 100%;
-            }
-            .title-container {
-                font-size: 20px !important;
-            }
-            header img {
-                max-width: 50px;
-                height: 100%;
-            }
-            .song-list {
-                max-width: 100%;
-                padding: 10px;
-                margin: 6px 0px;
-                gap: 3px;
-                flex-wrap: wrap;
-            }
-            .song-item {
-                text-align: left;
-                flex: 1 1 100%;
-                font-size: 18px;
-                line-height: 22px;
-                padding: 0 6px;
-                grid-template-columns: 1fr auto auto;
-                column-gap: 6px;
-            }
-            .song-title { font-size: 18px; }
-            .song-meta, .song-length { font-size: 14px; }
-            .song-title { padding: 4px 12px; }
-            .song-meta { font-size: 14px; padding: 3px 12px; }
-            .player {
-                max-width: 100%;
-                padding: 4px;
-            }
-            .player-controls {
-                font-size: 16px;
-                gap: 4px;
-            }
-            .player-controls button {
-                width: 100px;
-                height: 30px;
-                padding: 3px 5px;
-                font-size: 12px;
-            }
-            .player-controls button .icon {
-                font-size: 14px;
-            }
-            .current-lyric {
-                display: none;
-            }
-            .player-timeline {
-                font-size: 16px;
-                padding-right: 4px;
-            }
-            .seek-bar-container {
-                margin: 2px 0;
-            }
-            .seek-bar {
-                height: 12px;
-            }
-            .seek-bar::-webkit-slider-runnable-track,
-            .seek-bar::-moz-range-track {
-                height: 12px;
-            }
-            .seek-bar[value]::-webkit-slider-runnable-track {
-                background: linear-gradient(
-                    to right,
-                    repeating-linear-gradient(
-                        to right,
-                        #00017b 0%,
-                        #00017b 10px,
-                        #c0c0c0 10px,
-                        #c0c0c0 12px
-                    ) 0% / calc(var(--value) * 1%) 100% no-repeat,
-                    #fff
-                );
-            }
-            .seek-bar[value]::-moz-range-progress {
-                height: 12px;
-                background: repeating-linear-gradient(
-                    to right,
-                    #00017b 0%,
-                    #00017b 10px,
-                    #c0c0c0 10px,
-                    #c0c0c0 12px
-                );
-            }
-            .seek-bar::-ms-fill-lower {
-                background: repeating-linear-gradient(
-                    to right,
-                    #00017b 0%,
-                    #00017b 10px,
-                    #c0c0c0 10px,
-                    #c0c0c0 12px
-                );
-            }
-            .current-info {
-                font-size: 14px;
-                gap: 6px;
-            }
-            .content-container {
-                flex-direction: column;
-                gap: 6px;
-            }
-            .lyrics, .structure {
-                font-size: 18px;
-            }
-            .lyrics h4, .structure h4 {
-                font-size: 20px;
-                margin-bottom: 2px;
-            }
-            .tempo-info {
-                font-size: 12px;
-                margin-bottom: 4px;
-            }
-            .section-label {
-                font-size: 20px;
-                margin: 6px 0 3px;
-            }
+
             .structure-chord {
-                font-size: 18px;
-                padding: 1px 2px;
+                padding: 4px 2px;
             }
-            .chord-value, .chord-diagram {
-                font-size: 16px;
-                padding: 2px;
-            }
-            .chord-progress {
-                height: 4px;
-            }
-        }
-        @media (max-width: 400px) {
-            .song-item {
-                font-size: 11px;
-                line-height: 18px;
-            }
-            .player-controls button {
-                width: 30px;
-                height: 18px;
-                font-size: 11px;
-            }
-            .player-controls button .icon {
-                font-size: 12px;
-            }
-            .player-timeline {
-                font-size: 11px;
-            }
-            .current-info {
-                font-size: 10px;
-            }
+
+            /* Mobile text size increases */
+            .song-title { font-size: 16px; }
+            .song-list:not(:hover) .song-item.active .song-title { font-size: 22px; }
+            .current-info { font-size: 20px; }
+            .current-lyric { font-size: 16px; }
+            .current-chord, .chord-instructions { font-size: 14px; }
+            .lyrics, .structure, .lyrics h4, .structure h4, .tempo-info, .section-label { font-size: 16px; }
+            .player-timeline { font-size: 16px; }
         }
     </style>
 </head>
@@ -707,6 +709,7 @@
 
     <section class="song-list" id="song-list"></section>
 
+    <div class="player-wrap">
     <div class="player-basic" id="player-basic">
         <div class="player-controls">
             <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
@@ -768,6 +771,7 @@
             <div class="menu-item" data-action="export-song">Export Lyrics & Chords</div>
         </div>
     </section>
+    </div>
 
     <script src="js/audio-engine.js"></script>
     <script src="js/progress-gl.js"></script>
@@ -864,6 +868,48 @@
     const currentChordDisplay = playerBasic.querySelector('.current-chord');
     const currentSectionDisplay = playerBasic.querySelector('.current-section');
     const chordInstructionsDisplay = playerBasic.querySelector('.chord-instructions');
+    const playerWrap = document.querySelector('.player-wrap');
+
+    // Mobile Interaction Logic
+    const isMobile = () => window.innerWidth <= 768;
+
+    // Capture phase: Handle expansion and prevent selection if collapsed
+    songList.addEventListener('click', (e) => {
+        if (!isMobile()) return;
+        if (!songList.classList.contains('expanded')) {
+            songList.classList.add('expanded');
+            e.stopPropagation(); 
+        }
+    }, true);
+
+    // Bubble phase: Handle collapse after selection
+    songList.addEventListener('click', (e) => {
+        if (!isMobile()) return;
+        if (songList.classList.contains('expanded')) {
+            if (e.target.closest('.song-item')) {
+                 songList.classList.remove('expanded');
+            }
+        }
+    });
+
+    // Player expansion
+    playerBasic.addEventListener('click', (e) => {
+        if (!isMobile()) return;
+        if (e.target.closest('.player-controls') || e.target.closest('.seek-bar-container')) return;
+        playerWrap.classList.toggle('expanded');
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!isMobile()) return;
+        if (!songList.contains(e.target)) {
+            songList.classList.remove('expanded');
+        }
+        if (!playerWrap.contains(e.target)) {
+            playerWrap.classList.remove('expanded');
+        }
+    });
+
         function setAnimatedText(el, nextText) {
             if (el.textContent === nextText) return;
             el.style.opacity = '0';
@@ -1578,7 +1624,12 @@
         songLength.className = 'song-length';
         songLength.textContent = '0:00';
 
+        const songSection = document.createElement('div');
+        songSection.className = 'song-section';
+        songSection.textContent = '';
+
         songItem.appendChild(songTitle);
+        songItem.appendChild(songSection);
         songItem.appendChild(songMeta);
         songItem.appendChild(songLength);
         songItem.addEventListener('contextmenu', (e) => {
@@ -1688,6 +1739,59 @@
     let lastActiveLyric = null;
     let lastActiveChord = null;
 
+    // Recompute chord overlay layout when player becomes visible or viewport changes
+    function recomputeChordLayout() {
+        try {
+            if (!structureContent) return;
+            const hostRect = structureContent.getBoundingClientRect();
+            if (!hostRect || hostRect.height === 0) return; // not visible yet
+
+            const containers = structureContent.querySelectorAll('.chord-container');
+            cachedChordContainers = Array.from(containers).map(c => {
+                const r = c.getBoundingClientRect();
+                const progressEl = c.querySelector('.chord-progress');
+                return {
+                    beat: parseInt(progressEl.dataset.beat) - 1,
+                    span: parseInt(progressEl.dataset.span) || 1,
+                    x: Math.floor(r.left - hostRect.left),
+                    y: Math.floor(r.top - hostRect.top),
+                    w: Math.floor(r.width),
+                    h: Math.floor(r.height)
+                };
+            });
+
+            const chordsCanvas = document.getElementById('chords-gl');
+            cachedChordOverlay = chordsCanvas && window.getChordOverlayRenderer ?
+                window.getChordOverlayRenderer(chordsCanvas) : null;
+        } catch (e) { /* noop */ }
+    }
+
+    // Recompute when expanding player or resizing viewport
+    player.addEventListener('mouseenter', recomputeChordLayout);
+    window.addEventListener('resize', recomputeChordLayout);
+
+    // Dynamically compute available height for overlay player to avoid clipping
+    function updatePlayerMaxHeight() {
+        try {
+            const rect = player.getBoundingClientRect();
+            const bottomPad = 48; // match body bottom padding
+            const avail = Math.max(120, Math.floor(window.innerHeight - rect.top - bottomPad));
+            player.style.setProperty('--player-max', avail + 'px');
+        } catch (e) { /* noop */ }
+    }
+    if (playerWrap) {
+        playerWrap.addEventListener('mouseenter', () => {
+            recomputeChordLayout();
+            updatePlayerMaxHeight();
+        });
+    }
+    window.addEventListener('resize', () => {
+        recomputeChordLayout();
+        updatePlayerMaxHeight();
+    });
+    // Initial compute
+    updatePlayerMaxHeight();
+
     function updateProgressBars() {
         if (!currentTrack || audio.paused) return;
 
@@ -1721,6 +1825,15 @@
             beatIndex += sectionBeats;
         }
         setAnimatedText(currentSectionDisplay, currentSection);
+        
+        // Update song item section display
+        const activeSongItem = document.querySelector('.song-item.active');
+        if (activeSongItem) {
+            const sectionSpan = activeSongItem.querySelector('.song-section');
+            if (sectionSpan && sectionSpan.textContent !== currentSection) {
+                sectionSpan.textContent = currentSection;
+            }
+        }
 
         // Update lyrics with minimal DOM manipulation
         let currentLyric = '';
