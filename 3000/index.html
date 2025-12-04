@@ -133,6 +133,10 @@
             max-width: 600px;
             width: 100%;
             padding: 8px;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.35s ease, opacity 0.35s ease;
         }
         .player-basic {
             background-color: #FFF;
@@ -141,8 +145,9 @@
             padding: 8px;
             transition: all 0.3s ease;
         }
-        .player.collapsed {
-            display: none;
+        .player.expanded {
+            max-height: 1000px; /* large enough for content */
+            opacity: 1;
         }
 
         .controls-bar {
@@ -156,7 +161,7 @@
         }
         .toggle-player-btn {
             width: 100%;
-            background: #fff;
+            background: #EEE;
             color: #000;
             border: 0;
             cursor: pointer;
@@ -167,10 +172,13 @@
             border-radius: 0;
             padding: 12px 0;
         }
+        /* Remove rotation; use icon class change for orientation */
+        .toggle-player-btn i { transition: none; }
         .player-controls {
             display: flex;
             align-items: center;
             flex-wrap: nowrap;
+            gap: 12px;
         }
         .player-controls button {
             padding: 4px 8px;
@@ -197,12 +205,13 @@
             font-size: 12px;
             text-align: right;
             padding-right: 12px;
+            margin-left: auto;
         }
         .current-info {
             font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
             flex: 1;
             min-width: 0;
             transition: all 0.25s ease;
@@ -216,108 +225,25 @@
             overflow: hidden;
             text-overflow: ellipsis;
             flex: 1;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
         .current-chord {
             color: #00017b;
             font-weight: bold;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
         .chord-instructions {
             color: #555;
             font-style: italic;
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
         .seek-bar-container {
             width: 100%;
-            margin: 6px 0;
+            margin: 0;
+            padding: 0;
+            position: relative;
         }
-        .seek-bar {
-            width: 100%;
-            height: 12px;
-            -webkit-appearance: none;
-            appearance: none;
-            outline: none;
-            cursor: pointer;
-            background: #fff;
-            border: 1px solid #000;
-            border-radius: 0;
-            box-sizing: border-box;
-        }
-        .seek-bar::-webkit-slider-runnable-track {
-            height: 10px;
-            background: #fff;
-            border: none;
-            border-radius: 0;
-        }
-        .seek-bar::-moz-range-track {
-            height: 10px;
-            background: #fff;
-            border: none;
-            border-radius: 0;
-        }
-        .seek-bar::-ms-track {
-            height: 10px;
-            background: #fff;
-            border: none;
-            color: transparent;
-            border-radius: 0;
-        }
-        .seek-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 10px;
-            height: 10px;
-            background: #000;
-            border: none;
-            margin-top: 0px;
-            border-radius: 0;
-            transition: transform 0.1s ease;
-        }
-        .seek-bar:active::-webkit-slider-thumb {
-            transform: scale(1.2);
-        }
-        .seek-bar::-moz-range-thumb {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            border: none;
-            border-radius: 0;
-            transition: transform 0.1s ease;
-        }
-        .seek-bar:active::-moz-range-thumb {
-            transform: scale(1.2);
-        }
-        .seek-bar::-ms-thumb {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            border: none;
-            border-radius: 0;
-            transition: transform 0.1s ease;
-        }
-        .seek-bar:active::-ms-thumb {
-            transform: scale(1.2);
-        }
-
-        /* Fill passed area in black */
-        .seek-bar[value]::-webkit-slider-runnable-track {
-            background: linear-gradient(to right, #000 0%, #000 var(--value), #fff var(--value), #fff 100%);
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
-        }
-        .seek-bar[value]::-moz-range-progress {
-            height: 10px;
-            background: #000;
-        }
-        .seek-bar[value]::-moz-range-track {
-            background: #fff;
-        }
-        .seek-bar::-ms-fill-lower {
-            background: #000;
-        }
-        .seek-bar::-ms-fill-upper {
-            background: #fff;
-        }
+        /* Old HTML seek styles removed; WebGL used instead */
         .content-container {
             display: flex;
             gap: 8px;
@@ -357,8 +283,8 @@
             padding: 1px 5px;
         }
         .lyrics-line.active {
-            background: #fff;
-            color: #000;
+            background: #000;
+            color: #fff;
         }
         .lyrics-line.passed {
             opacity: 0.5;
@@ -371,12 +297,14 @@
             position: relative;
         }
         .structure-chord.active {
-            background: #000;
-            color: #fff;
+            background: transparent; /* avoid instant black pop */
+            color: #000;
+            outline: 1px solid #00017b;
             padding: 2px 4px;
         }
         .structure-chord.passed {
-            opacity: 0.5;
+            background-color: #000;
+            color: #fff;
         }
         .structure-chord:hover .chord-value,
         .structure-chord:hover .chord-diagram {
@@ -386,7 +314,6 @@
             margin-bottom: 12px;
         }
         .structure-block {
-            margin-bottom: 4px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -425,11 +352,12 @@
             text-align: center;
         }
         .chord-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 6px;
-            background: #fff;
-            margin-top: 2px;
-            position: relative;
+            height: 100%;
+            pointer-events: none;
             overflow: hidden;
         }
         .chord-progress::before {
@@ -438,15 +366,11 @@
             top: 0;
             left: 0;
             height: 100%;
-            width: calc(var(--progress, 0) * 1%);
-            background: repeating-linear-gradient(
-                to right,
-                #00017b 0%,
-                #00017b 8px,
-                #c0c0c0 8px,
-                #c0c0c0 10px
-            );
-            transition: width 0.01s linear;
+            width: 100%;
+            background: rgba(0,0,0,0.18);
+            transform-origin: left center;
+            transform: scaleX(calc(var(--progress, 0) / 100));
+            will-change: transform;
         }
         audio {
             display: none;
@@ -680,14 +604,14 @@
             <span class="player-timeline">0:00 / 0:00</span>
         </div>
         <div class="seek-bar-container">
-            <input type="range" class="seek-bar" min="0" max="100" value="0" style="--value: 0;">
+            <canvas id="seek-gl" width="600" height="16"></canvas>
         </div>
-        <audio id="audio-player"></audio>
+        <audio id="audio-player" crossorigin="anonymous"></audio>
     </div>
     <div class="controls-bar">
         <button class="toggle-player-btn" id="toggle-player" aria-label="Toggle player"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
     </div>
-    <section class="player collapsed" id="player">
+    <section class="player" id="player">
         <div class="content-container">
             <div class="lyrics">
                 <h4>Lyrics</h4>
@@ -695,7 +619,9 @@
             </div>
             <div class="structure">
                 <h4>Structure</h4>
-                <div class="structure-content"></div>
+                <div class="structure-content" style="position: relative;">
+                    <canvas id="chords-gl" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
+                </div>
             </div>
         </div>
         <div id="context-menu" class="context-menu">
@@ -731,6 +657,8 @@
         </div>
     </section>
 
+    <script src="js/audio-engine.js"></script>
+    <script src="js/progress-gl.js"></script>
     <script>
         
         fetch('album.json')
@@ -812,16 +740,35 @@
     const playerBasic = document.getElementById('player-basic');
     const togglePlayerBtn = document.getElementById('toggle-player');
     const audio = document.getElementById('audio-player');
+    const seekCanvas = document.getElementById('seek-gl');
+    const glSeek = createSeekRenderer(seekCanvas);
+    const audioEngine = new AudioEngine();
     const playBtn = playerBasic.querySelector('.play-btn');
     const pauseBtn = playerBasic.querySelector('.pause-btn');
     const timeline = playerBasic.querySelector('.player-timeline');
-    const seekBar = playerBasic.querySelector('.seek-bar');
+    const seekBar = null;
+    const seekFill = null;
     const lyricsContent = player.querySelector('.lyrics-content');
     const structureContent = player.querySelector('.structure-content');
     const currentLyricDisplay = playerBasic.querySelector('.current-lyric');
     const currentChordDisplay = playerBasic.querySelector('.current-chord');
     const currentSectionDisplay = playerBasic.querySelector('.current-section');
     const chordInstructionsDisplay = playerBasic.querySelector('.chord-instructions');
+        function setAnimatedText(el, nextText) {
+            if (el.textContent === nextText) return;
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(4px)';
+            requestAnimationFrame(() => {
+                el.textContent = nextText;
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            });
+        }
+
+        // Remove marquee behavior per request
+        function updateLyricMarquee() {
+            currentLyricDisplay.classList.remove('marquee');
+        }
     const contextMenu = document.getElementById('context-menu');
     let currentTrack = null;
     let lastUpdateTime = 0;
@@ -832,16 +779,17 @@
         return `${baseUrl}?song=${trackIndex}`;
     }
 
-    // Expand/Collapse player
+    // Expand/Collapse player with animation
     togglePlayerBtn.addEventListener('click', () => {
-        const isCollapsed = player.classList.toggle('collapsed');
+        const isExpanded = player.classList.toggle('expanded');
+        togglePlayerBtn.classList.toggle('expanded', isExpanded);
         const icon = togglePlayerBtn.querySelector('i');
-        if (isCollapsed) {
-            icon.classList.remove('fa-chevron-up');
-            icon.classList.add('fa-chevron-down');
-        } else {
+        if (isExpanded) {
             icon.classList.remove('fa-chevron-down');
             icon.classList.add('fa-chevron-up');
+        } else {
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
         }
     });
 
@@ -853,9 +801,8 @@
     function selectSong(track, trackIndex, startTime = 0, autoPlay = true) {
         console.log(`Selecting song: ${track.title} (index: ${trackIndex}, startTime: ${startTime}, autoPlay: ${autoPlay})`);
         if (currentTrack) {
-            audio.pause();
-            audio.currentTime = 0;
-            audio.src = ''; // Clear current source to reset audio element
+            audioEngine.stop();
+            audio.src = '';
         }
         document.querySelectorAll('.song-item').forEach(item => item.classList.remove('active'));
         const songItem = songList.children[trackIndex];
@@ -875,7 +822,17 @@
             return;
         }
         lyricsContent.innerHTML = '';
+        // Clear structure content but preserve overlay canvas by recreating it
         structureContent.innerHTML = '';
+        const chordsCanvasExisting = document.getElementById('chords-gl');
+        const chordsCanvas = document.createElement('canvas');
+        chordsCanvas.id = 'chords-gl';
+        chordsCanvas.style.position = 'absolute';
+        chordsCanvas.style.top = '0';
+        chordsCanvas.style.left = '0';
+        chordsCanvas.style.width = '100%';
+        chordsCanvas.style.height = '100%';
+        chordsCanvas.style.pointerEvents = 'none';
         currentLyricDisplay.textContent = '';
         currentChordDisplay.textContent = '';
         chordInstructionsDisplay.textContent = '';
@@ -888,6 +845,7 @@
         tempoInfo.className = 'tempo-info';
         tempoInfo.textContent = `Tempo: ${track.tempo} BPM | Time Signature: ${track.timeSignature}`;
         structureContent.appendChild(tempoInfo);
+        structureContent.appendChild(chordsCanvas);
 
         track.lyrics.forEach((line, index) => {
             const lineDiv = document.createElement('div');
@@ -907,8 +865,8 @@
                     const offset = parseFloat(lineDiv.dataset.offset) || 0;
                     const beatsPerBar = isSixEight ? 2 : 4;
                     const startTime = (bar * beatsPerBar * beatDuration) + offset;
-                    audio.currentTime = startTime;
-                    audio.play().catch(err => {
+                    audioEngine.seek(startTime);
+                    audioEngine.play().catch(err => {
                         console.error('Audio play error:', err);
                         playBtn.disabled = false;
                         pauseBtn.disabled = true;
@@ -973,8 +931,8 @@
                                 const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
                                 const beat = parseInt(chordSpan.dataset.beat);
                                 const startTime = (beat - 1) * beatDuration;
-                                audio.currentTime = startTime;
-                                audio.play().catch(err => {
+                                audioEngine.seek(startTime);
+                                audioEngine.play().catch(err => {
                                     console.error('Audio play error:', err);
                                     playBtn.disabled = false;
                                     pauseBtn.disabled = true;
@@ -999,8 +957,7 @@
             }
         });
 
-        seekBar.value = 0;
-        seekBar.style.setProperty('--value', '0%');
+        glSeek.render(0);
         lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
             line.classList.remove('active');
             line.classList.remove('passed');
@@ -1012,11 +969,12 @@
         structureContent.querySelectorAll('.chord-progress').forEach(progress => progress.style.setProperty('--progress', 0));
 
         audio.addEventListener('loadedmetadata', () => {
+            audioEngine.attach(audio);
             if (startTime < audio.duration) {
-                audio.currentTime = startTime;
+                audioEngine.seek(startTime);
             }
             if (autoPlay) {
-                audio.play().catch(err => {
+                audioEngine.play().catch(err => {
                     console.error('Audio play error:', err);
                     playBtn.disabled = false;
                     pauseBtn.disabled = true;
@@ -1024,7 +982,7 @@
                 playBtn.disabled = true;
                 pauseBtn.disabled = false;
             }
-            requestAnimationFrame(updateProgressBars);
+            // Let the dedicated rAF loop handle updates at 60fps
         }, { once: true });
     }
 
@@ -1200,8 +1158,8 @@
             const rect = contextTarget.element.getBoundingClientRect();
             const pos = (e.clientX - rect.left) / rect.width;
             const duration = audio.duration || 0;
-            audio.currentTime = pos * duration;
-            audio.play().catch(err => {
+            audioEngine.seek(pos * duration);
+            audioEngine.play().catch(err => {
                 console.error('Audio play error:', err);
                 playBtn.disabled = false;
                 pauseBtn.disabled = true;
@@ -1448,16 +1406,24 @@
         hideContextMenu();
     });
 
-    seekBar.addEventListener('input', () => {
-        seekBar.style.setProperty('--value', seekBar.value + '%');
-        if (currentTrack) {
-            const duration = audio.duration || 0;
-            audio.currentTime = (seekBar.value / 100) * duration;
-        }
+    // Clicking on seek canvas performs seeking via Web Audio
+    seekCanvas.addEventListener('click', (e) => {
+        if (!currentTrack) return;
+        const rect = seekCanvas.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        const duration = audio.duration || 0;
+        audioEngine.seek(pos * duration);
+        audioEngine.play().catch(err => {
+            console.error('Audio play error:', err);
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+        });
+        playBtn.disabled = true;
+        pauseBtn.disabled = false;
     });
 
-    seekBar.addEventListener('contextmenu', (e) => {
-        showContextMenu(e, 'seek-bar', seekBar);
+    seekCanvas.addEventListener('contextmenu', (e) => {
+        showContextMenu(e, 'seek-bar', seekCanvas);
     });
 
     data.tracks.forEach((track, trackIndex) => {
@@ -1531,7 +1497,7 @@
     handleQueryParams();
 
     playBtn.addEventListener('click', () => {
-        audio.play().catch(err => {
+        audioEngine.play().catch(err => {
             console.error('Audio play error:', err);
             playBtn.disabled = false;
             pauseBtn.disabled = true;
@@ -1540,12 +1506,11 @@
         pauseBtn.disabled = false;
         playerBasic.classList.add('playing');
         // ensure seeker starts at 0 with no offset
-        seekBar.value = 0;
-        seekBar.style.setProperty('--value', '0%');
+        glSeek.render(0);
     });
 
     pauseBtn.addEventListener('click', () => {
-        audio.pause();
+        audioEngine.pause();
         playBtn.disabled = false;
         pauseBtn.disabled = true;
         playerBasic.classList.remove('playing');
@@ -1558,8 +1523,7 @@
         } else {
             playBtn.disabled = false;
             pauseBtn.disabled = true;
-            seekBar.value = 0;
-            seekBar.style.setProperty('--value', '0%');
+            glSeek.render(0);
             currentLyricDisplay.textContent = '';
             currentChordDisplay.textContent = '';
             chordInstructionsDisplay.textContent = '';
@@ -1584,8 +1548,7 @@
         const duration = audio.duration || 0;
         timeline.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
         const progressPercent = duration ? (currentTime / duration) * 100 : 0;
-        seekBar.value = progressPercent;
-        seekBar.style.setProperty('--value', progressPercent + '%');
+        glSeek.render(progressPercent / 100);
 
         const bpm = parseInt(currentTrack.tempo) || 120;
         const isSixEight = currentTrack.timeSignature === '6/8';
@@ -1601,7 +1564,7 @@
             }
             beatIndex += sectionBeats;
         });
-        currentSectionDisplay.textContent = currentSection;
+        setAnimatedText(currentSectionDisplay, currentSection);
 
         let currentLyric = '';
         lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
@@ -1617,7 +1580,8 @@
                 currentLyric = line.textContent;
             }
         });
-        currentLyricDisplay.textContent = currentLyric;
+        setAnimatedText(currentLyricDisplay, currentLyric);
+        updateLyricMarquee();
 
         let currentChord = '';
         structureContent.querySelectorAll('.structure-chord').forEach(chord => {
@@ -1629,26 +1593,42 @@
             if (currentBeat >= startBeat && currentBeat <= endBeat) {
                 currentChord = chord.querySelector('.chord').textContent;
                 const chordData = chordMap.get(currentChord) || { instructions: 'N/A' };
-                currentChordDisplay.textContent = currentChord;
-                chordInstructionsDisplay.textContent = chordData.instructions ? `${chordData.instructions}` : '';
+                setAnimatedText(currentChordDisplay, currentChord);
+                setAnimatedText(chordInstructionsDisplay, chordData.instructions ? `${chordData.instructions}` : '');
             }
         });
 
-        structureContent.querySelectorAll('.chord-progress').forEach(progress => {
-            const progressBeat = parseInt(progress.dataset.beat) - 1;
-            const spanLength = parseInt(progress.dataset.span) || 1;
-            const beatStartTime = progressBeat * beatDuration;
-            const beatEndTime = beatStartTime + (beatDuration * spanLength);
-            let progressValue = 0;
-
-            if (currentTime >= beatEndTime) {
-                progressValue = 100;
-            } else if (currentTime >= beatStartTime && currentTime < beatEndTime) {
-                progressValue = Math.min(100, ((currentTime - beatStartTime) / (beatDuration * spanLength)) * 100);
+        // WebGL overlay for chord progress
+        const chordsCanvas = document.getElementById('chords-gl');
+        if (chordsCanvas) {
+            const overlay = window.getChordOverlayRenderer ? window.getChordOverlayRenderer(chordsCanvas) : null;
+            if (overlay) {
+            const rects = [];
+            const containers = structureContent.querySelectorAll('.chord-container');
+            containers.forEach(c => {
+                const progressBeat = parseInt(c.querySelector('.chord-progress').dataset.beat) - 1;
+                const spanLength = parseInt(c.querySelector('.chord-progress').dataset.span) || 1;
+                const beatStartTime = progressBeat * beatDuration;
+                const beatEndTime = beatStartTime + (beatDuration * spanLength);
+                let p = 0;
+                if (currentTime >= beatEndTime) p = 1;
+                else if (currentTime >= beatStartTime && currentTime < beatEndTime) {
+                    p = Math.min(1, (currentTime - beatStartTime) / (beatDuration * spanLength));
+                }
+                if (p > 0) {
+                    const r = c.getBoundingClientRect();
+                    const host = structureContent.getBoundingClientRect();
+                    rects.push({
+                        x: Math.floor(r.left - host.left) + 1,
+                        y: Math.floor(r.top - host.top) + 1,
+                        w: Math.max(1, Math.floor((r.width - 2) * p)),
+                        h: Math.max(1, Math.floor(r.height - 2))
+                    });
+                }
+            });
+                overlay.render(rects);
             }
-
-            progress.style.setProperty('--progress', progressValue);
-        });
+        }
 
         requestAnimationFrame(updateProgressBars);
     }
