@@ -102,6 +102,29 @@
             grid-template-columns: 1fr auto auto;
             column-gap: 8px;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .song-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.6) 40%, 
+                rgba(255, 255, 255, 0.95) 50%, 
+                rgba(255, 255, 255, 0.6) 60%, 
+                transparent 100%);
+            transition: left 0s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .song-item > * {
+            position: relative;
+            z-index: 2;
         }
         .song-title {
             padding: 2px 4px;
@@ -124,8 +147,12 @@
             opacity: 0.85;
         }
         .song-item:hover {
-            background: #FFF6;
+            background: #FFFFFFCC;
             color: #000;
+        }
+        .song-item:hover::before {
+            left: 100%;
+            transition: left 0.4s ease;
         }
         .song-item.active {
             background: #FFF;
@@ -133,6 +160,7 @@
         }
         .player {
             background-color: #FFF;
+            backdrop-filter: blur(20px);
             max-width: 600px;
             width: 100%;
             padding: 8px;
@@ -141,6 +169,7 @@
         }
         .player-basic {
             background-color: #FFF;
+            backdrop-filter: blur(20px);
             max-width: 600px;
             width: 100%;
             padding: 8px;
@@ -174,14 +203,39 @@
             line-height: 1;
             border-radius: 0px !important;
             border: 0px;
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+        }
+        .player-controls button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.6) 40%, 
+                rgba(255, 255, 255, 0.95) 50%, 
+                rgba(255, 255, 255, 0.6) 60%, 
+                transparent 100%);
+            transition: left 0s ease;
+            pointer-events: none;
+        }
+        .player-controls button:not(:disabled):hover::before {
+            left: 100%;
+            transition: left 0.3s ease;
         }
         .player-controls button:disabled {
-            color: #808080;
+            opacity: 0.4;
             cursor: default;
         }
         .player-controls button i {
             font-size: 14px;
             line-height: 1;
+            color: #fff;
         }
         .player-timeline {
             font-size: 12px;
@@ -263,6 +317,33 @@
         }
         .lyrics-line {
             padding: 1px 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .lyrics-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.6) 40%, 
+                rgba(255, 255, 255, 0.9) 50%, 
+                rgba(255, 255, 255, 0.6) 60%, 
+                transparent 100%);
+            transition: left 0s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .lyrics-line:hover {
+            background: #000000;
+            color: #fff;
+        }
+        .lyrics-line:hover::before {
+            left: 100%;
+            transition: left 0.4s ease;
         }
         .lyrics-line.active {
             background: #000;
@@ -277,6 +358,36 @@
             font-size: 11px;
             cursor: pointer;
             position: relative;
+            overflow: hidden;
+        }
+        .structure-chord::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.6) 40%, 
+                rgba(255, 255, 255, 0.95) 50%, 
+                rgba(255, 255, 255, 0.6) 60%, 
+                transparent 100%);
+            transition: left 0s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .structure-chord:hover::before {
+            left: 100%;
+            transition: left 0.4s ease;
+        }
+        .structure-chord:not(.passed):hover {
+            background: #000000;
+            color: #fff;
+        }
+        .structure-chord.passed:hover {
+            background: #FFFFFF;
+            color: #000;
         }
         .structure-chord.active {
             background: transparent; /* avoid instant black pop */
@@ -378,11 +489,34 @@
         .menu-item {
             padding: 4px 8px;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.5) 40%, 
+                rgba(255, 255, 255, 0.8) 50%, 
+                rgba(255, 255, 255, 0.5) 60%, 
+                transparent 100%);
+            transition: left 0s ease;
+            pointer-events: none;
+            z-index: 1;
         }
 
         .menu-item:hover {
             background: #00017b;
             color: #fff;
+        }
+        .menu-item:hover::before {
+            left: 100%;
+            transition: left 0.3s ease;
         }
 
         .menu-divider {
@@ -934,6 +1068,35 @@
 
         audio.addEventListener('loadedmetadata', () => {
             audioEngine.attach(audio);
+            
+            // Cache DOM elements for performance
+            cachedLyricLines = Array.from(lyricsContent.querySelectorAll('.lyrics-line'));
+            cachedChordElements = Array.from(structureContent.querySelectorAll('.structure-chord'));
+            
+            // Pre-compute and cache bounding rects for chord containers
+            const containers = structureContent.querySelectorAll('.chord-container');
+            const hostRect = structureContent.getBoundingClientRect();
+            cachedChordContainers = Array.from(containers).map(c => {
+                const r = c.getBoundingClientRect();
+                const progressEl = c.querySelector('.chord-progress');
+                return {
+                    beat: parseInt(progressEl.dataset.beat) - 1,
+                    span: parseInt(progressEl.dataset.span) || 1,
+                    x: Math.floor(r.left - hostRect.left),
+                    y: Math.floor(r.top - hostRect.top),
+                    w: Math.floor(r.width),
+                    h: Math.floor(r.height)
+                };
+            });
+            
+            // Cache chord overlay renderer
+            const chordsCanvas = document.getElementById('chords-gl');
+            cachedChordOverlay = chordsCanvas && window.getChordOverlayRenderer ? 
+                window.getChordOverlayRenderer(chordsCanvas) : null;
+            
+            lastActiveLyric = null;
+            lastActiveChord = null;
+            
             if (startTime < audio.duration) {
                 audioEngine.seek(startTime);
             }
@@ -946,7 +1109,6 @@
                 playBtn.disabled = true;
                 pauseBtn.disabled = false;
             }
-            // Let the dedicated rAF loop handle updates at 60fps
         }, { once: true });
     }
 
@@ -1494,110 +1656,154 @@
         }
     });
 
-    function updateProgressBars(timestamp) {
+    // Cache for performance
+    let cachedLyricLines = [];
+    let cachedChordElements = [];
+    let cachedChordContainers = [];
+    let cachedChordOverlay = null;
+    let lastActiveLyric = null;
+    let lastActiveChord = null;
+
+    function updateProgressBars() {
         if (!currentTrack || audio.paused) return;
 
         const currentTime = audio.currentTime;
         const duration = audio.duration || 0;
-        timeline.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-        const progressPercent = duration ? (currentTime / duration) * 100 : 0;
-        glSeek.render(progressPercent / 100);
+        
+        // Update timeline text (throttle to reduce DOM writes)
+        const timeText = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+        if (timeline.textContent !== timeText) {
+            timeline.textContent = timeText;
+        }
+        
+        const progressPercent = duration ? (currentTime / duration) : 0;
+        glSeek.render(progressPercent);
 
         const bpm = parseInt(currentTrack.tempo) || 120;
         const isSixEight = currentTrack.timeSignature === '6/8';
         const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
         const currentBeat = Math.floor(currentTime / beatDuration);
 
+        // Find current section
         let currentSection = '';
         let beatIndex = 0;
-        currentTrack.structure.sections.forEach(section => {
-            const sectionBeats = section.chords.length;
+        const sections = currentTrack.structure.sections;
+        for (let i = 0; i < sections.length; i++) {
+            const sectionBeats = sections[i].chords.length;
             if (currentBeat >= beatIndex && currentBeat < beatIndex + sectionBeats) {
-                currentSection = section.label;
+                currentSection = sections[i].label;
+                break;
             }
             beatIndex += sectionBeats;
-        });
+        }
         setAnimatedText(currentSectionDisplay, currentSection);
 
+        // Update lyrics with minimal DOM manipulation
         let currentLyric = '';
-        lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
+        const beatsPerBar = isSixEight ? 2 : 4;
+        
+        for (let i = 0; i < cachedLyricLines.length; i++) {
+            const line = cachedLyricLines[i];
             const bar = parseInt(line.dataset.bar) || 1;
             const length = parseFloat(line.dataset.length) || 1;
             const offset = parseFloat(line.dataset.offset) || 0;
-            const beatsPerBar = isSixEight ? 2 : 4;
             const startTime = (bar * beatsPerBar * beatDuration) + offset;
             const endTime = startTime + (length * beatsPerBar * beatDuration);
-            line.classList.toggle('active', currentTime >= startTime && currentTime < endTime);
-            line.classList.toggle('passed', currentTime >= endTime);
-            if (currentTime >= startTime && currentTime < endTime) {
+            
+            const isActive = currentTime >= startTime && currentTime < endTime;
+            const isPassed = currentTime >= endTime;
+            
+            // Only update classes if state changed
+            if (isActive && line !== lastActiveLyric) {
+                if (lastActiveLyric) lastActiveLyric.classList.remove('active');
+                line.classList.add('active');
+                line.classList.remove('passed');
+                lastActiveLyric = line;
                 currentLyric = line.textContent;
+            } else if (isPassed && !line.classList.contains('passed')) {
+                line.classList.remove('active');
+                line.classList.add('passed');
+            } else if (!isActive && !isPassed && (line.classList.contains('active') || line.classList.contains('passed'))) {
+                line.classList.remove('active', 'passed');
             }
-        });
+            
+            if (isActive) currentLyric = line.textContent;
+        }
         setAnimatedText(currentLyricDisplay, currentLyric);
-        updateLyricMarquee();
 
+        // Update chords with minimal DOM manipulation
         let currentChord = '';
-        structureContent.querySelectorAll('.structure-chord').forEach(chord => {
+        for (let i = 0; i < cachedChordElements.length; i++) {
+            const chord = cachedChordElements[i];
             const startBeat = parseInt(chord.dataset.beat) - 1;
             const spanLength = parseInt(chord.dataset.span) || 1;
             const endBeat = startBeat + spanLength - 1;
-            chord.classList.toggle('active', currentBeat >= startBeat && currentBeat <= endBeat);
-            chord.classList.toggle('passed', currentBeat > endBeat);
-            if (currentBeat >= startBeat && currentBeat <= endBeat) {
-                currentChord = chord.querySelector('.chord').textContent;
-                const chordData = chordMap.get(currentChord) || { instructions: 'N/A' };
-                setAnimatedText(currentChordDisplay, currentChord);
+            
+            const isActive = currentBeat >= startBeat && currentBeat <= endBeat;
+            const isPassed = currentBeat > endBeat;
+            
+            // Only update classes if state changed
+            if (isActive && chord !== lastActiveChord) {
+                if (lastActiveChord) lastActiveChord.classList.remove('active');
+                chord.classList.add('active');
+                chord.classList.remove('passed');
+                lastActiveChord = chord;
+                const chordName = chord.querySelector('.chord').textContent;
+                const chordData = chordMap.get(chordName) || { instructions: 'N/A' };
+                setAnimatedText(currentChordDisplay, chordName);
                 setAnimatedText(chordInstructionsDisplay, chordData.instructions ? `${chordData.instructions}` : '');
-            }
-        });
-
-        // WebGL overlay for chord progress
-        const chordsCanvas = document.getElementById('chords-gl');
-        if (chordsCanvas) {
-            const overlay = window.getChordOverlayRenderer ? window.getChordOverlayRenderer(chordsCanvas) : null;
-            if (overlay) {
-            const rects = [];
-            const containers = structureContent.querySelectorAll('.chord-container');
-            containers.forEach(c => {
-                const progressBeat = parseInt(c.querySelector('.chord-progress').dataset.beat) - 1;
-                const spanLength = parseInt(c.querySelector('.chord-progress').dataset.span) || 1;
-                const beatStartTime = progressBeat * beatDuration;
-                const beatEndTime = beatStartTime + (beatDuration * spanLength);
-                let p = 0;
-                if (currentTime >= beatEndTime) p = 1;
-                else if (currentTime >= beatStartTime && currentTime < beatEndTime) {
-                    p = Math.min(1, (currentTime - beatStartTime) / (beatDuration * spanLength));
-                }
-                if (p > 0) {
-                    const r = c.getBoundingClientRect();
-                    const host = structureContent.getBoundingClientRect();
-                    rects.push({
-                        x: Math.floor(r.left - host.left) + 1,
-                        y: Math.floor(r.top - host.top) + 1,
-                        w: Math.max(1, Math.floor((r.width - 2) * p)),
-                        h: Math.max(1, Math.floor(r.height - 2))
-                    });
-                }
-            });
-                overlay.render(rects);
+            } else if (isPassed && !chord.classList.contains('passed')) {
+                chord.classList.remove('active');
+                chord.classList.add('passed');
+            } else if (!isActive && !isPassed && (chord.classList.contains('active') || chord.classList.contains('passed'))) {
+                chord.classList.remove('active', 'passed');
             }
         }
 
-        requestAnimationFrame(updateProgressBars);
+        // WebGL overlay for chord progress (use cached data)
+        if (cachedChordOverlay && cachedChordContainers.length > 0) {
+            const rects = [];
+            for (let i = 0; i < cachedChordContainers.length; i++) {
+                const c = cachedChordContainers[i];
+                const progressBeat = c.beat;
+                const spanLength = c.span;
+                const beatStartTime = progressBeat * beatDuration;
+                const beatEndTime = beatStartTime + (beatDuration * spanLength);
+                
+                let p = 0;
+                if (currentTime >= beatEndTime) p = 1;
+                else if (currentTime >= beatStartTime && currentTime < beatEndTime) {
+                    p = (currentTime - beatStartTime) / (beatDuration * spanLength);
+                }
+                
+                if (p > 0) {
+                    rects.push({
+                        x: c.x + 1,
+                        y: c.y + 1,
+                        w: Math.max(1, Math.floor((c.w - 2) * p)),
+                        h: Math.max(1, c.h - 2)
+                    });
+                }
+            }
+            cachedChordOverlay.render(rects);
+        }
     }
 
     let animationFrameId = null;
     
     function smoothUpdateLoop() {
-        if (!audio.paused && currentTrack) {
-            updateProgressBars();
-            animationFrameId = requestAnimationFrame(smoothUpdateLoop);
+        if (audio.paused || !currentTrack) {
+            animationFrameId = null;
+            return;
         }
+        updateProgressBars();
+        animationFrameId = requestAnimationFrame(smoothUpdateLoop);
     }
     
     audio.addEventListener('play', () => {
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        smoothUpdateLoop();
+        if (!animationFrameId) {
+            smoothUpdateLoop();
+        }
     });
     
     audio.addEventListener('pause', () => {
@@ -1608,9 +1814,7 @@
     });
     
     audio.addEventListener('seeking', () => {
-        if (!audio.paused) {
-            updateProgressBars();
-        }
+        updateProgressBars();
     });
 
     audio.addEventListener('error', () => {

@@ -59,12 +59,17 @@ function createSeekRenderer(canvas) {
     gl.enableVertexAttribArray(a_pos);
     gl.vertexAttribPointer(a_pos, 2, gl.FLOAT, false, 0, 0);
 
+    // Pre-allocate buffer to avoid GC
+    const verts = new Float32Array(12);
+
     function rect(x, y, w, h){
         const x2 = x + w, y2 = y + h;
-        const verts = new Float32Array([
-            x, y,  x2, y,  x, y2,
-            x, y2, x2, y, x2, y2
-        ]);
+        verts[0] = x; verts[1] = y;
+        verts[2] = x2; verts[3] = y;
+        verts[4] = x; verts[5] = y2;
+        verts[6] = x; verts[7] = y2;
+        verts[8] = x2; verts[9] = y;
+        verts[10] = x2; verts[11] = y2;
         gl.bufferData(gl.ARRAY_BUFFER, verts, gl.DYNAMIC_DRAW);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
@@ -136,6 +141,9 @@ function createChordOverlayRenderer(canvas){
     const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.enableVertexAttribArray(a_pos); gl.vertexAttribPointer(a_pos,2,gl.FLOAT,false,0,0);
 
+    // Pre-allocate buffer
+    const verts = new Float32Array(12);
+
     function resize(){
         const rect = canvas.getBoundingClientRect();
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -148,10 +156,12 @@ function createChordOverlayRenderer(canvas){
 
     function rect(x,y,w,h){
         const x2 = x+w, y2 = y+h;
-        const verts = new Float32Array([
-            x,y,  x2,y,  x,y2,
-            x,y2, x2,y, x2,y2
-        ]);
+        verts[0] = x; verts[1] = y;
+        verts[2] = x2; verts[3] = y;
+        verts[4] = x; verts[5] = y2;
+        verts[6] = x; verts[7] = y2;
+        verts[8] = x2; verts[9] = y;
+        verts[10] = x2; verts[11] = y2;
         gl.bufferData(gl.ARRAY_BUFFER, verts, gl.DYNAMIC_DRAW);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
