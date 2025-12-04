@@ -24,13 +24,15 @@
             background: url('resources/background.png') center center / cover no-repeat fixed;
             background-color: #007c7e;
             color: #000;
-            padding: 10px;
+            padding: 10px 10px 10px 10px;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             -webkit-text-size-adjust: 100%;
             --right-margin: 60px;
             margin-right: var(--right-margin);
+            overflow: hidden;
+            height: 100vh;
         }
         * {
             margin: 0;
@@ -80,7 +82,8 @@
             -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%); /* Reversed gradient direction */
         }
         .song-list {
-            background-color: #FFF1;
+            background-color: #FFFFFF16;
+            backdrop-filter: blur(6px);
             max-width: 600px;
             width: 100%;
             display: flex;
@@ -133,10 +136,8 @@
             max-width: 600px;
             width: 100%;
             padding: 8px;
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;
-            transition: max-height 0.35s ease, opacity 0.35s ease;
+            max-height: 500px;
+            overflow-y: auto;
         }
         .player-basic {
             background-color: #FFF;
@@ -145,11 +146,6 @@
             padding: 8px;
             transition: all 0.3s ease;
         }
-        .player.expanded {
-            max-height: 1000px; /* large enough for content */
-            opacity: 1;
-        }
-
         .controls-bar {
             max-width: 600px;
             width: 100%;
@@ -159,21 +155,7 @@
             color: #fff;
             text-align: center;
         }
-        .toggle-player-btn {
-            width: 100%;
-            background: #EEE;
-            color: #000;
-            border: 0;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0;
-            padding: 12px 0;
-        }
-        /* Remove rotation; use icon class change for orientation */
-        .toggle-player-btn i { transition: none; }
+
         .player-controls {
             display: flex;
             align-items: center;
@@ -239,7 +221,7 @@
         }
         .seek-bar-container {
             width: 100%;
-            margin: 0;
+            margin: 10px 0;
             padding: 0;
             position: relative;
         }
@@ -608,9 +590,6 @@
         </div>
         <audio id="audio-player" crossorigin="anonymous"></audio>
     </div>
-    <div class="controls-bar">
-        <button class="toggle-player-btn" id="toggle-player" aria-label="Toggle player"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
-    </div>
     <section class="player" id="player">
         <div class="content-container">
             <div class="lyrics">
@@ -738,7 +717,6 @@
     const songList = document.getElementById('song-list');
     const player = document.getElementById('player');
     const playerBasic = document.getElementById('player-basic');
-    const togglePlayerBtn = document.getElementById('toggle-player');
     const audio = document.getElementById('audio-player');
     const seekCanvas = document.getElementById('seek-gl');
     const glSeek = createSeekRenderer(seekCanvas);
@@ -778,20 +756,6 @@
         const baseUrl = window.location.origin + window.location.pathname;
         return `${baseUrl}?song=${trackIndex}`;
     }
-
-    // Expand/Collapse player with animation
-    togglePlayerBtn.addEventListener('click', () => {
-        const isExpanded = player.classList.toggle('expanded');
-        togglePlayerBtn.classList.toggle('expanded', isExpanded);
-        const icon = togglePlayerBtn.querySelector('i');
-        if (isExpanded) {
-            icon.classList.remove('fa-chevron-down');
-            icon.classList.add('fa-chevron-up');
-        } else {
-            icon.classList.remove('fa-chevron-up');
-            icon.classList.add('fa-chevron-down');
-        }
-    });
 
     function updateURL(trackIndex) {
         const url = generateSongLink(trackIndex);
@@ -1454,26 +1418,16 @@
         });
         songList.appendChild(songItem);
 
-        // Fetch Last-Modified header via HEAD request and show relative time
+        // Show time since release date
+        if (track.releaseDate) {
+            const releaseDate = new Date(track.releaseDate);
+            songMeta.textContent = formatRelativeTime(releaseDate);
+        } else {
+            songMeta.textContent = '';
+        }
+
+        // Compute track length using Audio metadata
         if (track.mp3) {
-            try {
-                fetch(track.mp3, { method: 'HEAD' })
-                    .then(res => {
-                        const lm = res.headers.get('Last-Modified');
-                        if (lm) {
-                            const d = new Date(lm);
-                            songMeta.textContent = formatRelativeTime(d);
-                        } else {
-                            songMeta.textContent = 'modified: unavailable';
-                        }
-                    })
-                    .catch(() => {
-                        songMeta.textContent = 'modified: unavailable';
-                    });
-            } catch {
-                songMeta.textContent = 'modified: unavailable';
-            }
-            // Compute track length using Audio metadata
             try {
                 const tempAudio = new Audio();
                 tempAudio.preload = 'metadata';
@@ -1489,7 +1443,6 @@
                 songLength.textContent = '0:00';
             }
         } else {
-            songMeta.textContent = 'modified: unavailable';
             songLength.textContent = '0:00';
         }
     });
