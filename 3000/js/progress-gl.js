@@ -188,3 +188,65 @@ window.getChordOverlayRenderer = function(canvas){
     }
     return canvas.__renderer;
 };
+
+function createPanelRenderer(canvas){
+    const gl = canvas.getContext('webgl', { antialias: true, preserveDrawingBuffer: false });
+    if (!gl) return { start:()=>{}, stop:()=>{}, setMouse:()=>{} };
+
+    const vsSrc = `
+        attribute vec2 a_pos;
+        void main(){ gl_Position=vec4(a_pos,0.0,1.0); }
+    `;
+    const fsSrc = `
+        precision mediump float;
+        uniform vec2 u_res; uniform vec2 u_mouse; uniform float u_time;
+        void main(){
+            vec2 uv = gl_FragCoord.xy / u_res;
+            vec2 m = u_mouse / u_res;
+            // radial light from mouse, with soft falloff and slight time shimmer
+            float d = distance(uv, m);
+            float vignette = smoothstep(0.9, 0.3, d);
+            float shimmer = 0.03 * sin(u_time*3.0 + uv.x*8.0 + uv.y*6.0);
+            float intensity = clamp(vignette + shimmer, 0.0, 1.0);
+            vec3 color = vec3(1.0) * intensity;
+            gl_FragColor = vec4(color, 0.12);
+        }
+    `;
+    function compile(t,s){ const sh=gl.createShader(t); gl.shaderSource(sh,s); gl.compileShader(sh); if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)){ console.warn('PanelGL shader error:', gl.getShaderInfoLog(sh)); gl.deleteShader(sh); return null; } return sh; }
+    const vs=compile(gl.VERTEX_SHADER,vsSrc), fs=compile(gl.FRAGMENT_SHADER,fsSrc);
+    if (!vs || !fs) return { start:()=>{}, stop:()=>{}, setMouse:()=>{} };
+    const prog=gl.createProgram(); gl.attachShader(prog,vs); gl.attachShader(prog,fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn('PanelGL link error:', gl.getProgramInfoLog(prog)); return { start:()=>{}, stop:()=>{}, setMouse:()=>{} }; }
+    gl.useProgram(prog);
+    const a_pos=gl.getAttribLocation(prog,'a_pos'); const u_res=gl.getUniformLocation(prog,'u_res');
+    const u_mouse=gl.getUniformLocation(prog,'u_mouse'); const u_time=gl.getUniformLocation(prog,'u_time');
+    const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    if (a_pos === -1){ console.warn('PanelGL attribute a_pos missing'); return { start:()=>{}, stop:()=>{}, setMouse:()=>{} }; }
+    gl.enableVertexAttribArray(a_pos);
+    gl.vertexAttribPointer(a_pos,2,gl.FLOAT,false,0,0);
+    const verts=new Float32Array(12);
+    let mouseX=0, mouseY=0, running=false, rafId=null;
+    function resize(){ const r=canvas.getBoundingClientRect(); const dpr=Math.min(window.devicePixelRatio||1,2);
+        const w=Math.max(200, Math.floor(r.width*dpr)); const h=Math.max(40, Math.floor(r.height*dpr));
+        if (canvas.width!==w||canvas.height!==h){ canvas.width=w; canvas.height=h; }
+        gl.viewport(0,0,gl.drawingBufferWidth, gl.drawingBufferHeight);
+        gl.uniform2f(u_res, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    }
+    function fullQuad(){ verts[0]=-1;verts[1]=-1; verts[2]=1;verts[3]=-1; verts[4]=-1;verts[5]=1; verts[6]=-1;verts[7]=1; verts[8]=1;verts[9]=-1; verts[10]=1;verts[11]=1; gl.bufferData(gl.ARRAY_BUFFER, verts, gl.DYNAMIC_DRAW); gl.drawArrays(gl.TRIANGLES,0,6); }
+    function draw(){ resize(); const W=gl.drawingBufferWidth,H=gl.drawingBufferHeight; gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform2f(u_mouse, mouseX, mouseY); gl.uniform1f(u_time, performance.now()*0.001);
+        fullQuad();
+        if (running){ rafId=requestAnimationFrame(draw); } else { rafId=null; }
+    }
+    window.addEventListener('resize', draw);
+    canvas.addEventListener('mousemove', (e)=>{ const r=canvas.getBoundingClientRect(); const dpr=Math.min(window.devicePixelRatio||1,2);
+        mouseX=(e.clientX - r.left)*dpr; mouseY=(e.clientY - r.top)*dpr; if (!rafId) draw();
+    });
+    function start(){ if (!running){ running=true; draw(); } }
+    function stop(){ running=false; if (!rafId) draw(); }
+    function setMouse(x,y){ mouseX=x; mouseY=y; if (!rafId) draw(); }
+    draw();
+    return { start, stop, setMouse };
+}
+
+window.createPanelRenderer = createPanelRenderer;

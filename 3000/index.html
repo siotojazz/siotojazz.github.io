@@ -709,8 +709,7 @@
 
     <div class="player-basic" id="player-basic">
         <div class="player-controls">
-            <button class="play-btn" disabled aria-label="Play audio"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
-            <button class="pause-btn" disabled aria-label="Pause audio"><i class="fa-solid fa-pause" aria-hidden="true"></i></button>
+            <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
             <div class="current-info">
                 <span class="current-section"></span>
                 <span class="current-lyric"></span>
@@ -855,8 +854,7 @@
     const seekCanvas = document.getElementById('seek-gl');
     const glSeek = createSeekRenderer(seekCanvas);
     const audioEngine = new AudioEngine();
-    const playBtn = playerBasic.querySelector('.play-btn');
-    const pauseBtn = playerBasic.querySelector('.pause-btn');
+    const toggleBtn = playerBasic.querySelector('.toggle-btn');
     const timeline = playerBasic.querySelector('.player-timeline');
     const seekBar = null;
     const seekFill = null;
@@ -909,14 +907,14 @@
             return;
         }
         songItem.classList.add('active');
-        playBtn.disabled = !autoPlay; // Enable play button if autoplay is not requested
-        pauseBtn.disabled = true;
+        toggleBtn.disabled = false;
+        setToggleIcon(autoPlay ? false : true);
 
         audio.src = track.mp3;
         if (!audio.src) {
             console.error('Invalid audio source for track:', track.title);
-            playBtn.disabled = false;
-            pauseBtn.disabled = true;
+            toggleBtn.disabled = false;
+            setToggleIcon(true);
             return;
         }
         lyricsContent.innerHTML = '';
@@ -966,11 +964,10 @@
                     audioEngine.seek(startTime);
                     audioEngine.play().catch(err => {
                         console.error('Audio play error:', err);
-                        playBtn.disabled = false;
-                        pauseBtn.disabled = true;
+                        toggleBtn.disabled = false;
+                        setToggleIcon(true);
                     });
-                    playBtn.disabled = true;
-                    pauseBtn.disabled = false;
+                    setToggleIcon(false);
                 }
             });
             lineDiv.addEventListener('contextmenu', (e) => {
@@ -1032,11 +1029,10 @@
                                 audioEngine.seek(startTime);
                                 audioEngine.play().catch(err => {
                                     console.error('Audio play error:', err);
-                                    playBtn.disabled = false;
-                                    pauseBtn.disabled = true;
+                                    toggleBtn.disabled = false;
+                                    setToggleIcon(true);
                                 });
-                                playBtn.disabled = true;
-                                pauseBtn.disabled = false;
+                                setToggleIcon(false);
                             }
                         });
                         chordSpan.addEventListener('contextmenu', (e) => {
@@ -1103,11 +1099,10 @@
             if (autoPlay) {
                 audioEngine.play().catch(err => {
                     console.error('Audio play error:', err);
-                    playBtn.disabled = false;
-                    pauseBtn.disabled = true;
+                    toggleBtn.disabled = false;
+                    setToggleIcon(true);
                 });
-                playBtn.disabled = true;
-                pauseBtn.disabled = false;
+                setToggleIcon(false);
             }
         }, { once: true });
     }
@@ -1134,6 +1129,7 @@
 
     function showContextMenu(e, targetType, targetElement, targetTrack = currentTrack, targetTrackIndex = data.tracks.findIndex(t => t === currentTrack)) {
         e.preventDefault();
+        e.stopPropagation();
         contextTarget = { type: targetType, element: targetElement, track: targetTrack, trackIndex: targetTrackIndex };
         const menuItems = contextMenu.querySelectorAll('.menu-item');
         const currentTrackIndex = currentTrack ? data.tracks.findIndex(t => t === currentTrack) : -1;
@@ -1195,6 +1191,8 @@
             if (!hasPrevVerse) contextMenu.querySelector('[data-action="prev-verse"]').style.display = 'none';
         }
 
+        // Make visible before measuring so we get real dimensions
+        contextMenu.style.display = 'block';
         const menuRect = contextMenu.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
@@ -1212,7 +1210,6 @@
 
         contextMenu.style.top = `${menuY}px`;
         contextMenu.style.left = `${menuX}px`;
-        contextMenu.style.display = 'block';
     }
 
     function hideContextMenu() {
@@ -1220,11 +1217,31 @@
         contextTarget = null;
     }
 
-    document.addEventListener('click', hideContextMenu);
-    document.addEventListener('contextmenu', (e) => {
-        if (!e.target.closest('.song-item, .lyrics-line, .structure-chord, .seek-bar')) {
+    // Only hide on left-clicks outside relevant targets
+    document.addEventListener('click', (e) => {
+        if (e.button !== 0) return; // ignore right/middle clicks
+        if (!e.target.closest('#context-menu, .song-item, .lyrics-line, .structure-chord, #seek-gl')) {
             hideContextMenu();
         }
+    });
+    document.addEventListener('contextmenu', (e) => {
+        // Route right-clicks to our custom menu when on supported targets
+        const targetEl = e.target.closest('.song-item, .lyrics-line, .structure-chord, #seek-gl');
+        if (targetEl) {
+            let targetType = null;
+            if (targetEl.matches('.song-item')) targetType = 'song-item';
+            else if (targetEl.matches('.lyrics-line')) targetType = 'lyrics-line';
+            else if (targetEl.matches('.structure-chord')) targetType = 'structure-chord';
+            else if (targetEl.matches('#seek-gl')) targetType = 'seek-bar';
+            if (targetType) {
+                e.preventDefault();
+                e.stopPropagation();
+                showContextMenu(e, targetType, targetEl);
+                return; // handled by custom menu
+            }
+        }
+        // Otherwise, hide any open menu and allow default browser menu
+        hideContextMenu();
     });
 
     contextMenu.addEventListener('click', (e) => {
@@ -1287,11 +1304,10 @@
             audioEngine.seek(pos * duration);
             audioEngine.play().catch(err => {
                 console.error('Audio play error:', err);
-                playBtn.disabled = false;
-                pauseBtn.disabled = true;
+                toggleBtn.disabled = false;
+                setToggleIcon(true);
             });
-            playBtn.disabled = true;
-            pauseBtn.disabled = false;
+            setToggleIcon(false);
         } else if (action === 'copy-song-link' && targetTrack) {
             const link = generateSongLink(targetTrackIndex);
             navigator.clipboard.writeText(link);
@@ -1349,11 +1365,10 @@
                     audio.currentTime = startTime;
                     audio.play().catch(err => {
                         console.error('Audio play error:', err);
-                        playBtn.disabled = false;
-                        pauseBtn.disabled = true;
+                        toggleBtn.disabled = false;
+                        setToggleIcon(true);
                     });
-                    playBtn.disabled = true;
-                    pauseBtn.disabled = false;
+                    setToggleIcon(false);
                 }
             }
         } else if (action === 'prev-verse' && contextTarget.type === 'lyrics-line' && targetTrack) {
@@ -1374,11 +1389,10 @@
                     audio.currentTime = startTime;
                     audio.play().catch(err => {
                         console.error('Audio play error:', err);
-                        playBtn.disabled = false;
-                        pauseBtn.disabled = true;
+                        toggleBtn.disabled = false;
+                        setToggleIcon(true);
                     });
-                    playBtn.disabled = true;
-                    pauseBtn.disabled = false;
+                    setToggleIcon(false);
                 }
             }
         } else if (action === 'next-stanza' && contextTarget.type === 'lyrics-line' && targetTrack) {
@@ -1407,11 +1421,10 @@
                     audio.currentTime = startTime;
                     audio.play().catch(err => {
                         console.error('Audio play error:', err);
-                        playBtn.disabled = false;
-                        pauseBtn.disabled = true;
+                        toggleBtn.disabled = false;
+                        setToggleIcon(true);
                     });
-                    playBtn.disabled = true;
-                    pauseBtn.disabled = false;
+                    setToggleIcon(false);
                 }
             }
         } else if (action === 'prev-stanza' && contextTarget.type === 'lyrics-line' && targetTrack) {
@@ -1438,11 +1451,10 @@
                     audio.currentTime = startTime;
                     audio.play().catch(err => {
                         console.error('Audio play error:', err);
-                        playBtn.disabled = false;
-                        pauseBtn.disabled = true;
+                        toggleBtn.disabled = false;
+                        setToggleIcon(true);
                     });
-                    playBtn.disabled = true;
-                    pauseBtn.disabled = false;
+                    setToggleIcon(false);
                 }
             }
         } else if (action === 'next-section' && contextTarget.type === 'structure-chord' && targetTrack) {
@@ -1468,11 +1480,10 @@
                     audio.currentTime = nextSectionTime;
                     audio.play().catch(err => {
                         console.error('Audio play error:', err);
-                        playBtn.disabled = false;
-                        pauseBtn.disabled = true;
+                        toggleBtn.disabled = false;
+                        setToggleIcon(true);
                     });
-                    playBtn.disabled = true;
-                    pauseBtn.disabled = false;
+                    setToggleIcon(false);
                 }
             }
         } else if (action === 'prev-section' && contextTarget.type === 'structure-chord' && targetTrack) {
@@ -1496,11 +1507,10 @@
                 audio.currentTime = prevSectionTime;
                 audio.play().catch(err => {
                     console.error('Audio play error:', err);
-                    playBtn.disabled = false;
-                    pauseBtn.disabled = true;
+                    toggleBtn.disabled = false;
+                    setToggleIcon(true);
                 });
-                playBtn.disabled = true;
-                pauseBtn.disabled = false;
+                setToggleIcon(false);
             }
         } else if (action === 'toggle-lyrics') {
             const lyrics = document.querySelector('.lyrics');
@@ -1541,11 +1551,10 @@
         audioEngine.seek(pos * duration);
         audioEngine.play().catch(err => {
             console.error('Audio play error:', err);
-            playBtn.disabled = false;
-            pauseBtn.disabled = true;
+            toggleBtn.disabled = false;
+            setToggleIcon(true);
         });
-        playBtn.disabled = true;
-        pauseBtn.disabled = false;
+        setToggleIcon(false);
     });
 
     seekCanvas.addEventListener('contextmenu', (e) => {
@@ -1609,26 +1618,41 @@
         }
     });
 
+    // Set startup defaults until a song is selected
+    setToggleIcon(true);
+    toggleBtn.disabled = true;
+
     handleQueryParams();
 
-    playBtn.addEventListener('click', () => {
-        audioEngine.play().catch(err => {
-            console.error('Audio play error:', err);
-            playBtn.disabled = false;
-            pauseBtn.disabled = true;
-        });
-        playBtn.disabled = true;
-        pauseBtn.disabled = false;
-        playerBasic.classList.add('playing');
-        // ensure seeker starts at 0 with no offset
-        glSeek.render(0);
-    });
+    function setToggleIcon(showPlay) {
+        const icon = toggleBtn.querySelector('i');
+        if (showPlay) {
+            toggleBtn.setAttribute('aria-label', 'Play');
+            icon.classList.remove('fa-pause');
+            icon.classList.add('fa-play');
+            playerBasic.classList.remove('playing');
+        } else {
+            toggleBtn.setAttribute('aria-label', 'Pause');
+            icon.classList.remove('fa-play');
+            icon.classList.add('fa-pause');
+            playerBasic.classList.add('playing');
+        }
+    }
 
-    pauseBtn.addEventListener('click', () => {
-        audioEngine.pause();
-        playBtn.disabled = false;
-        pauseBtn.disabled = true;
-        playerBasic.classList.remove('playing');
+    toggleBtn.addEventListener('click', () => {
+        if (!currentTrack) return;
+        if (audio.paused) {
+            audioEngine.play().catch(err => {
+                console.error('Audio play error:', err);
+                toggleBtn.disabled = false;
+                setToggleIcon(true);
+            });
+            setToggleIcon(false);
+            glSeek.render(0);
+        } else {
+            audioEngine.pause();
+            setToggleIcon(true);
+        }
     });
 
     audio.addEventListener('ended', () => {
@@ -1636,8 +1660,8 @@
         if (currentTrackIndex < data.tracks.length - 1) {
             selectSong(data.tracks[currentTrackIndex + 1], currentTrackIndex + 1, 0, true);
         } else {
-            playBtn.disabled = false;
-            pauseBtn.disabled = true;
+            toggleBtn.disabled = false;
+            setToggleIcon(true);
             glSeek.render(0);
             currentLyricDisplay.textContent = '';
             currentChordDisplay.textContent = '';
@@ -1819,8 +1843,8 @@
 
     audio.addEventListener('error', () => {
         console.error('Audio error:', audio.error);
-        playBtn.disabled = false;
-        pauseBtn.disabled = true;
+        toggleBtn.disabled = false;
+        setToggleIcon(true);
     });
 })
 .catch(error => console.error('Error loading JSON:', error));
