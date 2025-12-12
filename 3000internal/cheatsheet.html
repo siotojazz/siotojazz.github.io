@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sioto Jazz - 29</title>
+    <style>
+        body {
+            font-family: 'MS Sans Serif', 'Arial', sans-serif;
+            margin: 10px auto;
+            background-color: #008080; /* Windows 98 teal */
+            color: #000;
+            line-height: 1.3;
+        }
+        .window {
+            border: 2px outset #fff;
+            background-color: #C0C0C0;
+            padding: 3px;
+            max-width: 600px;
+            margin: 10px auto;
+            box-shadow: 2px 2px 2px #808080;
+        }
+        .window-title {
+            background-color: #000080;
+            color: #fff;
+            padding: 3px 5px;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px inset #fff;
+        }
+        .track-container {
+            margin-bottom: 10px;
+            border: 2px inset #fff;
+            background-color: #C0C0C0;
+            padding: 5px;
+            overflow-x: auto;
+            display: block;
+            box-shadow: 2px 2px 2px #808080;
+        }
+        .track-table {
+            width: 100%;
+            max-width: 600px;
+            border-collapse: collapse;
+            background-color: #C0C0C0;
+            border: 1px inset #fff;
+            table-layout: fixed;
+            margin-bottom: 10px;
+        }
+        .track-table th, .track-table td {
+            border: 1px solid #808080;
+            padding: 3px;
+            text-align: center;
+            font-size: 11px;
+            min-width: 30px;
+            max-width: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .track-table th {
+            background-color: #000080;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            height: 80px;
+            padding: 2px;
+        }
+        .track-table .meta-row th {
+            background-color: #000080;
+            color: #fff;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            height: 80px;
+            padding: 2px;
+        }
+        .track-table tr:nth-child(even) {
+            background-color: #D3D3D3;
+        }
+        .status-text {
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: left;
+            padding-left: 5px;
+            min-width: 450px; /* For colspan=6 in written/recorded */
+            writing-mode: horizontal-tb;
+        }
+        .title-cell {
+            font-weight: 700;
+            font-size: 13px;
+            color: #000;
+            text-align: left;
+            padding-left: 5px;
+        }
+        a {
+            color: #0000FF;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #0000FF;
+            text-decoration: underline;
+        }
+        .error {
+            color: #FF0000;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px;
+            background-color: #C0C0C0;
+            border: 1px inset #fff;
+            padding: 5px;
+            box-shadow: 2px 2px 2px #808080;
+        }
+        .meta-cell {
+            text-align: left;
+            padding: 3px 5px;
+            color: #000;
+        }
+        .meta-cell.title-column {
+            min-width: 150px; /* For colspan=2 in metadata */
+        }
+        .meta-cell.notes-cell {
+            min-width: 600px; /* For colspan=6, wider than title */
+        }
+        .notes-cell {
+            cursor: pointer;
+            max-width: none;
+        }
+        .notes-cell.expanded {
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+        }
+        .track-table th[title], .track-table td[title] {
+            cursor: help;
+        }
+        .progress-bar {
+            width: 6px;
+            height: 12px;
+            background-color: #C0C0C0;
+            display: inline-block;
+            position: relative;
+            vertical-align: middle;
+            border: 1px inset #fff;
+        }
+        .progress-bar.level-0 {
+            border: 1px solid #FF0000;
+        }
+        .progress-bar.level-1,
+        .progress-bar.level-2,
+        .progress-bar.level-3,
+        .progress-bar.level-4,
+        .progress-bar.level-5 {
+            border: 1px solid #000000;
+        }
+        .progress-fill {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        .progress-fill.level-0 { background-color: transparent; }
+        .progress-fill.level-1 { background-color: #FF0000; }
+        .progress-fill.level-2 { background-color: #FF4500; }
+        .progress-fill.level-3 { background-color: #FFA500; }
+        .progress-fill.level-4 { background-color: #FFFF00; }
+        .progress-fill.level-5 { background-color: #00FF00; }
+        .unavailable-cell {
+            color: #808080;
+            font-weight: bold;
+        }
+        .filter-container {
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: #C0C0C0;
+            border: 1px inset #fff;
+            box-shadow: 2px 2px 2px #808080;
+        }
+        .filter-container input {
+            width: 100%;
+            padding: 3px;
+            font-size: 11px;
+            border: 1px solid #808080;
+            background-color: #C0C0C0;
+            font-family: 'MS Sans Serif', 'Arial', sans-serif;
+        }
+        .toggle-container {
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: #C0C0C0;
+            border: 1px inset #fff;
+            text-align: center;
+            box-shadow: 2px 2px 2px #808080;
+        }
+        .toggle-container button {
+            padding: 3px 10px;
+            margin: 0 5px;
+            font-size: 11px;
+            border: 2px outset #fff;
+            background-color: #C0C0C0;
+            cursor: pointer;
+            font-family: 'MS Sans Serif', 'Arial', sans-serif;
+        }
+        .toggle-container button.active {
+            background-color: #000080;
+            color: #fff;
+            border: 2px inset #fff;
+        }
+        .toggle-container button:hover {
+            background-color: #D3D3D3;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (max-width: 600px) {
+            .track-table th, .track-table td {
+                font-size: 9px;
+                padding: 2px;
+                min-width: 20px;
+                max-width: 50px;
+            }
+            .status-text {
+                min-width: 360px; /* For colspan=6 */
+            }
+            .meta-cell.title-column {
+                min-width: 120px; /* For colspan=2 */
+            }
+            .meta-cell.notes-cell {
+                min-width: 480px; /* For colspan=6 */
+            }
+            .title-cell {
+                font-size: 11px;
+            }
+            .progress-bar {
+                width: 4px;
+                height: 10px;
+            }
+            .window {
+                margin: 5px;
+                max-width: 100%;
+            }
+            .track-table {
+                max-width: 100%;
+            }
+            .track-table th {
+                height: 60px;
+            }
+            .track-table .meta-row th {
+                height: 60px;
+            }
+            .filter-container input {
+                font-size: 9px;
+            }
+            .toggle-container button {
+                font-size: 9px;
+                padding: 2px 8px;
+                margin: 0 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <div class="window-title">Sioto Jazz - 29</div>
+        <div class="toggle-container">
+            <button id="toggle-meta" class="active">Metadata</button>
+            <button id="toggle-written" class="active">Written</button>
+            <button id="toggle-recorded" class="active">Recorded</button>
+        </div>
+        <div class="filter-container">
+            <input type="text" id="filter-input" placeholder="Enter query: e.g., bass recorded =0, bass written >0, requires drums, with samplers">
+        </div>
+        <div id="tracks-container"></div>
+    </div>
+
+    <script>
+        // Define the fixed instrument order
+        const INSTRUMENT_ORDER = [
+            'lyrics', 'vocals', 'backingvocals', 'guitar1', 'guitar2',
+            'bass', 'sax', 'drums', 'samplers', 'synths',
+            'violin', 'cello', 'trumpet', 'brass', 'chimes'
+        ];
+
+        // Parse status and return instruments with their levels
+        function parseInstrumentStatus(status) {
+            if (!status || status === '') {
+                console.log('Status is empty, returning empty object');
+                return {};
+            }
+            const result = {};
+            const entries = status.split(',').map(entry => entry.trim());
+            console.log('Raw status entries:', entries);
+            for (const entry of entries) {
+                const match = entry.match(/([^[]+)\[(\d+)\]/);
+                if (match) {
+                    const instrument = match[1].trim();
+                    const level = Math.min(Math.max(parseInt(match[2]), 0), 5);
+                    result[instrument] = level;
+                    console.log(`Parsed: ${instrument} -> Level ${level}`);
+                } else {
+                    console.log(`Failed to parse entry: ${entry}`);
+                }
+            }
+            return result;
+        }
+
+        // Get unique instruments from all tracks, sorted by INSTRUMENT_ORDER
+        function getAllInstruments(tracks) {
+            const instruments = new Set();
+            tracks.forEach(track => {
+                const writtenStatus = parseInstrumentStatus(track.written);
+                const recordedStatus = parseInstrumentStatus(track.recorded);
+                Object.keys(writtenStatus).forEach(instrument => instruments.add(instrument));
+                Object.keys(recordedStatus).forEach(instrument => instruments.add(instrument));
+            });
+            const instrumentList = Array.from(instruments).sort((a, b) => {
+                const indexA = INSTRUMENT_ORDER.indexOf(a);
+                const indexB = INSTRUMENT_ORDER.indexOf(b);
+                if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+                if (indexA === -1) return 1;
+                if (indexB === -1) return -1;
+                return indexA - indexB;
+            });
+            console.log('All Sorted Instruments:', instrumentList);
+            return instrumentList;
+        }
+
+        // Generate status cell
+        function generateStatusCell(instrument, statusMap, writtenStatus) {
+            if (!(instrument in writtenStatus)) {
+                return `<span class="unavailable-cell">X</span>`;
+            }
+            const level = statusMap[instrument] !== undefined ? statusMap[instrument] : 0;
+            const height = (level / 5) * 100;
+            console.log(`Rendering: ${instrument} -> Level ${level}`);
+            return `
+                <span class="status-cell">
+                    <div class="progress-bar level-${level}" aria-label="${instrument} (completion level ${level})" title="${instrument} (completion level ${level})">
+                        <div class="progress-fill level-${level}" style="height: ${height}%"></div>
+                    </div>
+                </span>
+            `;
+        }
+
+        // Toggle notes expansion
+        function toggleNotes(event) {
+            const cell = event.currentTarget;
+            cell.classList.toggle('expanded');
+        }
+
+        // Parse filter query
+        function parseFilterQuery(query) {
+            if (!query) return null;
+            const requiresMatch = query.trim().match(/^(requires|with)\s+(\w+)$/i);
+            if (requiresMatch) {
+                return {
+                    type: 'requires',
+                    instrument: requiresMatch[2].toLowerCase()
+                };
+            }
+            const levelMatch = query.trim().match(/^(\w+)\s+(written|recorded)\s*(=|>|<)(\d+)$/i);
+            if (levelMatch) {
+                const [, instrument, status, operator, value] = levelMatch;
+                return {
+                    type: 'level',
+                    instrument: instrument.toLowerCase(),
+                    status: status.toLowerCase(),
+                    operator,
+                    value: parseInt(value)
+                };
+            }
+            console.log('Invalid query format:', query);
+            return null;
+        }
+
+        // Apply filter to tracks
+        function filterTracks(tracks, query) {
+            const parsedQuery = parseFilterQuery(query);
+            if (!parsedQuery) return tracks;
+            if (parsedQuery.type === 'requires') {
+                const { instrument } = parsedQuery;
+                return tracks.filter(track => {
+                    const writtenStatus = parseInstrumentStatus(track.written);
+                    const recordedStatus = parseInstrumentStatus(track.recorded);
+                    const hasInstrument = instrument in writtenStatus || instrument in recordedStatus;
+                    console.log(`Filtering: ${track.title}, requires ${instrument} = ${hasInstrument}`);
+                    return hasInstrument;
+                });
+            }
+            const { instrument, status, operator, value } = parsedQuery;
+            return tracks.filter(track => {
+                const statusMap = parseInstrumentStatus(track[status]);
+                const level = statusMap[instrument] !== undefined ? statusMap[instrument] : 0;
+                console.log(`Filtering: ${track.title}, ${instrument} ${status} = ${level}`);
+                if (operator === '=') return level === value;
+                if (operator === '>') return level > value;
+                if (operator === '<') return level < value;
+                return false;
+            });
+        }
+
+        // Render tracks
+        function renderTracks(tracks) {
+            const tracksContainer = document.getElementById('tracks-container');
+            tracksContainer.innerHTML = '';
+            const instruments = getAllInstruments(tracks);
+
+            // Metadata table (TITLE colspan=2, NOTES colspan=6)
+            const metadataTable = document.createElement('table');
+            metadataTable.className = 'track-table meta-table';
+            metadataTable.innerHTML = `
+                <thead>
+                    <tr class="meta-row">
+                        <th class="meta-cell title-column" colspan="2" title="TITLE">TITLE</th>
+                        <th class="meta-cell" title="MP3">MP3</th>
+                        <th class="meta-cell" title="BACKING">BACKING</th>
+                        <th class="meta-cell" title="TEMPO">TEMPO</th>
+                        <th class="meta-cell" title="TIME SIGNATURE">TIME SIGNATURE</th>
+                        <th class="meta-cell notes-cell" colspan="6" title="NOTES">NOTES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tracks.map(track => `
+                        <tr>
+                            <td class="meta-cell title-column" colspan="2"><span class="title-cell">${track.title || 'N/A'}</span></td>
+                            <td class="meta-cell"><a href="${track.mp3 || '#'}" target="_blank" title="${track.mp3 || 'N/A'}">mp3</a></td>
+                            <td class="meta-cell"><a href="${track.backingmp3 || '#'}" target="_blank" title="${track.backingmp3 || 'N/A'}">backing</a></td>
+                            <td class="meta-cell" title="${track.tempo ? track.tempo + 'BPM' : 'N/A'}">${track.tempo ? track.tempo + 'BPM' : 'N/A'}</td>
+                            <td class="meta-cell" title="${track.timeSignature || 'N/A'}">${track.timeSignature || 'N/A'}</td>
+                            <td class="meta-cell notes-cell" colspan="6" title="${track.notes || 'N/A'}">${track.notes || 'N/A'}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+
+            // Written table
+            const writtenTable = document.createElement('table');
+            writtenTable.className = 'track-table written-table';
+            writtenTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th class="status-text" colspan="6">WRITTEN</th>
+                        ${instruments.map(instrument => `<th title="${instrument}">${instrument}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tracks.map(track => {
+                        const writtenStatus = parseInstrumentStatus(track.written);
+                        return `
+                            <tr>
+                                <td class="status-text" colspan="6" title="${track.title || 'N/A'}">${track.title || 'N/A'}</td>
+                                ${instruments.map(instrument => `<td>${generateStatusCell(instrument, writtenStatus, writtenStatus)}</td>`).join('')}
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+
+            // Recorded table
+            const recordedTable = document.createElement('table');
+            recordedTable.className = 'track-table recorded-table';
+            recordedTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th class="status-text" colspan="6">RECORDED</th>
+                        ${instruments.map(instrument => `<th title="${instrument}">${instrument}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tracks.map(track => {
+                        const writtenStatus = parseInstrumentStatus(track.written);
+                        const recordedStatus = parseInstrumentStatus(track.recorded);
+                        return `
+                            <tr>
+                                <td class="status-text" colspan="6" title="${track.title || 'N/A'}">${track.title || 'N/A'}</td>
+                                ${instruments.map(instrument => `<td>${generateStatusCell(instrument, recordedStatus, writtenStatus)}</td>`).join('')}
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+
+            // Append tables to container
+            tracksContainer.appendChild(metadataTable);
+            tracksContainer.appendChild(writtenTable);
+            tracksContainer.appendChild(recordedTable);
+
+            // Add click events to notes cells
+            const notesCells = metadataTable.querySelectorAll('.notes-cell');
+            notesCells.forEach(cell => cell.addEventListener('click', toggleNotes));
+
+            // Update table visibility
+            updateTableVisibility();
+        }
+
+        // Toggle table visibility
+        function updateTableVisibility() {
+            const metaToggle = document.getElementById('toggle-meta').classList.contains('active');
+            const writtenToggle = document.getElementById('toggle-written').classList.contains('active');
+            const recordedToggle = document.getElementById('toggle-recorded').classList.contains('active');
+
+            document.querySelector('.meta-table').classList.toggle('hidden', !metaToggle);
+            document.querySelector('.written-table').classList.toggle('hidden', !writtenToggle);
+            document.querySelector('.recorded-table').classList.toggle('hidden', !recordedToggle);
+        }
+
+        // Load and display album data
+        let allTracks = [];
+        async function loadAlbumData() {
+            try {
+                const response = await fetch('album.json');
+                if (!response.ok) throw new Error(`Failed to load album.json: ${response.statusText}`);
+                allTracks = await response.json();
+                allTracks = allTracks.tracks || allTracks;
+                renderTracks(allTracks);
+            } catch (error) {
+                console.error('Error loading album data:', error);
+                const tracksContainer = document.getElementById('tracks-container');
+                tracksContainer.innerHTML = `<div class="error">Error loading data: ${error.message}</div>`;
+            }
+        }
+
+        // Filter on input change
+        document.getElementById('filter-input').addEventListener('input', (event) => {
+            const query = event.target.value;
+            const filteredTracks = filterTracks(allTracks, query);
+            renderTracks(filteredTracks);
+        });
+
+        // Toggle button event listeners
+        document.getElementById('toggle-meta').addEventListener('click', () => {
+            document.getElementById('toggle-meta').classList.toggle('active');
+            updateTableVisibility();
+        });
+        document.getElementById('toggle-written').addEventListener('click', () => {
+            document.getElementById('toggle-written').classList.toggle('active');
+            updateTableVisibility();
+        });
+        document.getElementById('toggle-recorded').addEventListener('click', () => {
+            document.getElementById('toggle-recorded').classList.toggle('active');
+            updateTableVisibility();
+        });
+
+        window.onload = loadAlbumData;
+    </script>
+</body>
+</html>

@@ -29,7 +29,6 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            justify-content: flex-start;
             -webkit-text-size-adjust: 100%;
             --right-margin: 60px;
             margin-right: var(--right-margin);
@@ -217,6 +216,15 @@
         .song-list:not(:hover):not(.expanded) .song-item.active .song-length {
             display: none;
         }
+        .player {
+            background-color: #FFF;
+            backdrop-filter: blur(20px);
+            max-width: 600px;
+            width: 100%;
+            padding: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
         .player-basic {
             background-color: #FFF;
             backdrop-filter: blur(20px);
@@ -234,16 +242,14 @@
         }
         /* Player details collapsed by default; expand on hover over base */
         .player {
-            background-color: #FFF;
-            backdrop-filter: blur(20px);
-            max-width: 600px;
-            width: 100%;
-            position: relative;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
             overflow: hidden;
             max-height: 0;
-            padding: 0 8px;
             opacity: 0;
-            transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.35s ease;
+            transition: max-height 0.35s ease, opacity 0.25s ease;
             pointer-events: none;
             z-index: 1;
         }
@@ -252,9 +258,6 @@
         .player:hover {
             max-height: var(--player-max, 80vh); /* computed via JS, fallback */
             opacity: 1;
-            padding: 8px;
-            pointer-events: auto;
-        }
             pointer-events: auto;
             overflow-y: auto; /* allow scrolling when expanded */
             -webkit-overflow-scrolling: touch;
@@ -694,117 +697,9 @@
             .lyrics, .structure, .lyrics h4, .structure h4, .tempo-info, .section-label { font-size: 16px; }
             .player-timeline { font-size: 16px; }
         }
-        .confidential-notice {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #ffffff;
-            color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .confidential-content {
-            padding: 20px;
-            text-align: center;
-            max-width: 80%;
-        }
-        .confidential-close {
-            margin-top: 15px;
-            padding: 10px 20px;
-            background-color: #ff0000;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .moodboard {
-            position: relative;
-            margin-top: 0;
-            padding: 0;
-            font-size: 12px;
-            background-color: #FFFFFF16;
-            backdrop-filter: blur(6px);
-            border-radius: 0;
-            max-width: 600px;
-            width: 100%;
-            z-index: 100;
-        }
-        .moodboard h4 {
-            font-size: 12px;
-            color: #fff;
-            background-color: #000;
-            margin: 0;
-            padding: 10px;
-            font-weight: bold;
-            line-height: 14px;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-        .moodboard-grid {
-            display: grid;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 0 10px;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            max-height: 0;
-            opacity: 0;
-            overflow-y: auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.35s ease;
-            pointer-events: none;
-        }
-        .moodboard:hover .moodboard-grid {
-            max-height: 60vh;
-            opacity: 1;
-            padding: 10px;
-            pointer-events: auto;
-        }
-        @media (min-width: 480px) {
-            .moodboard-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        .moodboard-grid img {
-            width: 100%;
-            height: auto;
-            border-radius: 0;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .moodboard-grid img:hover {
-            transform: scale(1.05);
-        }
-        .copyright {
-            text-align: center;
-            font-size: 10px;
-            color: rgba(0, 0, 0, 0.5);
-            margin-top: 20px;
-            padding-bottom: 10px;
-            width: 100%;
-        }
     </style>
 </head>
 <body>
-    <div class="confidential-notice" id="confidential-notice">
-        <div class="confidential-content">
-            <p>CONFIDENTIAL: This page is confidential and shouldn't be shared with anyone unless you get direct permission from a band member.</p>
-            <button class="confidential-close" onclick="document.getElementById('confidential-notice').style.display='none'">I Understand</button>
-            <div class="copyright">
-                &copy; 2025 Sioto Jazz. All rights reserved.
-            </div>
-        </div>
-    </div>
     <header>
         <!-- <img id="album-cover" src="album_cover.png" alt="Album Cover"> -->
         <div class="title-container">
@@ -876,42 +771,6 @@
             <div class="menu-item" data-action="export-song">Export Lyrics & Chords</div>
         </div>
     </section>
-    </div>
-
-    <div class="moodboard">
-        <h4>MOODBOARD</h4>
-        <div class="moodboard-grid" id="moodboard-grid">
-            <img src="moodboard/a_life_less_ordinary.webp" alt="a_life_less_ordinary">
-            <img src="moodboard/blur_blur.webp" alt="blur_blur">
-            <img src="moodboard/brian_eno_music_for_airports.webp" alt="brian_eno_music_for_airports">
-            <img src="moodboard/cloud_watch.webp" alt="cloud_watch">
-            <img src="moodboard/clubbed_out.webp" alt="clubbed_out">
-            <img src="moodboard/clublife.webp" alt="clublife">
-            <img src="moodboard/depeche_mode_the_singles.webp" alt="depeche_mode_the_singles">
-            <img src="moodboard/dreamcast_magazine.webp" alt="dreamcast_magazine">
-            <img src="moodboard/everything_but_the_girl.webp" alt="everything_but_the_girl">
-            <img src="moodboard/every_little_thing.webp" alt="every_little_thing">
-            <img src="moodboard/excursion.webp" alt="excursion">
-            <img src="moodboard/faultline_closer_colder.webp" alt="faultline_closer_colder">
-            <img src="moodboard/groove_coverage.webp" alt="groove_coverage">
-            <img src="moodboard/his.webp" alt="his">
-            <img src="moodboard/idealism_one.webp" alt="idealism_one">
-            <img src="moodboard/identity_only_human.webp" alt="identity_only_human">
-            <img src="moodboard/kent_isola.webp" alt="kent_isola">
-            <img src="moodboard/landslide.webp" alt="landslide">
-            <img src="moodboard/logandi_ljos.webp" alt="logandi_ljos">
-            <img src="moodboard/mark_clement.webp" alt="mark_clement">
-            <img src="moodboard/melanie_b.webp" alt="melanie_b">
-            <img src="moodboard/next_to_you_stephanie_maica.webp" alt="next_to_you_stephanie_maica">
-            <img src="moodboard/nick_warren.webp" alt="nick_warren">
-            <img src="moodboard/nine_days.webp" alt="nine_days">
-            <img src="moodboard/progress.webp" alt="progress">
-            <img src="moodboard/simpletone.webp" alt="simpletone">
-            <img src="moodboard/supreme_particles.webp" alt="supreme_particles">
-            <img src="moodboard/uk_garage.webp" alt="uk_garage">
-            <img src="moodboard/vigilance.webp" alt="vigilance">
-            <img src="moodboard/wamdue_project_program_yourself.webp" alt="wamdue_project_program_yourself">
-        </div>
     </div>
 
     <script src="js/audio-engine.js"></script>
