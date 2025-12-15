@@ -26,10 +26,7 @@
             color: #000;
             padding: 10px 10px 10px 10px;
             padding-bottom: 48px; /* extra bottom margin from viewport */
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            justify-content: flex-start;
+            display: block;
             -webkit-text-size-adjust: 100%;
             --right-margin: 60px;
             margin-right: var(--right-margin);
@@ -52,6 +49,14 @@
             max-width: 600px;
             /* border: 5px #FFF solid; */
             position: relative;
+        }
+        /* Right-side content wrapper to avoid overlap with fixed moodboard */
+        .right-panel {
+            margin-left: var(--moodboard-width, 320px);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0;
         }
         header .title-container {
             background: transparent;
@@ -90,7 +95,7 @@
             width: 100%;
             display: flex;
             flex-wrap: wrap;
-            overflow: hidden;
+            overflow-y: auto;
             --row-h: 34px;
             max-height: var(--row-h); /* exactly one row */
             transition: max-height 0.75s ease-in-out, opacity 0.75s ease-in-out;
@@ -114,7 +119,7 @@
             color: #fff;
         }
         /* When expanded (hover), show all items */
-        .song-list:hover { max-height: 1000px; }
+        .song-list:hover { max-height: 60vh; overflow-y: auto; }
         .song-list:hover .song-item {
             height: var(--row-h);
             opacity: 1;
@@ -253,8 +258,6 @@
             max-height: var(--player-max, 80vh); /* computed via JS, fallback */
             opacity: 1;
             padding: 8px;
-            pointer-events: auto;
-        }
             pointer-events: auto;
             overflow-y: auto; /* allow scrolling when expanded */
             -webkit-overflow-scrolling: touch;
@@ -622,10 +625,10 @@
             body {
                 margin-right: 0;
                 padding: 10px;
-                align-items: center;
                 height: auto;
                 overflow-y: auto;
             }
+            .right-panel { margin-left: 0; align-items: center; }
             header, .song-list, .player-wrap, .player-basic, .player {
                 max-width: 100%;
                 width: 100%;
@@ -693,6 +696,8 @@
             .current-chord, .chord-instructions { font-size: 14px; }
             .lyrics, .structure, .lyrics h4, .structure h4, .tempo-info, .section-label { font-size: 16px; }
             .player-timeline { font-size: 16px; }
+            .moodboard { position: relative; top: 0; left: 0; width: 100%; max-height: none; }
+            .moodboard-grid { max-height: none; }
         }
         .confidential-notice {
             position: fixed;
@@ -724,16 +729,21 @@
             font-size: 14px;
         }
         .moodboard {
-            position: relative;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: var(--moodboard-width, 320px);
+            max-height: calc(100vh - 20px);
             margin-top: 0;
             padding: 0;
             font-size: 12px;
             background-color: #FFFFFF16;
             backdrop-filter: blur(6px);
             border-radius: 0;
-            max-width: 600px;
-            width: 100%;
             z-index: 100;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
         .moodboard h4 {
             font-size: 12px;
@@ -748,26 +758,17 @@
         }
         .moodboard-grid {
             display: grid;
-            position: absolute;
-            top: 100%;
-            left: 0;
+            position: relative;
             width: 100%;
             background-color: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
-            padding: 0 10px;
+            padding: 10px;
             grid-template-columns: 1fr;
             gap: 16px;
-            max-height: 0;
-            opacity: 0;
+            flex: 1 1 auto;
+            opacity: 1;
             overflow-y: auto;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.35s ease;
-            pointer-events: none;
-        }
-        .moodboard:hover .moodboard-grid {
-            max-height: 60vh;
-            opacity: 1;
-            padding: 10px;
             pointer-events: auto;
         }
         @media (min-width: 480px) {
@@ -805,6 +806,7 @@
             </div>
         </div>
     </div>
+    <div class="right-panel">
     <header>
         <!-- <img id="album-cover" src="album_cover.png" alt="Album Cover"> -->
         <div class="title-container">
@@ -878,6 +880,7 @@
     </section>
     </div>
 
+    </div>
     <div class="moodboard">
         <h4>MOODBOARD</h4>
         <div class="moodboard-grid" id="moodboard-grid">
