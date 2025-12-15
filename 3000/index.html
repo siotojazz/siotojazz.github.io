@@ -628,7 +628,7 @@
                 height: auto;
                 overflow-y: auto;
             }
-            .right-panel { margin-left: 0; align-items: center; }
+            .right-panel { margin-left: 0; align-items: center; position: relative; z-index: 2; }
             header, .song-list, .player-wrap, .player-basic, .player {
                 max-width: 100%;
                 width: 100%;
@@ -672,6 +672,22 @@
                 font-size: 18px;
                 max-height: 300px;
             }
+                    /* Prevent grid squeeze and overlapping on small widths */
+                    .song-item {
+                        grid-template-columns: 1fr;
+                        row-gap: 2px;
+                        align-items: start;
+                    }
+                    .song-section { margin-left: 0; }
+                    .song-meta, .song-length {
+                        text-align: left;
+                        line-height: var(--row-h);
+                    }
+                    /* When collapsed on mobile, keep active meta visible stacked */
+                    .song-list:not(.expanded) .song-item.active .song-meta,
+                    .song-list:not(.expanded) .song-item.active .song-length {
+                        display: inline-block;
+                    }
             .menu-item {
                 padding: 6px 10px;
             }
@@ -680,7 +696,7 @@
             }
 
             .structure-chord .chord {
-                font-size: 28px;
+                font-size: 14px;
                 font-weight: bold;
             }
 
@@ -696,8 +712,16 @@
             .current-chord, .chord-instructions { font-size: 14px; }
             .lyrics, .structure, .lyrics h4, .structure h4, .tempo-info, .section-label { font-size: 16px; }
             .player-timeline { font-size: 16px; }
-            .moodboard { position: relative; top: 0; left: 0; width: 100%; max-height: none; }
+            .moodboard { position: static; top: auto; left: auto; width: 100%; max-height: none; z-index: 1; margin-top: 16px; }
             .moodboard-grid { max-height: none; }
+            /* Ensure page can scroll without hidden overflow */
+            html, body { overflow-x: hidden; }
+        }
+
+        /* Tablet safeguard to avoid overlap just above mobile breakpoint */
+        @media (max-width: 1024px) {
+            .right-panel { margin-left: 0; }
+            .moodboard { position: static; width: 100%; max-height: none; }
         }
         .confidential-notice {
             position: fixed;
@@ -770,6 +794,11 @@
             overflow-y: auto;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             pointer-events: auto;
+        }
+        /* Strong mobile override placed after fixed styles to ensure precedence */
+        @media (max-width: 768px) {
+            .moodboard { position: static !important; top: auto !important; left: auto !important; width: 100% !important; max-height: none !important; margin-top: 16px !important; }
+            .moodboard-grid { max-height: none !important; }
         }
         @media (min-width: 480px) {
             .moodboard-grid {
