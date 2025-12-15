@@ -98,7 +98,7 @@
             overflow-y: auto;
             --row-h: 34px;
             max-height: var(--row-h); /* exactly one row */
-            transition: max-height 0.75s ease-in-out, opacity 0.75s ease-in-out;
+            transition: max-height 0.1875s ease-in-out, opacity 0.1875s ease-in-out;
             opacity: 1;
             position: relative;
             z-index: 2;
@@ -109,7 +109,7 @@
             overflow: hidden;
             height: 0;
             opacity: 0;
-            transition: height 0.6s ease, opacity 0.3s ease;
+            transition: height 0.1875s ease-in-out, opacity 0.1875s ease-in-out;
         }
         /* When collapsed, only the active item is visible */
         .song-list:not(:hover) .song-item.active {
@@ -123,6 +123,13 @@
         .song-list:hover .song-item {
             height: var(--row-h);
             opacity: 1;
+            transition-delay: var(--expand-delay, 0ms);
+        }
+        /* When open (hover), disable text color animation inside tracklist */
+        .song-list:hover .song-title,
+        .song-list:hover .song-meta,
+        .song-list:hover .song-length {
+            transition: font-size 0.1875s ease-in-out, letter-spacing 0.1875s ease-in-out;
         }
 
         .song-item {
@@ -181,7 +188,7 @@
             padding: 0;
             font-size: 12px;
             text-transform: capitalize;
-            transition: font-size 0.2s ease, letter-spacing 0.2s ease;
+            transition: font-size 0.1875s ease-in-out, letter-spacing 0.1875s ease-in-out, color 0.1875s ease-in-out;
         }
         /* Active track larger + caps only when collapsed */
         .song-list:not(:hover) .song-item.active .song-title {
@@ -216,6 +223,7 @@
         .song-item.active {
             background: #FFF;
             color: #000;
+            transition: background-color 0.75s ease-in-out, color 0.75s ease-in-out;
         }
         /* Hide meta for active song ONLY when list is collapsed */
         .song-list:not(:hover):not(.expanded) .song-item.active .song-meta,
@@ -247,8 +255,7 @@
             overflow: hidden;
             max-height: 0;
             padding: 0 8px;
-            opacity: 0;
-            transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.35s ease;
+            transition: max-height 0.8s ease, padding 0.8s ease;
             pointer-events: none;
             z-index: 1;
         }
@@ -256,7 +263,6 @@
         .player-wrap:hover .player,
         .player:hover {
             max-height: var(--player-max, 80vh); /* computed via JS, fallback */
-            opacity: 1;
             padding: 8px;
             pointer-events: auto;
             overflow-y: auto; /* allow scrolling when expanded */
@@ -342,7 +348,7 @@
             justify-content: flex-start;
         }
         .player-basic.playing .current-info { gap: 8px; }
-        .player-timeline { transition: all 0.25s ease; }
+        .player-timeline { transition: all 0.1875s ease-in-out; }
         .player-basic.playing .player-timeline { }
         .current-lyric {
             color: #00017b;
@@ -350,7 +356,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             flex: 1;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 0.1875s ease-in-out, transform 0.1875s ease-in-out, color 0.1875s ease-in-out;
             display: block;
             text-align: left;
             font-size: 14px;
@@ -360,7 +366,7 @@
         .current-chord {
             color: #00017b;
             font-weight: bold;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 0.1875s ease-in-out, transform 0.1875s ease-in-out, color 0.1875s ease-in-out;
             font-size: 12px;
             opacity: 0.5;
             white-space: nowrap;
@@ -370,7 +376,7 @@
         .chord-instructions {
             color: #555;
             font-style: italic;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 0.1875s ease-in-out, transform 0.1875s ease-in-out, color 0.1875s ease-in-out;
             font-size: 12px;
             opacity: 0.5;
             white-space: nowrap;
@@ -953,6 +959,24 @@
         fetch('album.json')
 .then(response => response.json())
 .then(data => {
+    // Enforce desired track order by title
+    const desiredOrder = [
+        'Импулс',
+        'Magic',
+        'Time Machine',
+        'Нов Зеланд',
+        'Higher Ground',
+        'Cinema',
+        'Колку Далеку?',
+        'My Innocent Sea',
+        'Quite Unreal',
+        'Roots Apart',
+        'Одмор'
+    ];
+    // Prefer ordering by numeric id so album.json id reflects order
+    if (Array.isArray(data.tracks)) {
+        data.tracks.sort((a, b) => (a.id || 9999) - (b.id || 9999));
+    }
     document.getElementById('album-title').textContent = data.album.title;
     document.getElementById('album-band').textContent = data.album.band;
 
@@ -1042,6 +1066,7 @@
     const currentSectionDisplay = playerBasic.querySelector('.current-section');
     const chordInstructionsDisplay = playerBasic.querySelector('.chord-instructions');
     const playerWrap = document.querySelector('.player-wrap');
+    const moodboardEl = document.querySelector('.moodboard');
 
     // Mobile Interaction Logic
     const isMobile = () => window.innerWidth <= 768;
@@ -1070,6 +1095,13 @@
         if (!isMobile()) return;
         if (e.target.closest('.player-controls') || e.target.closest('.seek-bar-container')) return;
         playerWrap.classList.toggle('expanded');
+        if (moodboardEl) {
+            if (playerWrap.classList.contains('expanded')) {
+                moodboardEl.style.marginTop = `${Math.ceil(window.innerHeight)}px`;
+            } else {
+                moodboardEl.style.marginTop = '16px';
+            }
+        }
     });
 
     // Close when clicking outside
@@ -1080,6 +1112,7 @@
         }
         if (!playerWrap.contains(e.target)) {
             playerWrap.classList.remove('expanded');
+            if (moodboardEl) moodboardEl.style.marginTop = '16px';
         }
     });
 
@@ -1126,6 +1159,15 @@
             return;
         }
         songItem.classList.add('active');
+        // Recompute stagger delays so expand animates outward from active
+        try {
+            const items = Array.from(songList.children);
+            items.forEach((el, i) => {
+                const dist = Math.abs(i - trackIndex);
+                const delayMs = Math.min(600, dist * 80);
+                el.style.setProperty('--expand-delay', `${delayMs}ms`);
+            });
+        } catch (e) { /* noop */ }
         toggleBtn.disabled = false;
         setToggleIcon(autoPlay ? false : true);
 
@@ -1841,6 +1883,17 @@
             songLength.textContent = '0:00';
         }
     });
+
+    // Initialize stagger delays with first item as reference
+    try {
+        const items = Array.from(songList.children);
+        const refIndex = 0;
+        items.forEach((el, i) => {
+            const dist = Math.abs(i - refIndex);
+            const delayMs = Math.min(600, dist * 80);
+            el.style.setProperty('--expand-delay', `${delayMs}ms`);
+        });
+    } catch (e) { /* noop */ }
 
     // Set startup defaults until a song is selected
     setToggleIcon(true);
