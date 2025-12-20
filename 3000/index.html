@@ -98,7 +98,7 @@
             overflow-y: auto;
             --row-h: 34px;
             max-height: var(--row-h); /* exactly one row */
-            transition: max-height 0.1875s ease-in-out, opacity 0.1875s ease-in-out;
+            transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
             opacity: 1;
             position: relative;
             z-index: 2;
@@ -109,7 +109,7 @@
             overflow: hidden;
             height: 0;
             opacity: 0;
-            transition: height 0.1875s ease-in-out, opacity 0.1875s ease-in-out;
+            transition: height 0.4s ease-in-out, opacity 0.4s ease-in-out;
         }
         /* When collapsed, only the active item is visible */
         .song-list:not(:hover) .song-item.active {
@@ -129,7 +129,7 @@
         .song-list:hover .song-title,
         .song-list:hover .song-meta,
         .song-list:hover .song-length {
-            transition: font-size 0.1875s ease-in-out, letter-spacing 0.1875s ease-in-out;
+            transition: font-size 0.4s ease-in-out, letter-spacing 0.4s ease-in-out;
         }
 
         .song-item {
@@ -149,16 +149,21 @@
         /* Set consistent row line-height for inner cells */
         .song-title, .song-meta, .song-length { line-height: var(--row-h); }
         .song-section {
-            font-size: 14px;
-            opacity: 0.6;
+            font-family: 'Garet', cursive;
+            font-size: 16px;
+            opacity: 1;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-left: 10px;
+            letter-spacing: 0;
+            margin: 0;
+            padding: 0;
             line-height: var(--row-h);
             display: none;
+            background: #000;
+            color: #fff;
         }
         .song-list:not(:hover) .song-item.active .song-section {
             display: inline-block;
+            margin-left: 10px; /* Keep some separation from title */
         }
         .song-list:hover .song-section {
             display: none;
@@ -188,7 +193,7 @@
             padding: 0;
             font-size: 12px;
             text-transform: capitalize;
-            transition: font-size 0.1875s ease-in-out, letter-spacing 0.1875s ease-in-out, color 0.1875s ease-in-out;
+            transition: font-size 0.4s ease-in-out, letter-spacing 0.4s ease-in-out, color 0.4s ease-in-out;
         }
         /* Active track larger + caps only when collapsed */
         .song-list:not(:hover) .song-item.active .song-title {
@@ -223,7 +228,7 @@
         .song-item.active {
             background: #FFF;
             color: #000;
-            transition: background-color 0.75s ease-in-out, color 0.75s ease-in-out;
+            transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
         }
         /* Hide meta for active song ONLY when list is collapsed */
         .song-list:not(:hover):not(.expanded) .song-item.active .song-meta,
@@ -255,7 +260,7 @@
             overflow: hidden;
             max-height: 0;
             padding: 0 8px;
-            transition: max-height 0.8s ease, padding 0.8s ease;
+            transition: max-height 0.4s ease, padding 0.4s ease;
             pointer-events: none;
             z-index: 1;
         }
@@ -351,7 +356,7 @@
         .player-timeline { transition: all 0.1875s ease-in-out; }
         .player-basic.playing .player-timeline { }
         .current-lyric {
-            color: #00017b;
+            color: #000;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -364,11 +369,10 @@
             min-width: 0;
         }
         .current-chord {
-            color: #00017b;
+            color: #000;
             font-weight: bold;
             transition: opacity 0.1875s ease-in-out, transform 0.1875s ease-in-out, color 0.1875s ease-in-out;
             font-size: 12px;
-            opacity: 0.5;
             white-space: nowrap;
             flex-shrink: 0;
             line-height: 1;
@@ -378,7 +382,6 @@
             font-style: italic;
             transition: opacity 0.1875s ease-in-out, transform 0.1875s ease-in-out, color 0.1875s ease-in-out;
             font-size: 12px;
-            opacity: 0.5;
             white-space: nowrap;
             flex-shrink: 0;
             line-height: 1;
@@ -413,14 +416,21 @@
         }
         .tempo-info {
             font-size: 12px;
-            color: #00017b;
+            color: #000;
             margin-bottom: 6px;
         }
         .section-label {
-            font-weight: bold;
-            margin: 8px 0 4px;
-            font-size: 12px;
-            color: #00017b;
+            font-family: 'Garet', cursive;
+            font-weight: normal;
+            margin: 0;
+            padding: 5px 10px;
+            font-size: 16px;
+            color: #fff;
+            background: #000;
+            width: 100%;
+            display: block;
+            text-transform: uppercase;
+            line-height: 1.2;
         }
         .lyrics-line, .structure-block {
             cursor: pointer;
@@ -467,10 +477,12 @@
             padding: 2px 4px;
             font-size: 12px;
             font-weight: bold;
-            color: #00017b;
+            color: #000;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
         }
         .structure-chord::before {
             content: '';
@@ -499,15 +511,15 @@
         }
         /* Passed chords should look like passed verses (faded only) */
         .structure-chord.active {
-            background: transparent; /* avoid instant black pop */
+            background: #fff;
             color: #000;
-            outline: 1px solid #00017b;
-            padding: 2px 4px;
+            border-right: 6px solid #000;
         }
-        .structure-chord.passed { opacity: 0.5; background: transparent !important; color: inherit; }
+        .structure-chord.passed { background: #fff; color: #000; opacity: 1; }
         .structure-chord:hover .chord-value,
         .structure-chord:hover .chord-diagram {
             display: block;
+            border-right: 1px solid #0000;
         }
         .stanza-end {
             margin-bottom: 12px;
@@ -521,6 +533,7 @@
             flex: 1;
             text-align: center;
             position: relative;
+            margin: 0;
         }
         .chord-value {
             display: none;
@@ -566,10 +579,12 @@
             left: 0;
             height: 100%;
             width: 100%;
-            background: rgba(0,0,0,0.18);
+            background: #fff;
+            mix-blend-mode: difference;
             transform-origin: left center;
             transform: scaleX(calc(var(--progress, 0) / 100));
             will-change: transform;
+            transition: transform 0.1s linear;
         }
         audio {
             display: none;
@@ -614,7 +629,7 @@
         }
 
         .menu-item:hover {
-            background: #00017b;
+            background: #000;
             color: #fff;
         }
         .menu-item:hover::before {
@@ -1164,7 +1179,7 @@
             const items = Array.from(songList.children);
             items.forEach((el, i) => {
                 const dist = Math.abs(i - trackIndex);
-                const delayMs = Math.min(600, dist * 80);
+                const delayMs = Math.min(400, dist * 50);
                 el.style.setProperty('--expand-delay', `${delayMs}ms`);
             });
         } catch (e) { /* noop */ }
@@ -1890,7 +1905,7 @@
         const refIndex = 0;
         items.forEach((el, i) => {
             const dist = Math.abs(i - refIndex);
-            const delayMs = Math.min(600, dist * 80);
+            const delayMs = Math.min(400, dist * 50);
             el.style.setProperty('--expand-delay', `${delayMs}ms`);
         });
     } catch (e) { /* noop */ }
@@ -2104,6 +2119,28 @@
             
             const isActive = currentBeat >= startBeat && currentBeat <= endBeat;
             const isPassed = currentBeat > endBeat;
+
+            // Update progress CSS variable
+            const progressEl = chord.nextElementSibling;
+            if (progressEl && progressEl.classList.contains('chord-progress')) {
+                const beatStartTime = startBeat * beatDuration;
+                const beatEndTime = beatStartTime + (beatDuration * spanLength);
+                let p = 0;
+                if (currentTime >= beatEndTime) p = 100;
+                else if (currentTime >= beatStartTime && currentTime < beatEndTime) {
+                    p = ((currentTime - beatStartTime) / (beatDuration * spanLength)) * 100;
+                }
+                
+                // Optimization: avoid unnecessary style recalcs
+                const currentP = progressEl.style.getPropertyValue('--progress');
+                if (isActive) {
+                    // Always update active chord for smoothness
+                    progressEl.style.setProperty('--progress', p);
+                } else if ((p === 0 && currentP !== '0') || (p === 100 && currentP !== '100')) {
+                    // Only update inactive chords if they need to snap to 0 or 100
+                    progressEl.style.setProperty('--progress', p);
+                }
+            }
             
             // Only update classes if state changed
             if (isActive && chord !== lastActiveChord) {
@@ -2123,7 +2160,8 @@
             }
         }
 
-        // WebGL overlay for chord progress (use cached data)
+        // WebGL overlay removed in favor of CSS mix-blend-mode progress
+        /*
         if (cachedChordOverlay && cachedChordContainers.length > 0) {
             const rects = [];
             for (let i = 0; i < cachedChordContainers.length; i++) {
@@ -2150,6 +2188,7 @@
             }
             cachedChordOverlay.render(rects);
         }
+        */
     }
 
     let animationFrameId = null;
