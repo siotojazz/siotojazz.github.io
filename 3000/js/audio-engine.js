@@ -8,7 +8,7 @@ class AudioEngine {
 
     attach(mediaElement) {
         if (!this.context) {
-            this.context = new (window.AudioContext || window.webkitAudioContext)();
+            this.context = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'playback' });
         }
         this.mediaElement = mediaElement;
         // Create or reuse nodes
@@ -21,7 +21,7 @@ class AudioEngine {
 
     async play() {
         if (!this.context) {
-            this.context = new (window.AudioContext || window.webkitAudioContext)();
+            this.context = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'playback' });
         }
         if (this.context.state === 'suspended') {
             await this.context.resume();

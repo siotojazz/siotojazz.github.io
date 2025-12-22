@@ -7,7 +7,15 @@ function createSeekRenderer(canvas) {
     }
 
     // Resize helper
+    let needsResize = true;
+    if (window.ResizeObserver) {
+        new ResizeObserver(() => needsResize = true).observe(canvas);
+    } else {
+        window.addEventListener('resize', () => needsResize = true);
+    }
+
     function resize() {
+        if (!needsResize) return;
         const rect = canvas.getBoundingClientRect();
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const w = Math.max(200, Math.floor(rect.width * dpr));
@@ -17,6 +25,7 @@ function createSeekRenderer(canvas) {
             canvas.height = h;
         }
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+        needsResize = false;
     }
 
     // Basic shaders for solid rects
@@ -144,7 +153,15 @@ function createChordOverlayRenderer(canvas){
     // Pre-allocate buffer
     const verts = new Float32Array(12);
 
+    let needsResize = true;
+    if (window.ResizeObserver) {
+        new ResizeObserver(() => needsResize = true).observe(canvas);
+    } else {
+        window.addEventListener('resize', () => needsResize = true);
+    }
+
     function resize(){
+        if (!needsResize) return;
         const rect = canvas.getBoundingClientRect();
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const w = Math.max(200, Math.floor(rect.width * dpr));
@@ -152,6 +169,7 @@ function createChordOverlayRenderer(canvas){
         if (canvas.width !== w || canvas.height !== h){ canvas.width = w; canvas.height = h; }
         gl.viewport(0,0,gl.drawingBufferWidth, gl.drawingBufferHeight);
         gl.uniform2f(u_res, gl.drawingBufferWidth, gl.drawingBufferHeight);
+        needsResize = false;
     }
 
     function rect(x,y,w,h){
