@@ -119,8 +119,8 @@
             color: #fff;
         }
         /* When expanded (hover), show all items */
-        .song-list:hover { max-height: 60vh; overflow-y: auto; }
-        .song-list:hover .song-item {
+        .song-list:hover, .song-list.force-expanded { max-height: 60vh; overflow-y: auto; }
+        .song-list:hover .song-item, .song-list.force-expanded .song-item {
             height: var(--row-h);
             opacity: 1;
             transition-delay: var(--expand-delay, 0ms);
@@ -128,7 +128,10 @@
         /* When open (hover), disable text color animation inside tracklist */
         .song-list:hover .song-title,
         .song-list:hover .song-meta,
-        .song-list:hover .song-length {
+        .song-list:hover .song-length,
+        .song-list.force-expanded .song-title,
+        .song-list.force-expanded .song-meta,
+        .song-list.force-expanded .song-length {
             transition: font-size 0.4s ease-in-out, letter-spacing 0.4s ease-in-out;
         }
 
@@ -266,7 +269,8 @@
         }
         /* Hover on base player expands details */
         .player-wrap:hover .player,
-        .player:hover {
+        .player:hover,
+        .player-wrap.force-expanded .player {
             max-height: var(--player-max, 80vh); /* computed via JS, fallback */
             padding: 8px;
             pointer-events: auto;
@@ -602,6 +606,8 @@
             max-height: 400px;
             overflow-y: auto;
             min-width: 150px;
+            border: 1px solid #000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .menu-item {
@@ -896,37 +902,7 @@
                 </div>
             </div>
         </div>
-        <div id="context-menu" class="context-menu">
-            <!-- Lyrics Actions -->
-            <div class="menu-item" data-action="copy-verse">Copy Verse</div>
-            <div class="menu-item" data-action="copy-stanza">Copy Stanza</div>
-            <div class="menu-item" data-action="copy-lyrics">Copy All Lyrics</div>
-            <div class="menu-item" data-action="copy-verse-link">Copy Verse Link</div>
-            <div class="menu-item" data-action="copy-stanza-link">Copy Stanza Link</div>
-            <div class="menu-item" data-action="next-verse">Next Verse</div>
-            <div class="menu-item" data-action="prev-verse">Previous Verse</div>
-            <div class="menu-item" data-action="next-stanza">Next Stanza</div>
-            <div class="menu-item" data-action="prev-stanza">Previous Stanza</div>
-            <hr class="menu-divider">
-            <!-- Chord Actions -->
-            <div class="menu-item" data-action="copy-chord">Copy Chord Diagram</div>
-            <div class="menu-item" data-action="copy-chords">Copy All Chords</div>
-            <div class="menu-item" data-action="next-section">Next Section</div>
-            <div class="menu-item" data-action="prev-section">Previous Section</div>
-            <hr class="menu-divider">
-            <!-- Playback Actions -->
-            <div class="menu-item" data-action="play-song">Play Song</div>
-            <div class="menu-item" data-action="next-song">Next Song</div>
-            <div class="menu-item" data-action="prev-song">Previous Song</div>
-            <div class="menu-item" data-action="seek-song">Seek to Position</div>
-            <div class="menu-item" data-action="copy-song-link">Copy Song Link</div>
-            <div class="menu-item" data-action="copy-time-link">Copy Current Time Link</div>
-            <hr class="menu-divider">
-            <!-- Display and Export Actions -->
-            <div class="menu-item" data-action="toggle-lyrics">Toggle Lyrics</div>
-            <div class="menu-item" data-action="toggle-structure">Toggle Structure</div>
-            <div class="menu-item" data-action="export-song">Export Lyrics & Chords</div>
-        </div>
+
     </section>
     </div>
 
@@ -965,6 +941,38 @@
             <img src="moodboard/vigilance.webp" alt="vigilance">
             <img src="moodboard/wamdue_project_program_yourself.webp" alt="wamdue_project_program_yourself">
         </div>
+    </div>
+
+    <div id="context-menu" class="context-menu">
+        <!-- Lyrics Actions -->
+        <div class="menu-item" data-action="copy-verse">Copy Verse</div>
+        <div class="menu-item" data-action="copy-stanza">Copy Stanza</div>
+        <div class="menu-item" data-action="copy-lyrics">Copy All Lyrics</div>
+        <div class="menu-item" data-action="copy-verse-link">Copy Verse Link</div>
+        <div class="menu-item" data-action="copy-stanza-link">Copy Stanza Link</div>
+        <div class="menu-item" data-action="next-verse">Next Verse</div>
+        <div class="menu-item" data-action="prev-verse">Previous Verse</div>
+        <div class="menu-item" data-action="next-stanza">Next Stanza</div>
+        <div class="menu-item" data-action="prev-stanza">Previous Stanza</div>
+        <hr class="menu-divider">
+        <!-- Chord Actions -->
+        <div class="menu-item" data-action="copy-chord">Copy Chord Diagram</div>
+        <div class="menu-item" data-action="copy-chords">Copy All Chords</div>
+        <div class="menu-item" data-action="next-section">Next Section</div>
+        <div class="menu-item" data-action="prev-section">Previous Section</div>
+        <hr class="menu-divider">
+        <!-- Playback Actions -->
+        <div class="menu-item" data-action="play-song">Play Song</div>
+        <div class="menu-item" data-action="next-song">Next Song</div>
+        <div class="menu-item" data-action="prev-song">Previous Song</div>
+        <div class="menu-item" data-action="seek-song">Seek to Position</div>
+        <div class="menu-item" data-action="copy-song-link">Copy Song Link</div>
+        <div class="menu-item" data-action="copy-time-link">Copy Current Time Link</div>
+        <hr class="menu-divider">
+        <!-- Display and Export Actions -->
+        <div class="menu-item" data-action="toggle-lyrics">Toggle Lyrics</div>
+        <div class="menu-item" data-action="toggle-structure">Toggle Structure</div>
+        <div class="menu-item" data-action="export-song">Export Lyrics & Chords</div>
     </div>
 
     <script src="js/audio-engine.js"></script>
@@ -1246,9 +1254,7 @@
                     setToggleIcon(false);
                 }
             });
-            lineDiv.addEventListener('contextmenu', (e) => {
-                showContextMenu(e, 'lyrics-line', lineDiv, track, trackIndex);
-            });
+            // lineDiv context menu handled by global listener
             lyricsContent.appendChild(lineDiv);
         });
 
@@ -1311,9 +1317,7 @@
                                 setToggleIcon(false);
                             }
                         });
-                        chordSpan.addEventListener('contextmenu', (e) => {
-                            showContextMenu(e, 'structure-chord', chordSpan, track, trackIndex);
-                        });
+                        // chordSpan context menu handled by global listener
 
                         chordContainer.appendChild(chordSpan);
                         chordContainer.appendChild(progressDiv);
@@ -1467,6 +1471,43 @@
             if (!hasPrevVerse) contextMenu.querySelector('[data-action="prev-verse"]').style.display = 'none';
         }
 
+        // Handle separators
+        let visibleCount = 0;
+        let lastWasSeparator = true; // Treat start as separator to hide first one
+        const allItems = contextMenu.querySelectorAll('.menu-item, .menu-divider');
+        
+        allItems.forEach(el => {
+            if (el.classList.contains('menu-divider')) {
+                if (lastWasSeparator) {
+                    el.style.display = 'none';
+                } else {
+                    el.style.display = 'block';
+                    lastWasSeparator = true;
+                }
+            } else {
+                if (el.style.display !== 'none') {
+                    visibleCount++;
+                    lastWasSeparator = false;
+                }
+            }
+        });
+        
+        // Hide trailing separator
+        const visibleItems = Array.from(allItems).filter(el => el.style.display !== 'none');
+        if (visibleItems.length > 0 && visibleItems[visibleItems.length - 1].classList.contains('menu-divider')) {
+            visibleItems[visibleItems.length - 1].style.display = 'none';
+        }
+
+        // Handle expansion
+        if (targetElement) {
+            if (targetElement.closest('.song-list')) {
+                document.getElementById('song-list').classList.add('force-expanded');
+            }
+            if (targetElement.closest('.player-wrap')) {
+                document.querySelector('.player-wrap').classList.add('force-expanded');
+            }
+        }
+
         // Make visible before measuring so we get real dimensions
         contextMenu.style.display = 'block';
         const menuRect = contextMenu.getBoundingClientRect();
@@ -1491,6 +1532,8 @@
     function hideContextMenu() {
         contextMenu.style.display = 'none';
         contextTarget = null;
+        document.getElementById('song-list').classList.remove('force-expanded');
+        document.querySelector('.player-wrap').classList.remove('force-expanded');
     }
 
     // Only hide on left-clicks outside relevant targets
@@ -1501,23 +1544,39 @@
         }
     });
     document.addEventListener('contextmenu', (e) => {
-        // Route right-clicks to our custom menu when on supported targets
         const targetEl = e.target.closest('.song-item, .lyrics-line, .structure-chord, #seek-gl');
         if (targetEl) {
-            let targetType = null;
-            if (targetEl.matches('.song-item')) targetType = 'song-item';
-            else if (targetEl.matches('.lyrics-line')) targetType = 'lyrics-line';
-            else if (targetEl.matches('.structure-chord')) targetType = 'structure-chord';
-            else if (targetEl.matches('#seek-gl')) targetType = 'seek-bar';
-            if (targetType) {
-                e.preventDefault();
-                e.stopPropagation();
-                showContextMenu(e, targetType, targetEl);
-                return; // handled by custom menu
+            e.preventDefault();
+            e.stopPropagation();
+            
+            let type = '';
+            let track = currentTrack;
+            let trackIndex = currentTrack ? data.tracks.findIndex(t => t === currentTrack) : -1;
+
+            if (targetEl.matches('.song-item')) {
+                type = 'song-item';
+                const idx = parseInt(targetEl.dataset.trackIndex);
+                if (!isNaN(idx)) {
+                    trackIndex = idx;
+                    track = data.tracks[idx];
+                }
+            } else if (targetEl.matches('.lyrics-line')) {
+                type = 'lyrics-line';
+            } else if (targetEl.matches('.structure-chord')) {
+                type = 'structure-chord';
+            } else if (targetEl.matches('#seek-gl')) {
+                type = 'seek-bar';
+            }
+
+            if (type) {
+                showContextMenu(e, type, targetEl, track, trackIndex);
+            }
+        } else {
+            // Only hide if clicking outside context menu itself
+            if (!e.target.closest('#context-menu')) {
+                hideContextMenu();
             }
         }
-        // Otherwise, hide any open menu and allow default browser menu
-        hideContextMenu();
     });
 
     contextMenu.addEventListener('click', (e) => {
@@ -1833,9 +1892,7 @@
         setToggleIcon(false);
     });
 
-    seekCanvas.addEventListener('contextmenu', (e) => {
-        showContextMenu(e, 'seek-bar', seekCanvas);
-    });
+    // seekCanvas context menu handled by global listener
 
     data.tracks.forEach((track, trackIndex) => {
         const songItem = document.createElement('div');
@@ -1862,9 +1919,7 @@
         songItem.appendChild(songSection);
         songItem.appendChild(songMeta);
         songItem.appendChild(songLength);
-        songItem.addEventListener('contextmenu', (e) => {
-            showContextMenu(e, 'song-item', songItem, track, trackIndex);
-        });
+        // songItem context menu handled by global listener
         songItem.addEventListener('click', () => {
             selectSong(track, trackIndex);
         });
