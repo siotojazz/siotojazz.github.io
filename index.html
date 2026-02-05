@@ -3,101 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Discover Sioto Jazz, a Macedonian pop rock indie jazz folk supergroup from Bitola, formed in 2022.">
-    <meta name="keywords" content="Sioto Jazz, Macedonian pop rock, indie jazz folk, Bitola band, Herbie Hancock, Nick Cave, Smashing Pumpkins, debut album">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="Sioto Jazz Official">
-
-    <meta property="og:title" content="Sioto Jazz">
-    <meta property="og:description" content="Formed in 2022 in Bitola, Sioto Jazz mixes pop rock, indie, jazz, and folk influences into a unique sound. Check out their story and music!">
-    <meta property="og:image" content="https://siotojazz.com/extra/photos/SJ_16.JPG">
-    <meta property="og:url" content="https://www.siotojazz.com">
-    <meta property="og:type" content="website">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Sioto Jazz - Macedonian Pop Rock Indie Jazz Folk Band">
-    <meta name="twitter:description" content="Sioto Jazz from Bitola blends jazz, folk, and rock into a fresh sound. Explore their debut album about small-town life.">
-    <meta name="twitter:image" content="https://siotojazz.com/extra/photos/SJ_16.JPG">
-
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "MusicGroup",
-        "name": "Sioto Jazz",
-        "description": "A Macedonian pop rock indie jazz folk supergroup from Bitola, formed in 2022.",
-        "genre": ["Pop", "Rock", "Indie", "Jazz", "Folk"],
-        "foundingLocation": {
-            "@type": "Place",
-            "name": "Bitola, Macedonia"
-        },
-        "foundingDate": "2022",
-        "member": [
-            {"@type": "Person", "name": "Martin Petkovski"},
-            {"@type": "Person", "name": "Anastasija Trajkovska"},
-            {"@type": "Person", "name": "Eva Todorovska"},
-            {"@type": "Person", "name": "Ilija Volcheski"}
-        ],
-        "album": {
-            "@type": "MusicAlbum",
-            "name": "The True State of All Things",
-            "description": "Explores small-town life, identity, and renewal."
-        },
-        "influencedBy": ["Herbie Hancock", "Nick Cave", "Smashing Pumpkins", "The National", "Men I Trust", "Grimes", "Spasen Siljanoski"]
-    }
-    </script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/brands.min.css" integrity="sha512-9YHSK59/rjvhtDcY/b+4rdnl0V4LPDWdkKceBl8ZLF5TB6745ml1AfluEU6dFWqwDw9lPvnauxFgpKvJqp7jiQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="main.css">
+    <meta name="description" content="Sioto Jazz - Alternative rock band from Bitola, Macedonia">
     <title>Sioto Jazz</title>
+    <style>
+        @font-face { font-family: 'Astrella'; src: url('fonts/Astrella.ttf') format('truetype'); }
+        @font-face { font-family: 'Garet'; src: url('fonts/Garet.ttf') format('truetype'); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Garet', Verdana, Geneva, sans-serif;
+            font-size: 11px;
+            line-height: 1.5;
+            background: #f5f5dc;
+            color: #333;
+            padding: 20px;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        a { color: #00c; }
+        a:hover { color: #c00; background: #ff0; }
+        h1 {
+            font-family: 'Astrella', Impact, Arial Black, sans-serif;
+            font-size: 56px;
+            margin-bottom: 2px;
+            letter-spacing: 2px;
+        }
+        .tagline { font-size: 10px; color: #666; margin-bottom: 15px; }
+        .section { margin-bottom: 12px; border: 1px solid #999; background: #fffff0; }
+        .section-title { background: #e0e0c0; padding: 4px 8px; font-weight: bold; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #999; }
+        .section-content { padding: 8px; }
+        .links { display: flex; flex-wrap: wrap; gap: 6px; }
+        .links a { font-size: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 10px; }
+        th, td { text-align: left; padding: 2px 4px; border-bottom: 1px solid #ccc; }
+        th { background: #e0e0c0; font-size: 9px; text-transform: uppercase; }
+        .merch-item { margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed #ccc; }
+        .merch-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .price { font-weight: bold; }
+        .photos { display: flex; flex-wrap: wrap; gap: 4px; }
+        .photos img { width: 80px; height: 60px; object-fit: cover; border: 1px solid #999; }
+        footer { text-align: center; font-size: 9px; color: #666; margin-top: 15px; padding-top: 10px; border-top: 1px dashed #999; }
+        .emp { color: #c00; font-style: italic; }
+        select { font-size: 10px; padding: 2px; font-family: 'Garet', Verdana, sans-serif; }
+        .q { font-weight: bold; margin-top: 10px; margin-bottom: 4px; }
+        .q:first-child { margin-top: 0; }
+        .a { margin-bottom: 4px; padding-left: 10px; }
+        .speaker { font-weight: bold; color: #00c; }
+        .tr-row td:first-child { font-weight: bold; }
+        .preferred { background: #d0e8ed; }
+        .required { background: #f5d0d0; }
+        .info { background: #d0f0d0; }
+        .optional { background: #f5f0d0; }
+        audio { width: 100%; height: 24px; margin: 3px 0; }
+        .samples { display: flex; flex-wrap: wrap; gap: 8px; }
+        .sample-link { cursor: pointer; color: #00c; text-decoration: underline; font-size: 10px; }
+        .sample-link:hover { color: #c00; background: #ff0; }
+        .sample-link.playing { color: #c00; font-weight: bold; }
+        .btn { display: inline-block; padding: 4px 10px; background: #e0e0c0; border: 1px solid #999; color: #333; text-decoration: none; font-size: 10px; margin-top: 6px; }
+        .btn:hover { background: #ff0; color: #c00; }
+        
+        /* Mobile-specific enhancements */
+        @media (max-width: 600px) {
+            body { font-size: 15px; padding: 16px; }
+            h1 { font-size: 42px; }
+            .tagline { font-size: 14px; margin-bottom: 20px; }
+            .section { margin-bottom: 16px; }
+            .section-title { padding: 10px 12px; font-size: 13px; }
+            .section-content { padding: 12px; }
+            .links { gap: 8px 12px; }
+            .links a { font-size: 15px; display: inline-block; padding: 4px 0; }
+            table { font-size: 13px; display: block; overflow-x: auto; }
+            th, td { padding: 8px 6px; white-space: nowrap; }
+            th { font-size: 11px; }
+            .merch-item { margin-bottom: 12px; padding-bottom: 12px; font-size: 14px; line-height: 1.8; }
+            .photos { gap: 6px; }
+            .photos img { width: calc(50% - 3px); height: auto; aspect-ratio: 4/3; }
+            .samples { gap: 6px 16px; }
+            .sample-link { font-size: 15px; display: inline-block; padding: 6px 0; }
+            select { font-size: 16px; padding: 6px 8px; }
+            .btn { padding: 8px 14px; font-size: 14px; }
+            footer { font-size: 12px; margin-top: 20px; padding-top: 15px; }
+        }
+    </style>
 </head>
 <body>
-    <div class="titleContainer">
-        <div class="bandName">SIOTO JAZZ</div>
-        <div class="bandDescription">alternative rock from Macedonia</div>
+    <h1>SIOTO JAZZ</h1>
+    <div class="tagline">alternative rock from Macedonia</div>
+
+    <!-- RELEASES -->
+    <div class="section">
+        <div class="section-title">Releases</div>
+        <div class="section-content">
+            <div>Unnamed Upcoming Thing - Sophomore Album (2026)</div>
+            <div style="margin-top:4px;"><a href="truestate"><strong>The True State of All Things</strong></a> — Debut Album (2023)</div>
+            <div style="margin-top:4px;"><a href="https://www.youtube.com/watch?v=yvLuSa4OSZM">Watch Live Session</a> — Full Concert</div>
+        </div>
     </div>
-    <div class="buttonWrapper">
-        <div class="linkContainer">
-            <a href="mailto:siotojazz@gmail.com" class="linkButton"><i class="fas fa-envelope"></i> Inquire <span class="linkDesc">We want to play</span></a>
-            <a href="events" class="linkButton"><i class="fas fa-calendar-alt"></i> Events <span class="linkDesc">Future & past</span></a>
-            <a href="extra" class="linkButton"><i class="fas fa-bullhorn"></i> Promo <span class="linkDesc">Kits and extras</span></a>
-            <a href="#" class="linkButton"><i class="fas fa-music"></i> Album #2 <span class="linkDesc">TBA</span></a>
-            <a href="truestate" class="linkButton albumButton"><i class="fas fa-music"></i> Album #1 <span class="linkDesc">The True State of All Things</span></a>
-            <a href="https://www.youtube.com/watch?v=yvLuSa4OSZM" class="linkButton albumButton liveCover"><i class="fas fa-music"></i> Live <span class="linkDesc">The True State of All Things</span></a>
-            <a href="merch/" class="linkButton"><i class="fas fa-shopping-cart"></i> Merch <span class="linkDesc">Some cool things</span></a>
-            <div class="linkButton expandable" onclick="toggleLinks()"><i class="fas fa-share-alt"></i> Follow Us <span class="linkDesc">Stream & connect</span></div>
-            <div class="socialLinks" id="socialLinks">
-                <a href="https://www.instagram.com/siotojazz/" class="socialLink"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://open.spotify.com/artist/36K91fF4LvLQQQ2V7MBK6f?autoplay=true" class="socialLink"><i class="fa-brands fa-spotify"></i></a>
-                <a href="https://music.apple.com/mk/artist/sioto-jazz/1707671814" class="socialLink"><i class="fa-brands fa-apple"></i></a>
-                <a href="https://www.youtube.com/channel/UCxY8-7rzp1QklNKs_ChynJA" class="socialLink"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://www.deezer.com/en/artist/230723095" class="socialLink"><i class="fa-brands fa-deezer"></i></a>
+
+    <!-- LISTEN -->
+    <div class="section">
+        <div class="section-title">Listen</div>
+        <div class="section-content">
+            <div class="samples">
+                <span class="sample-link" data-src="extra/audio/snip_language.mp3">Language</span>
+                <span class="sample-link" data-src="extra/audio/snip_mad.mp3">Mad</span>
+                <span class="sample-link" data-src="extra/audio/snip_patience.mp3">Patience</span>
+                <span class="sample-link" data-src="extra/audio/snip_jetpacks.mp3">Jetpacks</span>
+            </div>
+            <audio id="preview-player" preload="none" style="display:none;"></audio>
+            <div class="links" style="margin-top:8px;">
+                <a href="https://open.spotify.com/artist/36K91fF4LvLQQQ2V7MBK6f">Spotify</a>
+                <a href="https://music.apple.com/mk/artist/sioto-jazz/1707671814">Apple Music</a>
+                <a href="https://www.youtube.com/channel/UCxY8-7rzp1QklNKs_ChynJA">YouTube</a>
+                <a href="https://www.deezer.com/en/artist/230723095">Deezer</a>
+                <a href="https://www.amazon.com/Ink/dp/B0CJ79L3K2">Amazon</a>
             </div>
         </div>
     </div>
-    <div class="nameDesc">© 2022-2025 Sioto Jazz. All rights reserved.<br/>››› sioto jazz means <span class="emp">all that jazz</span> it's not actual jazz, except when it is </div>
+
+    <!-- PHOTOS -->
+    <div class="section">
+        <div class="section-title">Photos</div>
+        <div class="section-content photos">
+            <img src="extra/photos/SJ_10.JPG" alt="Photo">
+            <img src="extra/photos/SJ_11.JPG" alt="Photo">
+            <img src="extra/photos/SJ_12.JPG" alt="Photo">
+            <img src="extra/photos/SJ_14.JPG" alt="Photo">
+            <img src="extra/photos/SJ_15.JPG" alt="Photo">
+            <img src="extra/photos/SJ_16.JPG" alt="Photo">
+        </div>
+    </div>
+
+    <!-- SOCIAL -->
+    <div class="section">
+        <div class="section-title">Social</div>
+        <div class="section-content links">
+            <a href="https://www.instagram.com/siotojazz/">Instagram</a>
+            <a href="mailto:siotojazz@gmail.com">Email</a>
+            <a href="https://www.bandsintown.com/a/15585479">Bandsintown</a>
+        </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="section">
+        <div class="section-title">About</div>
+        <div class="section-content">
+            <p>Sioto Jazz is an alternative rock band from Bitola, Macedonia, formed in 2022. Blending raw emotion with introspective melodies, the group dives into the heart of small-town summers, fleeting connections, and the pull between roots and wanderlust.</p>
+        </div>
+    </div>
+
+    <!-- LINE UP -->
+    <div class="section">
+        <div class="section-title">Line Up</div>
+        <div class="section-content">
+            <table>
+                <tr><td>Anastasija</td><td>Lead Vocal</td></tr>
+                <tr><td>Martin</td><td>Guitar, Bass, Drums, Samplers</td></tr>
+                <tr><td>Eva</td><td>Vocal, Guitar</td></tr>
+                <tr><td>Ilija</td><td>Saxophone</td></tr>
+                <tr><td>+ rotating for live performances</td><td>Bass, Drums, Sound</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="section">
+        <div class="section-title">Past Events</div>
+        <div class="section-content" style="overflow-x:auto;">
+            <table>
+                <tr><th>Date</th><th>Event</th><th>Venue</th><th>City</th><th>With</th></tr>
+                <tr><td>30/08/2025</td><td>IA Vrteshka</td><td>Planinarski Dom</td><td>Shtip</td><td>—</td></tr>
+                <tr><td>13/06/2025</td><td>MTF 59</td><td>Bife</td><td>Prilep</td><td>Side Quest</td></tr>
+                <tr><td>21/02/2025</td><td>Soundfabrik</td><td>Minus Eden</td><td>Skopje</td><td>Mia Perevska</td></tr>
+                <tr><td>30/11/2024</td><td>Pin Showcase</td><td>Kino Frosina</td><td>Skopje</td><td>Various</td></tr>
+                <tr><td>15/10/2024</td><td>Za Nikodim</td><td>Kalinka</td><td>Prilep</td><td>The Hounds</td></tr>
+                <tr><td>01/10/2024</td><td>Brucoshka</td><td>UKIM</td><td>Skopje</td><td>Ringtones, Pajak</td></tr>
+                <tr><td>27/09/2024</td><td>Manaki OFF</td><td>Magaza</td><td>Bitola</td><td>—</td></tr>
+                <tr><td>23/08/2024</td><td>Sioto Jazz</td><td>La Kanja</td><td>Skopje</td><td>—</td></tr>
+                <tr><td>22/08/2024</td><td>Code 369</td><td>Oficerski</td><td>Bitola</td><td>Code 369, Sound Waves</td></tr>
+                <tr><td>16/08/2024</td><td>Simultan Baknezh</td><td>Rakometno</td><td>Bitola</td><td>Foltin, Corrosion</td></tr>
+                <tr><td>20/07/2024</td><td>Zrno Festival</td><td>Kooperacija</td><td>Smilevo</td><td>—</td></tr>
+                <tr><td>17/07/2024</td><td>Beach Film Fest</td><td>Slavija Beach</td><td>Sv. Stefan</td><td>—</td></tr>
+                <tr><td>15/06/2024</td><td>Kruzhch</td><td>Marko Cepenko</td><td>Prilep</td><td>Next to Silence</td></tr>
+                <tr><td>30/09/2023</td><td>Strovija 2023</td><td>Strovija</td><td>Strovija</td><td>Stoj! Posle</td></tr>
+                <tr><td>29/09/2023</td><td>Xotel Session</td><td>Mellivora Studio</td><td>Nizhe Pole</td><td>—</td></tr>
+                <tr><td>26/08/2023</td><td>Parko 2047</td><td>Parko</td><td>Bitola</td><td>Niandra</td></tr>
+                <tr><td>18/02/2023</td><td>Stara Bolnica 2</td><td>Vakyym</td><td>Bitola</td><td>XAJKA</td></tr>
+                <tr><td>22/12/2022</td><td>Stara Bolnica</td><td>Vakyym</td><td>Bitola</td><td>Jeff Bahami, Corrosion</td></tr>
+            </table>
+            <div style="margin-top:6px;"><a href="mailto:siotojazz@gmail.com?subject=Book%20Sioto%20Jazz">» Book us</a></div>
+        </div>
+    </div>
+
+    <!-- MERCH -->
+    <div class="section">
+        <div class="section-title">Merch</div>
+        <div class="section-content">
+            <div style="font-size:10px;margin-bottom:10px;padding:6px;background:#e8e8d0;border:1px dashed #999;">
+                <strong>How to order:</strong> Select your options below and click "Order Now" to send us an email with your desired items and shipping details! We ship free literally everywhere (you can pay the shipping if you want to support us even more).
+                <br><br>
+                <strong>Heads up:</strong> Services like PayPal and Patreon don't let us receive payments in Macedonia due to their restrictions and local regulations. That's why we're handling orders directly via email to keep things simple and get our merch to you!
+            </div>
+            <div class="merch-item">
+                <strong>Digital Album (Lossless)</strong> — <span class="price">$9.99</span> — 12 WAV + cover — <a href="mailto:siotojazz@gmail.com?subject=Order:%20Digital%20Album">Order Now</a>
+            </div>
+            <div class="merch-item">
+                <strong>Live Session (Lossless)</strong> — <span class="price">$9.99</span> — 10 WAV — <a href="mailto:siotojazz@gmail.com?subject=Order:%20Live%20Session">Order Now</a>
+            </div>
+            <div class="merch-item">
+                <strong>T-Shirt</strong> — <span class="price">$19.99</span> — Size: <select id="size"><option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option><option>2XL</option></select> — <a href="mailto:siotojazz@gmail.com?subject=Order:%20T-Shirt">Order Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROMO -->
+    <div class="section">
+        <div class="section-title">Promo Kit</div>
+        <div class="section-content links">
+            <a href="extra/siotojazz-logo3000.png">Logo</a>
+            <a href="extra/banners/sioto-jazz-banner.png">Banner</a>
+            <a href="extra/banners/sioto-jazz-banner-wide.png">Wide Banner</a>
+            <a href="fonts/Astrella.ttf">Astrella Font</a>
+            <a href="fonts/Garet.ttf">Garet Font</a>
+        </div>
+    </div>
+
+    <!-- TECH RIDER -->
+    <div class="section">
+        <div class="section-title">Tech Rider</div>
+        <div class="section-content" style="overflow-x:auto;">
+            <div style="font-size:9px;color:#666;margin-bottom:6px;">Legend: <span class="preferred" style="padding:1px 4px;">Preferred</span> <span class="required" style="padding:1px 4px;">Required</span> <span class="info" style="padding:1px 4px;">We bring</span> <span class="optional" style="padding:1px 4px;">Optional</span></div>
+            <table>
+                <tr><th>Item</th><th>Mic/Connection</th><th>Equipment</th><th>Power</th></tr>
+                <tr class="tr-row"><td>Kick</td><td class="preferred">Beta 91/52</td><td class="preferred">Pearl Export 22"</td><td>—</td></tr>
+                <tr class="tr-row"><td>Snare</td><td class="preferred">SM57 top, SM81 btm</td><td>—</td><td>—</td></tr>
+                <tr class="tr-row"><td>Rack Tom</td><td class="preferred">Beta 98</td><td class="preferred">Pearl Export 12"</td><td>—</td></tr>
+                <tr class="tr-row"><td>Floor Tom</td><td class="preferred">Beta 98</td><td class="preferred">Pearl Export 14"</td><td>—</td></tr>
+                <tr class="tr-row"><td>Overheads</td><td class="preferred">SM81 L/R</td><td>—</td><td>—</td></tr>
+                <tr class="tr-row"><td>Bass</td><td class="required">XLR Line Out</td><td class="preferred">Fender Rumble 500</td><td class="info">220V (1)</td></tr>
+                <tr class="tr-row"><td>Guitar 1</td><td class="required">SM57</td><td class="info">Fender Rumble 100</td><td class="info">220V (4)</td></tr>
+                <tr class="tr-row"><td>Guitar 2</td><td class="required">SM57</td><td class="preferred">Boss Katana 50</td><td class="info">220V (4)</td></tr>
+                <tr class="tr-row"><td>Sax</td><td class="preferred">Beta 98H/C or SM58</td><td>—</td><td>—</td></tr>
+                <tr class="tr-row"><td>Vocals (4)</td><td class="preferred">SM86</td><td>—</td><td>—</td></tr>
+                <tr class="tr-row"><td>Additional</td><td>—</td><td class="required">Digital Mixer</td><td>—</td></tr>
+                <tr class="tr-row"><td>Additional</td><td>—</td><td class="optional">4x Guitar Stands, 1x Sheet Stand</td><td>—</td></tr>
+            </table>
+            <div style="margin-top:6px;font-size:10px;">Monitors: 4-5 separate mixes. One by drummer, one front of lead vocal, 1-2 on sides.</div>
+            <div style="margin-top:4px;">Contact: Martin Petkovski — siotojazz@gmail.com</div>
+        </div>
+    </div>
+
+    <!-- INTERVIEW -->
+    <div class="section">
+        <div class="section-title">Interview (September 2024)</div>
+        <div class="section-content">
+            <div style="font-size:9px;color:#666;margin-bottom:8px;">The text below was compiled after getting to know Sioto Jazz, specifically Martin, Eva, Anastasija, and Gorazd by Dushica Brachikj. It was conducted in September 2024.</div>
+
+            <div class="q">Who are Sioto Jazz, how did you meet, and how did you realize you needed to form a band?</div>
+            <div class="a"><span class="speaker">Martin:</span> I had a band before, "Smooth But Not," with which we recorded an album that was, let's say, popular in certain circles. After some time, my friend Viktor said, "Let's play something," and we played some old songs from that band. We clicked, so I invited Anastasija to join as a vocalist, with the plan to start something new.</div>
+            <div class="a"><span class="speaker">Anastasija:</span> Yes, the idea was to get together, jam, but somehow that initial idea, that music, didn't click. Months passed, and they reached out to me again with an idea for a different project, and that's when the idea clicked. At first, it was Viktor, me, and Martin, and we needed one more person on an instrument. I invited Eva, and boom, the four of us came together.</div>
+            <div class="a"><span class="speaker">Gorazd:</span> They've been doing this band for two years, and I've been with them for one year. They needed to record a live session for XOTEL but didn't have a bassist, and the same for Strovija, so that's how I got involved. Andrej is our band manager; whenever there's tension or misunderstanding in the band, he's there to point things out and motivate us to talk it out. This is a call to other bands to find someone like Andrej—someone who can point out and resolve problems honestly and directly.</div>
+            <div class="a"><span class="speaker">Martin:</span> By the way, many people have been part of the group so far: Viktor Stojceski on drums, Ilija Volceski on saxophone, Martina Stevanovska as a backing vocal, Armin Amedovski on bass, Damjan Grujo on drums, and on the album, Santiago Vasquez plays classical guitar and Malfrid Vigdal plays double bass.</div>
+
+            <div class="q">Why are you a supergroup, and what makes you super friends?</div>
+            <div class="a"><span class="speaker">Martin:</span> We're a supergroup because we all come from different bands and operate more on the principle of "whoever can and whenever they can." As for why the others are great... for example, Blagojche is an excellent drummer—he keeps great time and tempo, very consistent, and I need that because I play with delay. Gogo is a very good bassist, creative, and knows how to add elements that weren't originally planned. Anastasija sings very consistently and can sing the same vocal line countless times in the same way. Without Eva, it simply sounds empty, and Ilija brings all the flair to the music.</div>
+            <div class="a"><span class="speaker">Eva:</span> Anastasija is great because she always brings good energy. Martin is great because he always has melodic songs.</div>
+            <div class="a"><span class="speaker">Anastasija:</span> Basically, Martin is the brain of the band. He writes the lyrics, comes up with melodies, and everything. That's what I'd highlight about Martin—his creativity. And it's great that we're all open to new things, giving each other space to express ourselves creatively.</div>
+
+            <div class="q">Who inspires you?</div>
+            <div class="a"><span class="speaker">Martin:</span> I listened to The National a lot, especially while working on the album. Poetically, I'm very inspired by Ben Gibbard—he's the frontman of Death Cab for Cutie—and stylistically, in terms of guitar tone, by The Smashing Pumpkins. I like doing conceptual things, which is why our album feels like a story, probably inspired by Pink Floyd and The Smashing Pumpkins' <em>Mellon Collie and the Infinite Sadness</em>, which are cohesive works with a beginning and an end.</div>
+            <div class="a"><span class="speaker">Anastasija:</span> For example, Eva and I listened to Khruangbin during an art residency; we played their albums. They looked so visually sweet and immersed in what they were doing—maybe that, that moment.</div>
+            <div class="a"><span class="speaker">Eva:</span> If we're talking about bands, there's also Men I Trust, Still Corners, and Sneaker Pimps.</div>
+
+            <div class="q">How does your creative process work?</div>
+            <div class="a"><span class="speaker">Martin:</span> At least for me, the creative process—generally, not for all songs—involves first finding a progression with the most basic chords. Over that progression, I come up with a vocal melody, which already has a rhythm, and then it's easy to write lyrics. The lyrics just need to be semantically crafted and fit the melody in the right places—usually starting with a verse, or maybe two or three, then adding a chorus. The whole creative process is acoustic guitar and vocals. Once this is complete as a whole, the chords are brought to rehearsal—the chords, vocals, and lyrics are there, but everything else is jammed out.</div>
+            <div class="a"><span class="speaker">Anastasija:</span> Initially, we rehearsed the songs for the album that way. I'd go to Martin's, and he'd have his guitar, and I'd have the lyrics to set the song. After that, it's easy to add the saxophone and everything else.</div>
+
+            <div class="q">Which song took you the longest to compose?</div>
+            <div class="a"><span class="speaker">Martin:</span> "Patience"—it's an old song, but the process to bring it from start to finish took the longest. We put the most love into that song, and I'm still not satisfied with how it turned out. For example, there's an interesting story: there's a stop after the second chorus—it happened completely by accident. I accidentally deleted the drums in that part and thought, "Hey, that's cool."</div>
+            <div class="a"><span class="speaker">Anastasija:</span> Yes, yes, we all listened to it and said, "This stays like this, no changes."</div>
+
+            <div class="q">How do you incorporate jazz into your music, which also has elements of pop, rock, and indie sounds?</div>
+            <div class="a"><span class="speaker">Martin:</span> The fact that "jazz" is in the band's name was somewhat ironic because we didn't plan to play any jazz music at all. Then we added a saxophone, changed the drums a bit—adding a shuffle—and that's how it integrated. I think that's the unique element of the band: we might play something energetic, and then the whole song softens, and the drums start playing jazz, creating that contrast. "Sioto" came about completely by accident—when I tried to create an email, I doubled the letters in "Siot Toj Jazz," then shortened the duplicates to get "Sioto," and it sounded exotic and Japanese to me, so it stuck.</div>
+            <div class="a"><span class="speaker">Eva:</span> It blends naturally; it's not complicated for us to perform.</div>
+
+            <div class="q">Your lyrics focus on small towns and their decline. Why do you think small towns are important for society and for the individual?</div>
+            <div class="a"><span class="speaker">Martin:</span> Specifically for Macedonia, I think the obvious problem is that centralization is in Skopje. It's not just that it negatively affects small towns, but it also impacts Skopje—because it's overcrowded and has too much congestion. Generally, I think that's not good—it's not good for the country. But it's very hard to motivate people to stay in small towns if they don't have conditions like proper education and authentic culture. But you can't just blame the country—it's also described in the album that it depends on each individual. So, you need to be brave enough, have enough mental resilience, and remain in a small town to do something good for it—something positive... because if you don't stay, no one else will. Everything you do for that place will come back to you with a lot of love. I have nothing against those who move abroad or, say, to Skopje; I just think it's very important to leave something good for the environment that raised them and shaped them into who they are.</div>
+            <div class="a"><span class="speaker">Gorazd:</span> Definitely, music has the power to influence decentralization. For example, Ponder managed to bring in many bands from 11 different countries, and we witnessed a lot of attendance from all cities in Macedonia, and even beyond.</div>
+
+            <div class="q">Which song from your album would you choose to make your day perfect?</div>
+            <div class="a"><span class="speaker">Eva:</span> For me, it's "Ghost" and "Patience." I imagine myself just listening to those songs and doing nothing else.</div>
+            <div class="a"><span class="speaker">Gorazd:</span> I really love "Ink"—it's on my playlist; I listen to it while I work.</div>
+            <div class="a"><span class="speaker">Anastasija:</span> For me, it's "Ink" or "Jetpacks" because they're very soft, gentle, and give me a feeling of nostalgia and sadness, but I love it. Like, for example, sitting outside, swinging on a hammock, drinking tea, and listening to them—that's it.</div>
+            <div class="a"><span class="speaker">Martin:</span> For me, it's "Mad" because every line in the song I can visualize as an image in my head—like how my room looked during that period, and also the boulevard in autumn, which is a reference to a song from my old band. Generally, I wouldn't want to live in the songs because they're sad and nostalgic; they remind me of other times that are complete and finished.</div>
+
+            <div class="q">What's it like when you see the audience enjoying your music, and do you prefer playing on a big stage or in a more intimate space?</div>
+            <div class="a"><span class="speaker">Gorazd:</span> It's the best feeling in the world, especially better on a bigger stage.</div>
+            <div class="a"><span class="speaker">Martin:</span> I think in front of a large audience, the fun is on stage, among us, but in a more intimate setting, you have more interaction with the audience—and I find that more interesting.</div>
+
+            <div class="q">How do you create memories?</div>
+            <div class="a"><span class="speaker">Eva:</span> You need to be immersed in the moment and listen to the people around you.</div>
+            <div class="a"><span class="speaker">Gorazd:</span> That cliché—"We didn't know we were making memories."</div>
+            <div class="a"><span class="speaker">Martin:</span> First, you have to go outside to make memories—there are no memories from sitting at home. Personally, I used to be more introverted, and I preferred staying home and gaining skills, but I think that way, you don't make memories; you don't have many stories, and you don't have much to "hold onto" when times get darker. You can't say, "Okay, things are bad now, but at least I did this." I reached a point where I got tired of that and realized I'm chasing stories in life. I'm willing to accept feeling bad, depressed, or anxious—just to have the story and the experience. Our album is just one of those stories I can say, "Okay, things are bad now, but at least this exists," something that locks away the good feelings, moments, and experiences we've had and, in some way, connects us with the people who've left.</div>
+        </div>
+    </div>
+
+    <footer>
+        © 2022-2026 Sioto Jazz <br> sioto jazz means <span class="emp">all that jazz</span> <br> it's not actual jazz, except when it is
+    </footer>
     <script>
-        function toggleLinks() {
-            const socialLinks = document.getElementById('socialLinks');
-            socialLinks.classList.toggle('active');
-        }
+        (function() {
+            var player = document.getElementById('preview-player');
+            var links = document.querySelectorAll('.sample-link');
+            links.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    var src = this.getAttribute('data-src');
+                    if (player.src.includes(src) && !player.paused) {
+                        player.pause();
+                        this.classList.remove('playing');
+                    } else {
+                        links.forEach(function(l) { l.classList.remove('playing'); });
+                        player.src = src;
+                        player.play();
+                        this.classList.add('playing');
+                    }
+                });
+            });
+            player.addEventListener('ended', function() {
+                links.forEach(function(l) { l.classList.remove('playing'); });
+            });
+        })();
     </script>
-    <!-- Meta Pixel Code -->
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '659373513548060');
-    fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=659373513548060&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
 </body>
 </html>

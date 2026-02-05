@@ -1,0 +1,353 @@
+/* Homepage Styles - Late 90s Band Site Aesthetic */
+/* Inspired by minimalist text-based sites */
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'Astrella';
+    src: url('fonts/Astrella.ttf') format('truetype');
+}
+
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+body {
+    font-family: 'Verdana', 'Geneva', 'Tahoma', sans-serif;
+    font-size: 12px;
+    line-height: 1.6;
+    background: #f5f5dc;
+    color: #333;
+    position: relative;
+}
+
+/* Hero Section - 90s style centered content */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    background: #f5f5dc;
+}
+
+.hero-content {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    border: 2px solid #333;
+    padding: 30px;
+    background: #fffff0;
+}
+
+/* Band Name - 90s style */
+.bandName {
+    font-family: 'Astrella', 'Impact', 'Arial Black', sans-serif;
+    font-size: clamp(36px, 10vw, 56px);
+    letter-spacing: 2px;
+    color: #000;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.bandTagline {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #666;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed #999;
+}
+
+/* Social Icons Row - 90s bracket style */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+}
+
+.social-icons a {
+    color: #0000cc;
+    text-decoration: underline;
+    padding: 2px 4px;
+}
+
+.social-icons a:hover {
+    color: #cc0000;
+    background: #ffff00;
+}
+
+.social-icons a::before {
+    content: '[ ';
+    text-decoration: none;
+    color: #333;
+}
+
+.social-icons a::after {
+    content: ' ]';
+    text-decoration: none;
+    color: #333;
+}
+
+.social-icons a i {
+    display: none;
+}
+
+/* Main CTA Buttons - 90s text links */
+.main-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid #999;
+    padding: 15px;
+    background: #f0f0e0;
+}
+
+.main-links::before {
+    content: '» MUSIC';
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.main-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    text-decoration: none;
+    color: #0000cc;
+    background: transparent;
+    border: 1px solid #ccc;
+    font-family: 'Verdana', sans-serif;
+    font-size: 11px;
+}
+
+.main-btn.album-btn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 8px;
+    overflow: hidden;
+}
+
+.main-btn .album-cover {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid #333;
+}
+
+.main-btn .btn-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.main-btn:hover {
+    background: #ffff99;
+    color: #cc0000;
+    border-color: #333;
+}
+
+.main-btn.coming-soon-btn {
+    background: #e0e0d0;
+    color: #999;
+    cursor: default;
+    border: 1px dashed #aaa;
+}
+
+.main-btn.coming-soon-btn:hover {
+    background: #e0e0d0;
+    color: #999;
+    border-color: #aaa;
+}
+
+.main-btn .btn-title {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.main-btn .btn-title i {
+    margin-right: 5px;
+}
+
+.main-btn .btn-sub {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    margin-top: 1px;
+}
+
+/* Secondary Links Row - 90s style */
+.secondary-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #999;
+}
+
+.sec-btn {
+    display: inline-block;
+    padding: 4px 8px;
+    text-decoration: underline;
+    color: #0000cc;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    background: transparent;
+    border: none;
+}
+
+.sec-btn:hover {
+    background: #ffff00;
+    color: #cc0000;
+}
+
+.sec-btn i {
+    display: none;
+}
+
+/* Footer - 90s style */
+.site-footer {
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #666;
+    padding-top: 15px;
+    border-top: 1px solid #ccc;
+    margin-top: 10px;
+}
+
+.footer-tagline {
+    margin-top: 3px;
+}
+
+.footer-tagline .emp {
+    color: #cc0000;
+    font-style: italic;
+}
+
+.retro-note {
+    margin-top: 8px;
+    font-size: 9px;
+    color: #999;
+}
+
+.hit-counter {
+    margin-top: 6px;
+    font-size: 10px;
+    color: #333;
+    background: #000;
+    color: #0f0;
+    padding: 2px 8px;
+    display: inline-block;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 540px) {
+    .hero {
+        padding: 20px 10px;
+    }
+    
+    .hero-content {
+        gap: 16px;
+        padding: 20px 15px;
+    }
+    
+    .bandTagline {
+        letter-spacing: 1px;
+        padding-bottom: 12px;
+    }
+    
+    .social-icons {
+        gap: 6px;
+    }
+    
+    .main-btn {
+        padding: 8px;
+    }
+    
+    .secondary-links {
+        gap: 8px;
+    }
+    
+    .sec-btn {
+        padding: 4px 6px;
+    }
+}
+
+/* Very small screens */
+@media (max-height: 600px) {
+    .hero-content {
+        gap: 12px;
+    }
+    
+    .bandName {
+        font-size: clamp(28px, 10vw, 42px);
+    }
+    
+    .bandTagline {
+        padding-bottom: 10px;
+    }
+    
+    .main-btn {
+        padding: 6px 8px;
+    }
+    
+    .sec-btn {
+        padding: 3px 5px;
+    }
+    
+    .site-footer {
+        padding-top: 10px;
+    }
+}
+
+/* 90s extras */
+.hero-content::before {
+    content: '═══════════════════════════════════════';
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #999;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.hero-content::after {
+    content: '═══════════════════════════════════════';
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #999;
+    overflow: hidden;
+    white-space: nowrap;
+}

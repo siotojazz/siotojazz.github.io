@@ -1,4 +1,5 @@
 /* Reset and Global Styles */
+/* Late 90s Band Site Theme - Light */
 * {
     padding: 0;
     margin: 0;
@@ -7,402 +8,251 @@
 
 @font-face {
     font-family: 'Astrella';
-    src: url('fonts/Astrella.ttf') format('truetype');
-}
-
-@font-face {
-    font-family: 'Garet';
-    src: url('fonts/Garet.ttf') format('truetype');
+    src: url('/fonts/Astrella.ttf') format('truetype');
 }
 
 body {
     margin: 0;
     width: 100%;
-    font-family: 'Garet', 'MS Sans Serif', 'Arial', sans-serif;
-    padding: 48px;
-    padding-top: 80px; /* Offset for fixed nav */
-    font-size: clamp(14px, 1.8vw, 16px);
+    font-family: 'Verdana', 'Geneva', 'Tahoma', sans-serif;
+    padding: 0;
+    font-size: 12px;
     line-height: 1.6;
     scroll-behavior: smooth;
-    color: #FFFFFF;
+    color: #333;
     min-height: 100vh;
-    background-color: #000;
-    background-image: url(extra/photos/SJ_12_BW.jpg);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover; /* Fill available area proportionally */
-    background-attachment: fixed;
+    background-color: #f5f5dc;
 }
 
 main {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    align-items: flex-end; /* Left alignment for main content */
-    gap: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px 24px 60px;
+    background: #fffff0;
+    border: 2px solid #333;
+    margin-top: 70px;
+    margin-bottom: 40px;
 }
 
-/* Title Section */
+.buttonWrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+p {
+    text-align: justify;
+    margin-bottom: 1em;
+    color: #333;
+    font-family: 'Verdana', sans-serif;
+    font-size: 12px;
+}
+
+/* Title Section - 90s style */
 .titleContainer {
-    text-align: left;
-    margin: 16px 0;
-    position: relative;
-    z-index: 10;
+    text-align: center;
+    padding: 80px 24px 20px;
+    border-bottom: 1px dashed #999;
+    margin-bottom: 30px;
 }
 
 .bandName {
-    font-family: 'Astrella', sans-serif;
-    font-size: 68px;
-    line-height: 1.1;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    font-family: 'Astrella', 'Impact', 'Arial Black', sans-serif;
+    font-size: clamp(32px, 10vw, 48px);
+    line-height: 1;
+    color: #000;
+    letter-spacing: 2px;
 }
 
 .bandNameLink {
     text-decoration: none;
     color: inherit;
-    transition: transform 0.2s ease;
 }
 
 .bandNameLink:hover {
-    transform: translateY(-2px);
+    color: #cc0000;
 }
-
-/* .bandDescription {
-    margin-bottom: 0px !important;
-} */
 
 .nameDesc {
     margin-top: 50px;
-    font-size: 6px !important;
-    color: #FFF3 !important;
-    display: inline-block   !important;
+    font-size: 9px !important;
+    color: #666 !important;
+    display: inline-block !important;
     font-weight: 600 !important;
+    font-family: 'Courier New', monospace !important;
 }
 
 .nameDesc .emp {
     font-style: italic !important;
-    color: #FFCC4444 !important;
+    color: #cc0000 !important;
 }
 
-.bandDescription, .nameDesc {
-    margin-bottom: 48px;
-    letter-spacing: 1px;
-    font-size: clamp(10px, 1.6vw, 12px);
+.bandDescription {
+    margin-bottom: 24px;
+    letter-spacing: 2px;
+    font-size: 11px;
     text-transform: uppercase;
-    animation: fadeInSubtitle 0.4s ease-out forwards;
+    color: #666;
+    font-family: 'Courier New', monospace;
 }
 
-/* Navigation Bar */
+/* Navigation Bar - 90s style */
 .extraNav {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
-    background-color: #0009; /* Semi-transparent black */
-    backdrop-filter: blur(5px); /* Add blur effect */
-    -webkit-backdrop-filter: blur(5px); /* For older WebKit browsers */
+    background: #e0e0c0;
+    border-bottom: 2px solid #333;
 }
 
 .navContainer {
+    max-width: 600px;
     margin: 0 auto;
-    padding: 10px 20px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Align all content to the left */
+    justify-content: flex-start;
+    height: 40px;
+    gap: 8px;
 }
 
 .extraNav ul {
     list-style: none;
     display: flex;
-    flex-direction: row; /* Horizontal layout */
-    justify-content: flex-start; /* Align items to the left */
     gap: 4px;
-    background: none;
-    flex-wrap: wrap; /* Keep buttons in one row */
-    width: 100%; /* Ensure ul takes full container width */
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 8px 0;
+}
+
+.extraNav ul::-webkit-scrollbar {
+    display: none;
 }
 
 .extraNav li {
-    flex: 1 0 0; /* Equal width for all buttons */
-    min-width: 80px; /* Prevent buttons from becoming too narrow */
+    flex-shrink: 0;
 }
 
 .extraNav a {
     display: flex;
     align-items: center;
-    justify-content: center; /* Align text/icons to the left */
-    padding: 2px 0px; /* Adjusted padding for balance */
-    border: none;
-    border-radius: 0;
-    text-decoration: none;
-    color: #FFFFFF;
-    font-size: 10px;
-    font-family: 'Garet', sans-serif;
-    position: relative;
-    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-    width: 100%; /* Ensure anchor fills list item */
-    box-sizing: border-box;
-}
-
-.extraNav a::before {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
-    transition: width 0.3s ease;
-}
-
-.extraNav a:hover::before {
-    width: 100%;
+    padding: 4px 8px;
+    text-decoration: underline;
+    color: #0000cc;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    white-space: nowrap;
 }
 
 .extraNav a:hover {
-    transform: translateY(-2px);
+    color: #cc0000;
+    background: #ffff00;
 }
 
 .extraNav a i {
-    margin-right: 8px;
-    transition: color 0.2s ease;
-}
-
-.extraNav a:hover i {
-    color: #FFA500;
+    display: none;
 }
 
 .hamburger {
     display: none;
-    background: linear-gradient(90deg, #03007a 80%, #0403ed);
-    border: none;
-    padding: 8px 12px;
+    background: #ccc;
+    border: 2px outset #fff;
+    padding: 4px 8px;
     cursor: pointer;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    margin-right: 10px; /* Space between hamburger and menu */
 }
 
 .hamburger i {
-    color: #FFFFFF;
-    font-size: clamp(16px, 2.2vw, 18px);
+    color: #333;
+    font-size: 14px;
 }
 
 /* Button Wrapper */
 .buttonWrapper {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
     width: 100%;
-    margin-top: 0;
 }
 
 .linkContainer {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    width: 100%;
-    max-width: 360px;
+    gap: 10px;
 }
 
-/* Gradient Border for Non-Button Elements */
-.merchItem, .audioItem, .extraTable, .merchNote, .paymentNote, .audioControls, .progressBar, .volumeSlider, .equipmentType, .photosContainer img, .logoImage, .bannerImage {
-    position: relative;
-    border: none;
-}
+/* Border for Non-Button Elements - 90s style */\n.merchItem, .audioItem, .extraTable, .merchNote, .paymentNote, .audioControls, .progressBar, .volumeSlider, .equipmentType, .photosContainer img, .logoImage, .bannerImage {\n    position: relative;\n    border: 1px solid #999;\n    background: #f0f0e0;\n}\n\n/* Border for Details */\ndetails {\n    position: relative;\n    border: 1px solid #999;\n    background: #f0f0e0;\n}\n\n/* General Button Styles - 90s style */\n.linkButton, .copyButton, .merchButton, .backButton {\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    gap: 8px;\n    padding: 8px 16px;\n    background: #e0e0c0;\n    border: 2px outset #fff;\n    text-decoration: none;\n    color: #0000cc;\n    font-size: 11px;\n    font-weight: normal;\n    letter-spacing: 0;\n    text-transform: uppercase;\n    cursor: pointer;\n    font-family: 'Verdana', sans-serif;\n}\n\n.linkButton:hover, .copyButton:hover, .merchButton:hover, .backButton:hover {\n    background: #ffff99;\n    border: 2px inset #999;\n    color: #cc0000;\n}\n\n.linkButton i {\n    font-size: 12px;\n}\n\n.linkButton:hover i {\n    color: #cc0000;\n}\n\n.linkButton .linkDesc {\n    font-size: 10px;\n    font-weight: 400;\n    margin-left: auto;\n    color: #666;\n}
 
-.merchItem::before, .audioItem::before, .extraTable::before, .merchNote::before, .paymentNote::before, .audioControls::before, .progressBar::before, .volumeSlider::before, .equipmentType::before, .photosContainer img::before, .logoImage::before, .bannerImage::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
-}
-
-/* Blue Gradient Border for Details */
-details {
-    position: relative;
-    border: none;
-}
-
-details::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(90deg, #03007a 80%, #0403ed);
-    z-index: -1;
-}
-
-/* General Button Styles */
-.linkButton, .copyButton, .merchButton, .backButton {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 8px 16px;
-    background: linear-gradient(90deg, #03007a 80%, #0403ed);
-    border: none;
-    border-radius: 0;
-    text-decoration: none;
-    color: #FFFFFF;
-    font-size: clamp(14px, 2vw, 15px);
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    position: relative;
-    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-
-.linkButton::before, .copyButton::before, .merchButton::before, .backButton::before {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
-    transition: width 0.3s ease;
-}
-
-.linkButton:hover::before, .copyButton:hover::before, .merchButton:hover::before, .backButton:hover::before {
-    width: 100%;
-}
-
-.linkButton:hover, .copyButton:hover, .merchButton:hover, .backButton:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(90deg, #0403ed 80%, #03007a);
-    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.linkButton i {
-    margin-right: 8px;
-    font-size: clamp(15px, 2vw, 16px);
-    transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.linkButton:hover i {
-    transform: translateX(3px);
-    color: #FFA500;
-}
-
-.linkButton .linkDesc {
-    font-size: clamp(10px, 1.6vw, 11px);
-    font-weight: 400;
-    margin-left: auto;
-}
-
-/* Album Button */
+/* Album Button - 90s style */
 .albumButton {
     display: flex;
     align-items: center;
     width: 100%;
     max-width: 360px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 0;
+    padding: 8px 12px;
+    border: 2px outset #fff;
     text-decoration: none;
-    color: #FFFFFF;
-    font-size: clamp(15px, 2.2vw, 16px);
-    font-weight: 700;
+    color: #0000cc;
+    font-size: 11px;
+    font-weight: bold;
     cursor: pointer;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     position: relative;
     overflow: hidden;
-    background: none;
+    background: #e0e0c0;
+    font-family: 'Verdana', sans-serif;
 }
 
 .albumButton::before {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
-    transition: width 0.3s ease;
+    display: none;
 }
 
 .albumButton:hover::before {
-    width: 100%;
+    display: none;
 }
 
 .albumButton::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('truestate/sioto_jazz_album_cover_small.png');
-    background-size: cover;
-    background-position: center;
-    opacity: 1;
-    z-index: -2;
-}
-
-.albumButton::before {
-    content: '';
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: #0403ed;
-    opacity: 0.5;
-    z-index: -1;
-    transition: opacity 0.2s ease;
-}
-
-.liveCover::after {
-    background-image: url('livecover.png') !important;
-    background-size: cover !important;
-    background-position: center !important;
-}
-
-.albumButton:hover::before {
-    opacity: 0.7;
+    display: none;
 }
 
 .albumButton:hover {
-    transform: translateY(-2px);
-    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
+    background: #ffff99;
+    border: 2px inset #999;
+    color: #cc0000;
+}
+
+.liveCover::after {
+    display: none !important;
 }
 
 .albumButton i, .albumButton .linkDesc {
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-    color: #FFFFFF;
+    text-shadow: none;
+    color: #666;
 }
 
 .albumButton i {
-    transition: color 0.2s ease;
+    color: #333;
 }
 
 .albumButton:hover i {
-    color: #FFA500;
+    color: #cc0000;
 }
 
 .albumButton .linkDesc {
-    font-size: clamp(10px, 1.6vw, 11px);
+    font-size: 10px;
     font-weight: 400;
     margin-left: auto;
+    color: #666;
 }
 
 /* Specific Button Styles */
 .copyButton {
     width: auto;
-    padding: 6px 12px;
-    font-size: clamp(12px, 1.8vw, 13px);
+    padding: 4px 10px;
+    font-size: 10px;
 }
 
-/* Social Links */
+/* Social Links - 90s style */
 .socialLinks {
     width: 100%;
     max-width: 360px;
@@ -419,49 +269,29 @@ details::before {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    gap: 10px;
     width: 100%;
-    padding: 8px 16px;
-    background: linear-gradient(90deg, #03007a 80%, #0403ed);
-    border: none;
-    border-radius: 0;
-    text-decoration: none;
-    color: #FFFFFF;
-    font-size: clamp(15px, 2.2vw, 16px);
-    font-weight: 600;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    position: relative;
-    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-
-.socialLink::before {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
-    transition: width 0.3s ease;
-}
-
-.socialLink:hover::before {
-    width: 100%;
+    padding: 8px 12px;
+    background: #f0f0e0;
+    border: 1px solid #999;
+    text-decoration: underline;
+    color: #0000cc;
+    font-size: 11px;
+    font-family: 'Verdana', sans-serif;
 }
 
 .socialLink:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(90deg, #0403ed 80%, #03007a);
-    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
+    background: #ffff99;
+    color: #cc0000;
+    color: #fff;
 }
 
 .socialLink i {
-    transition: transform 0.2s ease, color 0.2s ease;
+    margin-right: 10px;
 }
 
 .socialLink:hover i {
-    transform: translateX(3px);
-    color: #FFA500;
+    color: #fff;
 }
 
 .socialLink:nth-child(1) { --index: 1; }
@@ -474,25 +304,28 @@ details::before {
 .merchContainer {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     width: 100%;
-    gap: 16px;
-    margin-top: clamp(16px, 2.5vw, 20px);
+    max-width: 700px;
+    margin: 0 auto;
+    gap: 20px;
+    padding: 0 24px;
 }
 
 .merchNote, .paymentNote {
-    font-size: clamp(12px, 1.8vw, 13px);
-    color: #000080;
+    font-size: 14px;
+    color: rgba(255,255,255,0.9);
     text-align: left;
-    max-width: 500px;
-    margin-bottom: 12px;
-    padding: 10px;
-    background: #C0C0C0;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .paymentNote {
-    font-weight: 600;
+    font-weight: 500;
+    background: rgba(255,200,0,0.1);
+    border-color: rgba(255,200,0,0.3);
 }
 
 .merchItem {
@@ -500,10 +333,10 @@ details::before {
     flex-direction: row;
     align-items: flex-start;
     width: 100%;
-    max-width: 500px;
-    background: #C0C0C0;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    padding: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 20px;
+    gap: 16px;
 }
 
 .merchImage {
@@ -522,14 +355,15 @@ details::before {
 }
 
 .merchDetails h3 {
-    font-size: clamp(14px, 2.2vw, 15px);
-    color: #000080;
-    font-weight: 700;
+    font-size: 14px;
+    color: #000;
+    font-weight: bold;
+    font-family: 'Verdana', sans-serif;
 }
 
 .merchDetails p {
-    font-size: clamp(11px, 1.6vw, 12px);
-    color: #000080;
+    font-size: 11px;
+    color: #333;
 }
 
 .optionGroup {
@@ -540,82 +374,76 @@ details::before {
 }
 
 .optionGroup label {
-    font-size: clamp(11px, 1.6vw, 12px);
-    color: #000080;
-    font-weight: 600;
+    font-size: 11px;
+    color: #333;
+    font-weight: bold;
 }
 
 .optionGroup select {
-    padding: 6px 8px;
-    font-size: clamp(11px, 1.6vw, 12px);
-    background: #C0C0C0;
-    border: none;
-    color: #000080;
+    padding: 4px 8px;
+    font-size: 11px;
+    background: #fff;
+    border: 2px inset #999;
+    color: #333;
     cursor: pointer;
+    font-family: 'Verdana', sans-serif;
 }
 
 .optionGroup select::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
+    display: none;
 }
 
 .optionGroup select:focus {
-    outline: none;
+    outline: 1px dotted #333;
 }
 
 .optionGroup select:focus::before {
-    background: #FFA500;
+    display: none;
 }
 
-/* Extras Page Styles */
+/* Extras Page Styles - 90s style */
 .category {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
-    max-width: 500px;
-    gap: 16px;
-    margin-top: clamp(16px, 2.5vw, 20px);
+    max-width: 600px;
+    gap: 12px;
+    margin-top: 16px;
 }
 
 details {
     width: 100%;
-    max-width: 500px;
-    background: #F5F6F5;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    padding: 10px;
+    max-width: 600px;
+    background: #f0f0e0;
+    border: 1px solid #999;
+    padding: 12px;
 }
 
 summary {
-    font-size: clamp(14px, 2.2vw, 15px);
-    font-weight: 700;
-    color: #000080;
+    font-size: 13px;
+    font-weight: bold;
+    color: #000;
     cursor: pointer;
-    padding: 6px;
+    padding: 4px;
     display: flex;
     align-items: center;
+    font-family: 'Verdana', sans-serif;
 }
 
 summary i {
     margin-right: 8px;
-    color: #000080;
-    transition: color 0.2s ease;
+    color: #0000cc;
 }
 
 summary:hover i {
-    color: #FFA500;
+    color: #cc0000;
 }
 
 .detailsContent {
-    padding: 10px;
-    color: #000080;
-    font-size: clamp(11px, 1.6vw, 12px);
+    padding: 10px 0;
+    color: #333;
+    font-size: 11px;
 }
 
 .bandLongDescription p {
@@ -623,36 +451,46 @@ summary:hover i {
 }
 
 .eventFestival, .eventGig, .eventSpecial {
-    background-color: #000080;
-    color: #FFF;
-    width: 50px;
-    font-size: 8px;
-    margin-right: 10px;
+    background: #e0e0c0;
+    color: #333;
+    font-size: 9px;
+    font-weight: bold;
+    margin-right: 8px;
+    padding: 2px 6px;
     vertical-align: middle;
     display: inline-block;
     text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    border: 1px solid #999;
 }
 
 .eventGig {
-    background-color: #0066FF;
+    border-color: #aaa;
+    color: #666;
+    background: #f0f0e0;
 }
 
 .eventSpecial {
-    background-color: #CC0000;
+    border-color: #cc9900;
+    color: #996600;
+    background: #ffffcc;
 }
 
 .audioContainer {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     width: 100%;
 }
 
 .audioItem {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 10px;
+    gap: 6px;
+    padding: 8px;
+    background: #f0f0e0;
+    border: 1px solid #999;
 }
 
 .audioItem .customAudio {
@@ -662,246 +500,208 @@ summary:hover i {
 .audioControls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
-    background: #EEE;
-    padding: 6px;
+    background: #e0e0c0;
+    padding: 8px;
+    border: 1px solid #aaa;
 }
 
 .audioControlBtn {
-    background: #DDD;
-    border: none;
-    width: 32px;
-    height: 32px;
+    background: #ccc;
+    border: 2px outset #fff;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     position: relative;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.audioControlBtn::before {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
-    transition: width 0.3s ease;
-}
-
-.audioControlBtn:hover::before {
-    width: 100%;
 }
 
 .audioControlBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
+    background: #ffff99;
+    border: 2px inset #999;
 }
 
 .audioControlBtn i {
-    color: #000080;
-    font-size: clamp(13px, 1.8vw, 14px);
-    transition: color 0.2s ease;
-    filter: contrast(1.2);
+    color: #333;
+    font-size: 12px;
 }
 
 .audioControlBtn:hover i {
-    color: #FFA500;
+    color: #cc0000;
 }
 
 .progressContainer {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     flex-grow: 1;
-    max-width: 240px;
+    max-width: 200px;
 }
 
 .currentTime, .duration {
-    font-size: clamp(10px, 1.6vw, 11px);
-    color: #000080;
+    font-size: 10px;
+    color: #333;
     min-width: 32px;
+    font-family: 'Courier New', monospace;
 }
 
 .progressBar {
     width: 100%;
-    height: 6px;
-    background: #C0C0C0;
-    border: none;
-    border-radius: 0;
+    height: 8px;
+    background: #fff;
+    border: 2px inset #999;
     cursor: pointer;
-    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF;
 }
 
 .progressBar::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 10px;
-    height: 10px;
-    background: #FFA500;
-    border: 2px solid #0000FF;
-    border-radius: 2px;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    width: 12px;
+    height: 12px;
+    background: #333;
+    border: none;
 }
 
 .progressBar::-moz-range-thumb {
-    width: 10px;
-    height: 10px;
-    background: #FFA500;
-    border: 2px solid #0000FF;
-    border-radius: 2px;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    width: 12px;
+    height: 12px;
+    background: #333;
+    border: none;
 }
 
 .volumeContainer {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
 .volumeContainer i {
-    color: #000080;
-    font-size: clamp(13px, 1.8vw, 14px);
-    transition: color 0.2s ease;
-    filter: contrast(1.2);
+    color: #333;
+    font-size: 12px;
 }
 
 .volumeContainer:hover i {
-    color: #FFA500;
+    color: #cc0000;
 }
 
 .volumeSlider {
-    width: 60px;
-    height: 6px;
-    background: #C0C0C0;
-    border: none;
-    border-radius: 0;
+    width: 50px;
+    height: 8px;
+    background: #fff;
+    border: 2px inset #999;
     cursor: pointer;
-    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF;
 }
 
 .volumeSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 10px;
-    height: 10px;
-    background: #FFA500;
-    border: 2px solid #0000FF;
-    border-radius: 2px;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
 }
 
 .volumeSlider::-moz-range-thumb {
-    width: 10px;
-    height: 10px;
-    background: #FFA500;
-    border: 2px solid #0000FF;
-    border-radius: 2px;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
 }
 
 .audioDetails {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
 }
 
 .audioTitle {
-    font-weight: 800;
-    font-size: clamp(14px, 2.2vw, 15px);
-    color: #000080;
-    letter-spacing: 0.5px;
+    font-weight: bold;
+    font-size: 12px;
+    color: #000;
+    letter-spacing: 0;
+    font-family: 'Verdana', sans-serif;
 }
 
 .audioIntensity {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: clamp(11px, 1.6vw, 12px);
-    color: #000080;
+    gap: 6px;
+    font-size: 10px;
+    color: #666;
 }
 
 .audioIntensity progress {
     width: 100%;
-    max-width: 160px;
-    height: 6px;
-    background: #C0C0C0;
-    border: none;
-    border-radius: 0;
-    box-shadow: inset 2px 2px 4px #808080, inset -2px -2px 4px #FFFFFF;
-}
-
-.audioIntensity progress::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
+    max-width: 120px;
+    height: 8px;
+    background: #fff;
+    border: 2px inset #999;
 }
 
 .audioIntensity progress::-webkit-progress-bar {
-    background: #C0C0C0;
+    background: #fff;
 }
 
 .audioIntensity progress::-webkit-progress-value {
-    background: #FFA500;
+    background: #0000cc;
 }
 
 .audioIntensity progress::-moz-progress-bar {
-    background: #FFA500;
+    background: #0000cc;
 }
 
 .audioItem .linkButton {
     width: auto;
-    padding: 6px 12px;
-    font-size: clamp(11px, 1.6vw, 12px);
+    padding: 4px 10px;
+    font-size: 10px;
 }
 
 .extraTable {
     width: 100%;
     border-collapse: collapse;
+    background: #fffff0;
+    font-size: 11px;
+    border: 1px solid #999;
 }
 
 .extraTable th, .extraTable td {
-    padding: 8px;
+    padding: 6px;
     text-align: left;
-    border: none;
-    vertical-align: middle;
-}
-
-.extraTable th::before, .extraTable td::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
+    border: 1px solid #999;
+    vertical-align: top;
 }
 
 .extraTable th {
-    font-weight: 700;
-    color: #000080;
+    font-weight: bold;
+    color: #000;
+    background: #e0e0c0;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0;
 }
 
 .extraTable td {
-    color: #000080;
+    color: #333;
+}
+
+.extraTable tr:hover td {
+    background: #ffffcc;
 }
 
 .techRiderTable {
     display: table;
+    background: #f0f0e0;
 }
 
 .techRiderTable th, .techRiderTable td {
     width: 25%;
-    padding: 6px;
-    font-size: clamp(10px, 1.6vw, 11px);
+    padding: 6px 8px;
+    font-size: 11px;
+    color: #333;
+    border: 1px solid #999;
 }
 
 .photosContainer {
@@ -913,12 +713,13 @@ summary:hover i {
 .photosContainer img {
     width: 100%;
     height: auto;
+    border: 1px solid #999;
 }
 
 .externalLinks {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
     max-width: 500px;
 }
@@ -932,55 +733,57 @@ summary:hover i {
 .logoImage {
     max-width: 100%;
     height: auto;
+    border: 1px solid #999;
 }
 
 .bannerImage {
     max-width: 100%;
     height: auto;
+    border: 1px solid #999;
 }
 
 .fontLinks {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    font-size: clamp(15px, 2.5vw, 16px);
-    color: #000080;
+    gap: 6px;
+    font-size: 12px;
+    color: #333;
 }
 
 .interviewSection {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .question {
-    font-weight: 700;
-    font-size: clamp(12px, 2vw, 13px);
-    color: #000080;
-    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 12px;
+    color: #000;
+    margin-bottom: 6px;
 }
 
 .answer p {
-    margin-bottom: 8px;
-    color: #000080;
+    margin-bottom: 6px;
+    color: #333;
 }
 
 .speaker {
-    font-weight: 700;
-    color: #000080;
+    font-weight: bold;
+    color: #000;
     margin-right: 4px;
 }
 
 .equipmentTypes {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 6px;
+    margin-bottom: 10px;
     justify-content: flex-start;
 }
 
 .equipmentList {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     width: 100%;
 }
 
@@ -992,56 +795,67 @@ summary:hover i {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    background: #C0C0C0;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    padding: 10px;
+    background: #f0f0e0;
+    padding: 12px;
+    border: 1px solid #999;
 }
 
 .equipmentField {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: clamp(11px, 1.6vw, 12px);
-    color: #000080;
+    font-size: 11px;
+    color: #333;
     flex-wrap: wrap;
 }
 
 .equipmentLabel {
-    font-weight: 700;
-    color: #000080;
+    font-weight: bold;
+    color: #333;
     min-width: 80px;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0;
 }
 
 .equipmentType {
-    padding: 5px 8px;
-    font-size: clamp(10px, 1.6vw, 11px);
-    color: #000080;
+    padding: 4px 8px;
+    font-size: 11px;
+    color: #333;
+    background: #e0e0c0;
+    border: 1px solid #999;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    white-space: nowrap;
+    gap: 4px;
 }
 
 .equipmentType.preferred {
-    background: #FFD700;
+    background: #ccffcc;
+    border-color: #009900;
+    color: #006600;
 }
 
 .equipmentType.required {
-    background: #FFA500;
+    background: #ffcccc;
+    border-color: #cc0000;
+    color: #990000;
 }
 
 .equipmentType.info {
-    background: #0403ed;
-    color: #FFFFFF;
+    background: #ccccff;
+    border-color: #0000cc;
+    color: #000099;
 }
 
 .equipmentType.optional {
-    background: #87CEFA;
+    background: #f0f0e0;
+    border-color: #aaa;
+    color: #666;
 }
 
 .minorDesc {
-    font-size: clamp(9px, 1.4vw, 10px);
-    color: #000080;
+    font-size: 9px;
+    color: #666;
     white-space: normal;
     max-width: 100%;
 }
@@ -1051,59 +865,46 @@ summary:hover i {
 }
 
 .note {
-    margin-top: 12px;
+    margin-top: 10px;
 }
 
 .note h3 {
-    font-size: clamp(12px, 2vw, 13px);
-    color: #000080;
-    margin-bottom: 8px;
+    font-size: 12px;
+    color: #000;
+    margin-bottom: 6px;
 }
 
 .footer {
     text-align: left;
-        color: #FFF3;
-    font-size: clamp(10px, 1.6vw, 11px);
-    margin-top: 16px;
+    color: #666;
+    font-size: 10px;
+    margin-top: 12px;
     padding: 8px 0;
     width: 100%;
+    font-family: 'Courier New', monospace;
+    border-top: 1px dashed #999;
 }
 
 #scrollToTopBtn {
     position: fixed;
-    bottom: 12px;
-    right: 12px;
-    width: auto;
+    bottom: 20px;
+    right: 20px;
     padding: 6px 12px;
-    font-size: clamp(11px, 1.6vw, 12px);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0;
     display: none;
-    background: linear-gradient(90deg, #03007a 80%, #0403ed);
-    border: none;
-    color: #FFFFFF;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-
-#scrollToTopBtn::before {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FFA500 50%, #FF4500);
-    z-index: -1;
-    transition: width 0.3s ease;
-}
-
-#scrollToTopBtn:hover::before {
-    width: 100%;
+    background: #e0e0c0;
+    border: 2px outset #fff;
+    color: #0000cc;
+    cursor: pointer;
+    font-family: 'Verdana', sans-serif;
 }
 
 #scrollToTopBtn:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(90deg, #0403ed 80%, #03007a);
-    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.2);
+    background: #ffff99;
+    border: 2px inset #999;
+    color: #cc0000;
 }
 
 #scrollToTopBtn.visible {
@@ -1111,7 +912,16 @@ summary:hover i {
 }
 
 #PastPerformances {
-    min-width: 1000px !important;
+    width: 100%;
+}
+
+#PastPerformances .detailsContent {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#PastPerformances .extraTable {
+    min-width: 550px;
 }
 
 /* Animations */
@@ -1130,33 +940,29 @@ summary:hover i {
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive Design */
+/* Responsive Design - 90s style */
 @media screen and (max-width: 768px) {
     body {
-        padding: 8px;
-        padding-top: 60px; /* Adjusted for smaller nav height */
-        font-size: clamp(11px, 1.8vw, 13px);
+        padding: 16px;
+        padding-top: 50px;
+        font-size: 11px;
         text-align: left;
-        background-size: auto;
-        background-position: center center;
     }
 
-     .extraNav {
-        padding: 8px;
+    .extraNav {
+        padding: 6px;
     }
 
     .extraNav ul {
         display: none;
-        flex-direction: column; /* Stack vertically on mobile */
+        flex-direction: column;
         position: absolute;
-        top: 60px;
+        top: 40px;
         left: 0;
         width: 100%;
-        background-color: #0009; /* Match nav background */
-        backdrop-filter: blur(5px); /* Maintain blur effect */
-        -webkit-backdrop-filter: blur(5px);
-        padding: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        background: #e0e0c0;
+        padding: 8px;
+        border: 1px solid #999;
     }
 
     .extraNav ul.active {
@@ -1164,20 +970,20 @@ summary:hover i {
     }
 
     .extraNav li {
-        flex: none; /* Remove equal sizing for vertical stack */
-        width: 100%; /* Full width for each item */
+        flex: none;
+        width: 100%;
     }
 
     .extraNav a {
-        font-size: clamp(13px, 2vw, 14px);
-        justify-content: flex-start; /* Left-align text/icons */
-        width: 100%; /* Full width to fit available space */
-        box-sizing: border-box;
-        padding: 10px 16px; /* Slightly larger padding for mobile */
+        font-size: 11px;
+        justify-content: flex-start;
+        width: 100%;
+        padding: 8px 12px;
+        border-bottom: 1px dashed #999;
     }
 
     .hamburger {
-        display: block; /* Show hamburger on mobile */
+        display: block;
     }
 
     .titleContainer {
@@ -1185,22 +991,23 @@ summary:hover i {
     }
 
     .bandName {
-        font-size: 60px;
+        font-size: clamp(28px, 8vw, 40px);
     }
 
     .bandDescription {
-        font-size: 12px;
-        margin-bottom: 48px;
+        font-size: 10px;
+        margin-bottom: 20px;
     }
 
     .merchContainer, .category {
-        margin-top: clamp(12px, 2vw, 16px);
-        gap: 12px;
+        margin-top: 12px;
+        gap: 10px;
     }
 
-    .linkButton, .albumButton {
+    .linkButton {
         max-width: none;
-        font-size: 22px;
+        font-size: 11px;
+        padding: 8px 12px;
     }
 
     .socialLinks, .socialLink {
@@ -1210,13 +1017,23 @@ summary:hover i {
     .merchItem {
         flex-direction: column;
         align-items: flex-start;
-        padding: 8px;
+        padding: 10px;
+        max-width: none;
     }
 
     .merchImage {
         width: 100%;
         height: 120px;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+
+    .merchNote, .paymentNote {
+        max-width: none;
+    }
+
+    details {
+        max-width: none;
     }
 
     .externalLinks {

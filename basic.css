@@ -17,11 +17,11 @@
 body {
     margin: 0;
     width: 100%;
-    background-color: #f4ebdd;
-    font-family: 'Garet', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif !important;
+    background-color: #f5f5dc;
+    font-family: 'Verdana', 'Geneva', 'Tahoma', sans-serif !important;
     padding: 48px 16px;
     padding-top: 80px;
-    font-size: clamp(14px, 1.8vw, 16px);
+    font-size: 12px;
     line-height: 1.6;
     scroll-behavior: smooth;
 }
@@ -36,14 +36,15 @@ details {
 summary {
     list-style: none;
     cursor: pointer;
-    padding: 10px;
+    padding: 8px;
     font-weight: bold;
-    font-size: 130%;
+    font-size: 13px;
     transition: 0.1s;
     margin: -20px;
-    color:#000;
-    border: 1px solid #000;
-    background-color: #00000015;
+    color: #0000cc;
+    border: 1px solid #999;
+    background-color: #e0e0c0;
+    font-family: 'Verdana', sans-serif;
 }
 
 summary i {
@@ -90,33 +91,29 @@ nav li {
 }
 
 nav a {
-    text-decoration: none !important;
-    color: #111 !important; 
+    text-decoration: underline !important;
+    color: #0000cc !important; 
     display: flex; 
     align-items: center;
     justify-content: center;
-    padding: 8px 12px;
+    padding: 6px 10px;
     border: none; 
     box-shadow: none;
-    transition: transform 0.2s, box-shadow 0.2s;
     text-align: left;
     height: 100%;
     width: 100%;
     box-sizing: border-box;
-    font-size: 10px;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
 }
 
 nav a:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 3px 5px #0006;
-    background-color: #FFF3; 
+    background-color: #ffff00;
+    color: #cc0000 !important;
 }
 
 nav a:active {
-    transform: translateY(0px);
-    box-shadow: 0 3px 5px #0006 inset;
-    background-color: #0003; 
-    transition: 0.1s;
+    background-color: #ffff99; 
 }
 
 
@@ -138,10 +135,10 @@ nav a:active {
 }
 
 .bandName {
-    font-family: 'Astrella', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Astrella', 'Impact', 'Arial Black', sans-serif;
     width: 100%;
     text-align: center;
-    font-size: clamp(48px, 6vw, 68px);
+    font-size: clamp(36px, 6vw, 52px);
     color: #000;
     line-height: 1.1;
 }
@@ -272,11 +269,12 @@ th, td {
 .menuItem {
     font-size: 100%;
     cursor: pointer;
-    padding: 0.5vw 1.5vw;
+    padding: 8px 16px;
     display: inline-block;
     line-height: 1.5;
-    border: 2px solid #111;
-    margin-bottom: 30px;
+    border: 2px solid #333;\n    background: #e0e0c0;
+    margin-bottom: 20px;
+    font-family: 'Verdana', sans-serif;
 }
 
 .menu a:hover {
@@ -289,17 +287,16 @@ th, td {
 }
 
 a:link, a:visited {
-    color: #111;
-    text-decoration: none;
-    transition: 0.2s;
+    color: #0000cc;
+    text-decoration: underline;
 }
 
 details a:link, details a:visited {
-    color: #06A;
+    color: #0000cc;
 }
 
 details img {
-    border: 1px solid #111;
+    border: 1px solid #999;
 }
 
 progress {
@@ -310,12 +307,12 @@ progress[value]::-moz-progress-bar { background-color: #C00; }
 progress[value]::-webkit-progress-bar { background-color: #C00; }
 
 a:hover {
-    filter: brightness(1.5);
-    text-decoration: underline;
+    color: #cc0000;
+    background: #ffff00;
 }
 
 a:hover img {
-    filter: brightness(0.7) !important;
+    filter: brightness(0.9) !important;
 }
 
 .menu a i {
@@ -324,9 +321,9 @@ a:hover img {
 }
 
 .menuItem:hover, .menuLink:hover {
-    background-color: #111;
-    color: #FFF;
-    transition: 0.2s;
+    background-color: #ffff99;
+    color: #cc0000;
+    border-color: #cc0000;
 }
 
 .menuLinks {
@@ -374,26 +371,7 @@ a:hover img {
     font-size: 80%;
 }
 
-#scrollToTopBtn {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    color: #000;
-    border: solid 1px #000;
-    font-size: 200%;
-    padding: 10px;
-    cursor: pointer;
-}
-
-#top #scrollToTopBtn {
-    display: block;
-}
-
-#scrollToTopBtn:hover {
-    background-color: #111;
-    color: #f4ebdd;
-}
+#scrollToTopBtn {\n    display: none;\n    position: fixed;\n    bottom: 20px;\n    right: 20px;\n    color: #0000cc;\n    border: 2px outset #fff;\n    background: #e0e0c0;\n    font-size: 14px;\n    padding: 8px 12px;\n    cursor: pointer;\n    font-family: 'Verdana', sans-serif;\n}\n\n#top #scrollToTopBtn {\n    display: block;\n}\n\n#scrollToTopBtn:hover {\n    background-color: #ffff99;\n    color: #cc0000;\n    border: 2px inset #999;\n}
 
 .show-scroll-btn {
     display: block;
