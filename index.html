@@ -84,8 +84,8 @@
             font-family: 'Garet', Verdana, Geneva, sans-serif;
             font-size: 11px;
             line-height: 1.5;
-            background: #f5f5dc;
-            color: #333;
+            background: #f6f2e1;
+            color: #111;
             padding: 20px;
             max-width: 650px;
             margin: 0 auto;
@@ -95,13 +95,12 @@
         h1 {
             font-family: 'Astrella', Impact, Arial Black, sans-serif;
             font-size: 56px;
-            margin-bottom: 2px;
-            letter-spacing: 2px;
+            line-height: 56px;
         }
-        .tagline { font-size: 10px; color: #666; margin-bottom: 15px; }
-        .section { margin-bottom: 12px; border: 1px solid #999; background: #fffff0; }
-        .section-title { background: #e0e0c0; padding: 4px 8px; font-weight: bold; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #999; }
-        .section-content { padding: 8px; }
+        .tagline { font-size: 10px; color: #111; margin-bottom: 15px; }
+        .section { padding-bottom: 15px; }
+        .section-title { font-family: 'Garet', cursive; font-weight: bold; background: #0001; color: #000; padding: 2px 6px; font-size: 12px; text-transform: uppercase; }
+        .section-content { padding-top: 8px; }
         .links { display: flex; flex-wrap: wrap; gap: 6px; }
         .links a { font-size: 10px; }
         table { width: 100%; border-collapse: collapse; font-size: 10px; }
@@ -111,7 +110,7 @@
         .merch-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .price { font-weight: bold; }
         .photos { display: flex; flex-wrap: wrap; gap: 4px; }
-        .photos img { width: 80px; height: 60px; object-fit: cover; border: 1px solid #999; }
+        .photos img { width: calc(50% - 2px); height: auto; object-fit: cover; border: 1px solid #999; }
         footer { text-align: center; font-size: 9px; color: #666; margin-top: 15px; padding-top: 10px; border-top: 1px dashed #999; }
         .emp { color: #c00; font-style: italic; }
         select { font-size: 10px; padding: 2px; font-family: 'Garet', Verdana, sans-serif; }
@@ -168,7 +167,7 @@
     <section class="section" aria-labelledby="releases-heading">
         <h2 id="releases-heading" class="section-title">Releases</h2>
         <div class="section-content">
-            <div>Unnamed Upcoming Thing - Sophomore Album (2026)</div>
+            <div><a href="https://www.instagram.com/siotojazz" rel="noopener" target="_blank">Unnamed Upcoming Thing</a> - Sophomore Album (2026)</div>
             <div style="margin-top:4px;"><a href="truestate"><strong>The True State of All Things</strong></a> — Debut Album (2023)</div>
             <div style="margin-top:4px;"><a href="https://www.youtube.com/watch?v=yvLuSa4OSZM" rel="noopener" target="_blank">The True State of All Things</a> — Full Concert</div>
             <div style="margin-top:4px;"><a href="https://www.youtube.com/watch?v=EfUrtsRinVs" rel="noopener" target="_blank">Xotel</a> — Live Session</div>
@@ -186,14 +185,17 @@
                 <span class="sample-link" data-src="extra/audio/snip_jetpacks.mp3">Jetpacks</span>
             </div>
             <audio id="preview-player" preload="none" style="display:none;"></audio>
-            <nav class="links" style="margin-top:8px;" aria-label="Streaming platforms">
-                <a href="https://open.spotify.com/artist/36K91fF4LvLQQQ2V7MBK6f" rel="noopener" target="_blank" title="Listen to Sioto Jazz on Spotify">Spotify</a>
-                <a href="https://music.apple.com/mk/artist/sioto-jazz/1707671814" rel="noopener" target="_blank" title="Listen to Sioto Jazz on Apple Music">Apple Music</a>
-                <a href="https://www.youtube.com/channel/UCxY8-7rzp1QklNKs_ChynJA" rel="noopener" target="_blank" title="Watch Sioto Jazz on YouTube">YouTube</a>
-                <a href="https://www.deezer.com/en/artist/230723095" rel="noopener" target="_blank" title="Listen to Sioto Jazz on Deezer">Deezer</a>
-                <a href="https://www.amazon.com/Ink/dp/B0CJ79L3K2" rel="noopener" target="_blank" title="Buy Sioto Jazz music on Amazon">Amazon</a>
-            </nav>
         </div>
+    </section>
+
+    <section class="section" aria-labelledby="stream-heading">
+        <h2 id="stream-heading" class="section-title">Stream</h2>
+        <div class="section-content links" aria-label="Streaming platforms">
+            <a href="https://open.spotify.com/artist/36K91fF4LvLQQQ2V7MBK6f" rel="noopener" target="_blank">Spotify</a>
+            <a href="https://music.apple.com/mk/artist/sioto-jazz/1707671814" rel="noopener" target="_blank">Apple Music</a>
+            <a href="https://www.youtube.com/channel/UCxY8-7rzp1QklNKs_ChynJA" rel="noopener" target="_blank">YouTube</a>
+            <a href="https://www.deezer.com/en/artist/230723095" rel="noopener" target="_blank">Deezer</a>
+        </div> 
     </section>
 
     <!-- PHOTOS -->
