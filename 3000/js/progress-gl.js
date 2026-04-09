@@ -6,6 +6,21 @@ function createSeekRenderer(canvas) {
         };
     }
 
+    function getThemeRgb(name, fallback) {
+        const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+        const parts = raw.split(',').map(part => {
+            const value = Number.parseFloat(part.trim());
+            return Number.isFinite(value) ? Math.max(0, Math.min(255, value)) / 255 : 0;
+        });
+        return parts.length === 3 ? parts : fallback.split(',').map(part => Number.parseFloat(part.trim()) / 255);
+    }
+
+    const theme = {
+        surface: getThemeRgb('--club-blue-surface-rgb', '224, 230, 247'),
+        fill: getThemeRgb('--club-blue-rgb', '27, 53, 156'),
+        border: getThemeRgb('--club-blue-strong-rgb', '19, 37, 109')
+    };
+
     // Resize helper
     let needsResize = true;
     if (window.ResizeObserver) {
@@ -88,17 +103,17 @@ function createSeekRenderer(canvas) {
         const W = gl.drawingBufferWidth;
         const H = gl.drawingBufferHeight;
         gl.uniform2f(u_res, W, H);
-        gl.clearColor(1,1,1,1);
+        gl.clearColor(theme.surface[0], theme.surface[1], theme.surface[2], 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         // Border
-        gl.uniform4f(u_color, 0,0,0,1);
+        gl.uniform4f(u_color, theme.border[0], theme.border[1], theme.border[2], 1);
         rect(0, 0, W, 1);
         rect(0, H-1, W, 1);
         rect(0, 0, 1, H);
         rect(W-1, 0, 1, H);
         // Fill progress
         const filled = Math.max(0, Math.min(1, progress)) * (W-2);
-        gl.uniform4f(u_color, 0,0,0,1);
+        gl.uniform4f(u_color, theme.fill[0], theme.fill[1], theme.fill[2], 1);
         rect(1, 1, filled, H-2);
     }
 
@@ -119,6 +134,19 @@ function createChordOverlayRenderer(canvas){
     if (!gl) {
         return { render: () => {} };
     }
+
+    function getThemeRgb(name, fallback) {
+        const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+        const parts = raw.split(',').map(part => {
+            const value = Number.parseFloat(part.trim());
+            return Number.isFinite(value) ? Math.max(0, Math.min(255, value)) / 255 : 0;
+        });
+        return parts.length === 3 ? parts : fallback.split(',').map(part => Number.parseFloat(part.trim()) / 255);
+    }
+
+    const theme = {
+        overlay: getThemeRgb('--club-blue-progress-rgb', '23, 45, 133')
+    };
 
     const vsSrc = `
         attribute vec2 a_pos;
@@ -188,7 +216,7 @@ function createChordOverlayRenderer(canvas){
         resize();
         gl.clearColor(0,0,0,0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.uniform4f(u_color, 0,0,0,0.18);
+        gl.uniform4f(u_color, theme.overlay[0], theme.overlay[1], theme.overlay[2], 0.22);
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         for (const r of rects){
             rect(r.x * dpr, r.y * dpr, r.w * dpr, r.h * dpr);
