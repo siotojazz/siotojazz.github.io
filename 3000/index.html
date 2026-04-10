@@ -20,14 +20,23 @@
             font-style: normal;
         }
         :root {
-            --club-blue: #1b359c;
-            --club-blue-strong: #13256d;
-            --club-blue-rgb: 27, 53, 156;
-            --club-blue-strong-rgb: 19, 37, 109;
-            --club-blue-surface-rgb: 224, 230, 247;
-            --club-blue-progress-rgb: 23, 45, 133;
-            --club-blue-shadow: rgba(19, 37, 109, 0.3);
-            --club-blue-muted: rgba(19, 37, 109, 0.62);
+            --theme-color: #000416;
+            --theme-color-rgb: 0, 4, 22;
+            --theme-font-color: #13256d;
+            --theme-font-color-rgb: 19, 37, 109;
+            --theme-surface-rgb: 224, 230, 247;
+            --theme-progress-rgb: 0, 4, 22;
+            --theme-shadow: rgba(19, 37, 109, 0.3);
+            --theme-font-muted: rgba(19, 37, 109, 0.62);
+            --theme-on-color: #fff;
+            --club-blue: var(--theme-color);
+            --club-blue-strong: var(--theme-color);
+            --club-blue-rgb: var(--theme-color-rgb);
+            --club-blue-strong-rgb: var(--theme-font-color-rgb);
+            --club-blue-surface-rgb: var(--theme-surface-rgb);
+            --club-blue-progress-rgb: var(--theme-progress-rgb);
+            --club-blue-shadow: var(--theme-shadow);
+            --club-blue-muted: var(--theme-font-muted);
         }
         body {
             font-family: 'Garet', Arial, sans-serif;
@@ -156,7 +165,6 @@
         }
         .tab-btn:hover {
             background: var(--club-blue-strong);
-            transform: translate3d(0, -1px, 0);
             filter: saturate(1.04);
         }
         @keyframes tab-sweep {
