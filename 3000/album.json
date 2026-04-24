@@ -433,7 +433,7 @@
       }
     },
     {
-      "id": 9,
+      "id": 10,
       "title": "Quite Unreal",
       "mp3": "audio/quite_unreal.mp3",
       "backingmp3": "audio/quite_unreal_backing.mp3",
@@ -668,7 +668,49 @@
       }
     },
     {
-      "id": 8,
+      "id": 7,
+      "title": "Сноп од светлина",
+      "mp3": "audio/snop_od_svetlina.mp3",
+      "backingmp3": "",
+      "lyrics": [
+        { "line": "кажи ми каде си?", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "дали светот е таму ведар и", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "вистински?", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "дали таму сакаат бескрајно?", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true },
+        { "line": "ко сноп од светлина", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "се појавуваме и исчезнуваме", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "значајни за некои", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "но ние само поминуваме", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true },
+        { "line": "ќе те најдам ли?", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "барем меѓу редови", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "во книгите", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "кои за тебе ги напишав", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "а берат прашина", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true },
+        { "line": "ко сноп од светлина", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "се појавуваме и исчезнуваме", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "значајни за некои", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "но ние само поминуваме", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true },
+        { "line": "ко сноп од светлина", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "се појавуваме и исчезнуваме", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "значајни за некои", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "но ние само поминуваме", "barNumber": null, "barLength": null, "offset": null, "stanzaEnd": true },
+        { "line": "ко сноп од светлина", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "се појавуваме и исчезнуваме", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "значајни за некои", "barNumber": null, "barLength": null, "offset": null },
+        { "line": "но ние само поминуваме", "barNumber": null, "barLength": null, "offset": null }
+      ],
+      "releaseDate": "TBD",
+      "written": "lyrics[5], vocals[5]",
+      "recorded": "lyrics[5], vocals[0]",
+      "notes": "Lyrics not time-synced yet.",
+      "tempo": "90",
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": []
+      }
+    },
+    {
+      "id": 9,
       "title": "My Innocent Sea",
       "mp3": "audio/my_innocent_sea.mp3",
       "backingmp3": "audio/my_innocent_sea_backing.mp3",
@@ -914,7 +956,7 @@
       }
     },
     {
-      "id": 10,
+      "id": 11,
       "title": "Roots Apart",
       "mp3": "audio/roots_apart.mp3",
       "backingmp3": "audio/roots_apart_backing.mp3",
@@ -1040,7 +1082,7 @@
       }
     },
     {
-      "id": 7,
+      "id": 8,
       "title": "Колку далеку?",
       "mp3": "audio/kolku_daleku.mp3",
       "backingmp3": "audio/kolku_daleku_backing.mp3",
@@ -1268,7 +1310,7 @@
       }
     },
     {
-      "id": 11,
+      "id": 12,
       "title": "Одмор",
       "mp3": "audio/odmor.mp3",
       "backingmp3": "audio/odmor_backing.mp3",
