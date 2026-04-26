@@ -3,7 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "render": "node render-visualizer.mjs"
+        "render": "node sync-stock-videos-manifest.mjs && node render-visualizer.mjs",
+        "sync-stock-videos": "node sync-stock-videos-manifest.mjs"
     },
     "dependencies": {
         "playwright": "^1.54.2"
