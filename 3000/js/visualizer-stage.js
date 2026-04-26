@@ -40,6 +40,12 @@ const MOSAIC_BLUEPRINT = [
     { column: 4, row: 3, columnSpan: 1, rowSpan: 1, weight: 0.68 }
 ];
 
+const VIDEO_LOOP_TRANSITION = {
+    minSeconds: 0.35,
+    maxSeconds: 0.85,
+    ratio: 0.12
+};
+
 function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
 }
@@ -162,23 +168,82 @@ function getLyricState(track, time) {
         return { mode: 'empty', current: null, previous: null, next: null };
     }
 
-    const tailWindow = Math.min(Math.max(track.timing?.barDuration || 0.4, 0.24), 0.9);
-    const leadWindow = Math.min(Math.max((track.timing?.barDuration || 0.4) * 0.45, 0.18), 0.65);
-    let index = lines.findIndex((line) => time >= (line.startTime - leadWindow) && time <= (line.endTime + tailWindow));
-
-    if (index === -1) {
-        index = lines.findIndex((line) => time < line.startTime);
-        if (index === -1) {
-            index = lines.length - 1;
-        }
-    }
+    const index = lines.findIndex((line) => time >= line.startTime && time <= line.endTime);
+    const nextIndex = lines.findIndex((line) => time < line.startTime);
+    const previousIndex = nextIndex === -1
+        ? lines.length - 1
+        : Math.max(-1, nextIndex - 1);
 
     return {
         mode: 'synced',
-        current: lines[index] || null,
-        previous: index > 0 ? lines[index - 1] : null,
-        next: index < lines.length - 1 ? lines[index + 1] : null
+        current: index >= 0 ? lines[index] : null,
+        previous: previousIndex >= 0 ? lines[previousIndex] : null,
+        next: nextIndex >= 0 ? lines[nextIndex] : null
     };
+}
+
+function getLyricTransitionState(line, time, track) {
+    if (!line) {
+        return {
+            alpha: 0,
+            blur: 0,
+            translateY: 0,
+            scale: 1
+        };
+    }
+
+    const beatDuration = track?.timing?.beatDuration || 0.45;
+    const lineDuration = Math.max(line.endTime - line.startTime, beatDuration);
+    const enterDuration = Math.min(Math.max(beatDuration * 0.7, 0.14), 0.26);
+    const exitDuration = Math.min(Math.max(beatDuration * 0.85, 0.18), 0.32);
+    const enterProgress = clamp((time - line.startTime) / enterDuration, 0, 1);
+    const exitProgress = clamp((line.endTime - time) / exitDuration, 0, 1);
+    const visibility = Math.min(enterProgress, exitProgress);
+    const holdProgress = clamp((time - line.startTime) / lineDuration, 0, 1);
+
+    return {
+        alpha: 0.18 + (visibility * 0.78),
+        blur: (1 - visibility),
+        translateY: 1 - visibility,
+        scale: 0.992 + (holdProgress * 0.03)
+    };
+}
+
+function drawLyricGapNote(context, centerX, centerY, size) {
+    const headRadiusX = size * 0.17;
+    const headRadiusY = size * 0.13;
+    const stemHeight = size * 0.68;
+    const stemOffsetX = size * 0.12;
+    const stemTopY = centerY - (stemHeight * 0.62);
+    const noteHeadX = centerX - (size * 0.1);
+    const noteHeadY = centerY + (size * 0.08);
+
+    context.save();
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+    context.lineWidth = Math.max(2, size * 0.065);
+    context.strokeStyle = 'rgba(28, 28, 28, 0.62)';
+    context.fillStyle = 'rgba(28, 28, 28, 0.62)';
+
+    context.beginPath();
+    context.ellipse(noteHeadX, noteHeadY, headRadiusX, headRadiusY, -0.45, 0, Math.PI * 2);
+    context.fill();
+
+    context.beginPath();
+    context.moveTo(noteHeadX + stemOffsetX, noteHeadY - (headRadiusY * 0.65));
+    context.lineTo(noteHeadX + stemOffsetX, stemTopY);
+    context.stroke();
+
+    context.beginPath();
+    context.moveTo(noteHeadX + stemOffsetX, stemTopY);
+    context.quadraticCurveTo(
+        noteHeadX + (size * 0.36),
+        stemTopY + (size * 0.05),
+        noteHeadX + (size * 0.22),
+        stemTopY + (size * 0.24)
+    );
+    context.stroke();
+    context.restore();
 }
 
 function drawVideoCover(context, video, destination, options = {}) {
@@ -219,6 +284,18 @@ function drawVideoCover(context, video, destination, options = {}) {
         destination.y,
         destination.width,
         destination.height
+    );
+}
+
+function getLoopTransitionDuration(duration) {
+    if (!Number.isFinite(duration) || duration <= 0) {
+        return 0;
+    }
+
+    return Math.min(
+        Math.max(duration * VIDEO_LOOP_TRANSITION.ratio, VIDEO_LOOP_TRANSITION.minSeconds),
+        VIDEO_LOOP_TRANSITION.maxSeconds,
+        duration * 0.45
     );
 }
 
@@ -315,6 +392,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
     const stage = createElement('div', 'visualizer-canvas-stage');
     const canvas = createElement('canvas', 'visualizer-canvas-stage__canvas');
     const video = createElement('video', 'visualizer-canvas-stage__video');
+    const loopVideo = createElement('video', 'visualizer-canvas-stage__video');
     const context = canvas.getContext('2d', { alpha: false });
 
     stage.style.position = 'relative';
@@ -331,7 +409,14 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
     video.crossOrigin = 'anonymous';
     video.style.display = 'none';
 
-    stage.append(canvas, video);
+    loopVideo.preload = 'auto';
+    loopVideo.muted = true;
+    loopVideo.loop = false;
+    loopVideo.playsInline = true;
+    loopVideo.crossOrigin = 'anonymous';
+    loopVideo.style.display = 'none';
+
+    stage.append(canvas, video, loopVideo);
     host.replaceChildren(stage);
 
     let currentFormat = getFormatById(format);
@@ -342,11 +427,13 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
     let lastRenderedDuration = 0;
     let mediaLoadToken = 0;
     let videoReady = false;
+    let loopVideoReady = false;
     let mediaReadyResolver = null;
     let mediaReadyPromise = Promise.resolve();
     let noiseTile = buildNoiseTile(1);
     let noisePattern = null;
     let videoPlayPromise = null;
+    let loopVideoPlayPromise = null;
 
     function updateCanvasSize() {
         if (mode === 'render') {
@@ -414,15 +501,48 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         });
     }
 
+    function requestLoopVideoPlayback() {
+        if (!loopVideoReady || !loopVideo.paused || loopVideoPlayPromise) {
+            return;
+        }
+
+        const playPromise = loopVideo.play();
+        if (!playPromise?.then) {
+            return;
+        }
+
+        loopVideoPlayPromise = playPromise.catch(() => {
+            return null;
+        }).finally(() => {
+            loopVideoPlayPromise = null;
+        });
+    }
+
     function pauseVideoPlayback() {
         if (!video.paused) {
             video.pause();
         }
     }
 
+    function pauseLoopVideoPlayback() {
+        if (!loopVideo.paused) {
+            loopVideo.pause();
+        }
+    }
+
+    function setMediaTime(media, time) {
+        try {
+            media.currentTime = time;
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
     async function loadTrackMedia(track) {
         const token = ++mediaLoadToken;
         videoReady = false;
+        loopVideoReady = false;
         resetMediaReady();
         noiseTile = buildNoiseTile((track?.video?.seed || track?.id || 1) >>> 0);
         rebuildNoisePattern();
@@ -434,13 +554,18 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         }
 
         pauseVideoPlayback();
+        pauseLoopVideoPlayback();
         video.removeAttribute('src');
         video.load();
+        loopVideo.removeAttribute('src');
+        loopVideo.load();
         video.src = track.video.path;
+        loopVideo.src = track.video.path;
 
         try {
             await Promise.all([
                 waitForEvent(video, 'loadeddata', 'error'),
+                waitForEvent(loopVideo, 'loadeddata', 'error'),
                 document.fonts?.ready || Promise.resolve()
             ]);
 
@@ -448,8 +573,10 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
                 return;
             }
 
-            video.currentTime = 0;
+            setMediaTime(video, 0);
+            setMediaTime(loopVideo, 0);
             videoReady = true;
+            loopVideoReady = true;
             resolveMediaReady();
             drawFrame(lastRenderedTime, { duration: currentDuration });
         } catch {
@@ -458,6 +585,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
             }
 
             videoReady = false;
+            loopVideoReady = false;
             resolveMediaReady();
             drawFrame(lastRenderedTime, { duration: currentDuration });
         }
@@ -479,6 +607,28 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         return ((time % video.duration) + video.duration) % video.duration;
     }
 
+    function getLoopTransitionState(time) {
+        if (!videoReady || !Number.isFinite(video.duration) || video.duration <= 0) {
+            return null;
+        }
+
+        const loopedTime = getLoopedVideoTime(time);
+        const transitionDuration = getLoopTransitionDuration(video.duration);
+        if (transitionDuration <= 0) {
+            return null;
+        }
+
+        const transitionStart = video.duration - transitionDuration;
+        if (loopedTime < transitionStart) {
+            return null;
+        }
+
+        return {
+            blend: clamp((loopedTime - transitionStart) / transitionDuration, 0, 1),
+            seamTime: clamp(loopedTime - transitionStart, 0, transitionDuration)
+        };
+    }
+
     function syncPreviewVideo(time, isPlaying) {
         if (!videoReady || !Number.isFinite(video.duration) || video.duration <= 0) {
             return;
@@ -486,43 +636,53 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
 
         const targetTime = getLoopedVideoTime(time);
         const drift = Math.abs((video.currentTime || 0) - targetTime);
+        const loopTransitionState = getLoopTransitionState(time);
 
         if (isPlaying) {
             if (drift > 0.45) {
-                try {
-                    video.currentTime = targetTime;
-                } catch {
+                if (!setMediaTime(video, targetTime)) {
                     return;
                 }
             }
             requestVideoPlayback();
+
+            if (loopTransitionState && loopVideoReady) {
+                const loopDrift = Math.abs((loopVideo.currentTime || 0) - loopTransitionState.seamTime);
+                if (loopDrift > 0.18) {
+                    setMediaTime(loopVideo, loopTransitionState.seamTime);
+                }
+                requestLoopVideoPlayback();
+            } else {
+                pauseLoopVideoPlayback();
+                if (loopVideoReady && Math.abs(loopVideo.currentTime || 0) > (1 / 60)) {
+                    setMediaTime(loopVideo, 0);
+                }
+            }
             return;
         }
 
         pauseVideoPlayback();
         if (drift > (1 / 60)) {
-            try {
-                video.currentTime = targetTime;
-            } catch {
+            if (!setMediaTime(video, targetTime)) {
                 return;
             }
         }
+
+        pauseLoopVideoPlayback();
+        if (!loopVideoReady) {
+            return;
+        }
+
+        const loopTargetTime = loopTransitionState ? loopTransitionState.seamTime : 0;
+        const loopDrift = Math.abs((loopVideo.currentTime || 0) - loopTargetTime);
+        if (loopDrift > (1 / 60)) {
+            setMediaTime(loopVideo, loopTargetTime);
+        }
     }
 
-    async function syncVideoToTime(time, strict = false, isPlaying = false) {
-        if (!videoReady || !Number.isFinite(video.duration) || video.duration <= 0) {
-            return;
-        }
-
-        if (!strict) {
-            syncPreviewVideo(time, isPlaying);
-            return;
-        }
-
-        pauseVideoPlayback();
-        const targetTime = getLoopedVideoTime(time);
-        const drift = Math.abs((video.currentTime || 0) - targetTime);
-        if (drift <= (1 / 120)) {
+    async function seekMediaToTime(media, targetTime, tolerance = (1 / 120)) {
+        const drift = Math.abs((media.currentTime || 0) - targetTime);
+        if (drift <= tolerance) {
             return;
         }
 
@@ -536,20 +696,40 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
                 resolve();
             };
             const cleanup = () => {
-                video.removeEventListener('seeked', handleSeeked);
-                video.removeEventListener('error', handleError);
+                media.removeEventListener('seeked', handleSeeked);
+                media.removeEventListener('error', handleError);
             };
 
-            video.addEventListener('seeked', handleSeeked, { once: true });
-            video.addEventListener('error', handleError, { once: true });
+            media.addEventListener('seeked', handleSeeked, { once: true });
+            media.addEventListener('error', handleError, { once: true });
 
-            try {
-                video.currentTime = targetTime;
-            } catch {
+            if (!setMediaTime(media, targetTime)) {
                 cleanup();
                 resolve();
             }
         });
+    }
+
+    async function syncVideoToTime(time, strict = false, isPlaying = false) {
+        if (!videoReady || !Number.isFinite(video.duration) || video.duration <= 0) {
+            return;
+        }
+
+        if (!strict) {
+            syncPreviewVideo(time, isPlaying);
+            return;
+        }
+
+        pauseVideoPlayback();
+        pauseLoopVideoPlayback();
+        const targetTime = getLoopedVideoTime(time);
+        const loopTransitionState = getLoopTransitionState(time);
+
+        await seekMediaToTime(video, targetTime);
+
+        if (loopVideoReady) {
+            await seekMediaToTime(loopVideo, loopTransitionState ? loopTransitionState.seamTime : 0, loopTransitionState ? (1 / 120) : (1 / 60));
+        }
     }
 
     function drawBackdrop(sectionColor, energy, time) {
@@ -584,16 +764,30 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         };
         const tiles = buildMosaicTiles(bounds);
         const maskPath = buildMaskPath(tiles);
+        const videoMotion = {
+            panX: Math.sin((time * 0.04) + (track.id * 0.5)) * 0.14,
+            panY: Math.cos((time * 0.03) + (track.id * 0.35)) * 0.12,
+            scale: 1.025 + (featureSample.smoothed * 0.025)
+        };
+        const loopTransitionState = getLoopTransitionState(time);
 
         context.save();
         context.clip(maskPath);
 
         if (videoReady && video.videoWidth && video.videoHeight) {
-            drawVideoCover(context, video, bounds, {
-                panX: Math.sin((time * 0.04) + (track.id * 0.5)) * 0.14,
-                panY: Math.cos((time * 0.03) + (track.id * 0.35)) * 0.12,
-                scale: 1.025 + (featureSample.smoothed * 0.025)
-            });
+            if (loopTransitionState && loopVideoReady && loopVideo.videoWidth && loopVideo.videoHeight) {
+                context.save();
+                context.globalAlpha = 1 - loopTransitionState.blend;
+                drawVideoCover(context, video, bounds, videoMotion);
+                context.restore();
+
+                context.save();
+                context.globalAlpha = loopTransitionState.blend;
+                drawVideoCover(context, loopVideo, bounds, videoMotion);
+                context.restore();
+            } else {
+                drawVideoCover(context, video, bounds, videoMotion);
+            }
         } else {
             const fallbackFill = context.createLinearGradient(bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
             fallbackFill.addColorStop(0, rgba(accent, 0.34));
@@ -650,8 +844,9 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         const bandDescent = bandReferenceMetrics.actualBoundingBoxDescent || (bandSize * 0.28);
         const titleAscent = titleReferenceMetrics.actualBoundingBoxAscent || (titleSize * 0.72);
         const titleDescent = titleReferenceMetrics.actualBoundingBoxDescent || (titleSize * 0.28);
+        const titleOpticalOffset = Math.round(titleSize * 0.04) + Math.max(2, Math.round(height * 0.0037));
         const bandBaselineY = rowCenterY + ((bandAscent - bandDescent) * 0.5);
-        const titleBaselineY = rowCenterY + ((titleAscent - titleDescent) * 0.5);
+        const titleBaselineY = rowCenterY + ((titleAscent - titleDescent) * 0.5) + titleOpticalOffset;
         const separatorCenterX = startX + bandWidth + separatorPadding + separatorSize;
 
         context.save();
@@ -677,7 +872,6 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         const height = canvas.height;
         const lyricState = getLyricState(track, time);
         const lyricCenterX = canvas.width * 0.5;
-        const sectionGap = Math.round(height * 0.06);
         const lyricWidth = bounds.width * 0.72;
         const lyricZoneTop = bounds.y + bounds.height;
         const lyricZoneHeight = Math.max(0, height - lyricZoneTop);
@@ -701,21 +895,48 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         }
 
         const currentText = lyricState.current?.line || '';
-        const currentFontSize = fitFontSize(context, currentText || ' ', Math.round(height * 0.036), 18, lyricWidth, '"Garet", sans-serif');
-        const currentLineHeight = Math.round(currentFontSize * 1.12);
-
-        if (currentText) {
-            context.font = `600 ${currentFontSize}px "Garet", sans-serif`;
-            context.fillStyle = 'rgba(18, 18, 18, 0.96)';
-            const currentLines = buildWrappedLines(context, currentText, lyricWidth, 2);
-            const lyricMetrics = context.measureText(currentLines[0] || currentText);
-            const lyricAscent = lyricMetrics.actualBoundingBoxAscent || (currentFontSize * 0.72);
-            const lyricDescent = lyricMetrics.actualBoundingBoxDescent || (currentFontSize * 0.28);
-            const lyricVisibleHeight = lyricAscent + lyricDescent + ((currentLines.length - 1) * currentLineHeight);
-            const firstBaselineY = lyricZoneTop + ((lyricZoneHeight - lyricVisibleHeight) * 0.5) + lyricAscent;
-            context.textBaseline = 'alphabetic';
-            drawTextBlock(currentLines, lyricCenterX, firstBaselineY, currentLineHeight, lyricWidth);
+        if (!currentText) {
+            if (lyricState.next) {
+                const noteSize = Math.max(18, Math.round(height * 0.032));
+                const noteCenterY = lyricZoneTop + (lyricZoneHeight * 0.5);
+                drawLyricGapNote(context, lyricCenterX, noteCenterY, noteSize);
+            } else {
+                const noteSize = Math.round(height * 0.022);
+                const noteLineHeight = Math.round(noteSize * 1.2);
+                const noteTop = lyricZoneTop + Math.max(0, (lyricZoneHeight - noteLineHeight) * 0.5);
+                context.font = `${noteSize}px "Garet", sans-serif`;
+                context.textBaseline = 'top';
+                context.fillStyle = 'rgba(28, 28, 28, 0.62)';
+                context.fillText('Instrumental passage', lyricCenterX, noteTop, lyricWidth);
+            }
+            context.restore();
+            return;
         }
+
+        const currentFontSize = fitFontSize(context, currentText, Math.round(height * 0.036), 18, lyricWidth, '"Garet", sans-serif');
+        const currentLineHeight = Math.round(currentFontSize * 1.12);
+        const transition = getLyricTransitionState(lyricState.current, time, track);
+        const maxBlur = Math.max(3, Math.round(height * 0.0055));
+        const maxLift = Math.max(5, Math.round(height * 0.008));
+
+        context.font = `600 ${currentFontSize}px "Garet", sans-serif`;
+        context.fillStyle = 'rgba(18, 18, 18, 0.96)';
+        const currentLines = buildWrappedLines(context, currentText, lyricWidth, 2);
+        const lyricMetrics = context.measureText(currentLines[0] || currentText);
+        const lyricAscent = lyricMetrics.actualBoundingBoxAscent || (currentFontSize * 0.72);
+        const lyricDescent = lyricMetrics.actualBoundingBoxDescent || (currentFontSize * 0.28);
+        const lyricVisibleHeight = lyricAscent + lyricDescent + ((currentLines.length - 1) * currentLineHeight);
+        const firstBaselineY = lyricZoneTop + ((lyricZoneHeight - lyricVisibleHeight) * 0.5) + lyricAscent + (transition.translateY * maxLift);
+        const blockTopY = firstBaselineY - lyricAscent;
+        const blockCenterY = blockTopY + (lyricVisibleHeight * 0.5);
+        context.textBaseline = 'alphabetic';
+        context.globalAlpha = transition.alpha;
+        if (transition.blur > 0.001) {
+            context.filter = `blur(${(transition.blur * maxBlur).toFixed(2)}px)`;
+        }
+        context.translate(lyricCenterX, blockCenterY);
+        context.scale(transition.scale, transition.scale);
+        drawTextBlock(currentLines, 0, firstBaselineY - blockCenterY, currentLineHeight, lyricWidth);
 
         context.restore();
     }
