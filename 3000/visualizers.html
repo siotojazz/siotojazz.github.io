@@ -28,13 +28,17 @@
                 </div>
 
                 <div class="visualizer-toolbar__actions">
+                    <div class="visualizer-format-toggle" role="group" aria-label="Preview format">
+                        <button class="visualizer-action visualizer-format-toggle__button is-active" id="visualizer-format-youtube" type="button" data-format="youtube">YouTube 16:9</button>
+                        <button class="visualizer-action visualizer-format-toggle__button" id="visualizer-format-instagram" type="button" data-format="instagram">Instagram 9:16</button>
+                    </div>
                     <a class="visualizer-action" id="visualizer-render-route" target="_blank" rel="noreferrer">Open Render Route</a>
                     <button class="visualizer-action visualizer-action--primary" id="visualizer-render-video" type="button">Render Video</button>
                 </div>
             </header>
 
             <section class="visualizer-preview-panel">
-                <div class="visualizer-preview-root" id="visualizer-preview"></div>
+                <div class="visualizer-preview-root" id="visualizer-preview" data-format="youtube"></div>
             </section>
 
             <section class="visualizer-controls">
@@ -43,6 +47,11 @@
                 <label class="visualizer-scrub" for="visualizer-seek">
                     <span class="visualizer-scrub__label">Timeline</span>
                     <input class="visualizer-scrub__input" id="visualizer-seek" type="range" min="0" max="1000" step="1" value="0">
+                </label>
+
+                <label class="visualizer-scrub visualizer-scrub--speed" for="visualizer-speed">
+                    <span class="visualizer-scrub__label">Speed <span id="visualizer-speed-readout">1.00×</span></span>
+                    <input class="visualizer-scrub__input" id="visualizer-speed" type="range" min="0.25" max="1" step="0.05" value="1">
                 </label>
             </section>
 

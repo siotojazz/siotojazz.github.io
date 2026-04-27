@@ -5,6 +5,7 @@ export let STOCK_VIDEO_LIBRARY = [
     'stock-videos/14395989_3840_2160_30fps.mp4',
     'stock-videos/2776523-uhd_3840_2160_30fps.mp4'
 ];
+export let TRACK_VIDEO_MAP = new Map();
 
 const STOCK_VIDEO_MANIFEST_URL = 'stock-videos/manifest.json';
 let stockVideoLibraryPromise = null;
@@ -115,6 +116,24 @@ function normalizeVideoLibrary(entries) {
         .filter(Boolean))).sort();
 }
 
+function normalizeTrackVideoMap(entries) {
+    const map = new Map();
+    if (!entries || typeof entries !== 'object') {
+        return map;
+    }
+
+    Object.entries(entries).forEach(([key, value]) => {
+        const normalizedPath = normalizeVideoPath(value);
+        if (!normalizedPath) {
+            return;
+        }
+
+        map.set(String(key), normalizedPath);
+    });
+
+    return map;
+}
+
 async function loadStockVideoLibrary() {
     if (!stockVideoLibraryPromise) {
         stockVideoLibraryPromise = (async () => {
@@ -126,33 +145,57 @@ async function loadStockVideoLibrary() {
                         ? manifest
                         : (Array.isArray(manifest?.videos) ? manifest.videos : []);
                     const manifestLibrary = normalizeVideoLibrary(manifestEntries);
+                    const manifestTrackVideos = normalizeTrackVideoMap(manifest?.trackVideos);
                     if (manifestLibrary.length) {
                         STOCK_VIDEO_LIBRARY = manifestLibrary;
-                        return manifestLibrary;
+                    }
+                    if (manifestTrackVideos.size) {
+                        TRACK_VIDEO_MAP = manifestTrackVideos;
+                    }
+                    if (manifestLibrary.length || manifestTrackVideos.size) {
+                        return {
+                            library: manifestLibrary.length ? manifestLibrary : STOCK_VIDEO_LIBRARY,
+                            trackVideos: manifestTrackVideos.size ? manifestTrackVideos : TRACK_VIDEO_MAP
+                        };
                     }
                 }
             } catch {
-                return STOCK_VIDEO_LIBRARY;
+                return {
+                    library: STOCK_VIDEO_LIBRARY,
+                    trackVideos: TRACK_VIDEO_MAP
+                };
             }
 
-            return STOCK_VIDEO_LIBRARY;
+            return {
+                library: STOCK_VIDEO_LIBRARY,
+                trackVideos: TRACK_VIDEO_MAP
+            };
         })();
     }
 
     return stockVideoLibraryPromise;
 }
 
-function selectSeededVideo(track, stockVideoLibrary = STOCK_VIDEO_LIBRARY) {
+function selectSeededVideo(track, stockVideoData = { library: STOCK_VIDEO_LIBRARY, trackVideos: TRACK_VIDEO_MAP }) {
+    const stockVideoLibrary = Array.isArray(stockVideoData)
+        ? stockVideoData
+        : (Array.isArray(stockVideoData?.library) ? stockVideoData.library : STOCK_VIDEO_LIBRARY);
+    const trackVideoMap = stockVideoData instanceof Map
+        ? stockVideoData
+        : (stockVideoData?.trackVideos instanceof Map ? stockVideoData.trackVideos : TRACK_VIDEO_MAP);
+
     if (!stockVideoLibrary.length) {
         return { index: -1, path: '', seed: 0 };
     }
 
     const seed = hashString(`${track?.id || 0}|${track?.title || ''}|${track?.mp3 || ''}`);
     const index = seed % stockVideoLibrary.length;
+    const mappedPath = trackVideoMap.get(String(track?.id || ''));
 
     return {
         index,
-        path: stockVideoLibrary[index],
+        path: mappedPath || stockVideoLibrary[index],
+        sourcePath: stockVideoLibrary[index],
         seed
     };
 }
@@ -277,7 +320,7 @@ function getAnalysisAudioUrl(track) {
     return backingTrack;
 }
 
-function normalizeTrack(track, albumMeta = {}, stockVideoLibrary = STOCK_VIDEO_LIBRARY) {
+function normalizeTrack(track, albumMeta = {}, stockVideoData = { library: STOCK_VIDEO_LIBRARY, trackVideos: TRACK_VIDEO_MAP }) {
     const timing = getTiming(track?.tempo, track?.timeSignature);
     const audioOffset = Number.parseFloat(track?.audioOffset) || 0;
     let currentBeat = 0;
@@ -295,7 +338,7 @@ function normalizeTrack(track, albumMeta = {}, stockVideoLibrary = STOCK_VIDEO_L
         return Math.max(maxDuration, lyric.endTime);
     }, 0);
     const duration = Math.max(estimatedDuration, lyricDuration);
-    const video = selectSeededVideo(track, stockVideoLibrary);
+    const video = selectSeededVideo(track, stockVideoData);
 
     return {
         ...track,
@@ -323,12 +366,12 @@ function normalizeTrack(track, albumMeta = {}, stockVideoLibrary = STOCK_VIDEO_L
     };
 }
 
-export function normalizeAlbum(albumData, stockVideoLibrary = STOCK_VIDEO_LIBRARY) {
+export function normalizeAlbum(albumData, stockVideoData = { library: STOCK_VIDEO_LIBRARY, trackVideos: TRACK_VIDEO_MAP }) {
     const album = albumData?.album || {};
     const tracks = (Array.isArray(albumData?.tracks) ? albumData.tracks.slice() : [])
         .sort((left, right) => (Number(left?.id) || 0) - (Number(right?.id) || 0))
         .map((track, trackIndex) => ({
-            ...normalizeTrack(track, album, stockVideoLibrary),
+            ...normalizeTrack(track, album, stockVideoData),
             trackIndex
         }));
 
@@ -340,7 +383,7 @@ export function normalizeAlbum(albumData, stockVideoLibrary = STOCK_VIDEO_LIBRAR
 }
 
 export async function loadAlbum(url = 'album.json') {
-    const [response, stockVideoLibrary] = await Promise.all([
+    const [response, stockVideoData] = await Promise.all([
         fetch(url),
         loadStockVideoLibrary()
     ]);
@@ -349,7 +392,7 @@ export async function loadAlbum(url = 'album.json') {
     }
 
     const albumData = await response.json();
-    return normalizeAlbum(albumData, stockVideoLibrary);
+    return normalizeAlbum(albumData, stockVideoData);
 }
 
 export function getTrackById(normalizedAlbum, trackId) {

@@ -35,9 +35,21 @@ function slugifyTrackTitle(track) {
     return ascii || `track-${track?.id || 'unknown'}`;
 }
 
-function buildRenderArtifacts(track) {
+function buildRenderArtifacts(track, options = {}) {
     const slug = slugifyTrackTitle(track);
-    const command = `npm --prefix 3000/tools run render -- --track=${track.id} --output=renders/${track.id}-${slug}.mp4`;
+    const speed = Number.isFinite(options.speed) ? options.speed : 1;
+    const format = options.format === 'instagram' ? 'instagram' : 'youtube';
+    const speedSuffix = Math.abs(speed - 1) < 0.001 ? '' : `-${String(speed).replace('.', 'p')}x`;
+    const formatSuffix = format === 'instagram' ? '-9x16' : '';
+    const outputName = `renders/${track.id}-${slug}${formatSuffix}${speedSuffix}.mp4`;
+    const flagParts = [`--track=${track.id}`, `--output=${outputName}`];
+    if (format === 'instagram') {
+        flagParts.push('--format=instagram');
+    }
+    if (Math.abs(speed - 1) >= 0.001) {
+        flagParts.push(`--speed=${speed}`);
+    }
+    const command = `npm --prefix 3000/tools run render -- ${flagParts.join(' ')}`;
     const manifest = {
         trackId: track.id,
         title: track.title,
@@ -47,8 +59,10 @@ function buildRenderArtifacts(track) {
         backgroundVideo: track.video?.path || '',
         lyricMode: track.lyricsMode,
         estimatedDuration: track.duration,
-        renderRoute: `visualizer-render.html?track=${track.id}`,
-        output: `renders/${track.id}-${slug}.mp4`
+        format,
+        speed,
+        renderRoute: `visualizer-render.html?track=${track.id}&format=${format}&speed=${speed}`,
+        output: outputName
     };
 
     return {
@@ -77,7 +91,6 @@ function getStatusText(track, state) {
 
 async function bootstrap() {
     const trackList = document.getElementById('visualizer-track-list');
-    const previewRoot = document.getElementById('visualizer-preview');
     const status = document.getElementById('visualizer-status');
     const playToggle = document.getElementById('visualizer-play-toggle');
     const seek = document.getElementById('visualizer-seek');
@@ -87,7 +100,14 @@ async function bootstrap() {
     const outputStatus = document.getElementById('visualizer-output-status');
     const commandPre = document.getElementById('visualizer-render-command');
     const audio = document.getElementById('visualizer-audio');
+    const speedInput = document.getElementById('visualizer-speed');
+    const speedReadout = document.getElementById('visualizer-speed-readout');
+    const formatButtons = Array.from(document.querySelectorAll('.visualizer-format-toggle__button'));
+    const previewRoot = document.getElementById('visualizer-preview');
     const stage = createVisualizerStage(previewRoot, { format: 'youtube', mode: 'preview' });
+
+    let currentSpeed = 1;
+    let currentFormat = 'youtube';
 
     let normalizedAlbum = null;
     let currentTrack = null;
@@ -152,9 +172,11 @@ async function bootstrap() {
     }
 
     function updateRenderOutputs(track) {
-        const artifacts = buildRenderArtifacts(track);
+        const artifacts = buildRenderArtifacts(track, { speed: currentSpeed, format: currentFormat });
         const routeUrl = new URL('visualizer-render.html', window.location.href);
         routeUrl.searchParams.set('track', String(track.id));
+        routeUrl.searchParams.set('format', currentFormat);
+        routeUrl.searchParams.set('speed', String(currentSpeed));
         renderRoute.href = routeUrl.toString();
         commandPre.textContent = `${artifacts.command}\n\n${JSON.stringify(artifacts.manifest, null, 2)}`;
     }
@@ -240,7 +262,7 @@ async function bootstrap() {
             return;
         }
 
-        const { command } = buildRenderArtifacts(currentTrack);
+        const { command } = buildRenderArtifacts(currentTrack, { speed: currentSpeed, format: currentFormat });
         updateRenderOutputs(currentTrack);
 
         try {
@@ -249,6 +271,42 @@ async function bootstrap() {
         } catch {
             outputStatus.textContent = 'Render command generated below. Run it in a terminal to export the MP4.';
         }
+    });
+
+    function applySpeed(value) {
+        const safe = Math.max(0.25, Math.min(1, Number(value) || 1));
+        currentSpeed = safe;
+        if (speedReadout) {
+            speedReadout.textContent = `${safe.toFixed(2)}×`;
+        }
+        try {
+            audio.playbackRate = safe;
+        } catch { /* noop */ }
+        stage.setGlobalSpeed(safe);
+        if (currentTrack) {
+            updateRenderOutputs(currentTrack);
+        }
+    }
+
+    function applyFormat(formatId) {
+        const safe = formatId === 'instagram' ? 'instagram' : 'youtube';
+        currentFormat = safe;
+        previewRoot.dataset.format = safe;
+        stage.setFormat(safe);
+        formatButtons.forEach((button) => {
+            button.classList.toggle('is-active', button.dataset.format === safe);
+        });
+        renderCurrentFrame();
+        if (currentTrack) {
+            updateRenderOutputs(currentTrack);
+        }
+    }
+
+    if (speedInput) {
+        speedInput.addEventListener('input', () => applySpeed(speedInput.value));
+    }
+    formatButtons.forEach((button) => {
+        button.addEventListener('click', () => applyFormat(button.dataset.format));
     });
 
     playToggle.addEventListener('click', async () => {
