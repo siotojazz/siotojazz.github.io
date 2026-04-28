@@ -689,18 +689,403 @@
             display: none;
         }
 
-        /* ── Gallery Placeholder ── */
-        .gallery-placeholder {
+        /* ── Telemetry (Telemetry tab) ── */
+        .telemetry {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            color: #fff;
-            gap: 16px;
-            font-size: 14px;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(18px);
+            color: var(--club-blue-strong);
+        }
+        .telemetry-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .telemetry-kicker {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+        .telemetry-header h2 {
+            font-size: 28px;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+        .telemetry-status {
+            font-size: 12px;
+            line-height: 1.4;
+            text-align: right;
+            max-width: 240px;
+            opacity: 0.72;
+        }
+        .telemetry-live {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 12px;
+            background: linear-gradient(180deg, rgba(var(--club-blue-rgb), 0.08), rgba(var(--club-blue-rgb), 0.03));
+            border: 1px solid rgba(var(--club-blue-rgb), 0.12);
+        }
+        .telemetry-live-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .telemetry-live-kicker {
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            opacity: 0.58;
+            margin-bottom: 4px;
+        }
+        .telemetry-live-title {
+            display: block;
+            font-size: 20px;
+            line-height: 1.1;
+            font-weight: 900;
+        }
+        .telemetry-live-meta {
+            font-size: 11px;
+            line-height: 1.5;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+        .telemetry-live-time {
+            font-size: 18px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+        .telemetry-live-progress {
+            width: 100%;
+            height: 8px;
+            overflow: hidden;
+            background: rgba(var(--club-blue-rgb), 0.08);
+        }
+        .telemetry-live-progress-fill {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #13256d 0%, #f59e0b 100%);
+            transform-origin: left center;
+            transform: scaleX(0);
+        }
+        .telemetry-live-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .telemetry-live-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .telemetry-live-section-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px 12px;
+            flex-wrap: wrap;
+        }
+        .telemetry-live-section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 900;
+            opacity: 0.62;
+        }
+        .telemetry-live-section-note {
+            font-size: 11px;
+            line-height: 1.4;
+            opacity: 0.58;
+        }
+        .telemetry-live-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
+            gap: 10px;
+        }
+        .telemetry-live-card {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.84);
+            border: 1px solid rgba(var(--club-blue-rgb), 0.08);
+            min-width: 0;
+            min-height: 84px;
+        }
+        .telemetry-live-label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            opacity: 0.55;
+            margin-bottom: 4px;
+        }
+        .telemetry-live-value {
+            display: block;
+            font-size: clamp(15px, 1.7vw, 18px);
+            font-weight: 900;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+        .telemetry-live-detail {
+            display: block;
+            margin-top: auto;
+            font-size: 10px;
+            line-height: 1.35;
+            opacity: 0.58;
+        }
+        .telemetry-live-spectrum {
+            display: grid;
+            grid-template-columns: repeat(24, minmax(0, 1fr));
+            align-items: end;
+            gap: 4px;
+            height: 74px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.84);
+            border: 1px solid rgba(var(--club-blue-rgb), 0.08);
+        }
+        .telemetry-live-spectrum-bar {
+            display: block;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.85), rgba(19, 37, 109, 0.9));
+            transform-origin: bottom center;
+            transform: scaleY(0.08);
+            opacity: 0.8;
+        }
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .telemetry-card {
+            min-height: 110px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            background: var(--club-blue);
+            color: #fff;
+        }
+        .telemetry-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            left: -100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(var(--club-blue-surface-rgb), 0.14) 40%,
+                rgba(var(--club-blue-surface-rgb), 0.26) 50%,
+                rgba(var(--club-blue-surface-rgb), 0.14) 60%,
+                transparent 100%);
+            filter: blur(10px);
+        }
+        .telemetry-card:hover::before {
+            left: 100%;
+            transition: left 0.4s ease;
+        }
+        .telemetry-label,
+        .telemetry-detail,
+        .telemetry-value {
+            position: relative;
+            z-index: 1;
+        }
+        .telemetry-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.74;
+        }
+        .telemetry-value {
+            font-size: 28px;
+            line-height: 1;
+            font-weight: 900;
+        }
+        .telemetry-detail {
+            font-size: 12px;
+            line-height: 1.4;
+            opacity: 0.82;
+        }
+        .telemetry-song-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 0;
+        }
+        .telemetry-table-note {
+            font-size: 11px;
+            line-height: 1.5;
+            opacity: 0.7;
+        }
+        .telemetry-song-table-wrap {
+            overflow: auto;
+            background: #fff;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.14);
+            box-shadow: 0 12px 30px rgba(var(--club-blue-rgb), 0.08);
+        }
+        .telemetry-song-table {
+            width: 100%;
+            min-width: 2520px;
+            border-collapse: collapse;
+            background: #fff;
+            color: var(--club-blue-strong);
+        }
+        .telemetry-song-table th,
+        .telemetry-song-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(var(--club-blue-rgb), 0.1);
+            vertical-align: top;
+            text-align: left;
+            white-space: nowrap;
+            font-size: 12px;
+            line-height: 1.35;
+        }
+        .telemetry-song-table thead th {
+            position: sticky;
+            top: 0;
+            background: var(--club-blue);
+            color: #fff;
+            font-size: 10px;
+            letter-spacing: 0.9px;
+            text-transform: uppercase;
+            z-index: 1;
+            white-space: nowrap;
+        }
+        .telemetry-song-table thead th:first-child {
+            left: 0;
+            z-index: 3;
+        }
+        .telemetry-song-table thead th:nth-child(2) {
+            left: 56px;
+            z-index: 3;
+            box-shadow: 1px 0 0 rgba(var(--club-blue-surface-rgb), 0.18);
+        }
+        .telemetry-song-table tbody tr:nth-child(even) {
+            background: rgba(var(--club-blue-rgb), 0.03);
+        }
+        .telemetry-song-table tbody tr:hover {
+            background: rgba(var(--club-blue-rgb), 0.06);
+        }
+        .telemetry-song-table tbody tr.is-live {
+            background: rgba(245, 158, 11, 0.08);
+        }
+        .telemetry-index-cell {
+            width: 56px;
+            min-width: 56px;
+            font-weight: 900;
+            font-size: 13px;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background: #fff;
+        }
+        .telemetry-track-cell {
+            min-width: 280px;
+            position: sticky;
+            left: 56px;
+            z-index: 2;
+            background: #fff;
+            box-shadow: 1px 0 0 rgba(var(--club-blue-rgb), 0.08);
+        }
+        .telemetry-wave-cell {
+            min-width: 290px;
+        }
+        .telemetry-cell-compact {
+            min-width: 98px;
+        }
+        .telemetry-cell-medium {
+            min-width: 128px;
+        }
+        .telemetry-cell-wide {
+            min-width: 210px;
+            white-space: normal;
+        }
+        .telemetry-song-table tbody tr:nth-child(even) .telemetry-index-cell,
+        .telemetry-song-table tbody tr:nth-child(even) .telemetry-track-cell {
+            background: rgba(var(--club-blue-rgb), 0.03);
+        }
+        .telemetry-song-table tbody tr:hover .telemetry-index-cell,
+        .telemetry-song-table tbody tr:hover .telemetry-track-cell,
+        .telemetry-song-table tbody tr.is-live .telemetry-index-cell,
+        .telemetry-song-table tbody tr.is-live .telemetry-track-cell {
+            background: rgba(245, 158, 11, 0.08);
+        }
+        .telemetry-song-cell-title {
+            display: block;
+            font-size: 15px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+        .telemetry-song-cell-subtitle {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            opacity: 0.58;
+            line-height: 1.4;
+        }
+        .telemetry-wave {
+            display: block;
+            width: 272px;
+            height: 52px;
+            cursor: pointer;
+        }
+        .telemetry-wave-empty {
+            width: 272px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(var(--club-blue-rgb), 0.04);
+            border: 1px dashed rgba(var(--club-blue-rgb), 0.16);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            opacity: 0.6;
+        }
+        .telemetry-wave-playhead {
+            opacity: 0;
+            stroke: #10b981;
+            stroke-width: 2;
+            transition: opacity 0.12s ease;
+        }
+        .telemetry-song-table tbody tr.is-live .telemetry-wave-playhead {
+            opacity: 1;
+        }
+        .telemetry-mastering-flag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 7px;
+            font-size: 10px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.12);
+            background: rgba(var(--club-blue-rgb), 0.04);
+        }
+        .telemetry-mastering-flag--hot {
+            color: #b22137;
+            background: rgba(178, 33, 55, 0.08);
+            border-color: rgba(178, 33, 55, 0.18);
+        }
+        .telemetry-mastering-flag--clean {
+            color: var(--club-blue-strong);
         }
 
         /* ── Moodboard (Moodboard tab) ── */
@@ -866,6 +1251,24 @@
             .tab-icon {
                 font-size: 15px;
             }
+            .telemetry-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .telemetry-header h2 {
+                font-size: 24px;
+            }
+            .telemetry-status {
+                text-align: left;
+                max-width: none;
+            }
+        }
+        @media (max-width: 520px) {
+            .telemetry-grid {
+                grid-template-columns: 1fr;
+            }
+            .telemetry-live-time {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -914,9 +1317,9 @@
             <i class="tab-icon fa-solid fa-music" aria-hidden="true"></i>
             <span class="tab-label">Lyrics</span>
         </button>
-        <button class="tab-btn" data-tab="gallery" aria-label="Gallery">
-            <i class="tab-icon fa-solid fa-images" aria-hidden="true"></i>
-            <span class="tab-label">Gallery</span>
+        <button class="tab-btn" data-tab="telemetry" aria-label="Telemetry">
+            <i class="tab-icon fa-solid fa-chart-column" aria-hidden="true"></i>
+            <span class="tab-label">Telemetry</span>
         </button>
         <button class="tab-btn" data-tab="moodboard" aria-label="Moodboard">
             <i class="tab-icon fa-solid fa-clone" aria-hidden="true"></i>
@@ -948,11 +1351,120 @@
             </div>
         </div>
 
-        <div class="tab-panel" id="tab-gallery">
-            <div class="gallery-placeholder">
-                <i class="fa-solid fa-images" style="font-size: 48px; opacity: 0.3;"></i>
-                <p>Gallery coming soon</p>
-            </div>
+        <div class="tab-panel" id="tab-telemetry">
+            <section class="telemetry" aria-labelledby="telemetry-heading">
+                <div class="telemetry-header">
+                    <div>
+                        <p class="telemetry-kicker">Album telemetry</p>
+                        <h2 id="telemetry-heading">3000 system readout</h2>
+                    </div>
+                    <p class="telemetry-status" id="telemetry-status" aria-live="polite">Scanning master durations...</p>
+                </div>
+                <section class="telemetry-live" aria-labelledby="telemetry-live-title">
+                    <div class="telemetry-live-head">
+                        <div>
+                            <p class="telemetry-live-kicker">Live playback analysis</p>
+                            <strong class="telemetry-live-title" id="telemetry-live-title">Telemetry standing by</strong>
+                            <p class="telemetry-live-meta" id="telemetry-live-meta">Start a song or click a waveform to arm the live meters.</p>
+                        </div>
+                        <div class="telemetry-live-time" id="telemetry-live-time">0:00 / 0:00</div>
+                    </div>
+                    <div class="telemetry-live-progress">
+                        <span class="telemetry-live-progress-fill" id="telemetry-live-progress-fill"></span>
+                    </div>
+                    <div class="telemetry-live-sections">
+                        <section class="telemetry-live-section" aria-labelledby="telemetry-live-now-title">
+                            <div class="telemetry-live-section-head">
+                                <span class="telemetry-live-section-title" id="telemetry-live-now-title">Instant readout</span>
+                                <span class="telemetry-live-section-note">Fast frame-level values from the current playback moment.</span>
+                            </div>
+                            <div class="telemetry-live-grid">
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Peak</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-peak">--</strong>
+                                    <span class="telemetry-live-detail">Current sample-peak at the output meter.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">RMS</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-rms">--</strong>
+                                    <span class="telemetry-live-detail">Short-window loudness body from the analyser.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Crest</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-crest">--</strong>
+                                    <span class="telemetry-live-detail">Peak-to-body swing right now.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Centroid</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-centroid">--</strong>
+                                    <span class="telemetry-live-detail">Current spectral brightness center.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Low Band</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-low">--</strong>
+                                    <span class="telemetry-live-detail">Bass share of the current spectrum.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">High Band</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-high">--</strong>
+                                    <span class="telemetry-live-detail">Air/edge share of the current spectrum.</span>
+                                </article>
+                            </div>
+                        </section>
+                        <section class="telemetry-live-section" aria-labelledby="telemetry-live-avg-title">
+                            <div class="telemetry-live-section-head">
+                                <span class="telemetry-live-section-title" id="telemetry-live-avg-title">Rolling 8-second view</span>
+                                <span class="telemetry-live-section-note">Averaged and held metrics that move slower and are easier to read while listening.</span>
+                            </div>
+                            <div class="telemetry-live-grid">
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Peak Hold</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-peak-hold">--</strong>
+                                    <span class="telemetry-live-detail">Highest peak captured in the rolling window.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Avg RMS</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-rms-avg">--</strong>
+                                    <span class="telemetry-live-detail">Mean loudness body over the last 8 seconds.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Avg Crest</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-crest-avg">--</strong>
+                                    <span class="telemetry-live-detail">Smoothed transient contrast across the window.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Avg Centroid</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-centroid-avg">--</strong>
+                                    <span class="telemetry-live-detail">Average brightness center over the same span.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Clip Pressure</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-clip-pressure">--</strong>
+                                    <span class="telemetry-live-detail">Average clipped-sample share in the window.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Bass Tilt</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-bass-tilt">--</strong>
+                                    <span class="telemetry-live-detail">Low-minus-high energy tilt over 8 seconds.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">RMS Swing</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-rms-swing">--</strong>
+                                    <span class="telemetry-live-detail">Range of RMS motion inside the window.</span>
+                                </article>
+                                <article class="telemetry-live-card">
+                                    <span class="telemetry-live-label">Brightness Drift</span>
+                                    <strong class="telemetry-live-value" id="telemetry-live-brightness-drift">--</strong>
+                                    <span class="telemetry-live-detail">Centroid spread for slower tonal movement.</span>
+                                </article>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="telemetry-live-spectrum" id="telemetry-live-spectrum" aria-hidden="true"></div>
+                </section>
+                <div class="telemetry-grid" id="telemetry-grid"></div>
+                <div class="telemetry-song-list" id="telemetry-songs"></div>
+            </section>
         </div>
 
         <div class="tab-panel" id="tab-moodboard">
@@ -1142,6 +1654,1405 @@
     const chordInstructionsDisplay = playerBasic.querySelector('.chord-instructions');
     const playerWrap = document.querySelector('.player-wrap');
     const moodboardEl = document.querySelector('.moodboard');
+    const telemetryGrid = document.getElementById('telemetry-grid');
+    const telemetrySongs = document.getElementById('telemetry-songs');
+    const telemetryStatus = document.getElementById('telemetry-status');
+    const telemetryLiveTitle = document.getElementById('telemetry-live-title');
+    const telemetryLiveMeta = document.getElementById('telemetry-live-meta');
+    const telemetryLiveTime = document.getElementById('telemetry-live-time');
+    const telemetryLiveProgressFill = document.getElementById('telemetry-live-progress-fill');
+    const telemetryLivePeak = document.getElementById('telemetry-live-peak');
+    const telemetryLiveRms = document.getElementById('telemetry-live-rms');
+    const telemetryLiveCrest = document.getElementById('telemetry-live-crest');
+    const telemetryLiveCentroid = document.getElementById('telemetry-live-centroid');
+    const telemetryLiveLow = document.getElementById('telemetry-live-low');
+    const telemetryLiveHigh = document.getElementById('telemetry-live-high');
+    const telemetryLivePeakHold = document.getElementById('telemetry-live-peak-hold');
+    const telemetryLiveRmsAvg = document.getElementById('telemetry-live-rms-avg');
+    const telemetryLiveCrestAvg = document.getElementById('telemetry-live-crest-avg');
+    const telemetryLiveCentroidAvg = document.getElementById('telemetry-live-centroid-avg');
+    const telemetryLiveClipPressure = document.getElementById('telemetry-live-clip-pressure');
+    const telemetryLiveBassTilt = document.getElementById('telemetry-live-bass-tilt');
+    const telemetryLiveRmsSwing = document.getElementById('telemetry-live-rms-swing');
+    const telemetryLiveBrightnessDrift = document.getElementById('telemetry-live-brightness-drift');
+    const telemetryLiveSpectrum = document.getElementById('telemetry-live-spectrum');
+    const trackDurations = new Map();
+    const trackAudioAnalysis = new Map();
+    const durationFailures = new Set();
+    const audioAnalysisFailures = new Set();
+    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+    const NOTE_TO_SEMITONE = Object.freeze({
+        'C': 0,
+        'C#': 1,
+        'Db': 1,
+        'D': 2,
+        'D#': 3,
+        'Eb': 3,
+        'E': 4,
+        'Fb': 4,
+        'E#': 5,
+        'F': 5,
+        'F#': 6,
+        'Gb': 6,
+        'G': 7,
+        'G#': 8,
+        'Ab': 8,
+        'A': 9,
+        'A#': 10,
+        'Bb': 10,
+        'B': 11,
+        'Cb': 11
+    });
+    const SEMITONE_TO_NOTE = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+    const LYRIC_STOPWORDS = new Set([
+        'the', 'and', 'for', 'with', 'that', 'this', 'your', 'you', 'are', 'our', 'out', 'all', 'but', 'can', 'know', 'like', 'into', 'there', 'they', 'them', 'then', 'where', 'what', 'when', 'will', 'just', 'still', 'again', 'only', 'have', 'from', 'down', 'near', 'away', 'been', 'cuz', 'hey',
+        'its', 'it', 'ive', 'ill', 'cant', 'wont', 'youre', 'someone', 'maybe', 'still', 'gotta', 'oughta',
+        'и', 'во', 'не', 'се', 'те', 'од', 'на', 'со', 'до', 'за', 'само', 'таму', 'една', 'еден', 'сосема', 'има', 'по', 'го', 'то', 'ја', 'ќе', 'што', 'како', 'сум', 'си', 'сме', 'сте', 'ова', 'оваа', 'оној', 'овај', 'сега', 'таму', 'тука', 'еден', 'едно', 'едни',
+        'оооо', 'ооооо', 'аааа', 'ааааа', 'aaaa', 'oooo'
+    ]);
+    const KEY_CANDIDATES = Array.from({ length: 12 }, (_, tonic) => ([
+        {
+            tonic,
+            mode: 'major',
+            label: `${SEMITONE_TO_NOTE[tonic]} major`,
+            scale: [0, 2, 4, 5, 7, 9, 11],
+            qualities: ['major', 'minor', 'minor', 'major', 'major', 'minor', 'diminished']
+        },
+        {
+            tonic,
+            mode: 'minor',
+            label: `${SEMITONE_TO_NOTE[tonic]} minor`,
+            scale: [0, 2, 3, 5, 7, 8, 10],
+            qualities: ['minor', 'diminished', 'major', 'minor', 'minor', 'major', 'major']
+        }
+    ])).flat();
+    let telemetryAudioScanStarted = false;
+    let telemetryAudioScanComplete = false;
+    let telemetryAudioContext = null;
+    const LIVE_TELEMETRY_WINDOW_MS = 8000;
+    const liveTelemetryHistory = [];
+    let liveTelemetryTrackIndex = -1;
+    let liveTelemetryLastSampleAt = 0;
+    let lastLiveAnalysisSnapshot = null;
+
+    if (telemetryLiveSpectrum) {
+        telemetryLiveSpectrum.innerHTML = Array.from({ length: 24 }, () => '<span class="telemetry-live-spectrum-bar"></span>').join('');
+    }
+    const telemetryLiveSpectrumBars = telemetryLiveSpectrum
+        ? Array.from(telemetryLiveSpectrum.children)
+        : [];
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function average(values) {
+        if (!values.length) return null;
+        return values.reduce((sum, value) => sum + value, 0) / values.length;
+    }
+
+    function median(values) {
+        if (!values.length) return null;
+        const sorted = [...values].sort((a, b) => a - b);
+        const middle = Math.floor(sorted.length / 2);
+        return sorted.length % 2 === 0
+            ? (sorted[middle - 1] + sorted[middle]) / 2
+            : sorted[middle];
+    }
+
+    function getExtremeMetric(metrics, selector, pickMax = true) {
+        return metrics
+            .filter(metric => Number.isFinite(selector(metric)))
+            .reduce((best, metric) => {
+                if (!best) return metric;
+                return pickMax
+                    ? selector(metric) > selector(best) ? metric : best
+                    : selector(metric) < selector(best) ? metric : best;
+            }, null);
+    }
+
+    function normalizeChordName(chordName) {
+        return String(chordName || '').replace(/\*/g, '').trim();
+    }
+
+    function parseChordSymbol(chordName) {
+        const normalized = normalizeChordName(chordName);
+        const match = normalized.match(/^([A-Ga-g])([#b]?)(.*)$/);
+        if (!match) return null;
+
+        const rootName = `${match[1].toUpperCase()}${match[2] || ''}`;
+        const suffix = (match[3] || '').trim().toLowerCase();
+        const rootSemitone = NOTE_TO_SEMITONE[rootName];
+        if (!Number.isInteger(rootSemitone)) return null;
+
+        let quality = 'major';
+        if (/dim|°|o|b5/.test(suffix)) {
+            quality = 'diminished';
+        } else if (/aug|\+/.test(suffix)) {
+            quality = 'augmented';
+        } else if (/m(?!aj)/.test(suffix)) {
+            quality = 'minor';
+        } else if (/sus/.test(suffix)) {
+            quality = 'suspended';
+        } else if (/5/.test(suffix)) {
+            quality = 'power';
+        } else if (/7/.test(suffix) && !/maj7/.test(suffix)) {
+            quality = 'dominant';
+        }
+
+        return {
+            symbol: normalized,
+            rootName,
+            rootSemitone,
+            quality,
+            suffix
+        };
+    }
+
+    function getChordFitScore(parsedChord, candidate) {
+        if (!parsedChord) return -1;
+
+        const relativeRoot = (parsedChord.rootSemitone - candidate.tonic + 12) % 12;
+        const degreeIndex = candidate.scale.indexOf(relativeRoot);
+
+        if (degreeIndex === -1) {
+            if (candidate.mode === 'minor' && relativeRoot === 11 && parsedChord.quality === 'diminished') {
+                return 1.6;
+            }
+            return -0.65;
+        }
+
+        const expectedQuality = candidate.qualities[degreeIndex];
+        let score = 1.15;
+
+        if (parsedChord.quality === expectedQuality) {
+            score = 2.7;
+        } else if (parsedChord.quality === 'dominant' && (expectedQuality === 'major' || (candidate.mode === 'minor' && degreeIndex === 4))) {
+            score = 2.4;
+        } else if (['power', 'suspended'].includes(parsedChord.quality) && expectedQuality !== 'diminished') {
+            score = 2.0;
+        } else if (parsedChord.quality === 'augmented') {
+            score = 0.9;
+        }
+
+        if (relativeRoot === 0 || relativeRoot === 7) {
+            score += 0.12;
+        }
+
+        return score;
+    }
+
+    function analyzeHarmony(chordSequence) {
+        const parsedChords = chordSequence
+            .map(chord => ({
+                symbol: normalizeChordName(chord),
+                parsed: parseChordSymbol(chord)
+            }))
+            .filter(entry => entry.parsed);
+
+        if (!parsedChords.length) {
+            return {
+                keyLabel: 'n/a',
+                confidence: null,
+                borrowedCount: 0,
+                borrowedNames: [],
+                chromaticMoves: 0,
+                tritoneMoves: 0,
+                weirdnessScore: 0,
+                weirdSummary: 'n/a'
+            };
+        }
+
+        const rankedCandidates = KEY_CANDIDATES
+            .map(candidate => ({
+                ...candidate,
+                score: parsedChords.reduce((sum, entry) => sum + getChordFitScore(entry.parsed, candidate), 0)
+            }))
+            .sort((a, b) => b.score - a.score);
+
+        const bestCandidate = rankedCandidates[0];
+        const nextCandidate = rankedCandidates[1] || rankedCandidates[0];
+        const borrowedCounts = new Map();
+        let chromaticMoves = 0;
+        let tritoneMoves = 0;
+        let borrowedCount = 0;
+
+        parsedChords.forEach((entry, index) => {
+            const fitScore = getChordFitScore(entry.parsed, bestCandidate);
+            if (fitScore < 1.2) {
+                borrowedCount++;
+                borrowedCounts.set(entry.symbol, (borrowedCounts.get(entry.symbol) || 0) + 1);
+            }
+
+            if (index === 0) return;
+            const previous = parsedChords[index - 1].parsed;
+            const interval = (entry.parsed.rootSemitone - previous.rootSemitone + 12) % 12;
+            if (interval === 1 || interval === 11) {
+                chromaticMoves++;
+            } else if (interval === 6) {
+                tritoneMoves++;
+            }
+        });
+
+        const borrowedNames = [...borrowedCounts.entries()]
+            .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+            .slice(0, 3)
+            .map(([symbol, count]) => `${symbol}×${count}`);
+
+        const weirdParts = [];
+        if (borrowedCount) weirdParts.push(`${borrowedCount} detour${borrowedCount === 1 ? '' : 's'}`);
+        if (chromaticMoves) weirdParts.push(`${chromaticMoves} chromatic`);
+        if (tritoneMoves) weirdParts.push(`${tritoneMoves} tritone`);
+
+        return {
+            keyLabel: bestCandidate.label,
+            confidence: parsedChords.length ? (bestCandidate.score - nextCandidate.score) / parsedChords.length : null,
+            borrowedCount,
+            borrowedNames,
+            chromaticMoves,
+            tritoneMoves,
+            weirdnessScore: borrowedCount * 2 + chromaticMoves * 1.25 + tritoneMoves * 1.5,
+            weirdSummary: weirdParts.length ? weirdParts.join(' / ') : 'mostly diatonic'
+        };
+    }
+
+    function normalizeLyricText(text) {
+        return String(text || '')
+            .toLowerCase()
+            .normalize('NFKC')
+            .replace(/[’']/g, '')
+            .replace(/[^\p{L}\s-]/gu, ' ');
+    }
+
+    function tokenizeLyricWords(text, contentOnly = false) {
+        const tokens = normalizeLyricText(text)
+            .split(/\s+/)
+            .map(token => token.replace(/^-+|-+$/g, ''))
+            .filter(Boolean);
+
+        if (!contentOnly) return tokens;
+
+        return tokens.filter(token => token.length >= 3 && !LYRIC_STOPWORDS.has(token));
+    }
+
+    function analyzeLyrics(lyrics) {
+        const safeLyrics = Array.isArray(lyrics) ? lyrics : [];
+        const contentWordCounts = new Map();
+        const contentWords = [];
+        const stanzaLineCounts = [];
+        const stanzaWordCounts = [];
+        let currentStanzaLines = 0;
+        let currentStanzaWords = 0;
+
+        safeLyrics.forEach((lineObj, index) => {
+            const text = (lineObj.line || '').trim();
+            const rawWords = tokenizeLyricWords(text, false);
+            const contentTokens = tokenizeLyricWords(text, true);
+
+            if (text) {
+                currentStanzaLines++;
+                currentStanzaWords += rawWords.length;
+            }
+
+            contentTokens.forEach(token => {
+                contentWords.push(token);
+                contentWordCounts.set(token, (contentWordCounts.get(token) || 0) + 1);
+            });
+
+            if ((lineObj.stanzaEnd || index === safeLyrics.length - 1) && currentStanzaLines > 0) {
+                stanzaLineCounts.push(currentStanzaLines);
+                stanzaWordCounts.push(currentStanzaWords);
+                currentStanzaLines = 0;
+                currentStanzaWords = 0;
+            }
+        });
+
+        const rankedWords = [...contentWordCounts.entries()]
+            .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+            .slice(0, 3)
+            .map(([word, count]) => ({ word, count }));
+
+        return {
+            topWords: rankedWords,
+            topWordsLabel: rankedWords.length
+                ? rankedWords.map(entry => `${entry.word}×${entry.count}`).join(', ')
+                : 'n/a',
+            topWordShare: rankedWords.length && contentWords.length
+                ? (rankedWords[0].count / contentWords.length) * 100
+                : null,
+            uniqueWords: new Set(contentWords).size,
+            stanzaCount: stanzaLineCounts.length,
+            avgStanzaLines: average(stanzaLineCounts),
+            maxStanzaLines: stanzaLineCounts.length ? Math.max(...stanzaLineCounts) : null,
+            avgStanzaWords: average(stanzaWordCounts),
+            stanzaProfile: stanzaLineCounts.length
+                ? `${stanzaLineCounts.length} stz • ${average(stanzaLineCounts).toFixed(1)}L avg • ${Math.max(...stanzaLineCounts)}L max`
+                : 'n/a'
+        };
+    }
+
+    function getTrackSections(track) {
+        return Array.isArray(track.structure?.sections) ? track.structure.sections : [];
+    }
+
+    function getBeatsPerBar(track) {
+        return track.timeSignature === '6/8' ? 2 : 4;
+    }
+
+    function formatBars(barCount) {
+        if (!Number.isFinite(barCount)) return '0';
+        return Number.isInteger(barCount) ? String(barCount) : barCount.toFixed(1);
+    }
+
+    function formatSecondsMetric(seconds) {
+        if (!Number.isFinite(seconds)) return '--';
+        if (seconds >= 60) return formatTime(seconds);
+        if (seconds >= 10) return `${seconds.toFixed(1)}s`;
+        return `${seconds.toFixed(2)}s`;
+    }
+
+    function formatDb(value, unit = 'dB') {
+        if (!Number.isFinite(value)) return '--';
+        return `${value.toFixed(1)} ${unit}`;
+    }
+
+    function formatBitrate(value) {
+        if (!Number.isFinite(value)) return '--';
+        return `${Math.round(value)} kbps`;
+    }
+
+    function formatPercent(value) {
+        if (!Number.isFinite(value)) return '--';
+        return `${Math.round(value)}%`;
+    }
+
+    function formatFrequency(value) {
+        if (!Number.isFinite(value)) return '--';
+        if (value >= 1000) return `${(value / 1000).toFixed(2)} kHz`;
+        return `${Math.round(value)} Hz`;
+    }
+
+    function formatSignedPoints(value) {
+        if (!Number.isFinite(value)) return '--';
+        const sign = value > 0 ? '+' : '';
+        return `${sign}${value.toFixed(1)} pts`;
+    }
+
+    function formatFrequencySpread(value) {
+        if (!Number.isFinite(value)) return '--';
+        if (value >= 1000) return `${(value / 1000).toFixed(2)} kHz`;
+        return `${Math.round(value)} Hz`;
+    }
+
+    function formatRatio(value) {
+        if (!Number.isFinite(value)) return '--';
+        return value.toFixed(2);
+    }
+
+    function formatStereoBalance(value) {
+        if (!Number.isFinite(value)) return '--';
+        if (Math.abs(value) < 0.05) return 'centered';
+        const side = value > 0 ? 'L' : 'R';
+        return `${side}+${Math.abs(value).toFixed(1)} dB`;
+    }
+
+    function formatHeadroom(value) {
+        if (!Number.isFinite(value)) return '--';
+        return `${value.toFixed(2)} dB`;
+    }
+
+    function formatDensity(value) {
+        if (!Number.isFinite(value)) return '--';
+        return `${value.toFixed(1)}/min`;
+    }
+
+    function updateTelemetryPlaybackIndicators(activeTrackIndex, currentTime = 0, duration = 0) {
+        const rows = telemetrySongs.querySelectorAll('.telemetry-song-table tbody tr[data-track-index]');
+        rows.forEach(row => {
+            const rowTrackIndex = parseInt(row.dataset.trackIndex, 10);
+            const isActive = rowTrackIndex === activeTrackIndex;
+            row.classList.toggle('is-live', isActive);
+
+            const playhead = row.querySelector('.telemetry-wave-playhead');
+            if (!playhead) return;
+
+            if (!isActive || !Number.isFinite(duration) || duration <= 0) {
+                playhead.setAttribute('opacity', '0');
+                return;
+            }
+
+            const viewBoxWidth = playhead.ownerSVGElement?.viewBox?.baseVal?.width || 272;
+            const width = viewBoxWidth;
+            const x = Math.max(0, Math.min(width, (currentTime / duration) * width));
+            playhead.setAttribute('x1', x.toFixed(2));
+            playhead.setAttribute('x2', x.toFixed(2));
+            playhead.setAttribute('opacity', '1');
+        });
+    }
+
+    function resetLiveTelemetryHistory(trackIndex = -1) {
+        liveTelemetryHistory.length = 0;
+        liveTelemetryTrackIndex = trackIndex;
+        liveTelemetryLastSampleAt = 0;
+        lastLiveAnalysisSnapshot = null;
+    }
+
+    function recordLiveTelemetrySample(trackIndex, analysis) {
+        if (!analysis || audio.paused) return;
+
+        const now = performance.now();
+        if (liveTelemetryTrackIndex !== trackIndex) {
+            resetLiveTelemetryHistory(trackIndex);
+        }
+
+        if (liveTelemetryLastSampleAt && now - liveTelemetryLastSampleAt < 180) {
+            return;
+        }
+
+        liveTelemetryHistory.push({
+            time: now,
+            peakDb: analysis.peakDb,
+            rmsDb: analysis.rmsDb,
+            crestFactorDb: analysis.crestFactorDb,
+            spectralCentroidHz: analysis.spectralCentroidHz,
+            clipShare: analysis.clipShare,
+            lowEnergyPct: analysis.lowEnergyPct,
+            highEnergyPct: analysis.highEnergyPct
+        });
+        liveTelemetryLastSampleAt = now;
+
+        const cutoff = now - LIVE_TELEMETRY_WINDOW_MS;
+        while (liveTelemetryHistory.length && liveTelemetryHistory[0].time < cutoff) {
+            liveTelemetryHistory.shift();
+        }
+    }
+
+    function getLiveTelemetryWindowStats() {
+        if (!liveTelemetryHistory.length) {
+            return null;
+        }
+
+        const peaks = liveTelemetryHistory.map(sample => sample.peakDb).filter(value => Number.isFinite(value));
+        const rmsValues = liveTelemetryHistory.map(sample => sample.rmsDb).filter(value => Number.isFinite(value));
+        const crestValues = liveTelemetryHistory.map(sample => sample.crestFactorDb).filter(value => Number.isFinite(value));
+        const centroidValues = liveTelemetryHistory.map(sample => sample.spectralCentroidHz).filter(value => Number.isFinite(value));
+        const clipValues = liveTelemetryHistory.map(sample => sample.clipShare).filter(value => Number.isFinite(value));
+        const lowValues = liveTelemetryHistory.map(sample => sample.lowEnergyPct).filter(value => Number.isFinite(value));
+        const highValues = liveTelemetryHistory.map(sample => sample.highEnergyPct).filter(value => Number.isFinite(value));
+
+        return {
+            peakHoldDb: peaks.length ? Math.max(...peaks) : null,
+            avgRmsDb: average(rmsValues),
+            avgCrestDb: average(crestValues),
+            avgCentroidHz: average(centroidValues),
+            avgClipShare: average(clipValues),
+            bassTiltPts: average(lowValues) !== null && average(highValues) !== null
+                ? average(lowValues) - average(highValues)
+                : null,
+            rmsSwingDb: rmsValues.length ? Math.max(...rmsValues) - Math.min(...rmsValues) : null,
+            brightnessDriftHz: centroidValues.length ? Math.max(...centroidValues) - Math.min(...centroidValues) : null
+        };
+    }
+
+    function setTelemetryLiveIdle(message = 'Start a song or click a waveform to arm the live meters.') {
+        if (!telemetryLiveTitle) return;
+
+        if (!currentTrack || selectedTrackIndex < 0) {
+            resetLiveTelemetryHistory(-1);
+        }
+
+        const fallbackDuration = selectedTrackIndex >= 0
+            ? trackAudioAnalysis.get(selectedTrackIndex)?.duration || trackDurations.get(selectedTrackIndex) || 0
+            : 0;
+
+        telemetryLiveTitle.textContent = selectedTrackIndex >= 0 && data.tracks[selectedTrackIndex]
+            ? `${selectedTrackIndex + 1} ${data.tracks[selectedTrackIndex].title}`
+            : 'Telemetry standing by';
+        telemetryLiveMeta.textContent = message;
+        telemetryLiveTime.textContent = `${formatTime(audio.currentTime || 0)} / ${formatTime(fallbackDuration || 0)}`;
+        telemetryLiveProgressFill.style.transform = `scaleX(${fallbackDuration > 0 ? Math.max(0, Math.min(1, (audio.currentTime || 0) / fallbackDuration)) : 0})`;
+        telemetryLivePeak.textContent = '--';
+        telemetryLiveRms.textContent = '--';
+        telemetryLiveCrest.textContent = '--';
+        telemetryLiveCentroid.textContent = '--';
+        telemetryLiveLow.textContent = '--';
+        telemetryLiveHigh.textContent = '--';
+        telemetryLivePeakHold.textContent = '--';
+        telemetryLiveRmsAvg.textContent = '--';
+        telemetryLiveCrestAvg.textContent = '--';
+        telemetryLiveCentroidAvg.textContent = '--';
+        telemetryLiveClipPressure.textContent = '--';
+        telemetryLiveBassTilt.textContent = '--';
+        telemetryLiveRmsSwing.textContent = '--';
+        telemetryLiveBrightnessDrift.textContent = '--';
+        telemetryLiveSpectrumBars.forEach(bar => {
+            bar.style.transform = 'scaleY(0.08)';
+            bar.style.opacity = '0.45';
+        });
+        updateTelemetryPlaybackIndicators(selectedTrackIndex, audio.currentTime || 0, fallbackDuration || 0);
+    }
+
+    function updateLiveTelemetryAnalysis(force = false) {
+        const telemetryPanel = document.getElementById('tab-telemetry');
+        if (!force && (!telemetryPanel || !telemetryPanel.classList.contains('active'))) return;
+        if (!telemetryLiveTitle) return;
+
+        if (!currentTrack || selectedTrackIndex < 0) {
+            setTelemetryLiveIdle();
+            return;
+        }
+
+        const fallbackDuration = trackAudioAnalysis.get(selectedTrackIndex)?.duration || trackDurations.get(selectedTrackIndex) || 0;
+        const duration = audio.duration || fallbackDuration;
+        const currentTime = audio.currentTime || 0;
+        const rawAnalysis = audioEngine.getLiveAnalysis();
+        if (rawAnalysis && !audio.paused) {
+            lastLiveAnalysisSnapshot = rawAnalysis;
+            recordLiveTelemetrySample(selectedTrackIndex, rawAnalysis);
+        }
+        const analysis = (!audio.paused && rawAnalysis) ? rawAnalysis : lastLiveAnalysisSnapshot;
+        const rollingStats = getLiveTelemetryWindowStats();
+        const bpm = parseInt(currentTrack.tempo, 10) || 120;
+        const isSixEight = currentTrack.timeSignature === '6/8';
+        const beatsPerBar = isSixEight ? 2 : 4;
+        const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
+        const currentBar = Math.max(1, Math.floor(currentTime / (beatDuration * beatsPerBar)) + 1);
+
+        let currentSection = 'between sections';
+        let beatCursor = 0;
+        let totalBars = 0;
+        currentTrack.structure.sections.forEach(section => {
+            totalBars += section.chords.length / beatsPerBar;
+            if (currentSection !== 'between sections') return;
+            const sectionBeats = section.chords.length;
+            const currentBeat = Math.floor(currentTime / beatDuration);
+            if (currentBeat >= beatCursor && currentBeat < beatCursor + sectionBeats) {
+                currentSection = section.label;
+            }
+            beatCursor += sectionBeats;
+        });
+
+        telemetryLiveTitle.textContent = `${selectedTrackIndex + 1} ${currentTrack.title}`;
+        telemetryLiveMeta.textContent = `${audio.paused ? 'paused' : 'playing'} • ${currentSection} • bar ${currentBar}/${Math.max(1, Math.round(totalBars))} • ${currentTrack.timeSignature}`;
+        telemetryLiveTime.textContent = `${formatTime(currentTime)} / ${formatTime(duration || 0)}`;
+        telemetryLiveProgressFill.style.transform = `scaleX(${duration > 0 ? Math.max(0, Math.min(1, currentTime / duration)) : 0})`;
+
+        if (!analysis) {
+            telemetryLivePeak.textContent = '--';
+            telemetryLiveRms.textContent = '--';
+            telemetryLiveCrest.textContent = '--';
+            telemetryLiveCentroid.textContent = '--';
+            telemetryLiveLow.textContent = '--';
+            telemetryLiveHigh.textContent = '--';
+            telemetryLiveSpectrumBars.forEach(bar => {
+                bar.style.transform = 'scaleY(0.08)';
+                bar.style.opacity = '0.45';
+            });
+        } else {
+            telemetryLivePeak.textContent = Number.isFinite(analysis.peakDb) ? `${analysis.peakDb.toFixed(1)} dBFS` : '--';
+            telemetryLiveRms.textContent = Number.isFinite(analysis.rmsDb) ? `${analysis.rmsDb.toFixed(1)} dBFS` : '--';
+            telemetryLiveCrest.textContent = Number.isFinite(analysis.crestFactorDb) ? `${analysis.crestFactorDb.toFixed(1)} dB` : '--';
+            telemetryLiveCentroid.textContent = formatFrequency(analysis.spectralCentroidHz);
+            telemetryLiveLow.textContent = formatPercent(analysis.lowEnergyPct);
+            telemetryLiveHigh.textContent = formatPercent(analysis.highEnergyPct);
+            telemetryLiveSpectrumBars.forEach((bar, index) => {
+                const level = analysis.spectrumBins[index] ?? 0;
+                bar.style.transform = `scaleY(${Math.max(0.08, level)})`;
+                bar.style.opacity = `${0.45 + Math.min(0.5, level * 0.7)}`;
+            });
+        }
+
+        if (!rollingStats) {
+            telemetryLivePeakHold.textContent = '--';
+            telemetryLiveRmsAvg.textContent = '--';
+            telemetryLiveCrestAvg.textContent = '--';
+            telemetryLiveCentroidAvg.textContent = '--';
+            telemetryLiveClipPressure.textContent = '--';
+            telemetryLiveBassTilt.textContent = '--';
+            telemetryLiveRmsSwing.textContent = '--';
+            telemetryLiveBrightnessDrift.textContent = '--';
+        } else {
+            telemetryLivePeakHold.textContent = Number.isFinite(rollingStats.peakHoldDb) ? `${rollingStats.peakHoldDb.toFixed(1)} dBFS` : '--';
+            telemetryLiveRmsAvg.textContent = Number.isFinite(rollingStats.avgRmsDb) ? `${rollingStats.avgRmsDb.toFixed(1)} dBFS` : '--';
+            telemetryLiveCrestAvg.textContent = Number.isFinite(rollingStats.avgCrestDb) ? `${rollingStats.avgCrestDb.toFixed(1)} dB` : '--';
+            telemetryLiveCentroidAvg.textContent = formatFrequency(rollingStats.avgCentroidHz);
+            telemetryLiveClipPressure.textContent = Number.isFinite(rollingStats.avgClipShare) ? `${rollingStats.avgClipShare.toFixed(2)}%` : '--';
+            telemetryLiveBassTilt.textContent = formatSignedPoints(rollingStats.bassTiltPts);
+            telemetryLiveRmsSwing.textContent = Number.isFinite(rollingStats.rmsSwingDb) ? `${rollingStats.rmsSwingDb.toFixed(1)} dB` : '--';
+            telemetryLiveBrightnessDrift.textContent = formatFrequencySpread(rollingStats.brightnessDriftHz);
+        }
+
+        updateTelemetryPlaybackIndicators(selectedTrackIndex, currentTime, duration || 0);
+    }
+
+    function getTelemetryScanPlaceholder(trackIndex) {
+        if (audioAnalysisFailures.has(trackIndex)) return 'scan failed';
+        return telemetryAudioScanStarted ? 'scan pending' : 'scan on open';
+    }
+
+    function formatMasterFormat(analysis, trackIndex) {
+        if (!analysis) return getTelemetryScanPlaceholder(trackIndex);
+        const sampleRateKHz = analysis.sampleRate / 1000;
+        const sampleRateLabel = Number.isInteger(sampleRateKHz)
+            ? sampleRateKHz.toFixed(0)
+            : sampleRateKHz.toFixed(1);
+        return `${sampleRateLabel} kHz • ${analysis.channelLabel}`;
+    }
+
+    function formatTrimmedDuration(metric) {
+        if (!metric.audioAnalysis) return getTelemetryScanPlaceholder(metric.trackIndex);
+        const trimmedDuration = Math.max(0, metric.audioAnalysis.duration - metric.audioAnalysis.leadingSilence - metric.audioAnalysis.trailingSilence);
+        return formatTime(trimmedDuration);
+    }
+
+    function formatPeakDisplay(metric) {
+        if (!metric.audioAnalysis) return getTelemetryScanPlaceholder(metric.trackIndex);
+        const peakPercent = Number.isFinite(metric.audioAnalysis.duration) && metric.audioAnalysis.duration > 0
+            ? Math.round((metric.audioAnalysis.peakTime / metric.audioAnalysis.duration) * 100)
+            : null;
+        const peakDb = Number.isFinite(metric.audioAnalysis.peakDb)
+            ? `${metric.audioAnalysis.peakDb.toFixed(1)} dBFS`
+            : '--';
+        return peakPercent === null
+            ? `${formatTime(metric.audioAnalysis.peakTime)} • ${peakDb}`
+            : `${formatTime(metric.audioAnalysis.peakTime)} • ${peakPercent}% • ${peakDb}`;
+    }
+
+    function formatCeilingFlags(metric) {
+        if (!metric.audioAnalysis) return getTelemetryScanPlaceholder(metric.trackIndex);
+        if (!metric.audioAnalysis.clipBinCount) return 'clean';
+        return `${metric.audioAnalysis.clipBinCount} hot bins`;
+    }
+
+    function renderWaveformSvg(metric) {
+        if (!metric.audioAnalysis || !Array.isArray(metric.audioAnalysis.waveformBins) || !metric.audioAnalysis.waveformBins.length) {
+            return `<div class="telemetry-wave-empty">${escapeHtml(getTelemetryScanPlaceholder(metric.trackIndex))}</div>`;
+        }
+
+        const analysis = metric.audioAnalysis;
+        const width = 272;
+        const height = 52;
+        const midY = height / 2;
+        const binCount = analysis.waveformBins.length;
+        const barWidth = width / binCount;
+        const safeDuration = analysis.duration > 0 ? analysis.duration : 1;
+        const leadWidth = Math.max(0, Math.min(width, (analysis.leadingSilence / safeDuration) * width));
+        const tailWidth = Math.max(0, Math.min(width, (analysis.trailingSilence / safeDuration) * width));
+        const peakX = Math.max(0, Math.min(width, (analysis.peakTime / safeDuration) * width));
+        const hotBins = new Set(analysis.hotBinIndexes || []);
+        const markerStep = metric.totalBars > 96 ? 16 : metric.totalBars > 48 ? 8 : metric.totalBars > 24 ? 4 : 2;
+        const barMarkers = [];
+        if (metric.totalBars > 0) {
+            for (let bar = markerStep; bar < metric.totalBars; bar += markerStep) {
+                const x = Math.max(0, Math.min(width, (bar / metric.totalBars) * width));
+                barMarkers.push(`<line x1="${x.toFixed(2)}" y1="4" x2="${x.toFixed(2)}" y2="${height - 4}" stroke="rgba(19, 37, 109, 0.12)" stroke-width="1"></line>`);
+            }
+
+            (metric.sectionBoundaries || []).forEach(boundaryBar => {
+                const x = Math.max(0, Math.min(width, (boundaryBar / metric.totalBars) * width));
+                barMarkers.push(`<line x1="${x.toFixed(2)}" y1="2" x2="${x.toFixed(2)}" y2="${height - 2}" stroke="rgba(245, 158, 11, 0.5)" stroke-width="1.5"></line>`);
+            });
+        }
+        const bars = analysis.waveformBins.map((value, index) => {
+            const amplitude = Math.max(0.04, Math.min(1, value));
+            const barHeight = amplitude * (height - 8);
+            const y = (height - barHeight) / 2;
+            const x = index * barWidth;
+            const fill = hotBins.has(index) ? '#b22137' : '#13256d';
+            return `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${Math.max(1, barWidth - 0.9).toFixed(2)}" height="${barHeight.toFixed(2)}" rx="1" fill="${fill}" opacity="${hotBins.has(index) ? '0.9' : '0.72'}"></rect>`;
+        }).join('');
+
+        return `
+            <svg class="telemetry-wave" data-track-index="${metric.trackIndex}" data-duration="${safeDuration.toFixed(3)}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" role="img" aria-label="Waveform for ${escapeHtml(metric.title)}">
+                <rect x="0" y="0" width="${width}" height="${height}" fill="rgba(19, 37, 109, 0.04)"></rect>
+                <rect x="0" y="0" width="${leadWidth.toFixed(2)}" height="${height}" fill="rgba(178, 33, 55, 0.08)"></rect>
+                <rect x="${Math.max(0, width - tailWidth).toFixed(2)}" y="0" width="${tailWidth.toFixed(2)}" height="${height}" fill="rgba(178, 33, 55, 0.08)"></rect>
+                <line x1="0" y1="${midY}" x2="${width}" y2="${midY}" stroke="rgba(19, 37, 109, 0.12)" stroke-width="1"></line>
+                ${barMarkers.join('')}
+                ${bars}
+                <line x1="${peakX.toFixed(2)}" y1="2" x2="${peakX.toFixed(2)}" y2="${height - 2}" stroke="#f59e0b" stroke-width="2"></line>
+                <line class="telemetry-wave-playhead" x1="0" y1="2" x2="0" y2="${height - 2}" opacity="0"></line>
+            </svg>
+        `;
+    }
+
+    function detectSilenceDuration(channelData, sampleRate, fromEnd = false) {
+        if (!channelData.length || !channelData[0]?.length) return 0;
+        const threshold = 0.003;
+        const frameCount = channelData[0].length;
+        const step = 128;
+
+        if (fromEnd) {
+            for (let frame = frameCount - 1; frame >= 0; frame -= step) {
+                let blockPeak = 0;
+                for (const channel of channelData) {
+                    blockPeak = Math.max(blockPeak, Math.abs(channel[frame] || 0));
+                }
+                if (blockPeak > threshold) {
+                    return (frameCount - frame) / sampleRate;
+                }
+            }
+            return frameCount / sampleRate;
+        }
+
+        for (let frame = 0; frame < frameCount; frame += step) {
+            let blockPeak = 0;
+            for (const channel of channelData) {
+                blockPeak = Math.max(blockPeak, Math.abs(channel[frame] || 0));
+            }
+            if (blockPeak > threshold) {
+                return frame / sampleRate;
+            }
+        }
+
+        return frameCount / sampleRate;
+    }
+
+    function analyzeAudioBuffer(audioBuffer, byteLength) {
+        const channelCount = audioBuffer.numberOfChannels;
+        const sampleRate = audioBuffer.sampleRate;
+        const frameCount = audioBuffer.length;
+        const channels = Array.from({ length: channelCount }, (_, channelIndex) => audioBuffer.getChannelData(channelIndex));
+        const analysisStep = Math.max(1, Math.floor(sampleRate / 12000));
+        const waveformBinCount = 96;
+        const waveformBins = new Array(waveformBinCount).fill(0);
+        const hotBinIndexes = [];
+        let peak = 0;
+        let peakFrame = 0;
+        let energy = 0;
+        let samplesRead = 0;
+        let midEnergy = 0;
+        let sideEnergy = 0;
+        let leftEnergy = 0;
+        let rightEnergy = 0;
+        let crossEnergy = 0;
+
+        for (let frame = 0; frame < frameCount; frame += analysisStep) {
+            let framePeak = 0;
+            let frameEnergy = 0;
+
+            for (let channelIndex = 0; channelIndex < channelCount; channelIndex++) {
+                const sample = channels[channelIndex][frame] || 0;
+                const magnitude = Math.abs(sample);
+                frameEnergy += sample * sample;
+                if (magnitude > framePeak) {
+                    framePeak = magnitude;
+                }
+            }
+
+            if (framePeak > peak) {
+                peak = framePeak;
+                peakFrame = frame;
+            }
+
+            energy += frameEnergy / Math.max(channelCount, 1);
+            samplesRead++;
+
+            if (channelCount >= 2) {
+                const left = channels[0][frame] || 0;
+                const right = channels[1][frame] || 0;
+                const mid = (left + right) * 0.5;
+                const side = (left - right) * 0.5;
+                midEnergy += mid * mid;
+                sideEnergy += side * side;
+                leftEnergy += left * left;
+                rightEnergy += right * right;
+                crossEnergy += left * right;
+            }
+        }
+
+        const rms = samplesRead > 0 ? Math.sqrt(energy / samplesRead) : 0;
+        const crestFactorDb = peak > 0 && rms > 0 ? 20 * Math.log10(peak / rms) : null;
+        const rmsDb = rms > 0 ? 20 * Math.log10(rms) : null;
+        const peakDb = peak > 0 ? 20 * Math.log10(peak) : null;
+        const headroomDb = Number.isFinite(peakDb) ? Math.max(0, -peakDb) : null;
+        const stereoWidthPct = channelCount >= 2 && (midEnergy + sideEnergy) > 0
+            ? (sideEnergy / (midEnergy + sideEnergy)) * 100
+            : 0;
+        const monoCorrelation = channelCount >= 2 && leftEnergy > 0 && rightEnergy > 0
+            ? Math.max(-1, Math.min(1, crossEnergy / Math.sqrt(leftEnergy * rightEnergy)))
+            : null;
+        const stereoBalanceDb = channelCount >= 2 && leftEnergy > 0 && rightEnergy > 0
+            ? 10 * Math.log10((leftEnergy + Number.EPSILON) / (rightEnergy + Number.EPSILON))
+            : null;
+        const duration = audioBuffer.duration || 0;
+        const bitrateKbps = duration > 0 ? (byteLength * 8) / (duration * 1000) : null;
+        const leadingSilence = Math.min(detectSilenceDuration(channels, sampleRate, false), duration);
+        const trailingSilence = Math.min(detectSilenceDuration(channels, sampleRate, true), duration);
+
+        for (let binIndex = 0; binIndex < waveformBinCount; binIndex++) {
+            const startFrame = Math.floor((binIndex / waveformBinCount) * frameCount);
+            const endFrame = Math.min(frameCount, Math.floor(((binIndex + 1) / waveformBinCount) * frameCount));
+            let binPeak = 0;
+
+            for (let frame = startFrame; frame < endFrame; frame += analysisStep) {
+                for (let channelIndex = 0; channelIndex < channelCount; channelIndex++) {
+                    const magnitude = Math.abs(channels[channelIndex][frame] || 0);
+                    if (magnitude > binPeak) {
+                        binPeak = magnitude;
+                    }
+                }
+            }
+
+            waveformBins[binIndex] = Number(binPeak.toFixed(4));
+            if (binPeak >= 0.985) {
+                hotBinIndexes.push(binIndex);
+            }
+        }
+
+        let transientBins = 0;
+        for (let binIndex = 1; binIndex < waveformBins.length - 1; binIndex++) {
+            const current = waveformBins[binIndex];
+            if (
+                current >= 0.58 &&
+                current > waveformBins[binIndex - 1] * 1.08 &&
+                current > waveformBins[binIndex + 1] * 1.08
+            ) {
+                transientBins++;
+            }
+        }
+
+        const transientDensity = duration > 0 ? transientBins / (duration / 60) : null;
+
+        return {
+            duration,
+            sampleRate,
+            channelCount,
+            channelLabel: channelCount === 1 ? 'mono' : channelCount === 2 ? 'stereo' : `${channelCount}ch`,
+            leadingSilence,
+            trailingSilence,
+            peakTime: peakFrame / sampleRate,
+            peak,
+            peakDb,
+            headroomDb,
+            rms,
+            rmsDb,
+            crestFactorDb,
+            monoCorrelation,
+            stereoBalanceDb,
+            stereoWidthPct,
+            bitrateKbps,
+            transientDensity,
+            waveformBins,
+            hotBinIndexes,
+            clipBinCount: hotBinIndexes.length
+        };
+    }
+
+    async function analyzeTrackAudio(track, trackIndex) {
+        if (!track.mp3 || !telemetryAudioContext) {
+            audioAnalysisFailures.add(trackIndex);
+            return;
+        }
+
+        const response = await fetch(track.mp3);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${track.mp3}: ${response.status}`);
+        }
+
+        const audioBytes = await response.arrayBuffer();
+        const decodedBuffer = await telemetryAudioContext.decodeAudioData(audioBytes.slice(0));
+        const analysis = analyzeAudioBuffer(decodedBuffer, audioBytes.byteLength);
+        trackAudioAnalysis.set(trackIndex, analysis);
+        audioAnalysisFailures.delete(trackIndex);
+
+        if (!trackDurations.has(trackIndex) && Number.isFinite(analysis.duration) && analysis.duration > 0) {
+            trackDurations.set(trackIndex, analysis.duration);
+        }
+    }
+
+    async function ensureTelemetryAudioAnalysis() {
+        if (telemetryAudioScanStarted) return;
+        telemetryAudioScanStarted = true;
+        renderTelemetry();
+
+        if (!AudioContextCtor) {
+            telemetryAudioScanComplete = true;
+            renderTelemetry();
+            return;
+        }
+
+        telemetryAudioContext = new AudioContextCtor();
+        try {
+            await telemetryAudioContext.resume();
+        } catch {
+            // decodeAudioData can still work while suspended in most browsers
+        }
+
+        for (let trackIndex = 0; trackIndex < data.tracks.length; trackIndex++) {
+            const track = data.tracks[trackIndex];
+            try {
+                await analyzeTrackAudio(track, trackIndex);
+            } catch (error) {
+                console.warn(`Telemetry scan failed for ${track.title}:`, error);
+                audioAnalysisFailures.add(trackIndex);
+            }
+            renderTelemetry();
+        }
+
+        telemetryAudioScanComplete = true;
+        if (telemetryAudioContext && typeof telemetryAudioContext.close === 'function') {
+            telemetryAudioContext.close().catch(() => {});
+        }
+        telemetryAudioContext = null;
+        renderTelemetry();
+    }
+
+    function getTrackMetrics(track, trackIndex) {
+        const sections = getTrackSections(track);
+        const chordNames = new Set();
+        const chordSequence = [];
+        let totalBeats = 0;
+        let chordChanges = 0;
+        let previousChord = null;
+        let runningBars = 0;
+        const sectionBoundaries = [];
+        const beatsPerBar = getBeatsPerBar(track);
+
+        sections.forEach(section => {
+            const chords = Array.isArray(section.chords) ? section.chords : [];
+            totalBeats += chords.length;
+            const sectionBars = chords.length > 0 ? chords.length / beatsPerBar : 0;
+            if (runningBars > 0) {
+                sectionBoundaries.push(runningBars);
+            }
+            runningBars += sectionBars;
+            chords.forEach(chord => {
+                if (chord) chordSequence.push(chord);
+                if (chord) chordNames.add(chord);
+                if (chord && previousChord && chord !== previousChord) {
+                    chordChanges++;
+                }
+                if (chord) {
+                    previousChord = chord;
+                }
+            });
+        });
+
+        const totalBars = totalBeats > 0 ? totalBeats / beatsPerBar : 0;
+        const lyricLines = Array.isArray(track.lyrics)
+            ? track.lyrics.filter(line => (line.line || '').trim()).length
+            : 0;
+        const bpm = Number.parseInt(track.tempo, 10);
+        const estimatedDuration = Number.isFinite(bpm) && bpm > 0
+            ? totalBeats * (track.timeSignature === '6/8' ? (60 / bpm) * 1.5 : 60 / bpm)
+            : null;
+        const measuredDuration = trackDurations.get(trackIndex);
+        const effectiveDuration = Number.isFinite(measuredDuration) ? measuredDuration : estimatedDuration;
+        const audioAnalysis = trackAudioAnalysis.get(trackIndex) || null;
+        const harmonicAnalysis = analyzeHarmony(chordSequence);
+        const lyricsAnalysis = analyzeLyrics(track.lyrics);
+        const lyricDensity = Number.isFinite(effectiveDuration) && effectiveDuration > 0
+            ? lyricLines / (effectiveDuration / 60)
+            : null;
+        const sectionChurn = Number.isFinite(effectiveDuration) && effectiveDuration > 0
+            ? sections.length / (effectiveDuration / 60)
+            : null;
+        const harmonicTurnover = totalBars > 0 ? chordChanges / totalBars : null;
+        const barsPerSection = sections.length > 0 ? totalBars / sections.length : null;
+
+        return {
+            trackIndex,
+            title: track.title || `Track ${trackIndex + 1}`,
+            bpm: Number.isFinite(bpm) ? bpm : null,
+            timeSignature: track.timeSignature || 'n/a',
+            lyricLines,
+            sectionCount: sections.length,
+            totalBars,
+            sectionBoundaries,
+            totalBeats,
+            chordChanges,
+            harmonicTurnover,
+            barsPerSection,
+            lyricDensity,
+            sectionChurn,
+            uniqueChordCount: chordNames.size,
+            chordNames: Array.from(chordNames),
+            measuredDuration,
+            estimatedDuration,
+            effectiveDuration,
+            hasMeasuredDuration: Number.isFinite(measuredDuration),
+            audioAnalysis,
+            harmonicAnalysis,
+            lyricsAnalysis
+        };
+    }
+
+    function formatDurationForTelemetry(metric) {
+        if (metric.hasMeasuredDuration) return formatTime(metric.measuredDuration);
+        if (Number.isFinite(metric.estimatedDuration)) return `${formatTime(metric.estimatedDuration)} est.`;
+        return 'unavailable';
+    }
+
+    function renderTelemetry() {
+        const metrics = data.tracks.map(getTrackMetrics);
+        const measuredCount = metrics.filter(metric => metric.hasMeasuredDuration).length;
+        const deepScanCount = metrics.filter(metric => metric.audioAnalysis).length;
+        const effectiveDurations = metrics.filter(metric => Number.isFinite(metric.effectiveDuration));
+        const medianRuntime = median(effectiveDurations.map(metric => metric.effectiveDuration));
+        const longestTrack = effectiveDurations.reduce((best, metric) => {
+            if (!best || metric.effectiveDuration > best.effectiveDuration) return metric;
+            return best;
+        }, null);
+        const shortestTrack = effectiveDurations.reduce((best, metric) => {
+            if (!best || metric.effectiveDuration < best.effectiveDuration) return metric;
+            return best;
+        }, null);
+        const audioMetrics = metrics.filter(metric => metric.audioAnalysis);
+        const totalMasterRuntime = metrics.reduce((sum, metric) => {
+            const runtime = metric.audioAnalysis?.duration ?? metric.measuredDuration ?? metric.effectiveDuration;
+            return sum + (Number.isFinite(runtime) ? runtime : 0);
+        }, 0);
+        const totalTrimmedRuntime = metrics.reduce((sum, metric) => {
+            if (metric.audioAnalysis) {
+                return sum + Math.max(0, metric.audioAnalysis.duration - metric.audioAnalysis.leadingSilence - metric.audioAnalysis.trailingSilence);
+            }
+            const fallbackRuntime = metric.measuredDuration ?? metric.effectiveDuration;
+            return sum + (Number.isFinite(fallbackRuntime) ? fallbackRuntime : 0);
+        }, 0);
+        const runtimeSpread = longestTrack && shortestTrack
+            ? longestTrack.effectiveDuration - shortestTrack.effectiveDuration
+            : null;
+        const totalDeadAir = audioMetrics.reduce((sum, metric) => {
+            return sum + metric.audioAnalysis.leadingSilence + metric.audioAnalysis.trailingSilence;
+        }, 0);
+        const longestColdOpen = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.leadingSilence, true);
+        const averageTailFade = average(audioMetrics.map(metric => metric.audioAnalysis.trailingSilence));
+        const averageStereoWidth = average(audioMetrics.map(metric => metric.audioAnalysis.stereoWidthPct));
+        const averageBitrate = average(audioMetrics.map(metric => metric.audioAnalysis.bitrateKbps));
+        const averageMonoFold = average(audioMetrics.map(metric => metric.audioAnalysis.monoCorrelation).filter(value => Number.isFinite(value)));
+        const medianHeadroom = median(audioMetrics.map(metric => metric.audioAnalysis.headroomDb).filter(value => Number.isFinite(value)));
+        const widestStereo = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.stereoWidthPct, true);
+        const highestCrestFactor = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.crestFactorDb, true);
+        const hottestMaster = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.rmsDb, true);
+        const safestMonoFold = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.monoCorrelation, true);
+        const tightestHeadroom = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.headroomDb, false);
+        const densestTransients = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.transientDensity, true);
+        const hardestPanBias = audioMetrics.reduce((best, metric) => {
+            if (!Number.isFinite(metric.audioAnalysis.stereoBalanceDb)) return best;
+            if (!best || Math.abs(metric.audioAnalysis.stereoBalanceDb) > Math.abs(best.audioAnalysis.stereoBalanceDb)) {
+                return metric;
+            }
+            return best;
+        }, null);
+        const averageHarmonicTurnover = average(metrics
+            .map(metric => metric.harmonicTurnover)
+            .filter(value => Number.isFinite(value))
+        );
+        const borrowedChordBudget = metrics.reduce((sum, metric) => sum + (metric.harmonicAnalysis.borrowedCount || 0), 0);
+        const densestLyricFlow = getExtremeMetric(metrics, metric => metric.lyricDensity, true);
+        const fastestSectionChurn = getExtremeMetric(metrics, metric => metric.sectionChurn, true);
+        const wildestHarmony = getExtremeMetric(metrics, metric => metric.harmonicAnalysis.weirdnessScore, true);
+        const stickiestHook = getExtremeMetric(metrics, metric => metric.lyricsAnalysis.topWordShare, true);
+        const longestStanzaTrack = getExtremeMetric(metrics, metric => metric.lyricsAnalysis.maxStanzaLines, true);
+        const richestLexicon = getExtremeMetric(metrics, metric => metric.lyricsAnalysis.uniqueWords, true);
+        const averageStanzaSpan = average(metrics.map(metric => metric.lyricsAnalysis.avgStanzaLines).filter(value => Number.isFinite(value)));
+        const waveformDetail = !AudioContextCtor
+            ? 'waveform scan unavailable in this browser'
+            : telemetryAudioScanStarted
+                ? telemetryAudioScanComplete
+                    ? 'waveform scan complete'
+                    : 'waveform scan in progress'
+                : 'waveform scan starts when telemetry opens';
+
+        const statusParts = [
+            `${measuredCount}/${metrics.length} headers`
+        ];
+        if (AudioContextCtor) {
+            statusParts.push(`${deepScanCount}/${metrics.length} waveform scans`);
+        } else {
+            statusParts.push('waveform scan unavailable');
+        }
+        if (durationFailures.size > 0) {
+            statusParts.push(`${durationFailures.size} header misses`);
+        }
+        if (audioAnalysisFailures.size > 0) {
+            statusParts.push(`${audioAnalysisFailures.size} waveform misses`);
+        }
+        telemetryStatus.textContent = statusParts.join(' • ');
+
+        const summaryCards = [
+            {
+                label: 'Album runtime',
+                value: totalMasterRuntime ? formatTime(totalMasterRuntime) : '--:--',
+                detail: measuredCount === metrics.length
+                    ? 'sum of raw file durations across all masters'
+                    : `${measuredCount}/${metrics.length} files resolved from headers`
+            },
+            {
+                label: 'Trimmed runtime',
+                value: totalTrimmedRuntime ? formatTime(totalTrimmedRuntime) : '--:--',
+                detail: deepScanCount === metrics.length
+                    ? 'after removing detected cold opens and tail fades'
+                    : deepScanCount > 0
+                        ? `${deepScanCount}/${metrics.length} songs trimmed, raw fallback for the rest`
+                        : waveformDetail
+            },
+            {
+                label: 'Median runtime',
+                value: medianRuntime ? formatTime(medianRuntime) : '--:--',
+                detail: effectiveDurations.length ? 'center of the album runtime spread' : 'waiting for duration data'
+            },
+            {
+                label: 'Runtime spread',
+                value: runtimeSpread ? formatTime(runtimeSpread) : '--:--',
+                detail: longestTrack && shortestTrack
+                    ? `${escapeHtml(shortestTrack.title)} to ${escapeHtml(longestTrack.title)}`
+                    : 'waiting for duration data'
+            },
+            {
+                label: 'Dead air budget',
+                value: audioMetrics.length ? formatSecondsMetric(totalDeadAir) : '--',
+                detail: audioMetrics.length
+                    ? 'combined lead-in and tail fade across scanned masters'
+                    : waveformDetail
+            },
+            {
+                label: 'Longest cold open',
+                value: longestColdOpen ? formatSecondsMetric(longestColdOpen.audioAnalysis.leadingSilence) : '--',
+                detail: longestColdOpen
+                    ? `${escapeHtml(longestColdOpen.title)} before first audible hit`
+                    : waveformDetail
+            },
+            {
+                label: 'Average tail fade',
+                value: averageTailFade ? formatSecondsMetric(averageTailFade) : '--',
+                detail: audioMetrics.length
+                    ? 'time spent dissolving into silence'
+                    : waveformDetail
+            },
+            {
+                label: 'Average stereo width',
+                value: averageStereoWidth !== null ? formatPercent(averageStereoWidth) : '--',
+                detail: audioMetrics.length
+                    ? 'side energy as share of scanned masters'
+                    : waveformDetail
+            },
+            {
+                label: 'Average mono fold',
+                value: averageMonoFold !== null ? formatRatio(averageMonoFold) : '--',
+                detail: audioMetrics.length
+                    ? 'mean left/right correlation across masters'
+                    : waveformDetail
+            },
+            {
+                label: 'Widest stereo field',
+                value: widestStereo ? formatPercent(widestStereo.audioAnalysis.stereoWidthPct) : '--',
+                detail: widestStereo
+                    ? escapeHtml(widestStereo.title)
+                    : waveformDetail
+            },
+            {
+                label: 'Highest crest factor',
+                value: highestCrestFactor ? formatDb(highestCrestFactor.audioAnalysis.crestFactorDb) : '--',
+                detail: highestCrestFactor
+                    ? `${escapeHtml(highestCrestFactor.title)} peak-to-body swing`
+                    : waveformDetail
+            },
+            {
+                label: 'Hottest master',
+                value: hottestMaster ? formatDb(hottestMaster.audioAnalysis.rmsDb, 'dBFS') : '--',
+                detail: hottestMaster
+                    ? `${escapeHtml(hottestMaster.title)} average RMS floor`
+                    : waveformDetail
+            },
+            {
+                label: 'Tightest headroom',
+                value: tightestHeadroom ? formatHeadroom(tightestHeadroom.audioAnalysis.headroomDb) : '--',
+                detail: tightestHeadroom
+                    ? `${escapeHtml(tightestHeadroom.title)} below digital ceiling`
+                    : waveformDetail
+            },
+            {
+                label: 'Median headroom',
+                value: medianHeadroom !== null ? formatHeadroom(medianHeadroom) : '--',
+                detail: audioMetrics.length
+                    ? 'center of the album ceiling margin'
+                    : waveformDetail
+            },
+            {
+                label: 'Safest mono fold',
+                value: safestMonoFold ? formatRatio(safestMonoFold.audioAnalysis.monoCorrelation) : '--',
+                detail: safestMonoFold
+                    ? `${escapeHtml(safestMonoFold.title)} left/right coherence`
+                    : waveformDetail
+            },
+            {
+                label: 'Hardest L/R bias',
+                value: hardestPanBias ? formatStereoBalance(hardestPanBias.audioAnalysis.stereoBalanceDb) : '--',
+                detail: hardestPanBias
+                    ? escapeHtml(hardestPanBias.title)
+                    : waveformDetail
+            },
+            {
+                label: 'Most transient dense',
+                value: densestTransients ? formatDensity(densestTransients.audioAnalysis.transientDensity) : '--',
+                detail: densestTransients
+                    ? `${escapeHtml(densestTransients.title)} impact spikes per minute`
+                    : waveformDetail
+            },
+            {
+                label: 'Average bitrate',
+                value: averageBitrate !== null ? formatBitrate(averageBitrate) : '--',
+                detail: audioMetrics.length
+                    ? 'derived from scanned master payload size'
+                    : waveformDetail
+            },
+            {
+                label: 'Harmonic turnover',
+                value: averageHarmonicTurnover !== null ? `${averageHarmonicTurnover.toFixed(2)}/bar` : '--',
+                detail: averageHarmonicTurnover !== null ? 'mean chord changes per bar' : 'no arrangement data'
+            },
+            {
+                label: 'Borrowed chord budget',
+                value: `${borrowedChordBudget}`,
+                detail: 'non-diatonic detours across inferred song keys'
+            },
+            {
+                label: 'Densest lyric flow',
+                value: densestLyricFlow ? `${densestLyricFlow.lyricDensity.toFixed(1)}/min` : '--',
+                detail: densestLyricFlow
+                    ? escapeHtml(densestLyricFlow.title)
+                    : 'waiting for lyric and duration data'
+            },
+            {
+                label: 'Fastest section churn',
+                value: fastestSectionChurn ? `${fastestSectionChurn.sectionChurn.toFixed(2)}/min` : '--',
+                detail: fastestSectionChurn
+                    ? escapeHtml(fastestSectionChurn.title)
+                    : 'waiting for arrangement and duration data'
+            },
+            {
+                label: 'Wildest harmony',
+                value: wildestHarmony ? escapeHtml(wildestHarmony.harmonicAnalysis.keyLabel) : '--',
+                detail: wildestHarmony
+                    ? `${escapeHtml(wildestHarmony.title)} • ${escapeHtml(wildestHarmony.harmonicAnalysis.weirdSummary)}`
+                    : 'waiting for harmonic analysis'
+            },
+            {
+                label: 'Stickiest hook',
+                value: stickiestHook ? formatPercent(stickiestHook.lyricsAnalysis.topWordShare) : '--',
+                detail: stickiestHook
+                    ? `${escapeHtml(stickiestHook.title)} • ${escapeHtml(stickiestHook.lyricsAnalysis.topWordsLabel)}`
+                    : 'waiting for lyric analysis'
+            },
+            {
+                label: 'Longest stanza',
+                value: longestStanzaTrack && Number.isFinite(longestStanzaTrack.lyricsAnalysis.maxStanzaLines)
+                    ? `${longestStanzaTrack.lyricsAnalysis.maxStanzaLines} lines`
+                    : '--',
+                detail: longestStanzaTrack
+                    ? escapeHtml(longestStanzaTrack.title)
+                    : 'waiting for lyric analysis'
+            },
+            {
+                label: 'Average stanza span',
+                value: averageStanzaSpan !== null ? `${averageStanzaSpan.toFixed(1)} lines` : '--',
+                detail: averageStanzaSpan !== null
+                    ? 'mean stanza length across all songs'
+                    : 'waiting for lyric analysis'
+            },
+            {
+                label: 'Richest lexicon',
+                value: richestLexicon ? `${richestLexicon.lyricsAnalysis.uniqueWords}` : '--',
+                detail: richestLexicon
+                    ? `${escapeHtml(richestLexicon.title)} content words`
+                    : 'waiting for lyric analysis'
+            }
+        ];
+
+        telemetryGrid.innerHTML = summaryCards.map(card => `
+            <article class="telemetry-card">
+                <span class="telemetry-label">${card.label}</span>
+                <strong class="telemetry-value">${card.value}</strong>
+                <span class="telemetry-detail">${card.detail}</span>
+            </article>
+        `).join('');
+
+        telemetrySongs.innerHTML = `
+            <p class="telemetry-table-note">Waveform guide: click anywhere on a waveform to play from that moment. Pink edge bands mark detected cold opens and tail fades, amber lines mark section changes plus the strongest transient, and red waveform bars flag near-ceiling bins that may deserve a mastering pass.</p>
+            <div class="telemetry-song-table-wrap">
+                <table class="telemetry-song-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Song</th>
+                            <th>Waveform</th>
+                            <th>Raw</th>
+                            <th>Trimmed</th>
+                            <th>Entry</th>
+                            <th>Tail</th>
+                            <th>Peak</th>
+                            <th>Ceiling</th>
+                            <th>Headroom</th>
+                            <th>Hotness</th>
+                            <th>Crest</th>
+                            <th>Mono</th>
+                            <th>Balance</th>
+                            <th>Width</th>
+                            <th>Format</th>
+                            <th>Bitrate</th>
+                            <th>Transients</th>
+                            <th>Key</th>
+                            <th>Odd moves</th>
+                            <th>Turnover</th>
+                            <th>Hook words</th>
+                            <th>Stanzas</th>
+                            <th>Lyric flow</th>
+                            <th>Section churn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${metrics.map(metric => {
+                            const ceilingFlagClass = metric.audioAnalysis && metric.audioAnalysis.clipBinCount > 0
+                                ? 'telemetry-mastering-flag telemetry-mastering-flag--hot'
+                                : 'telemetry-mastering-flag telemetry-mastering-flag--clean';
+
+                            return `
+                                <tr data-track-index="${metric.trackIndex}" class="${selectedTrackIndex === metric.trackIndex ? 'is-live' : ''}">
+                                    <td class="telemetry-index-cell">${String(metric.trackIndex + 1).padStart(2, '0')}</td>
+                                    <td class="telemetry-track-cell">
+                                        <span class="telemetry-song-cell-title">${escapeHtml(metric.title)}</span>
+                                        <span class="telemetry-song-cell-subtitle">${metric.bpm ? `${metric.bpm} BPM` : 'tempo n/a'} • ${escapeHtml(metric.timeSignature)} • ${formatBars(metric.totalBars)} bars</span>
+                                    </td>
+                                    <td class="telemetry-wave-cell">${renderWaveformSvg(metric)}</td>
+                                    <td class="telemetry-cell-compact">${formatDurationForTelemetry(metric)}</td>
+                                    <td class="telemetry-cell-compact">${formatTrimmedDuration(metric)}</td>
+                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatSecondsMetric(metric.audioAnalysis.leadingSilence) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatSecondsMetric(metric.audioAnalysis.trailingSilence) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-medium">${formatPeakDisplay(metric)}</td>
+                                    <td class="telemetry-cell-medium"><span class="${ceilingFlagClass}">${formatCeilingFlags(metric)}</span></td>
+                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatHeadroom(metric.audioAnalysis.headroomDb) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatDb(metric.audioAnalysis.rmsDb, 'dBFS') : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatDb(metric.audioAnalysis.crestFactorDb) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatRatio(metric.audioAnalysis.monoCorrelation) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-medium">${metric.audioAnalysis ? formatStereoBalance(metric.audioAnalysis.stereoBalanceDb) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatPercent(metric.audioAnalysis.stereoWidthPct) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-medium">${formatMasterFormat(metric.audioAnalysis, metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatBitrate(metric.audioAnalysis.bitrateKbps) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatDensity(metric.audioAnalysis.transientDensity) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
+                                    <td class="telemetry-cell-medium">${escapeHtml(metric.harmonicAnalysis.keyLabel)}</td>
+                                    <td class="telemetry-cell-wide">${escapeHtml(metric.harmonicAnalysis.weirdSummary)}${metric.harmonicAnalysis.borrowedNames.length ? ` • ${escapeHtml(metric.harmonicAnalysis.borrowedNames.join(', '))}` : ''}</td>
+                                    <td class="telemetry-cell-compact">${Number.isFinite(metric.harmonicTurnover) ? `${metric.harmonicTurnover.toFixed(2)}/bar` : 'n/a'}</td>
+                                    <td class="telemetry-cell-wide">${escapeHtml(metric.lyricsAnalysis.topWordsLabel)}${metric.lyricsAnalysis.uniqueWords ? ` • ${metric.lyricsAnalysis.uniqueWords} unique` : ''}</td>
+                                    <td class="telemetry-cell-wide">${escapeHtml(metric.lyricsAnalysis.stanzaProfile)}${Number.isFinite(metric.lyricsAnalysis.avgStanzaWords) ? ` • ${metric.lyricsAnalysis.avgStanzaWords.toFixed(1)}W avg` : ''}</td>
+                                    <td class="telemetry-cell-compact">${Number.isFinite(metric.lyricDensity) ? `${metric.lyricDensity.toFixed(1)}/min` : 'n/a'}</td>
+                                    <td class="telemetry-cell-compact">${Number.isFinite(metric.sectionChurn) ? `${metric.sectionChurn.toFixed(2)}/min` : 'n/a'}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        updateLiveTelemetryAnalysis(true);
+    }
 
     // Tab switching logic
     const tabNav = document.getElementById('tab-nav');
@@ -1162,7 +3073,46 @@
         if (tabId === 'lyrics') {
             requestAnimationFrame(recomputeChordLayout);
         }
+        if (tabId === 'telemetry') {
+            ensureTelemetryAudioAnalysis();
+            updateLiveTelemetryAnalysis(true);
+        }
     }
+
+    telemetrySongs.addEventListener('click', (e) => {
+        const waveform = e.target.closest('.telemetry-wave');
+        if (!waveform) return;
+
+        const trackIndex = parseInt(waveform.dataset.trackIndex, 10);
+        if (!Number.isFinite(trackIndex) || trackIndex < 0 || trackIndex >= data.tracks.length) return;
+
+        const rect = waveform.getBoundingClientRect();
+        if (!rect.width) return;
+
+        const clickRatio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const metric = getTrackMetrics(data.tracks[trackIndex], trackIndex);
+        const referenceDuration = Number.isFinite(metric.audioAnalysis?.duration)
+            ? metric.audioAnalysis.duration
+            : Number.parseFloat(waveform.dataset.duration);
+
+        if (!Number.isFinite(referenceDuration) || referenceDuration <= 0) return;
+
+        const startTime = clickRatio * referenceDuration;
+        const track = data.tracks[trackIndex];
+
+        if (currentTrack === track && audio.src) {
+            audioEngine.seek(startTime);
+            audioEngine.play().catch(err => {
+                console.error('Audio play error:', err);
+                toggleBtn.disabled = false;
+                setToggleIcon(true);
+            });
+            setToggleIcon(false);
+            return;
+        }
+
+        selectSong(track, trackIndex, startTime, true);
+    });
 
         function setAnimatedText(el, nextText) {
             if (el.textContent === nextText) return;
@@ -1175,6 +3125,7 @@
         }
     const contextMenu = document.getElementById('context-menu');
     let currentTrack = null;
+    let selectedTrackIndex = -1;
     let lastUpdateTime = 0;
     let contextTarget = null;
 
@@ -1229,8 +3180,11 @@
         currentSectionDisplay.textContent = '';
         document.getElementById('current-song-name').textContent = `${trackIndex + 1} ${track.title}`;
         currentTrack = track;
+        selectedTrackIndex = trackIndex;
+        resetLiveTelemetryHistory(trackIndex);
 
         updateURL(trackIndex);
+        updateLiveTelemetryAnalysis(true);
 
         const tempoInfo = document.createElement('div');
         tempoInfo.className = 'tempo-info';
@@ -1355,6 +3309,7 @@
 
         audio.addEventListener('loadedmetadata', () => {
             audioEngine.attach(audio);
+            updateLiveTelemetryAnalysis(true);
             
             // Cache DOM elements for performance
             cachedLyricLines = Array.from(lyricsContent.querySelectorAll('.lyrics-line'));
@@ -1893,6 +3848,8 @@
 
     // seekCanvas context menu handled by global listener
 
+    renderTelemetry();
+
     data.tracks.forEach((track, trackIndex) => {
         const songItem = document.createElement('div');
         songItem.className = 'song-item';
@@ -1940,16 +3897,28 @@
                 tempAudio.src = track.mp3;
                 tempAudio.addEventListener('loadedmetadata', () => {
                     if (!isNaN(tempAudio.duration) && tempAudio.duration > 0) {
-                        const mins = Math.floor(tempAudio.duration / 60);
-                        const secs = Math.floor(tempAudio.duration % 60).toString().padStart(2, '0');
-                        songLength.textContent = `${mins}:${secs}`;
+                        trackDurations.set(trackIndex, tempAudio.duration);
+                        durationFailures.delete(trackIndex);
+                        songLength.textContent = formatTime(tempAudio.duration);
+                        renderTelemetry();
+                    } else {
+                        durationFailures.add(trackIndex);
+                        renderTelemetry();
                     }
                 }, { once: true });
+                tempAudio.addEventListener('error', () => {
+                    durationFailures.add(trackIndex);
+                    renderTelemetry();
+                }, { once: true });
             } catch {
+                durationFailures.add(trackIndex);
                 songLength.textContent = '0:00';
+                renderTelemetry();
             }
         } else {
+            durationFailures.add(trackIndex);
             songLength.textContent = '0:00';
+            renderTelemetry();
         }
     });
 
@@ -2189,6 +4158,7 @@
             return;
         }
         updateProgressBars();
+        updateLiveTelemetryAnalysis();
         animationFrameId = requestAnimationFrame(smoothUpdateLoop);
     }
     
@@ -2196,6 +4166,7 @@
         if (!animationFrameId) {
             smoothUpdateLoop();
         }
+        updateLiveTelemetryAnalysis(true);
     });
     
     audio.addEventListener('pause', () => {
@@ -2203,10 +4174,12 @@
             cancelAnimationFrame(animationFrameId);
             animationFrameId = null;
         }
+        updateLiveTelemetryAnalysis(true);
     });
     
     audio.addEventListener('seeking', () => {
         updateProgressBars();
+        updateLiveTelemetryAnalysis(true);
     });
 
     audio.addEventListener('error', () => {
