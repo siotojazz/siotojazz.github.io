@@ -65,6 +65,10 @@
             overflow: hidden;
             padding: 10px 60px 0 10px;
         }
+        .app-container.telemetry-expanded {
+            max-width: none;
+            padding: 10px 10px 0 10px;
+        }
         header {
             display: flex;
             justify-content: space-between;
@@ -471,6 +475,42 @@
             color: var(--club-blue-strong);
             margin-bottom: 6px;
         }
+        .song-info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0;
+            margin-bottom: 6px;
+            background: transparent;
+            border: 0;
+            color: var(--club-blue-strong);
+        }
+        .song-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 6px 8px;
+        }
+        .song-info-stat {
+            min-width: 0;
+        }
+        .song-info-label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            opacity: 0.56;
+            margin-bottom: 3px;
+        }
+        .song-info-value {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        .song-info-reference {
+            margin-top: 4px;
+        }
         .section-label {
             font-family: 'Garet', cursive;
             font-weight: normal;
@@ -519,29 +559,22 @@
             transition: left 0.4s ease;
         }
         .lyrics-line.active {
-            background: var(--club-blue-strong);
+            background: var(--club-blue);
             color: #fff;
         }
         .lyrics-line.passed {
-            opacity: 0.5;
+            opacity: 0.56;
         }
         .structure-chord {
             display: block;
             padding: 2px 4px;
             font-size: 12px;
-            font-weight: bold;
-            color: #fff;
+            font-weight: 700;
+            color: var(--club-blue-strong);
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            background: var(--club-blue-strong);
-            border: 1px solid rgba(var(--club-blue-surface-rgb), 0.08);
-            transition: all 0.2s ease;
-            z-index: 1;
-        }
-        .structure-chord > * {
-            position: relative;
-            z-index: 2;
+            background: rgba(var(--club-blue-rgb), 0.05);
         }
         .structure-chord::before {
             content: '';
@@ -587,7 +620,11 @@
             pointer-events: none;
             z-index: 2;
         }
-        .structure-chord.passed { background: var(--club-blue-strong); color: #fff; opacity: 0.88; }
+        .structure-chord.passed {
+            background: rgba(var(--club-blue-rgb), 0.08);
+            color: var(--club-blue-strong);
+            opacity: 0.58;
+        }
         .structure-chord:hover .chord-value,
         .structure-chord:hover .chord-diagram {
             display: block;
@@ -606,6 +643,7 @@
             text-align: center;
             position: relative;
             margin: 0;
+            min-width: 0;
         }
         .chord-value {
             display: none;
@@ -694,8 +732,8 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            padding: 12px;
+            gap: 8px;
+            padding: 8px;
             background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(18px);
             color: var(--club-blue-strong);
@@ -704,7 +742,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 12px;
+            gap: 8px 12px;
             flex-wrap: wrap;
         }
         .telemetry-kicker {
@@ -715,22 +753,22 @@
             margin-bottom: 4px;
         }
         .telemetry-header h2 {
-            font-size: 28px;
+            font-size: 25px;
             line-height: 1;
             text-transform: uppercase;
         }
         .telemetry-status {
-            font-size: 12px;
+            font-size: 11px;
             line-height: 1.4;
             text-align: right;
-            max-width: 240px;
+            max-width: 280px;
             opacity: 0.72;
         }
         .telemetry-live {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            padding: 12px;
+            gap: 8px;
+            padding: 10px;
             background: linear-gradient(180deg, rgba(var(--club-blue-rgb), 0.08), rgba(var(--club-blue-rgb), 0.03));
             border: 1px solid rgba(var(--club-blue-rgb), 0.12);
         }
@@ -810,18 +848,18 @@
         }
         .telemetry-live-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
         }
         .telemetry-live-card {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            padding: 10px;
+            gap: 3px;
+            padding: 8px;
             background: rgba(255, 255, 255, 0.84);
             border: 1px solid rgba(var(--club-blue-rgb), 0.08);
             min-width: 0;
-            min-height: 84px;
+            min-height: 74px;
         }
         .telemetry-live-label {
             display: block;
@@ -833,7 +871,7 @@
         }
         .telemetry-live-value {
             display: block;
-            font-size: clamp(15px, 1.7vw, 18px);
+            font-size: clamp(14px, 1.45vw, 17px);
             font-weight: 900;
             white-space: normal;
             overflow: visible;
@@ -844,9 +882,15 @@
         .telemetry-live-detail {
             display: block;
             margin-top: auto;
-            font-size: 10px;
-            line-height: 1.35;
+            font-size: 9.5px;
+            line-height: 1.3;
             opacity: 0.58;
+        }
+        .telemetry-live-reference {
+            display: block;
+            font-size: 9.5px;
+            line-height: 1.3;
+            opacity: 0.72;
         }
         .telemetry-live-spectrum {
             display: grid;
@@ -868,16 +912,97 @@
         }
         .telemetry-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+            gap: 8px;
+        }
+        .telemetry-recommendations {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(var(--club-blue-rgb), 0.04);
+            border: 1px solid rgba(var(--club-blue-rgb), 0.12);
+        }
+        .telemetry-recommendations-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px 16px;
+            flex-wrap: wrap;
+        }
+        .telemetry-recommendations-title {
+            font-size: 16px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .telemetry-recommendations-note {
+            font-size: 11px;
+            line-height: 1.45;
+            opacity: 0.64;
+        }
+        .telemetry-recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 8px;
+        }
+        .telemetry-recommendation-card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.12);
+            box-shadow: 0 10px 24px rgba(var(--club-blue-rgb), 0.06);
+        }
+        .telemetry-recommendation-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            opacity: 0.56;
+        }
+        .telemetry-recommendation-value {
+            font-size: 16px;
+            line-height: 1.2;
+            font-weight: 900;
+            word-break: break-word;
+        }
+        .telemetry-recommendation-detail {
+            font-size: 11px;
+            line-height: 1.35;
+            opacity: 0.8;
+        }
+        .telemetry-recommendation-reference {
+            font-size: 9.5px;
+            line-height: 1.3;
+        }
+        .telemetry-recommendation-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin: 0;
+            padding: 0;
+        }
+        .telemetry-recommendation-item {
+            font-size: 10px;
+            line-height: 1.35;
+            padding-top: 5px;
+            border-top: 1px solid rgba(var(--club-blue-rgb), 0.08);
+            word-break: break-word;
+        }
+        .telemetry-recommendation-item:first-child {
+            border-top: 0;
+            padding-top: 0;
         }
         .telemetry-card {
-            min-height: 110px;
-            padding: 12px;
+            min-height: 118px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 8px;
+            gap: 6px;
             position: relative;
             overflow: hidden;
             background: var(--club-blue);
@@ -907,34 +1032,97 @@
             z-index: 1;
         }
         .telemetry-label {
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             opacity: 0.74;
         }
         .telemetry-value {
-            font-size: 28px;
+            font-size: clamp(18px, 2.2vw, 24px);
             line-height: 1;
             font-weight: 900;
         }
         .telemetry-detail {
-            font-size: 12px;
-            line-height: 1.4;
+            font-size: 11px;
+            line-height: 1.35;
             opacity: 0.82;
+        }
+        .telemetry-reference {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            font-size: 9.5px;
+            line-height: 1.25;
+        }
+        .telemetry-reference-range {
+            opacity: 0.88;
+        }
+        .telemetry-reference-status {
+            font-weight: 700;
+        }
+        .telemetry-card-reference {
+            position: relative;
+            z-index: 1;
+            align-self: flex-start;
+            padding: 0;
+            background: none;
+            border-radius: 0;
+        }
+        .telemetry-value,
+        .telemetry-live-value,
+        .telemetry-recommendation-value,
+        .telemetry-table-main {
+            max-width: 100%;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: none;
+        }
+        .telemetry-table-main {
+            display: block;
+            width: auto;
+        }
+        .telemetry-tone--inside .telemetry-value,
+        .telemetry-tone--inside .telemetry-live-value,
+        .telemetry-tone--inside .telemetry-recommendation-value,
+        .telemetry-tone--inside .telemetry-table-main,
+        .telemetry-reference--inside {
+            color: var(--club-blue-strong);
+        }
+        .telemetry-tone--low .telemetry-value,
+        .telemetry-tone--low .telemetry-live-value,
+        .telemetry-tone--low .telemetry-recommendation-value,
+        .telemetry-tone--low .telemetry-table-main,
+        .telemetry-tone--high .telemetry-value,
+        .telemetry-tone--high .telemetry-live-value,
+        .telemetry-tone--high .telemetry-recommendation-value,
+        .telemetry-tone--high .telemetry-table-main,
+        .telemetry-reference--low,
+        .telemetry-reference--high {
+            color: #b22137;
+        }
+        .telemetry-tone--pending .telemetry-value,
+        .telemetry-tone--pending .telemetry-live-value,
+        .telemetry-tone--pending .telemetry-recommendation-value,
+        .telemetry-tone--pending .telemetry-table-main,
+        .telemetry-reference--pending {
+            color: rgba(var(--club-blue-strong-rgb), 0.68);
         }
         .telemetry-song-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             min-width: 0;
         }
         .telemetry-table-note {
-            font-size: 11px;
-            line-height: 1.5;
+            font-size: 10px;
+            line-height: 1.35;
             opacity: 0.7;
         }
         .telemetry-song-table-wrap {
             overflow: auto;
+            position: relative;
+            isolation: isolate;
             background: #fff;
             border: 1px solid rgba(var(--club-blue-rgb), 0.14);
             box-shadow: 0 12px 30px rgba(var(--club-blue-rgb), 0.08);
@@ -948,13 +1136,13 @@
         }
         .telemetry-song-table th,
         .telemetry-song-table td {
-            padding: 10px 8px;
+            padding: 8px 6px;
             border-bottom: 1px solid rgba(var(--club-blue-rgb), 0.1);
             vertical-align: top;
             text-align: left;
             white-space: nowrap;
-            font-size: 12px;
-            line-height: 1.35;
+            font-size: 11px;
+            line-height: 1.25;
         }
         .telemetry-song-table thead th {
             position: sticky;
@@ -964,17 +1152,17 @@
             font-size: 10px;
             letter-spacing: 0.9px;
             text-transform: uppercase;
-            z-index: 1;
+            z-index: 4;
             white-space: nowrap;
         }
         .telemetry-song-table thead th:first-child {
             left: 0;
-            z-index: 3;
+            z-index: 7;
         }
         .telemetry-song-table thead th:nth-child(2) {
             left: 56px;
-            z-index: 3;
-            box-shadow: 1px 0 0 rgba(var(--club-blue-surface-rgb), 0.18);
+            z-index: 7;
+            box-shadow: 12px 0 18px rgba(var(--club-blue-rgb), 0.08);
         }
         .telemetry-song-table tbody tr:nth-child(even) {
             background: rgba(var(--club-blue-rgb), 0.03);
@@ -992,29 +1180,57 @@
             font-size: 13px;
             position: sticky;
             left: 0;
-            z-index: 2;
+            z-index: 5;
             background: #fff;
+            background-clip: padding-box;
+            box-shadow: 8px 0 14px rgba(var(--club-blue-rgb), 0.05);
         }
         .telemetry-track-cell {
             min-width: 280px;
             position: sticky;
             left: 56px;
-            z-index: 2;
+            z-index: 5;
             background: #fff;
-            box-shadow: 1px 0 0 rgba(var(--club-blue-rgb), 0.08);
+            background-clip: padding-box;
+            box-shadow: 14px 0 20px rgba(var(--club-blue-rgb), 0.08);
         }
         .telemetry-wave-cell {
-            min-width: 290px;
+            min-width: 278px;
         }
         .telemetry-cell-compact {
-            min-width: 98px;
+            min-width: 92px;
         }
         .telemetry-cell-medium {
-            min-width: 128px;
+            min-width: 118px;
         }
         .telemetry-cell-wide {
-            min-width: 210px;
+            min-width: 184px;
             white-space: normal;
+        }
+        .telemetry-table-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+            white-space: normal;
+        }
+        .telemetry-table-main {
+            display: inline-block;
+            width: fit-content;
+            word-break: break-word;
+        }
+        .telemetry-table-reference {
+            color: inherit;
+        }
+        .telemetry-head-ref {
+            display: block;
+            margin-top: 4px;
+            font-size: 10px;
+            line-height: 1.35;
+            letter-spacing: 0;
+            text-transform: none;
+            white-space: normal;
+            opacity: 0.78;
         }
         .telemetry-song-table tbody tr:nth-child(even) .telemetry-index-cell,
         .telemetry-song-table tbody tr:nth-child(even) .telemetry-track-cell {
@@ -1028,18 +1244,18 @@
         }
         .telemetry-song-cell-title {
             display: block;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 800;
             line-height: 1.1;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .telemetry-song-cell-subtitle {
             display: block;
-            font-size: 10px;
+            font-size: 9px;
             letter-spacing: 0.8px;
             text-transform: uppercase;
             opacity: 0.58;
-            line-height: 1.4;
+            line-height: 1.25;
         }
         .telemetry-wave {
             display: block;
@@ -1360,6 +1576,7 @@
                     </div>
                     <p class="telemetry-status" id="telemetry-status" aria-live="polite">Scanning master durations...</p>
                 </div>
+                <div id="telemetry-recommendations"></div>
                 <section class="telemetry-live" aria-labelledby="telemetry-live-title">
                     <div class="telemetry-live-head">
                         <div>
@@ -1383,31 +1600,37 @@
                                     <span class="telemetry-live-label">Peak</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-peak">--</strong>
                                     <span class="telemetry-live-detail">Current sample-peak at the output meter.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-peak-ref">Normal -6.0 dBFS to -0.8 dBFS • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">RMS</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-rms">--</strong>
                                     <span class="telemetry-live-detail">Short-window loudness body from the analyser.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-rms-ref">Normal -24.0 dBFS to -12.0 dBFS • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">Crest</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-crest">--</strong>
                                     <span class="telemetry-live-detail">Peak-to-body swing right now.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-crest-ref">Normal 8.0 dB to 18.0 dB • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">Centroid</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-centroid">--</strong>
                                     <span class="telemetry-live-detail">Current spectral brightness center.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-centroid-ref">Normal 900 Hz to 4.00 kHz • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">Low Band</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-low">--</strong>
                                     <span class="telemetry-live-detail">Bass share of the current spectrum.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-low-ref">Normal 20% to 55% • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">High Band</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-high">--</strong>
                                     <span class="telemetry-live-detail">Air/edge share of the current spectrum.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-high-ref">Normal 8% to 30% • current pending</span>
                                 </article>
                             </div>
                         </section>
@@ -1421,49 +1644,57 @@
                                     <span class="telemetry-live-label">Peak Hold</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-peak-hold">--</strong>
                                     <span class="telemetry-live-detail">Highest peak captured in the rolling window.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-peak-hold-ref">Normal -6.0 dBFS to -0.8 dBFS • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">Avg RMS</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-rms-avg">--</strong>
                                     <span class="telemetry-live-detail">Mean loudness body over the last 8 seconds.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-rms-avg-ref">Normal -22.0 dBFS to -12.0 dBFS • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">Avg Crest</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-crest-avg">--</strong>
                                     <span class="telemetry-live-detail">Smoothed transient contrast across the window.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-crest-avg-ref">Normal 8.0 dB to 18.0 dB • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">Avg Centroid</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-centroid-avg">--</strong>
                                     <span class="telemetry-live-detail">Average brightness center over the same span.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-centroid-avg-ref">Normal 1.20 kHz to 3.50 kHz • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">Clip Pressure</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-clip-pressure">--</strong>
                                     <span class="telemetry-live-detail">Average clipped-sample share in the window.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-clip-pressure-ref">Normal 0.00% to 0.20% • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">Bass Tilt</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-bass-tilt">--</strong>
                                     <span class="telemetry-live-detail">Low-minus-high energy tilt over 8 seconds.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-bass-tilt-ref">Normal -10.0 pts to +10.0 pts • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">RMS Swing</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-rms-swing">--</strong>
                                     <span class="telemetry-live-detail">Range of RMS motion inside the window.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-rms-swing-ref">Normal 4.0 dB to 12.0 dB • current pending</span>
                                 </article>
                                 <article class="telemetry-live-card">
                                     <span class="telemetry-live-label">Brightness Drift</span>
                                     <strong class="telemetry-live-value" id="telemetry-live-brightness-drift">--</strong>
                                     <span class="telemetry-live-detail">Centroid spread for slower tonal movement.</span>
+                                    <span class="telemetry-live-reference" id="telemetry-live-brightness-drift-ref">Normal 500 Hz to 2.50 kHz • current pending</span>
                                 </article>
                             </div>
                         </section>
                     </div>
                     <div class="telemetry-live-spectrum" id="telemetry-live-spectrum" aria-hidden="true"></div>
                 </section>
-                <div class="telemetry-grid" id="telemetry-grid"></div>
                 <div class="telemetry-song-list" id="telemetry-songs"></div>
+                <div class="telemetry-grid" id="telemetry-grid"></div>
             </section>
         </div>
 
@@ -1654,7 +1885,9 @@
     const chordInstructionsDisplay = playerBasic.querySelector('.chord-instructions');
     const playerWrap = document.querySelector('.player-wrap');
     const moodboardEl = document.querySelector('.moodboard');
+    const appContainer = document.querySelector('.app-container');
     const telemetryGrid = document.getElementById('telemetry-grid');
+    const telemetryRecommendations = document.getElementById('telemetry-recommendations');
     const telemetrySongs = document.getElementById('telemetry-songs');
     const telemetryStatus = document.getElementById('telemetry-status');
     const telemetryLiveTitle = document.getElementById('telemetry-live-title');
@@ -1675,6 +1908,22 @@
     const telemetryLiveBassTilt = document.getElementById('telemetry-live-bass-tilt');
     const telemetryLiveRmsSwing = document.getElementById('telemetry-live-rms-swing');
     const telemetryLiveBrightnessDrift = document.getElementById('telemetry-live-brightness-drift');
+    const telemetryLiveReferences = {
+        peak: document.getElementById('telemetry-live-peak-ref'),
+        rms: document.getElementById('telemetry-live-rms-ref'),
+        crest: document.getElementById('telemetry-live-crest-ref'),
+        centroid: document.getElementById('telemetry-live-centroid-ref'),
+        low: document.getElementById('telemetry-live-low-ref'),
+        high: document.getElementById('telemetry-live-high-ref'),
+        peakHold: document.getElementById('telemetry-live-peak-hold-ref'),
+        rmsAvg: document.getElementById('telemetry-live-rms-avg-ref'),
+        crestAvg: document.getElementById('telemetry-live-crest-avg-ref'),
+        centroidAvg: document.getElementById('telemetry-live-centroid-avg-ref'),
+        clipPressure: document.getElementById('telemetry-live-clip-pressure-ref'),
+        bassTilt: document.getElementById('telemetry-live-bass-tilt-ref'),
+        rmsSwing: document.getElementById('telemetry-live-rms-swing-ref'),
+        brightnessDrift: document.getElementById('telemetry-live-brightness-drift-ref')
+    };
     const telemetryLiveSpectrum = document.getElementById('telemetry-live-spectrum');
     const trackDurations = new Map();
     const trackAudioAnalysis = new Map();
@@ -2031,6 +2280,11 @@
         return `${Math.round(value)}%`;
     }
 
+    function formatPercentFixed(value, digits = 1) {
+        if (!Number.isFinite(value)) return '--';
+        return `${value.toFixed(digits)}%`;
+    }
+
     function formatFrequency(value) {
         if (!Number.isFinite(value)) return '--';
         if (value >= 1000) return `${(value / 1000).toFixed(2)} kHz`;
@@ -2069,6 +2323,623 @@
     function formatDensity(value) {
         if (!Number.isFinite(value)) return '--';
         return `${value.toFixed(1)}/min`;
+    }
+
+    function formatCount(value) {
+        if (!Number.isFinite(value)) return '--';
+        return `${Math.round(value)}`;
+    }
+
+    function formatGainAdjustment(value) {
+        if (!Number.isFinite(value)) return '--';
+        const sign = value > 0 ? '+' : '';
+        return `${sign}${value.toFixed(1)} dB`;
+    }
+
+    function formatTimeRange(startTime, endTime) {
+        if (!Number.isFinite(startTime) || !Number.isFinite(endTime)) return '--';
+        return `${formatTime(startTime)}-${formatTime(endTime)}`;
+    }
+
+    function createTextReference(rangeText, positionText, tone = 'inside') {
+        return { rangeText, positionText, tone };
+    }
+
+    function getRangeReference(value, min, max, formatter, options = {}) {
+        const rangeText = options.rangeText || `Normal ${formatter(min)} to ${formatter(max)}`;
+        const inspectedValue = Number.isFinite(value)
+            ? (options.absolute ? Math.abs(value) : value)
+            : null;
+
+        if (!Number.isFinite(inspectedValue)) {
+            return createTextReference(rangeText, options.pendingText || 'current pending', 'pending');
+        }
+        if (inspectedValue < min) {
+            return createTextReference(rangeText, options.lowText || 'current below band', 'low');
+        }
+        if (inspectedValue > max) {
+            return createTextReference(rangeText, options.highText || 'current above band', 'high');
+        }
+        if (typeof options.insideResolver === 'function') {
+            return createTextReference(rangeText, options.insideResolver(inspectedValue, min, max), 'inside');
+        }
+
+        const span = max - min;
+        const normalized = span > 0 ? (inspectedValue - min) / span : 0.5;
+        if (normalized <= 0.18) return createTextReference(rangeText, 'current low edge', 'inside');
+        if (normalized >= 0.82) return createTextReference(rangeText, 'current high edge', 'inside');
+        if (normalized >= 0.42 && normalized <= 0.58) return createTextReference(rangeText, 'current mid-band', 'inside');
+        return createTextReference(rangeText, 'current inside band', 'inside');
+    }
+
+    function getReferenceTone(referenceInfo) {
+        return referenceInfo?.tone || 'pending';
+    }
+
+    function renderReferenceNote(referenceInfo, className = 'telemetry-reference') {
+        if (!referenceInfo) return '';
+        return `
+            <span class="${className} telemetry-reference telemetry-reference--${referenceInfo.tone || 'inside'}">
+                <span class="telemetry-reference-range">${escapeHtml(referenceInfo.rangeText)}</span>
+                <span class="telemetry-reference-status">${escapeHtml(referenceInfo.positionText)}</span>
+            </span>
+        `;
+    }
+
+    function renderTelemetryCell(mainContent, referenceInfo) {
+        const tone = getReferenceTone(referenceInfo);
+        return `
+            <div class="telemetry-table-stack telemetry-tone--${tone}">
+                <span class="telemetry-table-main">${mainContent}</span>
+                ${renderReferenceNote(referenceInfo, 'telemetry-table-reference')}
+            </div>
+        `;
+    }
+
+    function getTempoReference(bpm) {
+        return getRangeReference(bpm, 72, 140, value => `${Math.round(value)} BPM`, {
+            lowText: 'current laid-back pocket',
+            highText: 'current brisk pocket'
+        });
+    }
+
+    function getSignatureReference(signature) {
+        if (!signature || signature === 'n/a') {
+            return createTextReference('Normal 4/4 or 6/8', 'current pending', 'pending');
+        }
+        const commonMeter = signature === '4/4' || signature === '6/8';
+        return createTextReference(
+            'Normal 4/4 or 6/8',
+            commonMeter ? 'current common meter' : 'current uncommon meter',
+            commonMeter ? 'inside' : 'high'
+        );
+    }
+
+    function getKeyReference(harmonicAnalysis) {
+        if (!harmonicAnalysis || !Number.isFinite(harmonicAnalysis.confidence)) {
+            return createTextReference('Normal 1 stable tonic with clear fit', 'current pending', 'pending');
+        }
+        if (harmonicAnalysis.confidence >= 0.25) {
+            return createTextReference('Normal 1 stable tonic with clear fit', 'current firm center', 'inside');
+        }
+        if (harmonicAnalysis.confidence >= 0.12) {
+            return createTextReference('Normal 1 stable tonic with clear fit', 'current workable center', 'inside');
+        }
+        return createTextReference('Normal 1 stable tonic with clear fit', 'current loose center', 'high');
+    }
+
+    function getHarmonyWeirdnessReference(harmonicAnalysis) {
+        if (!harmonicAnalysis) {
+            return createTextReference('Normal mostly diatonic, 0-2 borrowed moves', 'current pending', 'pending');
+        }
+        if (harmonicAnalysis.weirdnessScore <= 2.5) {
+            return createTextReference('Normal mostly diatonic, 0-2 borrowed moves', 'current stable', 'inside');
+        }
+        if (harmonicAnalysis.weirdnessScore <= 6) {
+            return createTextReference('Normal mostly diatonic, 0-2 borrowed moves', 'current colorful but inside band', 'inside');
+        }
+        return createTextReference('Normal mostly diatonic, 0-2 borrowed moves', 'current beyond common detour band', 'high');
+    }
+
+    function getHookReference(lyricsAnalysis) {
+        return getRangeReference(lyricsAnalysis?.topWordShare, 4, 14, value => formatPercentFixed(value, 1), {
+            lowText: 'current dispersed vocabulary',
+            highText: 'current extra-sticky hook'
+        });
+    }
+
+    function getStanzaReference(lyricsAnalysis) {
+        if (!lyricsAnalysis || !Number.isFinite(lyricsAnalysis.avgStanzaLines)) {
+            return createTextReference('Normal 3-8 lines / 18-60 words', 'current pending', 'pending');
+        }
+        if (lyricsAnalysis.avgStanzaLines < 3) {
+            return createTextReference('Normal 3-8 lines / 18-60 words', 'current terse blocks', 'low');
+        }
+        if (lyricsAnalysis.avgStanzaLines > 8) {
+            return createTextReference('Normal 3-8 lines / 18-60 words', 'current long-form blocks', 'high');
+        }
+        return createTextReference('Normal 3-8 lines / 18-60 words', 'current inside stanza band', 'inside');
+    }
+
+    function getFormatReference(analysis) {
+        if (!analysis) {
+            return createTextReference('Normal 44.1-48 kHz stereo master', 'current pending', 'pending');
+        }
+        const standardRate = analysis.sampleRate === 44100 || analysis.sampleRate === 48000;
+        const standardLayout = analysis.channelCount === 2;
+        if (standardRate && standardLayout) {
+            return createTextReference('Normal 44.1-48 kHz stereo master', 'current standard delivery', 'inside');
+        }
+        return createTextReference('Normal 44.1-48 kHz stereo master', `current ${analysis.channelLabel} / non-standard rate`, 'high');
+    }
+
+    function setLiveReferenceText(element, referenceInfo) {
+        if (!element) return;
+        const card = element.closest('.telemetry-live-card');
+        if (card) {
+            card.classList.remove('telemetry-tone--inside', 'telemetry-tone--low', 'telemetry-tone--high', 'telemetry-tone--pending');
+            card.classList.add(`telemetry-tone--${getReferenceTone(referenceInfo)}`);
+        }
+        element.textContent = `${referenceInfo.rangeText} • ${referenceInfo.positionText}`;
+    }
+
+    function groupConsecutiveIndexes(indexes) {
+        if (!indexes.length) return [];
+
+        const groups = [];
+        let start = indexes[0];
+        let end = indexes[0];
+
+        for (let i = 1; i < indexes.length; i++) {
+            if (indexes[i] === end + 1) {
+                end = indexes[i];
+                continue;
+            }
+            groups.push({ start, end });
+            start = indexes[i];
+            end = indexes[i];
+        }
+
+        groups.push({ start, end });
+        return groups;
+    }
+
+    function getSectionLabelForTime(metric, startTime, endTime) {
+        if (!metric.sectionTimeline?.length || !metric.totalBars || !metric.audioAnalysis?.duration) {
+            return 'song body';
+        }
+
+        const midpointRatio = ((startTime + endTime) * 0.5) / metric.audioAnalysis.duration;
+        const midpointBar = midpointRatio * metric.totalBars;
+        const section = metric.sectionTimeline.find(entry => midpointBar >= entry.startBar && midpointBar < entry.endBar + 0.001);
+        return section ? section.label : 'transition';
+    }
+
+    function getWaveformActionRegions(metric, mode = 'hot') {
+        const analysis = metric.audioAnalysis;
+        if (!analysis || !Array.isArray(analysis.waveformBins) || !analysis.waveformBins.length || !Number.isFinite(analysis.duration) || analysis.duration <= 0) {
+            return [];
+        }
+
+        const bins = analysis.waveformBins;
+        const hotBins = new Set(analysis.hotBinIndexes || []);
+        const bodyStart = analysis.leadingSilence / analysis.duration;
+        const bodyEnd = 1 - (analysis.trailingSilence / analysis.duration);
+        const candidateIndexes = [];
+
+        for (let index = 0; index < bins.length; index++) {
+            const ratio = (index + 0.5) / bins.length;
+            const isBody = ratio >= bodyStart && ratio <= bodyEnd;
+            if (!isBody) continue;
+
+            if (mode === 'hot') {
+                if (bins[index] >= 0.9 || hotBins.has(index)) {
+                    candidateIndexes.push(index);
+                }
+            } else if (mode === 'quiet') {
+                const safelyInsideBody = ratio >= bodyStart + 0.04 && ratio <= bodyEnd - 0.04;
+                if (safelyInsideBody && bins[index] <= 0.2 && !hotBins.has(index)) {
+                    candidateIndexes.push(index);
+                }
+            }
+        }
+
+        return groupConsecutiveIndexes(candidateIndexes)
+            .map(group => {
+                const slice = bins.slice(group.start, group.end + 1);
+                const startTime = (group.start / bins.length) * analysis.duration;
+                const endTime = ((group.end + 1) / bins.length) * analysis.duration;
+                const avgValue = average(slice) || 0;
+                const peakValue = slice.length ? Math.max(...slice) : 0;
+                return {
+                    startIndex: group.start,
+                    endIndex: group.end,
+                    startTime,
+                    endTime,
+                    avgValue,
+                    peakValue,
+                    duration: endTime - startTime,
+                    sectionLabel: getSectionLabelForTime(metric, startTime, endTime)
+                };
+            })
+            .filter(region => region.duration >= (mode === 'hot' ? 0.8 : 1.2))
+            .sort((a, b) => {
+                if (mode === 'hot') {
+                    return (b.peakValue - a.peakValue) || (b.avgValue - a.avgValue) || (b.duration - a.duration);
+                }
+                return (a.avgValue - b.avgValue) || (b.duration - a.duration);
+            });
+    }
+
+    function renderRecommendationList(items) {
+        if (!items.length) return '';
+        return `<ul class="telemetry-recommendation-list">${items.map(item => `<li class="telemetry-recommendation-item">${item}</li>`).join('')}</ul>`;
+    }
+
+    function getAlbumMasteringContext(metrics) {
+        const scannedMetrics = metrics.filter(metric => metric.audioAnalysis && Number.isFinite(metric.audioAnalysis.rmsDb));
+
+        return {
+            scannedMetrics,
+            targetRms: scannedMetrics.length
+                ? median(scannedMetrics.map(metric => metric.audioAnalysis.rmsDb).filter(value => Number.isFinite(value)))
+                : null,
+            targetCrest: scannedMetrics.length
+                ? median(scannedMetrics.map(metric => metric.audioAnalysis.crestFactorDb).filter(value => Number.isFinite(value)))
+                : null,
+            targetHeadroom: scannedMetrics.length
+                ? median(scannedMetrics.map(metric => metric.audioAnalysis.headroomDb).filter(value => Number.isFinite(value)))
+                : null
+        };
+    }
+
+    function buildTrackMasteringAdvice(metric, masteringContext) {
+        if (!metric.audioAnalysis || !Number.isFinite(masteringContext.targetRms)) {
+            return [
+                {
+                    tone: 'steady',
+                    text: 'Open telemetry once to finish the master scan for this song.'
+                }
+            ];
+        }
+
+        const advice = [];
+        const analysis = metric.audioAnalysis;
+        const loudnessDelta = analysis.rmsDb - masteringContext.targetRms;
+        const crestDelta = Number.isFinite(masteringContext.targetCrest)
+            ? analysis.crestFactorDb - masteringContext.targetCrest
+            : null;
+        const hotRegion = getWaveformActionRegions(metric, 'hot')[0] || null;
+        const quietRegion = getWaveformActionRegions(metric, 'quiet')[0] || null;
+
+        if (loudnessDelta > 0.75 || (analysis.headroomDb || 0) < 0.8) {
+            const trimDb = -Math.min(3.0, Math.max(0.4, (loudnessDelta * 0.9) + Math.max(0, 0.8 - (analysis.headroomDb || 0))));
+            advice.push({
+                tone: 'trim',
+                text: `Trim overall level ${formatGainAdjustment(trimDb)}`
+            });
+        } else if (loudnessDelta < -0.75 && (analysis.headroomDb || 0) > 1.1) {
+            const liftDb = Math.min(2.4, Math.max(0.4, Math.min(-loudnessDelta, (analysis.headroomDb || 0) - 0.6)));
+            advice.push({
+                tone: 'lift',
+                text: `Lift overall level ${formatGainAdjustment(liftDb)}`
+            });
+        } else {
+            advice.push({
+                tone: 'steady',
+                text: 'Whole-song gain is close to the album target.'
+            });
+        }
+
+        if (hotRegion) {
+            const pullDb = -Math.min(1.8, Math.max(0.5, ((hotRegion.peakValue - 0.88) * 6) + ((analysis.clipBinCount || 0) * 0.05)));
+            advice.push({
+                tone: 'trim',
+                text: `${hotRegion.sectionLabel} ${formatTimeRange(hotRegion.startTime, hotRegion.endTime)} • normalize down ${formatGainAdjustment(pullDb)}`
+            });
+        }
+
+        if (quietRegion && loudnessDelta < 0.25) {
+            const liftDb = Math.min(1.5, Math.max(0.4, (0.22 - quietRegion.avgValue) * 6));
+            advice.push({
+                tone: 'lift',
+                text: `${quietRegion.sectionLabel} ${formatTimeRange(quietRegion.startTime, quietRegion.endTime)} • support with ${formatGainAdjustment(liftDb)}`
+            });
+        }
+
+        if ((Number.isFinite(analysis.monoCorrelation) && analysis.monoCorrelation < 0.92) || (Number.isFinite(analysis.stereoBalanceDb) && Math.abs(analysis.stereoBalanceDb) > 0.8)) {
+            advice.push({
+                tone: 'watch',
+                text: `Check mono fold (${formatRatio(analysis.monoCorrelation)}) / balance (${formatStereoBalance(analysis.stereoBalanceDb)})`
+            });
+        }
+
+        if ((Number.isFinite(crestDelta) && crestDelta < -0.7) || ((analysis.clipBinCount || 0) > 4 && analysis.rmsDb > masteringContext.targetRms - 0.2)) {
+            advice.push({
+                tone: 'watch',
+                text: `Back off bus compression or limiting before pushing louder (${formatDb(analysis.crestFactorDb)} crest)`
+            });
+        }
+
+        return advice.slice(0, 4);
+    }
+
+    function renderSongInfoPanel(metric) {
+        const stats = [
+            { label: 'Tempo', value: metric.bpm ? `${metric.bpm} BPM` : 'tempo n/a' },
+            { label: 'Signature', value: escapeHtml(metric.timeSignature) },
+            { label: 'Key', value: escapeHtml(metric.harmonicAnalysis.keyLabel) },
+            { label: 'Bars', value: `${formatBars(metric.totalBars)} bars` },
+            { label: 'Sections', value: `${metric.sectionCount}` },
+            { label: 'Lyrics', value: `${metric.lyricLines} lines` }
+        ];
+
+        return `
+            <div class="song-info-panel">
+                <div class="song-info-grid">
+                    ${stats.map(stat => `
+                        <div class="song-info-stat">
+                            <span class="song-info-label">${stat.label}</span>
+                            <span class="song-info-value">${stat.value}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function refreshCurrentSongInfoPanel() {
+        if (!currentTrack || selectedTrackIndex < 0 || !structureContent) return;
+
+        const panel = structureContent.querySelector('.song-info-panel');
+        if (!panel) return;
+
+        const telemetryMetrics = data.tracks.map(getTrackMetrics);
+        panel.outerHTML = renderSongInfoPanel(telemetryMetrics[selectedTrackIndex]);
+    }
+
+    function renderMasteringRecommendations(metrics, waveformDetail) {
+        const masteringContext = getAlbumMasteringContext(metrics);
+        const { scannedMetrics, targetRms, targetCrest } = masteringContext;
+        if (!scannedMetrics.length) {
+            return `
+                <section class="telemetry-recommendations">
+                    <div class="telemetry-recommendations-head">
+                        <strong class="telemetry-recommendations-title">Mastering Recommendations</strong>
+                        <span class="telemetry-recommendations-note">${escapeHtml(waveformDetail)}</span>
+                    </div>
+                </section>
+            `;
+        }
+
+        const trimSongs = scannedMetrics
+            .map(metric => {
+                const loudnessDelta = metric.audioAnalysis.rmsDb - targetRms;
+                const ceilingPenalty = Math.max(0, 0.8 - (metric.audioAnalysis.headroomDb || 0));
+                const score = loudnessDelta + ceilingPenalty + ((metric.audioAnalysis.clipBinCount || 0) * 0.08);
+                if (score <= 0.45) return null;
+                return {
+                    metric,
+                    score,
+                    adjustmentDb: -Math.min(3.0, Math.max(0.5, (loudnessDelta * 0.9) + ceilingPenalty)),
+                    loudnessDelta,
+                    headroom: metric.audioAnalysis.headroomDb || 0
+                };
+            })
+            .filter(Boolean)
+            .sort((a, b) => b.score - a.score || b.loudnessDelta - a.loudnessDelta);
+
+        const liftSongs = scannedMetrics
+            .map(metric => {
+                const headroom = metric.audioAnalysis.headroomDb || 0;
+                const loudnessGap = targetRms - metric.audioAnalysis.rmsDb;
+                const availableLift = Math.max(0, headroom - 0.6);
+                const score = Math.min(loudnessGap, availableLift);
+                if (score <= 0.35) return null;
+                return {
+                    metric,
+                    score,
+                    adjustmentDb: Math.min(2.5, Math.max(0.4, score)),
+                    loudnessGap,
+                    headroom
+                };
+            })
+            .filter(Boolean)
+            .sort((a, b) => b.score - a.score || b.loudnessGap - a.loudnessGap);
+
+        const hotRegions = scannedMetrics
+            .flatMap(metric => getWaveformActionRegions(metric, 'hot').map(region => ({
+                metric,
+                region,
+                severity: region.peakValue + ((metric.audioAnalysis.clipBinCount || 0) * 0.03)
+            })))
+            .sort((a, b) => b.severity - a.severity || (b.region.duration - a.region.duration));
+
+        const quietRegions = scannedMetrics
+            .flatMap(metric => getWaveformActionRegions(metric, 'quiet').map(region => ({
+                metric,
+                region,
+                severity: (0.24 - region.avgValue) + Math.max(0, targetRms - metric.audioAnalysis.rmsDb) * 0.04
+            })))
+            .sort((a, b) => b.severity - a.severity || (b.region.duration - a.region.duration));
+
+        const monoWatchSongs = scannedMetrics
+            .map(metric => {
+                const monoCorrelation = metric.audioAnalysis.monoCorrelation;
+                const stereoBalanceDb = metric.audioAnalysis.stereoBalanceDb;
+                const correlationRisk = Number.isFinite(monoCorrelation) ? (0.92 - monoCorrelation) : 0;
+                const balanceRisk = Number.isFinite(stereoBalanceDb) ? (Math.abs(stereoBalanceDb) - 0.8) * 0.4 : 0;
+                const score = Math.max(correlationRisk, 0) + Math.max(balanceRisk, 0);
+                if (score <= 0) return null;
+                return {
+                    metric,
+                    score,
+                    monoCorrelation,
+                    stereoBalanceDb
+                };
+            })
+            .filter(Boolean)
+            .sort((a, b) => b.score - a.score || a.monoCorrelation - b.monoCorrelation);
+
+        const compressionWatchSongs = scannedMetrics
+            .map(metric => {
+                const crest = metric.audioAnalysis.crestFactorDb || 0;
+                const rms = metric.audioAnalysis.rmsDb || -Infinity;
+                const crestGap = Number.isFinite(targetCrest) ? (targetCrest - crest) : 0;
+                const clipRisk = (metric.audioAnalysis.clipBinCount || 0) > 4 && rms > targetRms - 0.2 ? ((metric.audioAnalysis.clipBinCount || 0) * 0.08) : 0;
+                const score = Math.max(0, crestGap - 0.7) + clipRisk;
+                if (score <= 0) return null;
+                return {
+                    metric,
+                    score,
+                    crest,
+                    rms
+                };
+            })
+            .filter(Boolean)
+            .sort((a, b) => b.score - a.score || a.crest - b.crest);
+
+        const cards = [
+            {
+                label: 'Trim',
+                value: trimSongs.length ? `${trimSongs.length} song${trimSongs.length === 1 ? '' : 's'}` : 'No overall trims queued',
+                detail: trimSongs.length
+                    ? 'Songs above the album target that should come down before final limiting.'
+                    : 'No song is far enough above the album loudness target to need a whole-song trim.',
+                reference: createTextReference('Normal within ±0.75 dB of album median and ≥ 0.8 dB headroom', trimSongs.length ? 'current trim queue populated' : 'current album inside trim band', trimSongs.length ? 'high' : 'inside'),
+                items: trimSongs.map(({ metric, adjustmentDb, loudnessDelta, headroom }) => `${escapeHtml(metric.title)} • trim ${Math.abs(adjustmentDb).toFixed(1)} dB • ${loudnessDelta.toFixed(1)} dB above median • ${formatHeadroom(headroom)} headroom`)
+            },
+            {
+                label: 'Lift',
+                value: liftSongs.length ? `${liftSongs.length} song${liftSongs.length === 1 ? '' : 's'}` : 'No overall lifts queued',
+                detail: liftSongs.length
+                    ? 'Songs below the album target that can be lifted without spending all remaining ceiling.'
+                    : 'No song sits far enough below the album center to justify a blanket lift.',
+                reference: createTextReference('Normal no more than 0.75 dB below album median unless headroom > 1.1 dB', liftSongs.length ? 'current lift queue populated' : 'current album inside lift band', liftSongs.length ? 'high' : 'inside'),
+                items: liftSongs.map(({ metric, adjustmentDb, loudnessGap, headroom }) => `${escapeHtml(metric.title)} • add ${adjustmentDb.toFixed(1)} dB • ${loudnessGap.toFixed(1)} dB below median • ${formatHeadroom(headroom)} headroom`)
+            },
+            {
+                label: 'Hot passages',
+                value: hotRegions.length ? `${hotRegions.length} passage${hotRegions.length === 1 ? '' : 's'}` : 'No hot passages found',
+                detail: hotRegions.length
+                    ? 'All flagged near-ceiling sections across the album, sorted from most urgent.'
+                    : 'No persistent near-ceiling passages were detected in the scanned masters.',
+                reference: createTextReference('Normal body bins stay under 0.90 with isolated edge peaks only', hotRegions.length ? 'current hot-passage queue populated' : 'current waveform bodies sit inside band', hotRegions.length ? 'high' : 'inside'),
+                items: hotRegions.map(({ metric, region }) => {
+                    const pullDb = -Math.min(1.8, Math.max(0.5, ((region.peakValue - 0.88) * 6) + ((metric.audioAnalysis.clipBinCount || 0) * 0.05)));
+                    return `${escapeHtml(metric.title)} • ${escapeHtml(region.sectionLabel)} • ${formatTimeRange(region.startTime, region.endTime)} • trim ${Math.abs(pullDb).toFixed(1)} dB`;
+                })
+            },
+            {
+                label: 'Quiet body',
+                value: quietRegions.length ? `${quietRegions.length} passage${quietRegions.length === 1 ? '' : 's'}` : 'No quiet passages found',
+                detail: quietRegions.length
+                    ? 'All body sections that read buried enough to need section-level lift instead of full-song gain.'
+                    : 'No buried body sections were detected once intros and outros were trimmed.',
+                reference: createTextReference('Normal body bins stay around 0.20 to 0.24 after intros/outros are removed', quietRegions.length ? 'current quiet-passage queue populated' : 'current body levels sit inside band', quietRegions.length ? 'high' : 'inside'),
+                items: quietRegions.map(({ metric, region }) => {
+                    const liftDb = Math.min(1.6, Math.max(0.4, (0.22 - region.avgValue) * 6));
+                    return `${escapeHtml(metric.title)} • ${escapeHtml(region.sectionLabel)} • ${formatTimeRange(region.startTime, region.endTime)} • add ${liftDb.toFixed(1)} dB`;
+                })
+            },
+            {
+                label: 'Mono / stereo watch',
+                value: monoWatchSongs.length ? `${monoWatchSongs.length} song${monoWatchSongs.length === 1 ? '' : 's'}` : 'No stereo issues queued',
+                detail: monoWatchSongs.length
+                    ? 'Songs with mono-fold risk or left/right bias worth checking in mid/side.'
+                    : 'Stereo image looks stable across the scanned masters.',
+                reference: createTextReference('Normal mono correlation 0.92-1.00 and balance within ±0.8 dB', monoWatchSongs.length ? 'current stereo watch queue populated' : 'current stereo image inside band', monoWatchSongs.length ? 'high' : 'inside'),
+                items: monoWatchSongs.map(({ metric, monoCorrelation, stereoBalanceDb }) => `${escapeHtml(metric.title)} • mono ${formatRatio(monoCorrelation)} • balance ${formatStereoBalance(stereoBalanceDb)}`)
+            },
+            {
+                label: 'Compression watch',
+                value: compressionWatchSongs.length ? `${compressionWatchSongs.length} song${compressionWatchSongs.length === 1 ? '' : 's'}` : 'No squeeze risks queued',
+                detail: compressionWatchSongs.length
+                    ? 'Songs whose crest or clip pressure suggest backing off bus compression or limiting.'
+                    : 'No song stands out as unusually squeezed from the current metrics.',
+                reference: createTextReference('Normal crest stays within 0.7 dB of the album median or higher', compressionWatchSongs.length ? 'current compression watch queue populated' : 'current crest spread inside band', compressionWatchSongs.length ? 'high' : 'inside'),
+                items: compressionWatchSongs.map(({ metric, crest, rms }) => `${escapeHtml(metric.title)} • crest ${formatDb(crest)} • RMS ${formatDb(rms, 'dBFS')}`)
+            }
+        ];
+
+        return `
+            <section class="telemetry-recommendations" aria-labelledby="telemetry-recommendations-title">
+                <div class="telemetry-recommendations-head">
+                    <strong class="telemetry-recommendations-title" id="telemetry-recommendations-title">Mastering Recommendations</strong>
+                    <span class="telemetry-recommendations-note">Derived from album-median loudness, headroom, clip bins, mono fold safety, and section-aware waveform regions.</span>
+                </div>
+                <div class="telemetry-recommendation-grid">
+                    ${cards.map(card => `
+                        <article class="telemetry-recommendation-card telemetry-tone--${getReferenceTone(card.reference)}">
+                            <span class="telemetry-recommendation-label">${card.label}</span>
+                            <strong class="telemetry-recommendation-value">${card.value}</strong>
+                            <p class="telemetry-recommendation-detail">${card.detail}</p>
+                            ${renderReferenceNote(card.reference, 'telemetry-recommendation-reference')}
+                            ${renderRecommendationList(card.items || [])}
+                        </article>
+                    `).join('')}
+                </div>
+            </section>
+        `;
+    }
+
+    function updateTelemetryLiveReferences(analysis, rollingStats) {
+        setLiveReferenceText(telemetryLiveReferences.peak, getRangeReference(analysis?.peakDb, -6, -0.8, value => formatDb(value, 'dBFS'), {
+            lowText: 'current conservative peak margin',
+            highText: 'current near ceiling'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.rms, getRangeReference(analysis?.rmsDb, -24, -12, value => formatDb(value, 'dBFS'), {
+            lowText: 'current restrained body',
+            highText: 'current hot body'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.crest, getRangeReference(analysis?.crestFactorDb, 8, 18, formatDb, {
+            lowText: 'current compressed swing',
+            highText: 'current very punchy swing'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.centroid, getRangeReference(analysis?.spectralCentroidHz, 900, 4000, formatFrequency, {
+            lowText: 'current dark center',
+            highText: 'current bright center'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.low, getRangeReference(analysis?.lowEnergyPct, 20, 55, formatPercent, {
+            lowText: 'current light low-end share',
+            highText: 'current bass-heavy share'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.high, getRangeReference(analysis?.highEnergyPct, 8, 30, formatPercent, {
+            lowText: 'current soft top-end share',
+            highText: 'current airy top-end share'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.peakHold, getRangeReference(rollingStats?.peakHoldDb, -6, -0.8, value => formatDb(value, 'dBFS'), {
+            lowText: 'current safe peak-hold margin',
+            highText: 'current near-ceiling hold'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.rmsAvg, getRangeReference(rollingStats?.avgRmsDb, -22, -12, value => formatDb(value, 'dBFS'), {
+            lowText: 'current restrained window body',
+            highText: 'current hot window body'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.crestAvg, getRangeReference(rollingStats?.avgCrestDb, 8, 18, formatDb, {
+            lowText: 'current compressed window swing',
+            highText: 'current very punchy window swing'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.centroidAvg, getRangeReference(rollingStats?.avgCentroidHz, 1200, 3500, formatFrequency, {
+            lowText: 'current darker window',
+            highText: 'current brighter window'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.clipPressure, getRangeReference(rollingStats?.avgClipShare, 0, 0.2, value => formatPercentFixed(value, 2), {
+            highText: 'current elevated clip pressure',
+            insideResolver: value => value === 0 ? 'current clean window' : 'current inside clip band'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.bassTilt, getRangeReference(rollingStats?.bassTiltPts, -10, 10, formatSignedPoints, {
+            lowText: 'current top-leaning tilt',
+            highText: 'current bass-leaning tilt'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.rmsSwing, getRangeReference(rollingStats?.rmsSwingDb, 4, 12, formatDb, {
+            lowText: 'current very even window',
+            highText: 'current wide loudness swing'
+        }));
+        setLiveReferenceText(telemetryLiveReferences.brightnessDrift, getRangeReference(rollingStats?.brightnessDriftHz, 500, 2500, formatFrequencySpread, {
+            lowText: 'current steady tone color',
+            highText: 'current wide tonal drift'
+        }));
     }
 
     function updateTelemetryPlaybackIndicators(activeTrackIndex, currentTime = 0, duration = 0) {
@@ -2194,6 +3065,7 @@
             bar.style.transform = 'scaleY(0.08)';
             bar.style.opacity = '0.45';
         });
+        updateTelemetryLiveReferences(null, null);
         updateTelemetryPlaybackIndicators(selectedTrackIndex, audio.currentTime || 0, fallbackDuration || 0);
     }
 
@@ -2286,6 +3158,8 @@
             telemetryLiveRmsSwing.textContent = Number.isFinite(rollingStats.rmsSwingDb) ? `${rollingStats.rmsSwingDb.toFixed(1)} dB` : '--';
             telemetryLiveBrightnessDrift.textContent = formatFrequencySpread(rollingStats.brightnessDriftHz);
         }
+
+        updateTelemetryLiveReferences(analysis, rollingStats);
 
         updateTelemetryPlaybackIndicators(selectedTrackIndex, currentTime, duration || 0);
     }
@@ -2612,15 +3486,22 @@
         let previousChord = null;
         let runningBars = 0;
         const sectionBoundaries = [];
+        const sectionTimeline = [];
         const beatsPerBar = getBeatsPerBar(track);
 
         sections.forEach(section => {
             const chords = Array.isArray(section.chords) ? section.chords : [];
             totalBeats += chords.length;
             const sectionBars = chords.length > 0 ? chords.length / beatsPerBar : 0;
+            const startBar = runningBars;
             if (runningBars > 0) {
                 sectionBoundaries.push(runningBars);
             }
+            sectionTimeline.push({
+                label: section.label,
+                startBar,
+                endBar: startBar + sectionBars
+            });
             runningBars += sectionBars;
             chords.forEach(chord => {
                 if (chord) chordSequence.push(chord);
@@ -2665,6 +3546,7 @@
             sectionCount: sections.length,
             totalBars,
             sectionBoundaries,
+            sectionTimeline,
             totalBeats,
             chordChanges,
             harmonicTurnover,
@@ -2782,7 +3664,11 @@
                 value: totalMasterRuntime ? formatTime(totalMasterRuntime) : '--:--',
                 detail: measuredCount === metrics.length
                     ? 'sum of raw file durations across all masters'
-                    : `${measuredCount}/${metrics.length} files resolved from headers`
+                    : `${measuredCount}/${metrics.length} files resolved from headers`,
+                reference: getRangeReference(totalMasterRuntime || null, 35 * 60, 50 * 60, formatTime, {
+                    lowText: 'current album is short-form',
+                    highText: 'current album is long-form'
+                })
             },
             {
                 label: 'Trimmed runtime',
@@ -2791,155 +3677,241 @@
                     ? 'after removing detected cold opens and tail fades'
                     : deepScanCount > 0
                         ? `${deepScanCount}/${metrics.length} songs trimmed, raw fallback for the rest`
-                        : waveformDetail
+                        : waveformDetail,
+                reference: getRangeReference(totalTrimmedRuntime || null, 32 * 60, 48 * 60, formatTime, {
+                    lowText: 'current trimmed album is concise',
+                    highText: 'current trimmed album is expansive'
+                })
             },
             {
                 label: 'Median runtime',
                 value: medianRuntime ? formatTime(medianRuntime) : '--:--',
-                detail: effectiveDurations.length ? 'center of the album runtime spread' : 'waiting for duration data'
+                detail: effectiveDurations.length ? 'center of the album runtime spread' : 'waiting for duration data',
+                reference: getRangeReference(medianRuntime, 180, 270, formatTime, {
+                    lowText: 'current song center is concise',
+                    highText: 'current song center is extended'
+                })
             },
             {
                 label: 'Runtime spread',
                 value: runtimeSpread ? formatTime(runtimeSpread) : '--:--',
                 detail: longestTrack && shortestTrack
                     ? `${escapeHtml(shortestTrack.title)} to ${escapeHtml(longestTrack.title)}`
-                    : 'waiting for duration data'
+                    : 'waiting for duration data',
+                reference: getRangeReference(runtimeSpread, 45, 150, formatTime, {
+                    lowText: 'current set is tightly clustered',
+                    highText: 'current set has wide runtime variance'
+                })
             },
             {
                 label: 'Dead air budget',
                 value: audioMetrics.length ? formatSecondsMetric(totalDeadAir) : '--',
                 detail: audioMetrics.length
                     ? 'combined lead-in and tail fade across scanned masters'
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(audioMetrics.length ? totalDeadAir : null, 0, 18, formatSecondsMetric, {
+                    highText: 'current album carries extra dead air',
+                    insideResolver: value => value <= 4 ? 'current very lean edges' : 'current inside dead-air band'
+                })
             },
             {
                 label: 'Longest cold open',
                 value: longestColdOpen ? formatSecondsMetric(longestColdOpen.audioAnalysis.leadingSilence) : '--',
                 detail: longestColdOpen
                     ? `${escapeHtml(longestColdOpen.title)} before first audible hit`
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(longestColdOpen?.audioAnalysis?.leadingSilence, 0, 2.5, formatSecondsMetric, {
+                    highText: 'current cold open is long'
+                })
             },
             {
                 label: 'Average tail fade',
                 value: averageTailFade ? formatSecondsMetric(averageTailFade) : '--',
                 detail: audioMetrics.length
                     ? 'time spent dissolving into silence'
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(averageTailFade, 0.4, 4.0, formatSecondsMetric, {
+                    lowText: 'current fades are abrupt',
+                    highText: 'current fades are extended'
+                })
             },
             {
                 label: 'Average stereo width',
                 value: averageStereoWidth !== null ? formatPercent(averageStereoWidth) : '--',
                 detail: audioMetrics.length
                     ? 'side energy as share of scanned masters'
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(averageStereoWidth, 25, 65, formatPercent, {
+                    lowText: 'current average field is narrow',
+                    highText: 'current average field is wide'
+                })
             },
             {
                 label: 'Average mono fold',
                 value: averageMonoFold !== null ? formatRatio(averageMonoFold) : '--',
                 detail: audioMetrics.length
                     ? 'mean left/right correlation across masters'
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(averageMonoFold, 0.92, 1.0, formatRatio, {
+                    lowText: 'current mono fold is risky',
+                    highText: 'current mono fold is very tight'
+                })
             },
             {
                 label: 'Widest stereo field',
                 value: widestStereo ? formatPercent(widestStereo.audioAnalysis.stereoWidthPct) : '--',
                 detail: widestStereo
                     ? escapeHtml(widestStereo.title)
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(widestStereo?.audioAnalysis?.stereoWidthPct, 35, 80, formatPercent, {
+                    lowText: 'current widest song is modest',
+                    highText: 'current widest song is very wide'
+                })
             },
             {
                 label: 'Highest crest factor',
                 value: highestCrestFactor ? formatDb(highestCrestFactor.audioAnalysis.crestFactorDb) : '--',
                 detail: highestCrestFactor
                     ? `${escapeHtml(highestCrestFactor.title)} peak-to-body swing`
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(highestCrestFactor?.audioAnalysis?.crestFactorDb, 8, 14, formatDb, {
+                    lowText: 'current album punch ceiling is restrained',
+                    highText: 'current album punch ceiling is very dynamic'
+                })
             },
             {
                 label: 'Hottest master',
                 value: hottestMaster ? formatDb(hottestMaster.audioAnalysis.rmsDb, 'dBFS') : '--',
                 detail: hottestMaster
                     ? `${escapeHtml(hottestMaster.title)} average RMS floor`
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(hottestMaster?.audioAnalysis?.rmsDb, -16, -11, value => formatDb(value, 'dBFS'), {
+                    lowText: 'current loudest master is still restrained',
+                    highText: 'current loudest master is above common band'
+                })
             },
             {
                 label: 'Tightest headroom',
                 value: tightestHeadroom ? formatHeadroom(tightestHeadroom.audioAnalysis.headroomDb) : '--',
                 detail: tightestHeadroom
                     ? `${escapeHtml(tightestHeadroom.title)} below digital ceiling`
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(tightestHeadroom?.audioAnalysis?.headroomDb, 0.8, 2.0, formatHeadroom, {
+                    lowText: 'current ceiling margin is very tight',
+                    highText: 'current ceiling margin is generous'
+                })
             },
             {
                 label: 'Median headroom',
                 value: medianHeadroom !== null ? formatHeadroom(medianHeadroom) : '--',
                 detail: audioMetrics.length
                     ? 'center of the album ceiling margin'
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(medianHeadroom, 1.0, 3.0, formatHeadroom, {
+                    lowText: 'current album runs close to ceiling',
+                    highText: 'current album keeps extra ceiling'
+                })
             },
             {
                 label: 'Safest mono fold',
                 value: safestMonoFold ? formatRatio(safestMonoFold.audioAnalysis.monoCorrelation) : '--',
                 detail: safestMonoFold
                     ? `${escapeHtml(safestMonoFold.title)} left/right coherence`
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(safestMonoFold?.audioAnalysis?.monoCorrelation, 0.95, 1.0, formatRatio, {
+                    lowText: 'current best mono fold is still only moderate',
+                    highText: 'current best mono fold is very tight'
+                })
             },
             {
                 label: 'Hardest L/R bias',
                 value: hardestPanBias ? formatStereoBalance(hardestPanBias.audioAnalysis.stereoBalanceDb) : '--',
                 detail: hardestPanBias
                     ? escapeHtml(hardestPanBias.title)
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(hardestPanBias?.audioAnalysis?.stereoBalanceDb, 0, 0.6, value => `${value.toFixed(1)} dB`, {
+                    absolute: true,
+                    highText: 'current balance offset is outside common band',
+                    insideResolver: value => value < 0.1 ? 'current nearly centered' : 'current inside balance band'
+                })
             },
             {
                 label: 'Most transient dense',
                 value: densestTransients ? formatDensity(densestTransients.audioAnalysis.transientDensity) : '--',
                 detail: densestTransients
                     ? `${escapeHtml(densestTransients.title)} impact spikes per minute`
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(densestTransients?.audioAnalysis?.transientDensity, 20, 75, formatDensity, {
+                    lowText: 'current densest master is still sparse',
+                    highText: 'current densest master is very busy'
+                })
             },
             {
                 label: 'Average bitrate',
                 value: averageBitrate !== null ? formatBitrate(averageBitrate) : '--',
                 detail: audioMetrics.length
                     ? 'derived from scanned master payload size'
-                    : waveformDetail
+                    : waveformDetail,
+                reference: getRangeReference(averageBitrate, 192, 320, formatBitrate, {
+                    lowText: 'current average bitrate is lean',
+                    highText: 'current average bitrate is above common delivery'
+                })
             },
             {
                 label: 'Harmonic turnover',
                 value: averageHarmonicTurnover !== null ? `${averageHarmonicTurnover.toFixed(2)}/bar` : '--',
-                detail: averageHarmonicTurnover !== null ? 'mean chord changes per bar' : 'no arrangement data'
+                detail: averageHarmonicTurnover !== null ? 'mean chord changes per bar' : 'no arrangement data',
+                reference: getRangeReference(averageHarmonicTurnover, 0.25, 0.8, value => `${value.toFixed(2)}/bar`, {
+                    lowText: 'current harmony pace is slow-moving',
+                    highText: 'current harmony pace is busy'
+                })
             },
             {
                 label: 'Borrowed chord budget',
                 value: `${borrowedChordBudget}`,
-                detail: 'non-diatonic detours across inferred song keys'
+                detail: 'non-diatonic detours across inferred song keys',
+                reference: getRangeReference(borrowedChordBudget, 0, 8, formatCount, {
+                    highText: 'current album borrows heavily',
+                    insideResolver: value => value === 0 ? 'current fully diatonic set' : 'current inside borrowed-chord band'
+                })
             },
             {
                 label: 'Densest lyric flow',
                 value: densestLyricFlow ? `${densestLyricFlow.lyricDensity.toFixed(1)}/min` : '--',
                 detail: densestLyricFlow
                     ? escapeHtml(densestLyricFlow.title)
-                    : 'waiting for lyric and duration data'
+                    : 'waiting for lyric and duration data',
+                reference: getRangeReference(densestLyricFlow?.lyricDensity, 8, 24, value => `${value.toFixed(1)}/min`, {
+                    lowText: 'current lyric flow peak is sparse',
+                    highText: 'current lyric flow peak is dense'
+                })
             },
             {
                 label: 'Fastest section churn',
                 value: fastestSectionChurn ? `${fastestSectionChurn.sectionChurn.toFixed(2)}/min` : '--',
                 detail: fastestSectionChurn
                     ? escapeHtml(fastestSectionChurn.title)
-                    : 'waiting for arrangement and duration data'
+                    : 'waiting for arrangement and duration data',
+                reference: getRangeReference(fastestSectionChurn?.sectionChurn, 1.0, 3.5, value => `${value.toFixed(2)}/min`, {
+                    lowText: 'current arrangement pace is patient',
+                    highText: 'current arrangement pace is rapid'
+                })
             },
             {
                 label: 'Wildest harmony',
                 value: wildestHarmony ? escapeHtml(wildestHarmony.harmonicAnalysis.keyLabel) : '--',
                 detail: wildestHarmony
                     ? `${escapeHtml(wildestHarmony.title)} • ${escapeHtml(wildestHarmony.harmonicAnalysis.weirdSummary)}`
-                    : 'waiting for harmonic analysis'
+                    : 'waiting for harmonic analysis',
+                reference: getHarmonyWeirdnessReference(wildestHarmony?.harmonicAnalysis)
             },
             {
                 label: 'Stickiest hook',
                 value: stickiestHook ? formatPercent(stickiestHook.lyricsAnalysis.topWordShare) : '--',
                 detail: stickiestHook
                     ? `${escapeHtml(stickiestHook.title)} • ${escapeHtml(stickiestHook.lyricsAnalysis.topWordsLabel)}`
-                    : 'waiting for lyric analysis'
+                    : 'waiting for lyric analysis',
+                reference: getHookReference(stickiestHook?.lyricsAnalysis)
             },
             {
                 label: 'Longest stanza',
@@ -2948,21 +3920,33 @@
                     : '--',
                 detail: longestStanzaTrack
                     ? escapeHtml(longestStanzaTrack.title)
-                    : 'waiting for lyric analysis'
+                    : 'waiting for lyric analysis',
+                reference: getRangeReference(longestStanzaTrack?.lyricsAnalysis?.maxStanzaLines, 4, 12, value => `${Math.round(value)} lines`, {
+                    lowText: 'current longest stanza is compact',
+                    highText: 'current longest stanza is extended'
+                })
             },
             {
                 label: 'Average stanza span',
                 value: averageStanzaSpan !== null ? `${averageStanzaSpan.toFixed(1)} lines` : '--',
                 detail: averageStanzaSpan !== null
                     ? 'mean stanza length across all songs'
-                    : 'waiting for lyric analysis'
+                    : 'waiting for lyric analysis',
+                reference: getRangeReference(averageStanzaSpan, 3, 8, value => `${value.toFixed(1)} lines`, {
+                    lowText: 'current stanza average is terse',
+                    highText: 'current stanza average is extended'
+                })
             },
             {
                 label: 'Richest lexicon',
                 value: richestLexicon ? `${richestLexicon.lyricsAnalysis.uniqueWords}` : '--',
                 detail: richestLexicon
                     ? `${escapeHtml(richestLexicon.title)} content words`
-                    : 'waiting for lyric analysis'
+                    : 'waiting for lyric analysis',
+                reference: getRangeReference(richestLexicon?.lyricsAnalysis?.uniqueWords, 30, 120, formatCount, {
+                    lowText: 'current richest lexicon is still tight',
+                    highText: 'current richest lexicon is expansive'
+                })
             }
         ];
 
@@ -2974,37 +3958,40 @@
             </article>
         `).join('');
 
+        telemetryRecommendations.innerHTML = renderMasteringRecommendations(metrics, waveformDetail);
+        refreshCurrentSongInfoPanel();
+
         telemetrySongs.innerHTML = `
-            <p class="telemetry-table-note">Waveform guide: click anywhere on a waveform to play from that moment. Pink edge bands mark detected cold opens and tail fades, amber lines mark section changes plus the strongest transient, and red waveform bars flag near-ceiling bins that may deserve a mastering pass.</p>
+            <p class="telemetry-table-note">Waveform guide: click anywhere on a waveform to play from that moment. Pink edge bands mark detected cold opens and tail fades, amber lines mark section changes plus the strongest transient, and red waveform bars flag near-ceiling bins that may deserve a mastering pass. Header notes show broad normal bands; each row now states where the current value sits against them.</p>
             <div class="telemetry-song-table-wrap">
                 <table class="telemetry-song-table">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Song</th>
-                            <th>Waveform</th>
-                            <th>Raw</th>
-                            <th>Trimmed</th>
-                            <th>Entry</th>
-                            <th>Tail</th>
-                            <th>Peak</th>
-                            <th>Ceiling</th>
-                            <th>Headroom</th>
-                            <th>Hotness</th>
-                            <th>Crest</th>
-                            <th>Mono</th>
-                            <th>Balance</th>
-                            <th>Width</th>
-                            <th>Format</th>
-                            <th>Bitrate</th>
-                            <th>Transients</th>
-                            <th>Key</th>
-                            <th>Odd moves</th>
-                            <th>Turnover</th>
-                            <th>Hook words</th>
-                            <th>Stanzas</th>
-                            <th>Lyric flow</th>
-                            <th>Section churn</th>
+                            <th>Waveform<span class="telemetry-head-ref">normal balanced body, isolated hot peaks</span></th>
+                            <th>Raw<span class="telemetry-head-ref">normal 3:00 to 5:00</span></th>
+                            <th>Trimmed<span class="telemetry-head-ref">normal 2:45 to 4:45</span></th>
+                            <th>Entry<span class="telemetry-head-ref">normal 0.00s to 1.50s</span></th>
+                            <th>Tail<span class="telemetry-head-ref">normal 0.30s to 4.00s</span></th>
+                            <th>Peak<span class="telemetry-head-ref">normal -6.0 dBFS to -0.8 dBFS</span></th>
+                            <th>Ceiling<span class="telemetry-head-ref">normal 0 to 2 hot bins</span></th>
+                            <th>Headroom<span class="telemetry-head-ref">normal 0.8 dB to 3.0 dB</span></th>
+                            <th>Hotness<span class="telemetry-head-ref">normal -16.0 dBFS to -11.0 dBFS</span></th>
+                            <th>Crest<span class="telemetry-head-ref">normal 8.0 dB to 14.0 dB</span></th>
+                            <th>Mono<span class="telemetry-head-ref">normal 0.92 to 1.00</span></th>
+                            <th>Balance<span class="telemetry-head-ref">normal within ±0.6 dB</span></th>
+                            <th>Width<span class="telemetry-head-ref">normal 25% to 65%</span></th>
+                            <th>Format<span class="telemetry-head-ref">normal 44.1-48 kHz stereo</span></th>
+                            <th>Bitrate<span class="telemetry-head-ref">normal 192 to 320 kbps</span></th>
+                            <th>Transients<span class="telemetry-head-ref">normal 20.0/min to 75.0/min</span></th>
+                            <th>Key<span class="telemetry-head-ref">normal one stable tonic</span></th>
+                            <th>Odd moves<span class="telemetry-head-ref">normal mostly diatonic, 0-2 detours</span></th>
+                            <th>Turnover<span class="telemetry-head-ref">normal 0.25/bar to 0.80/bar</span></th>
+                            <th>Hook words<span class="telemetry-head-ref">normal top word 4.0% to 14.0%</span></th>
+                            <th>Stanzas<span class="telemetry-head-ref">normal 3-8 lines / 18-60 words</span></th>
+                            <th>Lyric flow<span class="telemetry-head-ref">normal 8.0/min to 24.0/min</span></th>
+                            <th>Section churn<span class="telemetry-head-ref">normal 1.00/min to 3.50/min</span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -3012,6 +3999,78 @@
                             const ceilingFlagClass = metric.audioAnalysis && metric.audioAnalysis.clipBinCount > 0
                                 ? 'telemetry-mastering-flag telemetry-mastering-flag--hot'
                                 : 'telemetry-mastering-flag telemetry-mastering-flag--clean';
+                            const trimmedDuration = metric.audioAnalysis
+                                ? Math.max(0, metric.audioAnalysis.duration - metric.audioAnalysis.leadingSilence - metric.audioAnalysis.trailingSilence)
+                                : null;
+                            const rawRuntimeReference = getRangeReference(metric.effectiveDuration, 180, 300, formatTime, {
+                                lowText: 'current concise runtime',
+                                highText: 'current extended runtime'
+                            });
+                            const trimmedRuntimeReference = getRangeReference(trimmedDuration, 165, 285, formatTime, {
+                                lowText: 'current concise body',
+                                highText: 'current extended body'
+                            });
+                            const entryReference = getRangeReference(metric.audioAnalysis?.leadingSilence, 0, 1.5, formatSecondsMetric, {
+                                highText: 'current long cold open',
+                                insideResolver: value => value <= 0.1 ? 'current punch-in start' : 'current inside entry band'
+                            });
+                            const tailReference = getRangeReference(metric.audioAnalysis?.trailingSilence, 0.3, 4.0, formatSecondsMetric, {
+                                lowText: 'current abrupt tail',
+                                highText: 'current long tail'
+                            });
+                            const peakReference = getRangeReference(metric.audioAnalysis?.peakDb, -6, -0.8, value => formatDb(value, 'dBFS'), {
+                                lowText: 'current conservative peak',
+                                highText: 'current near ceiling'
+                            });
+                            const ceilingReference = getRangeReference(metric.audioAnalysis?.clipBinCount, 0, 2, value => `${Math.round(value)} bins`, {
+                                highText: 'current hot-bin heavy',
+                                insideResolver: value => value === 0 ? 'current clean ceiling' : 'current controlled hot spots'
+                            });
+                            const headroomReference = getRangeReference(metric.audioAnalysis?.headroomDb, 0.8, 3.0, formatHeadroom, {
+                                lowText: 'current tight ceiling margin',
+                                highText: 'current generous ceiling margin'
+                            });
+                            const rmsReference = getRangeReference(metric.audioAnalysis?.rmsDb, -16, -11, value => formatDb(value, 'dBFS'), {
+                                lowText: 'current restrained body',
+                                highText: 'current hot body'
+                            });
+                            const crestReference = getRangeReference(metric.audioAnalysis?.crestFactorDb, 8, 14, formatDb, {
+                                lowText: 'current compressed swing',
+                                highText: 'current punchy swing'
+                            });
+                            const monoReference = getRangeReference(metric.audioAnalysis?.monoCorrelation, 0.92, 1.0, formatRatio, {
+                                lowText: 'current mono fold risk',
+                                highText: 'current very tight fold'
+                            });
+                            const balanceReference = getRangeReference(metric.audioAnalysis?.stereoBalanceDb, 0, 0.6, value => `${value.toFixed(1)} dB`, {
+                                absolute: true,
+                                highText: 'current outside common balance band',
+                                insideResolver: value => value < 0.1 ? 'current centered' : 'current inside balance band'
+                            });
+                            const widthReference = getRangeReference(metric.audioAnalysis?.stereoWidthPct, 25, 65, formatPercent, {
+                                lowText: 'current narrow field',
+                                highText: 'current wide field'
+                            });
+                            const bitrateReference = getRangeReference(metric.audioAnalysis?.bitrateKbps, 192, 320, formatBitrate, {
+                                lowText: 'current lean payload',
+                                highText: 'current dense payload'
+                            });
+                            const transientReference = getRangeReference(metric.audioAnalysis?.transientDensity, 20, 75, formatDensity, {
+                                lowText: 'current sparse attacks',
+                                highText: 'current busy attack map'
+                            });
+                            const turnoverReference = getRangeReference(metric.harmonicTurnover, 0.25, 0.8, value => `${value.toFixed(2)}/bar`, {
+                                lowText: 'current slow chord rhythm',
+                                highText: 'current busy chord rhythm'
+                            });
+                            const lyricFlowReference = getRangeReference(metric.lyricDensity, 8, 24, value => `${value.toFixed(1)}/min`, {
+                                lowText: 'current sparse lyric cadence',
+                                highText: 'current dense lyric cadence'
+                            });
+                            const sectionChurnReference = getRangeReference(metric.sectionChurn, 1.0, 3.5, value => `${value.toFixed(2)}/min`, {
+                                lowText: 'current patient arrangement pace',
+                                highText: 'current rapid arrangement pace'
+                            });
 
                             return `
                                 <tr data-track-index="${metric.trackIndex}" class="${selectedTrackIndex === metric.trackIndex ? 'is-live' : ''}">
@@ -3021,28 +4080,28 @@
                                         <span class="telemetry-song-cell-subtitle">${metric.bpm ? `${metric.bpm} BPM` : 'tempo n/a'} • ${escapeHtml(metric.timeSignature)} • ${formatBars(metric.totalBars)} bars</span>
                                     </td>
                                     <td class="telemetry-wave-cell">${renderWaveformSvg(metric)}</td>
-                                    <td class="telemetry-cell-compact">${formatDurationForTelemetry(metric)}</td>
-                                    <td class="telemetry-cell-compact">${formatTrimmedDuration(metric)}</td>
-                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatSecondsMetric(metric.audioAnalysis.leadingSilence) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatSecondsMetric(metric.audioAnalysis.trailingSilence) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-medium">${formatPeakDisplay(metric)}</td>
-                                    <td class="telemetry-cell-medium"><span class="${ceilingFlagClass}">${formatCeilingFlags(metric)}</span></td>
-                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatHeadroom(metric.audioAnalysis.headroomDb) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatDb(metric.audioAnalysis.rmsDb, 'dBFS') : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatDb(metric.audioAnalysis.crestFactorDb) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatRatio(metric.audioAnalysis.monoCorrelation) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-medium">${metric.audioAnalysis ? formatStereoBalance(metric.audioAnalysis.stereoBalanceDb) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatPercent(metric.audioAnalysis.stereoWidthPct) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-medium">${formatMasterFormat(metric.audioAnalysis, metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatBitrate(metric.audioAnalysis.bitrateKbps) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-compact">${metric.audioAnalysis ? formatDensity(metric.audioAnalysis.transientDensity) : getTelemetryScanPlaceholder(metric.trackIndex)}</td>
-                                    <td class="telemetry-cell-medium">${escapeHtml(metric.harmonicAnalysis.keyLabel)}</td>
-                                    <td class="telemetry-cell-wide">${escapeHtml(metric.harmonicAnalysis.weirdSummary)}${metric.harmonicAnalysis.borrowedNames.length ? ` • ${escapeHtml(metric.harmonicAnalysis.borrowedNames.join(', '))}` : ''}</td>
-                                    <td class="telemetry-cell-compact">${Number.isFinite(metric.harmonicTurnover) ? `${metric.harmonicTurnover.toFixed(2)}/bar` : 'n/a'}</td>
-                                    <td class="telemetry-cell-wide">${escapeHtml(metric.lyricsAnalysis.topWordsLabel)}${metric.lyricsAnalysis.uniqueWords ? ` • ${metric.lyricsAnalysis.uniqueWords} unique` : ''}</td>
-                                    <td class="telemetry-cell-wide">${escapeHtml(metric.lyricsAnalysis.stanzaProfile)}${Number.isFinite(metric.lyricsAnalysis.avgStanzaWords) ? ` • ${metric.lyricsAnalysis.avgStanzaWords.toFixed(1)}W avg` : ''}</td>
-                                    <td class="telemetry-cell-compact">${Number.isFinite(metric.lyricDensity) ? `${metric.lyricDensity.toFixed(1)}/min` : 'n/a'}</td>
-                                    <td class="telemetry-cell-compact">${Number.isFinite(metric.sectionChurn) ? `${metric.sectionChurn.toFixed(2)}/min` : 'n/a'}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(formatDurationForTelemetry(metric), rawRuntimeReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(formatTrimmedDuration(metric), trimmedRuntimeReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatSecondsMetric(metric.audioAnalysis.leadingSilence) : getTelemetryScanPlaceholder(metric.trackIndex), entryReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatSecondsMetric(metric.audioAnalysis.trailingSilence) : getTelemetryScanPlaceholder(metric.trackIndex), tailReference)}</td>
+                                    <td class="telemetry-cell-medium">${renderTelemetryCell(formatPeakDisplay(metric), peakReference)}</td>
+                                    <td class="telemetry-cell-medium">${renderTelemetryCell(`<span class="${ceilingFlagClass}">${formatCeilingFlags(metric)}</span>`, ceilingReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatHeadroom(metric.audioAnalysis.headroomDb) : getTelemetryScanPlaceholder(metric.trackIndex), headroomReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatDb(metric.audioAnalysis.rmsDb, 'dBFS') : getTelemetryScanPlaceholder(metric.trackIndex), rmsReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatDb(metric.audioAnalysis.crestFactorDb) : getTelemetryScanPlaceholder(metric.trackIndex), crestReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatRatio(metric.audioAnalysis.monoCorrelation) : getTelemetryScanPlaceholder(metric.trackIndex), monoReference)}</td>
+                                    <td class="telemetry-cell-medium">${renderTelemetryCell(metric.audioAnalysis ? formatStereoBalance(metric.audioAnalysis.stereoBalanceDb) : getTelemetryScanPlaceholder(metric.trackIndex), balanceReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatPercent(metric.audioAnalysis.stereoWidthPct) : getTelemetryScanPlaceholder(metric.trackIndex), widthReference)}</td>
+                                    <td class="telemetry-cell-medium">${renderTelemetryCell(formatMasterFormat(metric.audioAnalysis, metric.trackIndex), getFormatReference(metric.audioAnalysis))}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatBitrate(metric.audioAnalysis.bitrateKbps) : getTelemetryScanPlaceholder(metric.trackIndex), bitrateReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatDensity(metric.audioAnalysis.transientDensity) : getTelemetryScanPlaceholder(metric.trackIndex), transientReference)}</td>
+                                    <td class="telemetry-cell-medium">${renderTelemetryCell(escapeHtml(metric.harmonicAnalysis.keyLabel), getKeyReference(metric.harmonicAnalysis))}</td>
+                                    <td class="telemetry-cell-wide">${renderTelemetryCell(`${escapeHtml(metric.harmonicAnalysis.weirdSummary)}${metric.harmonicAnalysis.borrowedNames.length ? ` • ${escapeHtml(metric.harmonicAnalysis.borrowedNames.join(', '))}` : ''}`, getHarmonyWeirdnessReference(metric.harmonicAnalysis))}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(Number.isFinite(metric.harmonicTurnover) ? `${metric.harmonicTurnover.toFixed(2)}/bar` : 'n/a', turnoverReference)}</td>
+                                    <td class="telemetry-cell-wide">${renderTelemetryCell(`${escapeHtml(metric.lyricsAnalysis.topWordsLabel)}${metric.lyricsAnalysis.uniqueWords ? ` • ${metric.lyricsAnalysis.uniqueWords} unique` : ''}`, getHookReference(metric.lyricsAnalysis))}</td>
+                                    <td class="telemetry-cell-wide">${renderTelemetryCell(`${escapeHtml(metric.lyricsAnalysis.stanzaProfile)}${Number.isFinite(metric.lyricsAnalysis.avgStanzaWords) ? ` • ${metric.lyricsAnalysis.avgStanzaWords.toFixed(1)}W avg` : ''}`, getStanzaReference(metric.lyricsAnalysis))}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(Number.isFinite(metric.lyricDensity) ? `${metric.lyricDensity.toFixed(1)}/min` : 'n/a', lyricFlowReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(Number.isFinite(metric.sectionChurn) ? `${metric.sectionChurn.toFixed(2)}/min` : 'n/a', sectionChurnReference)}</td>
                                 </tr>
                             `;
                         }).join('')}
@@ -3070,6 +4129,9 @@
         const btn = tabNav.querySelector(`[data-tab="${tabId}"]`);
         if (btn) btn.classList.add('active');
         document.getElementById('tab-' + tabId).classList.add('active');
+        if (appContainer) {
+            appContainer.classList.toggle('telemetry-expanded', tabId === 'telemetry');
+        }
         if (tabId === 'lyrics') {
             requestAnimationFrame(recomputeChordLayout);
         }
@@ -3077,6 +4139,10 @@
             ensureTelemetryAudioAnalysis();
             updateLiveTelemetryAnalysis(true);
         }
+    }
+
+    if (appContainer) {
+        appContainer.classList.toggle('telemetry-expanded', tabNav.querySelector('.tab-btn.active')?.dataset.tab === 'telemetry');
     }
 
     telemetrySongs.addEventListener('click', (e) => {
@@ -3186,10 +4252,8 @@
         updateURL(trackIndex);
         updateLiveTelemetryAnalysis(true);
 
-        const tempoInfo = document.createElement('div');
-        tempoInfo.className = 'tempo-info';
-        tempoInfo.textContent = `Tempo: ${track.tempo} BPM | Time Signature: ${track.timeSignature}`;
-        structureContent.appendChild(tempoInfo);
+        const telemetryMetrics = data.tracks.map(getTrackMetrics);
+        structureContent.insertAdjacentHTML('beforeend', renderSongInfoPanel(telemetryMetrics[trackIndex]));
         structureContent.appendChild(chordsCanvas);
 
         track.lyrics.forEach((line, index) => {
