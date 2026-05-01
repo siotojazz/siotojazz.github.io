@@ -78,9 +78,9 @@ function getMosaicDefinition(format) {
 }
 
 const VIDEO_LOOP_TRANSITION = {
-    minSeconds: 0.35,
-    maxSeconds: 0.85,
-    ratio: 0.12
+    minSeconds: 0.65,
+    maxSeconds: 1.35,
+    ratio: 0.16
 };
 
 const MOSAIC_OVERLAY_BLEED = 1.5;
@@ -254,12 +254,12 @@ function getLyricTransitionState(line, time, track) {
     };
 }
 
-function getEqualPowerBlend(progress) {
+function getVisualCrossfade(progress) {
     const clampedProgress = clamp(progress, 0, 1);
-    const angle = clampedProgress * (Math.PI / 2);
+    const easedProgress = clampedProgress * clampedProgress * (3 - (2 * clampedProgress));
     return {
-        outgoingOpacity: Math.cos(angle),
-        incomingOpacity: Math.sin(angle)
+        outgoingOpacity: 1 - easedProgress,
+        incomingOpacity: easedProgress
     };
 }
 
@@ -469,7 +469,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
     // Overlay canvas is alpha-composited above the video layer; backdrop is drawn here
     // first, then the mosaic tiles are punched out so the GPU-composited video shows
     // through, then text/lyrics/grain land on top.
-    const context = canvas.getContext('2d', { alpha: true, desynchronized: true });
+    const context = canvas.getContext('2d', { alpha: true, desynchronized: mode !== 'render' });
 
     stage.style.position = 'relative';
     stage.style.width = '100%';
@@ -543,6 +543,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
     let cachedHostHeight = 0;
     let cachedCanvasLayoutKey = '';
     let cachedCanvasLayout = null;
+    let currentVideoObjectUrl = null;
 
     function getSafeAreaForSize(width, height) {
         const margin = currentFormat.safeMargin || {};
@@ -681,6 +682,28 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         }
     }
 
+    function revokeCurrentVideoObjectUrl() {
+        if (!currentVideoObjectUrl) {
+            return;
+        }
+        URL.revokeObjectURL(currentVideoObjectUrl);
+        currentVideoObjectUrl = null;
+    }
+
+    async function resolveVideoSource(path) {
+        if (mode !== 'render') {
+            return { source: path, objectUrl: null };
+        }
+
+        const response = await fetch(path);
+        if (!response.ok) {
+            throw new Error(`Video fetch failed: ${response.status}`);
+        }
+
+        const objectUrl = URL.createObjectURL(await response.blob());
+        return { source: objectUrl, objectUrl };
+    }
+
     function applyFormat(nextFormatId) {
         currentFormat = getFormatById(nextFormatId);
         host.style.aspectRatio = currentFormat.aspectRatio;
@@ -762,6 +785,13 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         rebuildNoisePattern();
 
         if (!track?.video?.path) {
+            pauseVideoPlayback();
+            pauseLoopVideoPlayback();
+            video.removeAttribute('src');
+            video.load();
+            loopVideo.removeAttribute('src');
+            loopVideo.load();
+            revokeCurrentVideoObjectUrl();
             resolveMediaReady();
             drawFrame(lastRenderedTime, { duration: currentDuration });
             return;
@@ -773,10 +803,25 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         video.load();
         loopVideo.removeAttribute('src');
         loopVideo.load();
-        video.src = track.video.path;
-        loopVideo.src = track.video.path;
+        revokeCurrentVideoObjectUrl();
+
+        let nextObjectUrl = null;
 
         try {
+            const { source, objectUrl } = await resolveVideoSource(track.video.path);
+            nextObjectUrl = objectUrl;
+
+            if (token !== mediaLoadToken) {
+                if (nextObjectUrl) {
+                    URL.revokeObjectURL(nextObjectUrl);
+                }
+                return;
+            }
+
+            video.src = source;
+            loopVideo.src = source;
+            currentVideoObjectUrl = nextObjectUrl;
+
             await Promise.all([
                 waitForEvent(video, 'loadeddata', 'error'),
                 waitForEvent(loopVideo, 'loadeddata', 'error'),
@@ -799,11 +844,15 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
             drawFrame(lastRenderedTime, { duration: currentDuration });
         } catch {
             if (token !== mediaLoadToken) {
+                if (nextObjectUrl) {
+                    URL.revokeObjectURL(nextObjectUrl);
+                }
                 return;
             }
 
             videoReady = false;
             loopVideoReady = false;
+            revokeCurrentVideoObjectUrl();
             resolveMediaReady();
             drawFrame(lastRenderedTime, { duration: currentDuration });
         }
@@ -820,38 +869,55 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         );
     }
 
-    function getLoopedVideoTime(time) {
+    function getVideoLoopState(time) {
         if (!videoReady || !Number.isFinite(video.duration) || video.duration <= 0) {
-            return 0;
+            return {
+                primaryTime: 0,
+                transition: null
+            };
         }
 
+        const videoDuration = video.duration;
+        const transitionDuration = getLoopTransitionDuration(videoDuration);
         const safeTime = toFiniteNonNegative(time, 0);
-        return ((safeTime % video.duration) + video.duration) % video.duration;
+        const cycleDuration = Math.max(videoDuration - transitionDuration, 0.001);
+        const primaryTime = safeTime < videoDuration
+            ? safeTime
+            : transitionDuration + (((safeTime - videoDuration) % cycleDuration) + cycleDuration) % cycleDuration;
+
+        if (transitionDuration <= 0) {
+            return {
+                primaryTime: ((safeTime % videoDuration) + videoDuration) % videoDuration,
+                transition: null
+            };
+        }
+
+        const transitionStart = videoDuration - transitionDuration;
+        if (primaryTime < transitionStart) {
+            return {
+                primaryTime,
+                transition: null
+            };
+        }
+
+        const blend = clamp((primaryTime - transitionStart) / transitionDuration, 0, 1);
+
+        return {
+            primaryTime,
+            transition: {
+                blend,
+                incomingTime: clamp(primaryTime - transitionStart, 0, transitionDuration),
+                ...getVisualCrossfade(blend)
+            }
+        };
+    }
+
+    function getLoopedVideoTime(time) {
+        return getVideoLoopState(time).primaryTime;
     }
 
     function getLoopTransitionState(time) {
-        if (!videoReady || !Number.isFinite(video.duration) || video.duration <= 0) {
-            return null;
-        }
-
-        const loopedTime = getLoopedVideoTime(time);
-        const transitionDuration = getLoopTransitionDuration(video.duration);
-        if (transitionDuration <= 0) {
-            return null;
-        }
-
-        const transitionStart = video.duration - transitionDuration;
-        if (loopedTime < transitionStart) {
-            return null;
-        }
-
-        const blend = clamp((loopedTime - transitionStart) / transitionDuration, 0, 1);
-
-        return {
-            blend,
-            seamTime: clamp(loopedTime - transitionStart, 0, transitionDuration),
-            ...getEqualPowerBlend(blend)
-        };
+        return getVideoLoopState(time).transition;
     }
 
     function syncPreviewVideo(time, isPlaying) {
@@ -872,9 +938,9 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
             requestVideoPlayback();
 
             if (loopTransitionState && loopVideoReady) {
-                const loopDrift = Math.abs((loopVideo.currentTime || 0) - loopTransitionState.seamTime);
+                const loopDrift = Math.abs((loopVideo.currentTime || 0) - loopTransitionState.incomingTime);
                 if (loopDrift > 0.18) {
-                    setMediaTime(loopVideo, loopTransitionState.seamTime);
+                    setMediaTime(loopVideo, loopTransitionState.incomingTime);
                 }
                 requestLoopVideoPlayback();
             } else {
@@ -898,7 +964,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
             return;
         }
 
-        const loopTargetTime = loopTransitionState ? loopTransitionState.seamTime : 0;
+        const loopTargetTime = loopTransitionState ? loopTransitionState.incomingTime : 0;
         const loopDrift = Math.abs((loopVideo.currentTime || 0) - loopTargetTime);
         if (loopDrift > (1 / 60)) {
             setMediaTime(loopVideo, loopTargetTime);
@@ -953,7 +1019,84 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         }
     }
 
-    async function syncVideoToTime(time, strict = false, isPlaying = false) {
+    async function advanceMediaToTime(media, targetTime, tolerance = (1 / 120)) {
+        const currentTime = media.currentTime || 0;
+        const delta = targetTime - currentTime;
+
+        if (Math.abs(delta) <= tolerance) {
+            if (!media.paused) {
+                media.pause();
+            }
+            return;
+        }
+
+        if (delta < -tolerance || delta > 0.35) {
+            if (!media.paused) {
+                media.pause();
+            }
+            await seekMediaToTime(media, targetTime, tolerance);
+            if (!media.paused) {
+                media.pause();
+            }
+            return;
+        }
+
+        let playbackStarted = true;
+        try {
+            const playPromise = media.play();
+            if (playPromise?.catch) {
+                await playPromise.catch(() => {
+                    playbackStarted = false;
+                });
+            }
+        } catch {
+            playbackStarted = false;
+        }
+
+        if (!playbackStarted || media.paused) {
+            await seekMediaToTime(media, targetTime, tolerance);
+            if (!media.paused) {
+                media.pause();
+            }
+            return;
+        }
+
+        await new Promise((resolve) => {
+            const startedAt = performance.now();
+            const maxWaitMs = Math.max(160, ((delta / Math.max(media.playbackRate || 1, 0.1)) + 0.25) * 1000);
+            let timeoutId = 0;
+
+            const finish = () => {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                    timeoutId = 0;
+                }
+                resolve();
+            };
+
+            const check = () => {
+                if (
+                    media.currentTime >= targetTime - tolerance
+                    || media.paused
+                    || media.ended
+                    || media.error
+                    || performance.now() - startedAt > maxWaitMs
+                ) {
+                    finish();
+                    return;
+                }
+                timeoutId = setTimeout(check, 4);
+            };
+
+            check();
+        });
+
+        if (!media.paused) {
+            media.pause();
+        }
+    }
+
+    async function syncVideoToTime(time, strict = false, isPlaying = false, sequential = false) {
         if (!videoReady || !Number.isFinite(video.duration) || video.duration <= 0) {
             return;
         }
@@ -968,10 +1111,22 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         const targetTime = getLoopedVideoTime(time);
         const loopTransitionState = getLoopTransitionState(time);
 
+        if (sequential) {
+            await Promise.all([
+                advanceMediaToTime(video, targetTime),
+                loopVideoReady
+                    ? advanceMediaToTime(loopVideo, loopTransitionState ? loopTransitionState.incomingTime : 0, loopTransitionState ? (1 / 120) : (1 / 60))
+                    : Promise.resolve()
+            ]);
+            pauseVideoPlayback();
+            pauseLoopVideoPlayback();
+            return;
+        }
+
         await seekMediaToTime(video, targetTime);
 
         if (loopVideoReady) {
-            await seekMediaToTime(loopVideo, loopTransitionState ? loopTransitionState.seamTime : 0, loopTransitionState ? (1 / 120) : (1 / 60));
+            await seekMediaToTime(loopVideo, loopTransitionState ? loopTransitionState.incomingTime : 0, loopTransitionState ? (1 / 120) : (1 / 60));
         }
     }
 
@@ -1400,7 +1555,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         drawFrame(lastRenderedTime, { duration: currentDuration });
     }
 
-    async function renderTime(time, { duration, waitForVideo = false, isPlaying = false } = {}) {
+    async function renderTime(time, { duration, waitForVideo = false, isPlaying = false, sequentialVideo = false } = {}) {
         if (Number.isFinite(Number(duration))) {
             currentDuration = Math.max(
                 toFiniteNonNegative(currentTrack?.duration, 0),
@@ -1412,7 +1567,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
 
         if (waitForVideo) {
             await mediaReadyPromise;
-            await syncVideoToTime(safeTime, true, false);
+            await syncVideoToTime(safeTime, true, false, sequentialVideo);
         } else if (videoReady) {
             syncPreviewVideo(safeTime, isPlaying);
         }

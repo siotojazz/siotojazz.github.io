@@ -140,10 +140,11 @@ async function bootstrap() {
         isReady() {
             return isReady;
         },
-        setTime(time) {
+        setTime(time, options = {}) {
             return stage.setTime(clamp(time, 0, getDuration()), {
                 duration: getDuration(),
-                waitForVideo: true
+                waitForVideo: true,
+                sequentialVideo: options.sequentialVideo === true
             });
         },
         setFormat(formatId) {
