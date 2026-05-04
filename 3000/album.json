@@ -2,7 +2,7 @@
   "album": {
     "title": "3000",
     "band": "Sioto Jazz",
-    "releaseDate": "TBD",
+    "moment": "TBD",
     "coverImage": "album_cover.png"
   },
     "chords": [
@@ -113,7 +113,8 @@
         { "line": "те гледам во себеси", "barNumber": 62, "barLength": 2, "offset": 0 },
         { "line": "импулс во телото", "barNumber": 64, "barLength": 2, "offset": 0 }
       ],
-      "releaseDate": "2022-11-11",
+      "moment": "2022-11-11T00:00:00",
+      "worldCoordinates": "40.98445001438758, 20.923171906845294",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], samplers[5], bass[5], synths[5], backingvocals[0], chimes[5]",
       "recorded": "lyrics[5], samplers[5], vocals[5], synths[4], chimes[5], guitar1[5], guitar2[5]",
       "notes": "Sax?",
@@ -223,7 +224,8 @@
         { "line": "magic is what I'll do", "barNumber": 172, "barLength": 2, "offset": 0 },
         { "line": "cuz I know the feeling is true", "barNumber": 174, "barLength": 4, "offset": 0 }
       ],
-      "releaseDate": "2023-08-20",
+      "moment": "2023-08-20T00:00:00",
+      "worldCoordinates": "41.030404989330556, 21.334121885230374",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], drums[3], bass[5], backingvocals[0]",
       "recorded": "lyrics[5], vocals[5], guitar1[5], guitar2[5], drums[0], bass[0], backingvocals[0]",
       "notes": "Sax?",
@@ -367,7 +369,8 @@
         { "line": "ајде дај да избегаме", "barNumber": 82, "barLength": 4, "offset": 0 },
         { "line": "на тој остров во пацификот", "barNumber": 86, "barLength": 4, "offset": 0 }
       ],
-      "releaseDate": "2020-08-28",
+      "moment": "2020-08-28T00:00:00",
+      "worldCoordinates": "-37.68895138086445, 178.54817000303333",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], samplers[5], synths[5], sax[5], backingvocals[0]",
       "recorded": "lyrics[5], vocals[5], samplers[5], synths[5], guitar1[5], guitar2[5], bass[0], sax[0], backingvocals[0]",
       "notes": "The buildup should be shortened. Use samplers or drums? Key change? Should Eva sing? Should we use real strings or synths?",
@@ -455,7 +458,8 @@
         { "line": "still you make me feel, from head to heel", "barNumber": 87, "barLength": 4, "offset": 0 },
         { "line": "still you make it feel, so quite unreal", "barNumber": 91, "barLength": 4, "offset": 0 }
       ],
-      "releaseDate": "2023-06-30",
+      "moment": "2023-06-30T00:00:00",
+      "worldCoordinates": "40.91674165451901, 21.58526959636113",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], drums[5], bass[5], sax[5], violin[0], cello[0], backingvocals[0]",
       "recorded":"lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[0], drums[5], bass[0], sax[0], violin[0], cello[0], backingvocals[0]",
       "notes": "Do we need back vocals?",
@@ -572,7 +576,8 @@
         { "line": "the cinema", "barNumber": 127, "barLength": 2, "offset": 0 },
         { "line": "the cinema", "barNumber": 129, "barLength": 2, "offset": 0 }
       ],
-      "releaseDate": "2025-04-04",
+      "moment": "2025-04-04T00:00:00",
+      "worldCoordinates": "41.02813634240472, 21.334805865379995",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], drums[5], synths[5], backingvocals[5], violin[0], cello[0], acoustic[5]",
       "recorded": "lyrics[5], vocals[5], synths[5], backingvocals[5], guitar1[5], guitar2[5], bass[0], drums[2], violin[0], cello[0], acoustic[0]", 
       "notes": "Sax?",
@@ -699,7 +704,8 @@
         { "line": "значајни за некои", "barNumber": null, "barLength": null, "offset": null },
         { "line": "но ние само поминуваме", "barNumber": null, "barLength": null, "offset": null }
       ],
-      "releaseDate": "TBD",
+      "moment": "TBD",
+      "worldCoordinates": "41.18103200806172, 20.744568743194865",
       "written": "lyrics[5], vocals[5]",
       "recorded": "lyrics[5], vocals[0]",
       "notes": "Lyrics not time-synced yet.",
@@ -740,7 +746,8 @@
         { "line": "for you to sail", "barNumber": 126, "barLength": 2, "offset": 0 },
         { "line": "my innocent sea", "barNumber": 130, "barLength": 2, "offset": 0 }
       ],
-      "releaseDate": "2023-12-12",
+      "moment": "2023-12-12T00:00:00",
+      "worldCoordinates": "40.92416899759262, 21.443313956263182",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], bass[5], drums[5], violin[0], cello[0], synths[5], backingvocals[0]",
       "recorded": "lyrics[5], vocals[5], drums[5], synths[5], guitar1[5], guitar2[5], acoustic[0], bass[0], violin[0], cello[0], backingvocals[0]",
       "notes": "Strings should enter later maybe?",
@@ -847,7 +854,8 @@
         { "line": "(Will you move on?)", "barNumber": 104, "barLength": 2, "offset": 0 },
         { "line": "(To the future?)", "barNumber": 106, "barLength": 2, "offset": 0 }
       ],
-      "releaseDate": "2023-11-19",
+      "moment": "2023-11-19T00:00:00",
+      "worldCoordinates": "40.96871007511372, 20.910475634416567",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[5], sax[5], drums[3], chimes[5], backingvocals[4], brass[1]",
       "recorded": "lyrics[5], vocals[5], guitar1[5], guitar2[5], bass[0], sax[0], drums[0], chimes[5], backingvocals[4], brass[0]",
       "notes": "Should we use samplers? Key change?",
@@ -998,7 +1006,8 @@
         { "line": "I'll wait for you", "barNumber": 112, "barLength": 4, "offset": 0 },
         { "line": "I'll wait for you", "barNumber": 116, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
-      "releaseDate": "2022-10-14",
+      "moment": "2022-10-14T00:00:00",
+      "worldCoordinates": "48.20831814506486, 16.180807283527667",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], drums[5], sax[5], bass[5], synths[4], backingvocals[0], trumpet[1], acoustic[0]",
       "recorded":"lyrics[5], vocals[5], synths[5] , guitar1[5], guitar2[5], drums[0], bass[0], sax[0], backingvocals[0], trumpet[0], acoustic[0]",
       "notes": "Trumpet solo at the end. Make the synths less corny.",
@@ -1119,7 +1128,8 @@
         { "line": "по иста патека", "barNumber": 150, "barLength": 2, "offset": 0, "stanzaEnd": true },
         { "line": "колку далеку?", "barNumber": 156, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
-      "releaseDate": "2022-10-26",
+      "moment": "2022-10-26T00:00:00",
+      "worldCoordinates": "41.024467352171904, 21.337804996395853",
       "written": "lyrics[5], vocals[5], guitar1[5], bass[5], samplers[5], drums[5], synths[5], backingvocals[0], piano[5]",
       "recorded":"lyrics[5], vocals[5], guitar1[5], bass[0], samplers[3], drums[5], synths[3], backingvocals[0], piano[3]",
       "notes": "Needs transitions on the samplers between sections.",
@@ -1225,7 +1235,8 @@
         { "line": "sense how it feels", "barNumber": 69, "barLength": 1, "offset": 0 },
         { "line": "with an ember in your heart", "barNumber": 70, "barLength": 1, "offset": 0 }
       ],
-      "releaseDate": "2025-05-16",
+      "moment": "2025-05-16T00:00:00",
+      "worldCoordinates": "40.99322162050852, 20.881456860306066",
       "written": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[5], bass[5], samplers[5], drums[3], synths[5], backingvocals[0]",
       "recorded": "lyrics[5], vocals[5], guitar1[5], guitar2[5], acoustic[0], bass[0], samplers[5], drums[0], synths[5], backingvocals[0]",
       "notes": "The bridge should be more powerful.",
@@ -1351,7 +1362,8 @@
         { "line": "и богати и успешни", "barNumber": 156, "barLength": 4, "offset": 0 },
         { "line": "селани", "barNumber": 160, "barLength": 4, "offset": 0, "stanzaEnd": true }
       ],
-      "releaseDate": "2025-09-15",
+      "moment": "2025-09-15T00:00:00",
+      "worldCoordinates": "41.01735450839248, 21.342367326466608",
       "written": "lyrics[5], vocals[5], acoustic[5]",
       "recorded": "lyrics[5]",
       "notes": "",

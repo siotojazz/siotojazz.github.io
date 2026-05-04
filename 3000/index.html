@@ -508,6 +508,16 @@
             line-height: 1.4;
             word-break: break-word;
         }
+        .song-info-link {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 2px;
+        }
+        .song-info-link:hover,
+        .song-info-link:focus-visible {
+            color: var(--club-blue);
+        }
         .song-info-reference {
             margin-top: 4px;
         }
@@ -2000,6 +2010,38 @@
             .replace(/'/g, '&#39;');
     }
 
+    function normalizeWorldCoordinates(value) {
+        if (typeof value !== 'string') return '';
+        const match = value.trim().match(/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/);
+        if (!match) return '';
+        return `${match[1]},${match[2]}`;
+    }
+
+    function formatMomentLabel(value) {
+        if (!value) return 'moment n/a';
+        if (value === 'TBD') return 'TBD';
+
+        const momentDate = new Date(value);
+        if (Number.isNaN(momentDate.getTime())) return String(value);
+
+        return momentDate.toLocaleString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+    }
+
+    function getWorldCoordinatesLinkMarkup(value) {
+        const coordinates = normalizeWorldCoordinates(value);
+        if (!coordinates) return 'location n/a';
+
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(coordinates)}`;
+        return `<a class="song-info-link" href="${mapsUrl}" target="_blank" rel="noreferrer noopener">${escapeHtml(coordinates)}</a>`;
+    }
+
     function average(values) {
         if (!values.length) return null;
         return values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -2037,10 +2079,10 @@
         const rootName = `${match[1].toUpperCase()}${match[2] || ''}`;
         const suffix = (match[3] || '').trim().toLowerCase();
         const rootSemitone = NOTE_TO_SEMITONE[rootName];
-        if (!Number.isInteger(rootSemitone)) return null;
+        if (!Number.isFinite(rootSemitone)) return null;
 
         let quality = 'major';
-        if (/dim|°|o|b5/.test(suffix)) {
+        if (/dim|o/.test(suffix)) {
             quality = 'diminished';
         } else if (/aug|\+/.test(suffix)) {
             quality = 'augmented';
@@ -2667,11 +2709,13 @@
     function renderSongInfoPanel(metric) {
         const stats = [
             { label: 'Tempo', value: metric.bpm ? `${metric.bpm} BPM` : 'tempo n/a' },
-            { label: 'Signature', value: escapeHtml(metric.timeSignature) },
-            { label: 'Key', value: escapeHtml(metric.harmonicAnalysis.keyLabel) },
+            { label: 'Signature', value: metric.timeSignature || 'n/a' },
+            { label: 'Key', value: metric.harmonicAnalysis.keyLabel || 'n/a' },
             { label: 'Bars', value: `${formatBars(metric.totalBars)} bars` },
             { label: 'Sections', value: `${metric.sectionCount}` },
-            { label: 'Lyrics', value: `${metric.lyricLines} lines` }
+            { label: 'Lyrics', value: `${metric.lyricLines} lines` },
+            { label: 'Moment', value: formatMomentLabel(metric.moment) },
+            { label: 'Location', htmlValue: getWorldCoordinatesLinkMarkup(metric.worldCoordinates) }
         ];
 
         return `
@@ -2680,7 +2724,7 @@
                     ${stats.map(stat => `
                         <div class="song-info-stat">
                             <span class="song-info-label">${stat.label}</span>
-                            <span class="song-info-value">${stat.value}</span>
+                            <span class="song-info-value">${stat.htmlValue ?? escapeHtml(stat.value)}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -3542,6 +3586,8 @@
             title: track.title || `Track ${trackIndex + 1}`,
             bpm: Number.isFinite(bpm) ? bpm : null,
             timeSignature: track.timeSignature || 'n/a',
+            moment: track.moment || '',
+            worldCoordinates: normalizeWorldCoordinates(track.worldCoordinates),
             lyricLines,
             sectionCount: sections.length,
             totalBars,
@@ -4945,10 +4991,11 @@
         });
         songList.appendChild(songItem);
 
-        // Show time since release date
-        if (track.releaseDate) {
-            const releaseDate = new Date(track.releaseDate);
-            songMeta.textContent = formatRelativeTime(releaseDate);
+        // Show time since the track moment
+        const trackMoment = track.moment;
+        if (trackMoment) {
+            const momentDate = new Date(trackMoment);
+            songMeta.textContent = formatRelativeTime(momentDate);
         } else {
             songMeta.textContent = '';
         }
