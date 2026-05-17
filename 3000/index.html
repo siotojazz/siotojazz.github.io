@@ -1352,12 +1352,16 @@
 
         /* ── Moodboard (Moodboard tab) ── */
         .moodboard {
+            min-height: 100%;
+            display: flex;
             padding: 0;
             font-size: 12px;
         }
         .moodboard-grid {
+            flex: 1;
             display: grid;
             width: 100%;
+            min-height: 100%;
             background-color: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             padding: 10px;
@@ -1494,8 +1498,41 @@
             .structure-chord {
                 padding: 4px 2px;
             }
+            .song-item {
+                grid-template-columns: minmax(0, 1fr) auto;
+                column-gap: 8px;
+                row-gap: 3px;
+                align-items: start;
+                height: auto;
+                padding-top: 6px;
+                padding-bottom: 6px;
+            }
             .song-title { font-size: 16px; }
             .song-item.active .song-title { font-size: 18px; }
+            .song-title {
+                grid-column: 1;
+                grid-row: 1;
+                line-height: 1.2;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+            }
+            .song-status {
+                grid-column: 1 / -1;
+                grid-row: 2;
+                justify-self: start;
+                line-height: 1.2;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+                text-align: left;
+            }
+            .song-length {
+                grid-column: 2;
+                grid-row: 1;
+                align-self: start;
+                line-height: 1.2;
+            }
             .current-info { font-size: 20px; }
             .current-lyric { font-size: 16px; }
             .current-chord, .chord-instructions { font-size: 14px; }

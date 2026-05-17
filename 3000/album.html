@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sioto Jazz - 3000 Album Pitch</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="album.css">
+</head>
+<body>
+    <main class="pitch-shell" id="pitch-shell">
+        <section class="pitch-hero" aria-labelledby="pitch-title">
+            <div class="pitch-collage pitch-collage--hero" id="pitch-hero-collage" aria-hidden="true"></div>
+            <div class="pitch-hero__shade" aria-hidden="true"></div>
+
+            <div class="pitch-hero__content">
+                <p class="pitch-kicker" id="pitch-kicker">Visual album pitch</p>
+                <h1 class="pitch-title" id="pitch-title">3000 <span class="pitch-title-label" id="pitch-title-label">(Working title of the album)</span></h1>
+                <p class="pitch-subtitle" id="pitch-subtitle">Sioto Jazz</p>
+                <div class="pitch-tags" id="pitch-hero-tags" aria-label="Album markers"></div>
+            </div>
+
+            <a class="pitch-hero__jump" href="#pitch-tracks" title="Track previews">
+                <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                <span class="sr-only">Track previews</span>
+            </a>
+        </section>
+
+        <section class="pitch-section pitch-section--tracks" id="pitch-tracks" aria-labelledby="tracks-heading">
+            <header class="pitch-section__header pitch-section__header--compact">
+                <p class="pitch-kicker">Fragments</p>
+                <h2 id="tracks-heading">SONGS</h2>
+            </header>
+            <div class="track-reel" id="track-reel" aria-live="polite"></div>
+        </section>
+
+        <section class="pitch-section pitch-section--index" aria-labelledby="index-heading">
+            <header class="pitch-section__header pitch-section__header--compact">
+                <p class="pitch-kicker">Sequence</p>
+                <h2 id="index-heading">Full Track Index</h2>
+            </header>
+            <ol class="track-index" id="track-index"></ol>
+        </section>
+
+        <section class="pitch-section pitch-section--band" aria-labelledby="band-heading">
+            <header class="pitch-section__header pitch-section__header--compact">
+                <p class="pitch-kicker">Band</p>
+                <h2 id="band-heading">Sioto Jazz</h2>
+            </header>
+            <div class="band-profile" id="band-profile"></div>
+        </section>
+
+        <section class="pitch-section pitch-section--pulse" aria-labelledby="pulse-heading">
+            <header class="pitch-section__header pitch-section__header--compact">
+                <p class="pitch-kicker">State</p>
+                <h2 id="pulse-heading">Production Pulse</h2>
+            </header>
+            <div class="pulse-grid" id="production-pulse"></div>
+        </section>
+
+        <section class="pitch-cta" aria-labelledby="cta-heading">
+            <div class="pitch-collage pitch-collage--footer" id="pitch-footer-collage" aria-hidden="true"></div>
+            <div class="pitch-cta__content">
+                <p class="pitch-kicker">Contact</p>
+                <h2 id="cta-heading">Sioto Jazz</h2>
+                <p class="pitch-cta__note" id="pitch-cta-note" hidden></p>
+                <div class="pitch-cta__actions" id="pitch-cta-actions"></div>
+            </div>
+        </section>
+    </main>
+
+    <div class="pitch-fixed-cta" id="pitch-fixed-cta" aria-label="Pitch contact"></div>
+
+    <div class="pitch-notice-modal" id="pitch-notice-modal" role="dialog" aria-modal="true" aria-labelledby="pitch-notice-title" hidden>
+        <div class="pitch-notice-modal__panel">
+            <p class="pitch-kicker">Notice</p>
+            <h2 id="pitch-notice-title">Private Work Preview</h2>
+            <p id="pitch-notice-body"></p>
+            <button class="pitch-notice-modal__accept" id="pitch-notice-accept" type="button">Accept and Continue</button>
+        </div>
+    </div>
+
+    <audio id="pitch-audio" preload="metadata"></audio>
+    <script type="module" src="js/album-pitch.js"></script>
+</body>
+</html>

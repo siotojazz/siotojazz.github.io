@@ -438,7 +438,7 @@
         /* ── Photos ── */
         .photos {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(6, minmax(0, 1fr));
             grid-template-rows: auto auto;
             gap: 3px;
         }
@@ -576,43 +576,61 @@
 
         /* ── Responsive ── */
         @media (max-width: 640px) {
-            header { padding: 80px 0 40px; }
-            .wrap { padding: 0 18px; }
-            .section { padding: 32px 0; }
+            header { padding: clamp(92px, 18vh, 120px) 0 clamp(44px, 8vh, 56px); }
+            .wrap { padding: 0 clamp(20px, 7vw, 28px); }
+            h1 { font-size: 46px; letter-spacing: 2px; }
+            .tagline { max-width: 100%; margin-left: auto; margin-right: auto; letter-spacing: 3px; line-height: 1.8; }
+            .section { padding: clamp(32px, 8vw, 36px) 0; }
             .photos {
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto auto auto;
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+                grid-template-rows: auto auto;
             }
-            .photos img:nth-child(1) { grid-column: 1 / 3; grid-row: 1 / 2; aspect-ratio: 16/9; }
-            .photos img:nth-child(2) { grid-column: 1 / 2; grid-row: 2 / 3; aspect-ratio: 1; }
-            .photos img:nth-child(3) { grid-column: 2 / 3; grid-row: 2 / 3; aspect-ratio: 1; }
-            .photos img:nth-child(4) { grid-column: 1 / 2; grid-row: 3 / 4; aspect-ratio: 1; }
-            .photos img:nth-child(5) { grid-column: 2 / 3; grid-row: 3 / 4; aspect-ratio: 1; }
+            .photos img:nth-child(1) { grid-column: 1 / 4; grid-row: 1 / 2; aspect-ratio: 3/2; }
+            .photos img:nth-child(2) { grid-column: 4 / 7; grid-row: 1 / 2; aspect-ratio: 3/2; }
+            .photos img:nth-child(3) { grid-column: 1 / 3; grid-row: 2 / 3; aspect-ratio: 1; }
+            .photos img:nth-child(4) { grid-column: 3 / 5; grid-row: 2 / 3; aspect-ratio: 1; }
+            .photos img:nth-child(5) { grid-column: 5 / 7; grid-row: 2 / 3; aspect-ratio: 1; }
             table { display: block; overflow-x: auto; }
             th, td { white-space: nowrap; }
-            .release-item { flex-direction: column; gap: 2px; }
-            .sample-link { padding: 16px 20px 16px 14px; font-size: 15px; }
-            .platform-links a { font-size: 15px; padding: 4px 0; }
-            .links a { font-size: 15px; padding: 4px 0; }
-            .page-nav { gap: 6px 12px; margin-top: -8px; }
-            .page-nav a, .page-nav-toggle { flex-basis: 132px; }
-            .release-list { gap: 14px; }
-            .release-main { align-items: flex-start; gap: 10px; }
+            .sample-link { padding: 14px 18px; font-size: 13px; }
+            .platform-links a { font-size: 13px; padding: 6px 0; }
+            .links a { font-size: 13px; padding: 6px 0; }
+            .page-nav { gap: 8px 20px; margin-top: -12px; }
+            .page-nav a, .page-nav-toggle { flex-basis: 138px; }
+            .release-list { gap: 18px; }
+            .release-main { align-items: center; gap: 12px; }
             .release-copy {
                 display: grid;
                 gap: 4px;
-                align-content: start;
+                align-content: center;
             }
-            .release-copy a { line-height: 1.35; }
-            .release-cover { width: 72px; height: 72px; flex-basis: 72px; }
+            .release-copy a { line-height: 1.35; overflow-wrap: break-word; }
+            .release-cover { width: clamp(76px, 24vw, 92px); height: clamp(76px, 24vw, 92px); flex-basis: clamp(76px, 24vw, 92px); }
             .release-meta { white-space: normal; text-align: left; }
-            body { font-size: 15px; }
+            body { font-size: 14px; }
             select { font-size: 16px; padding: 6px 10px; padding-right: 28px; }
-            .merch-item { align-items: flex-start; font-size: 15px; line-height: 1.8; }
-            .merch-image { width: 84px; height: 84px; flex-basis: 84px; }
-            footer { font-size: 13px; padding-bottom: 48px; }
-            .star-tl, .star-bl { display: none; }
+            .merch-item { align-items: center; font-size: 14px; line-height: 1.7; }
+            .merch-image { width: clamp(76px, 24vw, 92px); height: clamp(76px, 24vw, 92px); flex-basis: clamp(76px, 24vw, 92px); }
+            footer { font-size: 12px; padding-bottom: 64px; }
             .float-star { display: none; }
+        }
+
+        @media (max-width: 420px) {
+            h1 { font-size: 36px; letter-spacing: 1.5px; }
+            .tagline { max-width: 280px; letter-spacing: 2.4px; }
+            .page-nav { gap: 6px 12px; }
+            .page-nav a, .page-nav-toggle { flex-basis: 132px; }
+            .sample-link { min-width: 130px; padding: 12px 14px; }
+            .platform-links a, .links a { min-width: 128px; flex-basis: 128px; }
+        }
+
+        @media (max-width: 360px) {
+            h1 { font-size: 32px; }
+            .tagline { max-width: 260px; letter-spacing: 2px; }
+            .wrap { padding: 0 20px; }
+            .page-nav a, .page-nav-toggle { flex-basis: 124px; }
+            .sample-link { min-width: 120px; padding: 12px; }
+            .platform-links a, .links a { min-width: 120px; flex-basis: 120px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
