@@ -94,6 +94,7 @@
     {
       "id": 1,
       "title": "Импулс",
+      "status": "missing recorded sax and vocals from mix",
       "mp3": "audio/impuls.mp3",
       "backingmp3": "audio/impuls_backing.mp3",
       "lyrics": [
@@ -179,6 +180,7 @@
     {
       "id": 2,
       "title": "Magic",
+      "status": "missing recorded vocals from mix",
       "mp3": "audio/magic.mp3",
       "backingmp3": "audio/magic_backing.mp3",
       "lyrics": [
@@ -353,6 +355,7 @@
     {
       "id": 4,
       "title": "Нов Зеланд",
+      "status": "missing recorded vocals and bass from mix",
       "mp3": "audio/nov_zeland.mp3",
       "backingmp3": "audio/nov_zeland_backing.mp3",
       "lyrics":[
@@ -438,6 +441,7 @@
     {
       "id": 11,
       "title": "Quite Unreal",
+      "status": "missing recorded vocals from mix",
       "mp3": "audio/quite_unreal.mp3",
       "backingmp3": "audio/quite_unreal_backing.mp3",
       "lyrics": [
@@ -535,6 +539,7 @@
     {
       "id": 5,
       "title": "За век понапред",
+      "status": "home demo, horror vocals by Martin™",
       "mp3": "audio/za_vek_ponapred.mp3",
       "backingmp3": "",
       "lyrics": [
@@ -585,6 +590,7 @@
     {
       "id": 7,
       "title": "Cinema",
+      "status": "missing recorded vocals and violins from mix",
       "mp3": "audio/cinema.mp3",
       "backingmp3": "audio/cinema_backing.mp3",
       "lyrics": [
@@ -725,6 +731,7 @@
     {
       "id": 8,
       "title": "Сноп од светлина",
+      "status": "home demo, vocals not recorded yet",
       "mp3": "audio/snop_od_svetlina.mp3",
       "backingmp3": "",
       "lyrics": [
@@ -768,6 +775,7 @@
     {
       "id": 10,
       "title": "My Innocent Sea",
+      "status": "missing recorded vocals and violins from mix",
       "mp3": "audio/my_innocent_sea.mp3",
       "backingmp3": "audio/my_innocent_sea_backing.mp3",
       "lyrics": [
@@ -860,6 +868,7 @@
     {
       "id": 3,
       "title": "Time Machine",
+      "status": "recorded vocals missing, sax home recorded",
       "mp3": "audio/time_machine.mp3",
       "backingmp3": "audio/time_machine_backing.mp3",
       "lyrics": [
@@ -1016,6 +1025,7 @@
     {
       "id": 12,
       "title": "Roots Apart",
+      "status": "studio version, unmixed",
       "mp3": "audio/roots_apart.mp3",
       "backingmp3": "audio/roots_apart_backing.mp3",
       "lyrics": [
@@ -1143,6 +1153,7 @@
     {
       "id": 9,
       "title": "Колку далеку?",
+      "status": "home demo, stiched together",
       "mp3": "audio/kolku_daleku.mp3",
       "backingmp3": "audio/kolku_daleku_backing.mp3",
       "lyrics": [
@@ -1248,6 +1259,7 @@
     {
       "id": 6,
       "title": "Higher Ground",
+      "status": "missing recorded vocals from mix",
       "mp3": "audio/higher_ground.mp3",
       "backingmp3": "audio/higher_ground_backing.mp3",
       "lyrics": [
@@ -1373,6 +1385,7 @@
     {
       "id": 13,
       "title": "Одмор",
+      "status": "outtake",
       "mp3": "audio/odmor.mp3",
       "backingmp3": "audio/odmor_backing.mp3",
       "lyrics": [

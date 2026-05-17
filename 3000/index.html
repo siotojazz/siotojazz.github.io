@@ -239,15 +239,15 @@
             cursor: pointer;
             font-size: 16px;
             display: grid;
-            grid-template-columns: 1fr auto;
-            column-gap: 8px;
+            grid-template-columns: minmax(0, 1fr) auto auto;
+            column-gap: 10px;
             align-items: center;
             position: relative;
             overflow: hidden;
             height: var(--row-h);
         }
         /* Set consistent row line-height for inner cells */
-        .song-title, .song-meta, .song-length { line-height: var(--row-h); }
+        .song-title, .song-length { line-height: var(--row-h); }
         .song-section {
             display: none;
         }
@@ -277,9 +277,39 @@
             padding: 0;
             font-size: 14px;
             text-transform: capitalize;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        .song-meta {
-            display: none;
+        .song-status {
+            display: block;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            height: auto;
+            border: 0;
+            background: transparent;
+            color: var(--club-blue-strong);
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            line-height: 1.1;
+            white-space: nowrap;
+            justify-self: end;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: right;
+            opacity: 0.6;
+        }
+        .song-status[data-status="demo"] {
+            color: #8e6416;
+        }
+        .song-status[data-status="in-progress"] {
+            color: var(--club-blue-strong);
+        }
+        .song-status[data-status="unmastered"] {
+            color: #7e3c26;
         }
         .song-length {
             display: block;
@@ -288,10 +318,16 @@
             padding: 0;
             text-align: right;
             opacity: 0.5;
+            min-width: 42px;
         }
         .song-item:hover {
             background: var(--club-blue);
             color: #fff;
+        }
+        .song-item:hover .song-status,
+        .song-item.active .song-status {
+            color: #fff;
+            opacity: 0.6;
         }
         .song-item:hover::before {
             left: 100%;
@@ -1874,6 +1910,17 @@
         }
 
         return diagram;
+    }
+
+    function getTrackStatusLabel(status) {
+        return typeof status === 'string' ? status.trim().replace(/\s+/g, ' ') : '';
+    }
+
+    function getTrackStatusKey(status) {
+        return getTrackStatusLabel(status)
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
     }
 
     const songList = document.getElementById('song-list');
@@ -4969,9 +5016,12 @@
         songTitle.className = 'song-title';
         songTitle.textContent = `${trackIndex + 1} ${track.title}`;
 
-        const songMeta = document.createElement('div');
-        songMeta.className = 'song-meta';
-        songMeta.textContent = 'modified: …';
+        const songStatus = document.createElement('div');
+        songStatus.className = 'song-status';
+        const trackStatusLabel = getTrackStatusLabel(track.status) || 'in progress';
+        songStatus.textContent = trackStatusLabel;
+        songStatus.dataset.status = getTrackStatusKey(trackStatusLabel) || 'in-progress';
+        songStatus.setAttribute('aria-label', `Status: ${trackStatusLabel}`);
 
         const songLength = document.createElement('div');
         songLength.className = 'song-length';
@@ -4983,22 +5033,13 @@
 
         songItem.appendChild(songTitle);
         songItem.appendChild(songSection);
-        songItem.appendChild(songMeta);
+        songItem.appendChild(songStatus);
         songItem.appendChild(songLength);
         // songItem context menu handled by global listener
         songItem.addEventListener('click', () => {
             selectSong(track, trackIndex);
         });
         songList.appendChild(songItem);
-
-        // Show time since the track moment
-        const trackMoment = track.moment;
-        if (trackMoment) {
-            const momentDate = new Date(trackMoment);
-            songMeta.textContent = formatRelativeTime(momentDate);
-        } else {
-            songMeta.textContent = '';
-        }
 
         // Compute track length using Audio metadata
         if (track.mp3) {
