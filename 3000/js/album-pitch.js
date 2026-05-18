@@ -27,6 +27,7 @@ const noticeAccept = document.getElementById('pitch-notice-accept');
 let activePreview = null;
 let progressFrame = 0;
 let audioFadeFrame = 0;
+let previewQueue = [];
 
 const previewFadeInDuration = 2000;
 const defaultAudioVolume = 1;
@@ -377,6 +378,44 @@ function resetActivePreview(resetProgress = true) {
     activePreview = null;
 }
 
+function getNextPreviewEntry(trackId) {
+    const currentIndex = previewQueue.findIndex((entry) => entry.track.id === trackId);
+    if (currentIndex < 0 || currentIndex >= previewQueue.length - 1) {
+        return null;
+    }
+
+    return previewQueue[currentIndex + 1];
+}
+
+function advanceToNextPreview() {
+    if (!activePreview) return;
+
+    const currentPreview = activePreview;
+    const nextPreview = getNextPreviewEntry(currentPreview.track.id);
+
+    audio.pause();
+
+    if (!nextPreview) {
+        const range = getClipPlaybackRange(currentPreview.clip);
+        audio.currentTime = range.start;
+    }
+
+    resetActivePreview();
+
+    if (!nextPreview) {
+        return;
+    }
+
+    void startPreview(
+        nextPreview.track,
+        nextPreview.clip,
+        nextPreview.card,
+        nextPreview.button,
+        nextPreview.progressElement,
+        { fadeInFromStart: false }
+    );
+}
+
 function getClipPlaybackRange(clip) {
     if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
         return { start: clip.start, end: clip.end };
@@ -403,9 +442,7 @@ function updateProgress() {
 
     if (!audio.paused && audio.currentTime >= range.end - 0.05) {
         setProgressValue(card, progressElement, 1);
-        audio.pause();
-        audio.currentTime = range.start;
-        resetActivePreview();
+        advanceToNextPreview();
         return;
     }
 
@@ -564,6 +601,7 @@ async function startPreview(track, clip, card, button, progressElement = null, o
 
 function renderTrackReel(tracks, pitch) {
     const fragment = document.createDocumentFragment();
+    previewQueue = [];
 
     tracks.forEach((track, index) => {
         const status = pitch.productionLabels[String(track.id)] || deriveStatus(track.status);
@@ -643,6 +681,7 @@ function renderTrackReel(tracks, pitch) {
         content.append(number, title, meta);
         card.append(image, button, content, progress);
         fragment.append(card);
+        previewQueue.push({ track, clip, card, button, progressElement: progress });
     });
 
     trackReel.replaceChildren(fragment);
@@ -789,7 +828,7 @@ audio.addEventListener('pause', () => {
 });
 
 audio.addEventListener('ended', () => {
-    resetActivePreview();
+    advanceToNextPreview();
 });
 
 window.addEventListener('beforeunload', () => {
