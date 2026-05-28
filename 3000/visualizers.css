@@ -332,19 +332,30 @@ a {
 
 .visualizer-output__header {
     padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
 }
 
 .visualizer-command {
     margin: 0;
     padding: 18px;
-    min-height: 180px;
+    min-height: 58px;
     overflow: auto;
     font-family: Consolas, 'Courier New', monospace;
     font-size: 13px;
-    line-height: 1.55;
+    line-height: 1.45;
+    white-space: pre;
     color: rgba(241, 231, 211, 0.88);
     background: rgba(3, 6, 9, 0.68);
     border-top: 1px solid var(--panel-border);
+    cursor: copy;
+}
+
+.visualizer-command:focus-visible {
+    outline: 2px solid rgba(196, 139, 108, 0.72);
+    outline-offset: -2px;
 }
 
 .visualizer-render-page {
@@ -407,6 +418,11 @@ a {
     .visualizer-controls {
         grid-template-columns: 1fr;
         display: grid;
+    }
+
+    .visualizer-output__header {
+        align-items: stretch;
+        flex-direction: column;
     }
 
     .visualizer-toolbar__actions {

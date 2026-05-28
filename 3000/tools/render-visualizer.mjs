@@ -17,7 +17,10 @@ const FORMAT_DIMENSIONS = {
     instagram: { width: 1080, height: 1920 }
 };
 
-const OUTPUT_FPS = 60;
+const OUTPUT_FPS = 24;
+const DEFAULT_CAPTURE_FPS = 24;
+const CAPTURE_IMAGE_TYPE = 'jpeg';
+const CAPTURE_JPEG_QUALITY = 92;
 
 const CONTENT_TYPES = {
     '.css': 'text/css; charset=utf-8',
@@ -209,11 +212,11 @@ function buildAtempoFilter(speed) {
     return stages.map((value) => `atempo=${value.toFixed(6)}`).join(',');
 }
 
-function spawnFfmpeg({ ffmpegPath, audioPath, audioOffsetSeconds, speed, durationSeconds, outputPath, dimensions }) {
-    const args = ['-y', '-hide_banner', '-loglevel', 'warning'];
+function spawnFfmpeg({ ffmpegPath, audioPath, audioOffsetSeconds, speed, durationSeconds, outputPath, dimensions, captureFps }) {
+    const args = ['-y', '-hide_banner', '-loglevel', 'error'];
 
-    // Video input: PNG frames piped on stdin at the chosen output FPS.
-    args.push('-f', 'image2pipe', '-vcodec', 'png', '-framerate', String(OUTPUT_FPS), '-i', 'pipe:0');
+    // Video input: high-quality JPEG frames piped on stdin at the chosen capture FPS.
+    args.push('-f', 'image2pipe', '-vcodec', 'mjpeg', '-framerate', String(captureFps), '-i', 'pipe:0');
 
     // Audio input: read from the original mp3 file (no resampling/clock drift introduced by
     // capturing audio.captureStream in the page).
@@ -232,11 +235,11 @@ function spawnFfmpeg({ ffmpegPath, audioPath, audioOffsetSeconds, speed, duratio
         '-map', '0:v:0',
         '-map', '1:a:0',
         '-c:v', 'libx264',
-        '-preset', 'medium',
+        '-preset', 'veryfast',
         '-crf', '17',
         '-pix_fmt', 'yuv420p',
         '-r', String(OUTPUT_FPS),
-        '-vsync', 'cfr',
+        '-fps_mode', 'cfr',
         '-c:a', 'aac',
         '-b:a', '192k',
         '-movflags', '+faststart',
@@ -265,9 +268,16 @@ async function main() {
     })();
     const format = args.format === 'instagram' ? 'instagram' : 'youtube';
     const dimensions = FORMAT_DIMENSIONS[format];
+    const captureFps = (() => {
+        const value = Number.parseInt(args['capture-fps'], 10);
+        if (!Number.isFinite(value)) {
+            return DEFAULT_CAPTURE_FPS;
+        }
+        return Math.max(1, Math.min(OUTPUT_FPS, value));
+    })();
 
     if (args.fps && Number.parseInt(args.fps, 10) !== OUTPUT_FPS) {
-        console.warn(`[render] Ignoring --fps=${args.fps}; output is locked to ${OUTPUT_FPS} fps.`);
+        console.warn(`[render] Ignoring --fps=${args.fps}; output is locked to cinematic ${OUTPUT_FPS} fps. Use --capture-fps for lower-fps drafts.`);
     }
 
     const albumData = JSON.parse(await readFile(albumPath, 'utf8'));
@@ -348,11 +358,12 @@ async function main() {
         }
 
         const outputDurationSeconds = songDuration / speed;
-        const totalFrames = Math.max(1, Math.round(outputDurationSeconds * OUTPUT_FPS));
+        const totalFrames = Math.max(1, Math.round(outputDurationSeconds * captureFps));
 
         console.log(
             `Rendering track ${track.id} (${track.title}) → ${outputPath}`
-            + `\n  format: ${format} (${dimensions.width}x${dimensions.height}) @ ${OUTPUT_FPS}fps`
+            + `\n  format: ${format} (${dimensions.width}x${dimensions.height}) @ ${OUTPUT_FPS}fps output, ${captureFps}fps capture`
+            + `\n  capture: ${CAPTURE_IMAGE_TYPE} quality ${CAPTURE_JPEG_QUALITY}`
             + `\n  song duration: ${songDuration.toFixed(3)}s, speed: ${speed}× → output ${outputDurationSeconds.toFixed(3)}s (${totalFrames} frames)`
             + `\n  ffmpeg: ${ffmpegPath}`
         );
@@ -364,7 +375,8 @@ async function main() {
             speed,
             durationSeconds: outputDurationSeconds,
             outputPath,
-            dimensions
+            dimensions,
+            captureFps
         });
 
         const ffmpegExit = new Promise((resolvePromise, rejectPromise) => {
@@ -384,14 +396,18 @@ async function main() {
 
         let lastProgressLog = 0;
         for (let frameIndex = 0; frameIndex < totalFrames; frameIndex++) {
-            const outputTime = frameIndex / OUTPUT_FPS;
+            const outputTime = frameIndex / captureFps;
             const songTime = Math.min(outputTime * speed, songDuration);
 
             await page.evaluate(async (t) => {
-                await window.__visualizerRender.setTime(t);
+                await window.__visualizerRender.setTime(t, { sequentialVideo: true });
             }, songTime);
 
-            const buffer = await canvasLocator.screenshot({ type: 'png', omitBackground: false });
+            const buffer = await canvasLocator.screenshot({
+                type: CAPTURE_IMAGE_TYPE,
+                quality: CAPTURE_JPEG_QUALITY,
+                omitBackground: false
+            });
 
             if (!stdin.write(buffer)) {
                 await new Promise((resolveDrain) => stdin.once('drain', resolveDrain));

@@ -97,6 +97,7 @@ async function bootstrap() {
     const timeReadout = document.getElementById('visualizer-time');
     const renderRoute = document.getElementById('visualizer-render-route');
     const renderButton = document.getElementById('visualizer-render-video');
+    const copyCommandButton = document.getElementById('visualizer-copy-command');
     const outputStatus = document.getElementById('visualizer-output-status');
     const commandPre = document.getElementById('visualizer-render-command');
     const audio = document.getElementById('visualizer-audio');
@@ -178,7 +179,24 @@ async function bootstrap() {
         routeUrl.searchParams.set('format', currentFormat);
         routeUrl.searchParams.set('speed', String(currentSpeed));
         renderRoute.href = routeUrl.toString();
-        commandPre.textContent = `${artifacts.command}\n\n${JSON.stringify(artifacts.manifest, null, 2)}`;
+        commandPre.textContent = artifacts.command;
+        commandPre.title = 'Click to copy render command';
+    }
+
+    async function copyCurrentRenderCommand() {
+        if (!currentTrack) {
+            return;
+        }
+
+        const { command } = buildRenderArtifacts(currentTrack, { speed: currentSpeed, format: currentFormat });
+        updateRenderOutputs(currentTrack);
+
+        try {
+            await navigator.clipboard.writeText(command);
+            outputStatus.textContent = 'Render command copied to the clipboard. Paste it in a terminal to export the MP4.';
+        } catch {
+            outputStatus.textContent = 'Render command is ready below. Copy the single line into a terminal to export the MP4.';
+        }
     }
 
     function buildTrackList() {
@@ -257,20 +275,16 @@ async function bootstrap() {
         renderCurrentFrame();
     }
 
-    renderButton.addEventListener('click', async () => {
-        if (!currentTrack) {
+    renderButton.addEventListener('click', copyCurrentRenderCommand);
+    copyCommandButton.addEventListener('click', copyCurrentRenderCommand);
+    commandPre.addEventListener('click', copyCurrentRenderCommand);
+    commandPre.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') {
             return;
         }
 
-        const { command } = buildRenderArtifacts(currentTrack, { speed: currentSpeed, format: currentFormat });
-        updateRenderOutputs(currentTrack);
-
-        try {
-            await navigator.clipboard.writeText(command);
-            outputStatus.textContent = 'Render command copied to the clipboard. Run it in a terminal to export the MP4.';
-        } catch {
-            outputStatus.textContent = 'Render command generated below. Run it in a terminal to export the MP4.';
-        }
+        event.preventDefault();
+        void copyCurrentRenderCommand();
     });
 
     function applySpeed(value) {
