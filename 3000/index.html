@@ -3217,11 +3217,9 @@
         }
         const analysis = (!audio.paused && rawAnalysis) ? rawAnalysis : lastLiveAnalysisSnapshot;
         const rollingStats = getLiveTelemetryWindowStats();
-        const bpm = parseInt(currentTrack.tempo, 10) || 120;
-        const isSixEight = currentTrack.timeSignature === '6/8';
-        const beatsPerBar = isSixEight ? 2 : 4;
-        const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-        const currentBar = Math.max(1, Math.floor(currentTime / (beatDuration * beatsPerBar)) + 1);
+        const songGridTime = getSongGridTime(currentTrack, currentTime);
+        const { beatDuration, beatsPerBar } = getTrackTiming(currentTrack);
+        const currentBar = Math.max(1, Math.floor(songGridTime / (beatDuration * beatsPerBar)) + 1);
 
         let currentSection = 'between sections';
         let beatCursor = 0;
@@ -3230,7 +3228,7 @@
             totalBars += section.chords.length / beatsPerBar;
             if (currentSection !== 'between sections') return;
             const sectionBeats = section.chords.length;
-            const currentBeat = Math.floor(currentTime / beatDuration);
+            const currentBeat = Math.floor(songGridTime / beatDuration);
             if (currentBeat >= beatCursor && currentBeat < beatCursor + sectionBeats) {
                 currentSection = section.label;
             }
@@ -4325,6 +4323,79 @@
     let lastUpdateTime = 0;
     let contextTarget = null;
 
+    function getTrackStartOffset(track) {
+        const offset = Number.parseFloat(track?.startOffset);
+        return Number.isFinite(offset) ? offset : 0;
+    }
+
+    function getTrackTiming(track) {
+        const bpm = parseInt(track?.tempo, 10) || 120;
+        const isSixEight = track?.timeSignature === '6/8';
+        return {
+            beatDuration: isSixEight ? (60 / bpm) * 1.5 : 60 / bpm,
+            beatsPerBar: isSixEight ? 2 : 4,
+            startOffset: getTrackStartOffset(track)
+        };
+    }
+
+    function getSongGridTime(track, audioTime) {
+        return (Number.parseFloat(audioTime) || 0) - getTrackStartOffset(track);
+    }
+
+    function getBeatStartTime(track, beatNumber) {
+        const { beatDuration, startOffset } = getTrackTiming(track);
+        return startOffset + Math.max(0, (parseInt(beatNumber, 10) || 1) - 1) * beatDuration;
+    }
+
+    function getBarStartTime(track, barNumber, lineOffset = 0) {
+        const { beatDuration, beatsPerBar, startOffset } = getTrackTiming(track);
+        const barIndex = Math.max(0, Number.parseFloat(barNumber) || 0);
+        const offset = Number.parseFloat(lineOffset);
+        return startOffset + (barIndex * beatsPerBar * beatDuration) + (Number.isFinite(offset) ? offset : 0);
+    }
+
+    function buildLyricTimingEntries(track, lyricLines) {
+        const { beatDuration, beatsPerBar } = getTrackTiming(track);
+        const entries = lyricLines.map((line, order) => {
+            const length = Number.parseFloat(line.dataset.length) || 1;
+            const barNumber = Number.parseFloat(line.dataset.bar) || 1;
+            const offset = Number.parseFloat(line.dataset.offset) || 0;
+            const startTime = getBarStartTime(track, barNumber, offset);
+            const naturalEndTime = startTime + (length * beatsPerBar * beatDuration);
+
+            return {
+                line,
+                order,
+                barNumber,
+                offset,
+                startTime,
+                endTime: naturalEndTime,
+                naturalEndTime
+            };
+        }).sort((a, b) => (a.startTime - b.startTime) || (a.order - b.order));
+
+        entries.forEach((entry, entryIndex) => {
+            for (let nextIndex = entryIndex + 1; nextIndex < entries.length; nextIndex += 1) {
+                const nextEntry = entries[nextIndex];
+                if (nextEntry.startTime >= entry.endTime) break;
+                if (nextEntry.barNumber === entry.barNumber) continue;
+
+                if (entry.offset !== 0 || nextEntry.offset !== 0) {
+                    entry.endTime = Math.min(entry.endTime, nextEntry.startTime);
+                    break;
+                }
+            }
+        });
+
+        return entries.sort((a, b) => a.order - b.order);
+    }
+
+    function formatTimeParam(seconds) {
+        const time = Number.parseFloat(seconds);
+        if (!Number.isFinite(time)) return '0';
+        return time.toFixed(3).replace(/\.?0+$/, '');
+    }
+
     function generateSongLink(trackIndex) {
         const baseUrl = window.location.origin + window.location.pathname;
         return `${baseUrl}?song=${trackIndex}`;
@@ -4397,13 +4468,7 @@
             lineDiv.textContent = line.line || ' ';
             lineDiv.addEventListener('click', () => {
                 if (currentTrack === track) {
-                    const bpm = parseInt(track.tempo) || 120;
-                    const isSixEight = track.timeSignature === '6/8';
-                    const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-                    const bar = parseInt(lineDiv.dataset.bar) || 1;
-                    const offset = parseFloat(lineDiv.dataset.offset) || 0;
-                    const beatsPerBar = isSixEight ? 2 : 4;
-                    const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                    const startTime = getBarStartTime(track, lineDiv.dataset.bar, lineDiv.dataset.offset);
                     audioEngine.seek(startTime);
                     audioEngine.play().catch(err => {
                         console.error('Audio play error:', err);
@@ -4462,11 +4527,7 @@
 
                         chordSpan.addEventListener('click', () => {
                             if (currentTrack === track) {
-                                const bpm = parseInt(track.tempo) || 120;
-                                const isSixEight = track.timeSignature === '6/8';
-                                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-                                const beat = parseInt(chordSpan.dataset.beat);
-                                const startTime = (beat - 1) * beatDuration;
+                                const startTime = getBeatStartTime(track, chordSpan.dataset.beat);
                                 audioEngine.seek(startTime);
                                 audioEngine.play().catch(err => {
                                     console.error('Audio play error:', err);
@@ -4507,6 +4568,7 @@
             
             // Cache DOM elements for performance
             cachedLyricLines = Array.from(lyricsContent.querySelectorAll('.lyrics-line'));
+            cachedLyricTimings = buildLyricTimingEntries(track, cachedLyricLines);
             cachedChordElements = Array.from(structureContent.querySelectorAll('.structure-chord'));
             
             // Pre-compute and cache bounding rects for chord containers
@@ -4530,7 +4592,6 @@
             cachedChordOverlay = chordsCanvas && window.getChordOverlayRenderer ? 
                 window.getChordOverlayRenderer(chordsCanvas) : null;
             
-            lastActiveLyric = null;
             lastActiveChord = null;
             
             if (startTime < audio.duration) {
@@ -4795,14 +4856,8 @@
             const link = generateSongLink(targetTrackIndex);
             navigator.clipboard.writeText(link);
         } else if (action === 'copy-verse-link' && contextTarget.type === 'lyrics-line' && targetTrack) {
-            const bar = parseInt(contextTarget.element.dataset.bar) || 1;
-            const offset = parseFloat(contextTarget.element.dataset.offset) || 0;
-            const bpm = parseInt(targetTrack.tempo) || 120;
-            const isSixEight = targetTrack.timeSignature === '6/8';
-            const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-            const beatsPerBar = isSixEight ? 2 : 4;
-            const startTime = (bar * beatsPerBar * beatDuration) + offset;
-            const link = generateSongLink(targetTrackIndex) + `&time=${Math.floor(startTime)}`;
+            const startTime = getBarStartTime(targetTrack, contextTarget.element.dataset.bar, contextTarget.element.dataset.offset);
+            const link = generateSongLink(targetTrackIndex) + `&time=${formatTimeParam(startTime)}`;
             navigator.clipboard.writeText(link);
         } else if (action === 'copy-stanza-link' && contextTarget.type === 'lyrics-line' && targetTrack) {
             const lines = contextTarget.element.parentElement.querySelectorAll('.lyrics-line');
@@ -4817,31 +4872,19 @@
                 }
             }
             if (firstLine) {
-                const bar = parseInt(firstLine.dataset.bar) || 1;
-                const offset = parseFloat(firstLine.dataset.offset) || 0;
-                const bpm = parseInt(targetTrack.tempo) || 120;
-                const isSixEight = targetTrack.timeSignature === '6/8';
-                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-                const beatsPerBar = isSixEight ? 2 : 4;
-                const startTime = (bar * beatsPerBar * beatDuration) + offset;
-                const link = generateSongLink(targetTrackIndex) + `&time=${Math.floor(startTime)}`;
+                const startTime = getBarStartTime(targetTrack, firstLine.dataset.bar, firstLine.dataset.offset);
+                const link = generateSongLink(targetTrackIndex) + `&time=${formatTimeParam(startTime)}`;
                 navigator.clipboard.writeText(link);
             }
         } else if (action === 'copy-time-link' && targetTrack) {
-            const link = generateSongLink(targetTrackIndex) + `&time=${Math.floor(audio.currentTime)}`;
+            const link = generateSongLink(targetTrackIndex) + `&time=${formatTimeParam(audio.currentTime)}`;
             navigator.clipboard.writeText(link);
         } else if (action === 'next-verse' && contextTarget.type === 'lyrics-line' && targetTrack) {
             const lines = lyricsContent.querySelectorAll('.lyrics-line');
             const currentIndex = parseInt(contextTarget.element.dataset.index);
             if (currentIndex < lines.length - 1) {
                 const nextLine = lines[currentIndex + 1];
-                const bar = parseInt(nextLine.dataset.bar) || 1;
-                const offset = parseFloat(nextLine.dataset.offset) || 0;
-                const bpm = parseInt(targetTrack.tempo) || 120;
-                const isSixEight = targetTrack.timeSignature === '6/8';
-                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-                const beatsPerBar = isSixEight ? 2 : 4;
-                const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                const startTime = getBarStartTime(targetTrack, nextLine.dataset.bar, nextLine.dataset.offset);
                 if (currentTrack !== targetTrack) {
                     selectSong(targetTrack, targetTrackIndex, startTime);
                 } else {
@@ -4859,13 +4902,7 @@
             const currentIndex = parseInt(contextTarget.element.dataset.index);
             if (currentIndex > 0) {
                 const prevLine = lines[currentIndex - 1];
-                const bar = parseInt(prevLine.dataset.bar) || 1;
-                const offset = parseFloat(prevLine.dataset.offset) || 0;
-                const bpm = parseInt(targetTrack.tempo) || 120;
-                const isSixEight = targetTrack.timeSignature === '6/8';
-                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-                const beatsPerBar = isSixEight ? 2 : 4;
-                const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                const startTime = getBarStartTime(targetTrack, prevLine.dataset.bar, prevLine.dataset.offset);
                 if (currentTrack !== targetTrack) {
                     selectSong(targetTrack, targetTrackIndex, startTime);
                 } else {
@@ -4891,13 +4928,7 @@
                 }
             }
             if (nextStanzaLine) {
-                const bar = parseInt(nextStanzaLine.dataset.bar) || 1;
-                const offset = parseFloat(nextStanzaLine.dataset.offset) || 0;
-                const bpm = parseInt(targetTrack.tempo) || 120;
-                const isSixEight = targetTrack.timeSignature === '6/8';
-                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-                const beatsPerBar = isSixEight ? 2 : 4;
-                const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                const startTime = getBarStartTime(targetTrack, nextStanzaLine.dataset.bar, nextStanzaLine.dataset.offset);
                 if (currentTrack !== targetTrack) {
                     selectSong(targetTrack, targetTrackIndex, startTime);
                 } else {
@@ -4921,13 +4952,7 @@
                 }
             }
             if (prevStanzaLine) {
-                const bar = parseInt(prevStanzaLine.dataset.bar) || 1;
-                const offset = parseFloat(prevStanzaLine.dataset.offset) || 0;
-                const bpm = parseInt(targetTrack.tempo) || 120;
-                const isSixEight = targetTrack.timeSignature === '6/8';
-                const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-                const beatsPerBar = isSixEight ? 2 : 4;
-                const startTime = (bar * beatsPerBar * beatDuration) + offset;
+                const startTime = getBarStartTime(targetTrack, prevStanzaLine.dataset.bar, prevStanzaLine.dataset.offset);
                 if (currentTrack !== targetTrack) {
                     selectSong(targetTrack, targetTrackIndex, startTime);
                 } else {
@@ -4941,17 +4966,14 @@
                 }
             }
         } else if (action === 'next-section' && contextTarget.type === 'structure-chord' && targetTrack) {
-            const currentTime = audio.currentTime;
-            const bpm = parseInt(targetTrack.tempo) || 120;
-            const isSixEight = targetTrack.timeSignature === '6/8';
-            const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-            const currentBeat = Math.floor(currentTime / beatDuration);
+            const { beatDuration, startOffset } = getTrackTiming(targetTrack);
+            const currentBeat = Math.floor(getSongGridTime(targetTrack, audio.currentTime) / beatDuration);
             let nextSectionTime = null;
             let beatIndex = 0;
             for (const section of targetTrack.structure.sections) {
                 const sectionBeats = section.chords.length;
                 if (currentBeat < beatIndex + sectionBeats) {
-                    nextSectionTime = (beatIndex + sectionBeats) * beatDuration;
+                    nextSectionTime = startOffset + (beatIndex + sectionBeats) * beatDuration;
                     break;
                 }
                 beatIndex += sectionBeats;
@@ -4970,18 +4992,15 @@
                 }
             }
         } else if (action === 'prev-section' && contextTarget.type === 'structure-chord' && targetTrack) {
-            const currentTime = audio.currentTime;
-            const bpm = parseInt(targetTrack.tempo) || 120;
-            const isSixEight = targetTrack.timeSignature === '6/8';
-            const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-            const currentBeat = Math.floor(currentTime / beatDuration);
-            let prevSectionTime = 0;
+            const { beatDuration, startOffset } = getTrackTiming(targetTrack);
+            const currentBeat = Math.floor(getSongGridTime(targetTrack, audio.currentTime) / beatDuration);
+            let prevSectionTime = startOffset;
             let beatIndex = 0;
             for (const section of targetTrack.structure.sections) {
                 if (currentBeat < beatIndex + section.chords.length) {
                     break;
                 }
-                prevSectionTime = beatIndex * beatDuration;
+                prevSectionTime = startOffset + beatIndex * beatDuration;
                 beatIndex += section.chords.length;
             }
             if (currentTrack !== targetTrack) {
@@ -5175,10 +5194,10 @@
 
     // Cache for performance
     let cachedLyricLines = [];
+    let cachedLyricTimings = [];
     let cachedChordElements = [];
     let cachedChordContainers = [];
     let cachedChordOverlay = null;
-    let lastActiveLyric = null;
     let lastActiveChord = null;
 
     // Recompute chord overlay layout when player becomes visible or viewport changes
@@ -5226,10 +5245,9 @@
         const progressPercent = duration ? (currentTime / duration) : 0;
         glSeek.render(progressPercent);
 
-        const bpm = parseInt(currentTrack.tempo) || 120;
-        const isSixEight = currentTrack.timeSignature === '6/8';
-        const beatDuration = isSixEight ? (60 / bpm) * 1.5 : 60 / bpm;
-        const currentBeat = Math.floor(currentTime / beatDuration);
+        const songGridTime = getSongGridTime(currentTrack, currentTime);
+        const { beatDuration, beatsPerBar, startOffset } = getTrackTiming(currentTrack);
+        const currentBeat = Math.floor(songGridTime / beatDuration);
 
         // Find current section
         let currentSection = '';
@@ -5256,35 +5274,34 @@
 
         // Update lyrics with minimal DOM manipulation
         let currentLyric = '';
-        const beatsPerBar = isSixEight ? 2 : 4;
         
-        for (let i = 0; i < cachedLyricLines.length; i++) {
-            const line = cachedLyricLines[i];
-            const bar = parseInt(line.dataset.bar) || 1;
-            const length = parseFloat(line.dataset.length) || 1;
-            const offset = parseFloat(line.dataset.offset) || 0;
-            const startTime = (bar * beatsPerBar * beatDuration) + offset;
-            const endTime = startTime + (length * beatsPerBar * beatDuration);
+        const activeLyricText = [];
+        const lyricTimings = cachedLyricTimings.length
+            ? cachedLyricTimings
+            : buildLyricTimingEntries(currentTrack, cachedLyricLines);
+
+        for (let i = 0; i < lyricTimings.length; i++) {
+            const timing = lyricTimings[i];
+            const line = timing.line;
+            const startTime = timing.startTime;
+            const endTime = timing.endTime;
             
             const isActive = currentTime >= startTime && currentTime < endTime;
             const isPassed = currentTime >= endTime;
             
             // Only update classes if state changed
-            if (isActive && line !== lastActiveLyric) {
-                if (lastActiveLyric) lastActiveLyric.classList.remove('active');
+            if (isActive) {
                 line.classList.add('active');
                 line.classList.remove('passed');
-                lastActiveLyric = line;
-                currentLyric = line.textContent;
+                activeLyricText.push(line.textContent);
             } else if (isPassed && !line.classList.contains('passed')) {
                 line.classList.remove('active');
                 line.classList.add('passed');
             } else if (!isActive && !isPassed && (line.classList.contains('active') || line.classList.contains('passed'))) {
                 line.classList.remove('active', 'passed');
             }
-            
-            if (isActive) currentLyric = line.textContent;
         }
+        currentLyric = activeLyricText.join(' / ');
         setAnimatedText(currentLyricDisplay, currentLyric);
 
         // Update chords with minimal DOM manipulation
@@ -5301,7 +5318,7 @@
             // Update progress CSS variable
             const progressEl = chord.nextElementSibling;
             if (progressEl && progressEl.classList.contains('chord-progress')) {
-                const beatStartTime = startBeat * beatDuration;
+                const beatStartTime = startOffset + startBeat * beatDuration;
                 const beatEndTime = beatStartTime + (beatDuration * spanLength);
                 let p = 0;
                 if (currentTime >= beatEndTime) p = 100;

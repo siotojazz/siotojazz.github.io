@@ -296,6 +296,20 @@ function normalizeLyrics(lyrics, timing, audioOffset) {
         return lyric;
     });
 
+    normalizedLines.forEach((lyric, lyricIndex) => {
+        for (let nextIndex = lyricIndex + 1; nextIndex < normalizedLines.length; nextIndex += 1) {
+            const nextLyric = normalizedLines[nextIndex];
+            if (nextLyric.startTime >= lyric.endTime) break;
+            if (nextLyric.barNumber === lyric.barNumber) continue;
+
+            if (lyric.offset !== 0 || nextLyric.offset !== 0) {
+                lyric.endTime = Math.min(lyric.endTime, nextLyric.startTime);
+                lyric.duration = Math.max(0, lyric.endTime - lyric.startTime);
+                break;
+            }
+        }
+    });
+
     return {
         mode: 'synced',
         lines: normalizedLines,

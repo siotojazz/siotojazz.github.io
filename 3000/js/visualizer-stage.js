@@ -213,15 +213,28 @@ function getLyricState(track, time) {
         return { mode: 'empty', current: null, previous: null, next: null };
     }
 
-    const index = lines.findIndex((line) => time >= line.startTime && time <= line.endTime);
+    const activeLines = lines.filter((line) => time >= line.startTime && time < line.endTime);
+    const index = activeLines.length ? lines.indexOf(activeLines[0]) : -1;
     const nextIndex = lines.findIndex((line) => time < line.startTime);
     const previousIndex = nextIndex === -1
         ? lines.length - 1
         : Math.max(-1, nextIndex - 1);
+    const sameBarActiveLines = activeLines.length
+        ? activeLines.filter((line) => line.barNumber === activeLines[0].barNumber)
+        : [];
+    const currentLine = activeLines.length > 1
+        ? {
+            ...activeLines[0],
+            line: sameBarActiveLines
+                .map((line) => line.line)
+                .join(' / '),
+            endTime: Math.max(...sameBarActiveLines.map((line) => line.endTime))
+        }
+        : activeLines[0] || null;
 
     return {
         mode: 'synced',
-        current: index >= 0 ? lines[index] : null,
+        current: index >= 0 ? currentLine : null,
         previous: previousIndex >= 0 ? lines[previousIndex] : null,
         next: nextIndex >= 0 ? lines[nextIndex] : null
     };
