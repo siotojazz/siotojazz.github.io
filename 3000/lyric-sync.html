@@ -1,0 +1,2888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3000 Lyric Sync Editor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --ink: #202124;
+            --muted: #686b73;
+            --line: #d7d2c8;
+            --paper: #f7f5ef;
+            --surface: #ffffff;
+            --surface-2: #eee8dd;
+            --accent: #1f7a75;
+            --accent-2: #b24a3b;
+            --accent-3: #d2ad39;
+            --beat: rgba(32, 33, 36, 0.12);
+            --bar: rgba(31, 122, 117, 0.42);
+            --shadow: none;
+            --waveform-h: 196px;
+            --lyric-y: 226px;
+            --chord-y: 390px;
+            --section-y: 456px;
+            --radius: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            letter-spacing: 0;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+            letter-spacing: 0;
+        }
+
+        button {
+            border: 1px solid var(--line);
+            border-radius: 0;
+            background: var(--surface);
+            color: var(--ink);
+            min-height: 34px;
+            padding: 0 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        button:hover {
+            border-color: var(--accent);
+        }
+
+        button.primary {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: #fff;
+        }
+
+        button.danger {
+            border-color: rgba(178, 74, 59, 0.45);
+            color: var(--accent-2);
+        }
+
+        button.icon {
+            width: 34px;
+            padding: 0;
+            font-weight: 700;
+        }
+
+        button[aria-pressed="true"] {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: #fff;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 0;
+            background: var(--surface);
+            color: var(--ink);
+            min-height: 34px;
+            padding: 7px 9px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            min-height: 18px;
+            padding: 0;
+        }
+
+        input[type="range"] {
+            min-height: 28px;
+            padding: 0;
+        }
+
+        label {
+            display: grid;
+            gap: 5px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.2;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .sync-app {
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 286px minmax(0, 1fr);
+        }
+
+        .sidebar {
+            min-width: 0;
+            border-right: 1px solid var(--line);
+            background: var(--surface);
+            display: grid;
+            grid-template-rows: auto auto minmax(0, 1fr);
+        }
+
+        .brand {
+            padding: 18px 16px 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 23px;
+            line-height: 1.05;
+        }
+
+        .brand p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .file-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            padding: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .file-actions button:first-child,
+        .file-actions button:last-child {
+            grid-column: span 2;
+        }
+
+        .track-list {
+            overflow: auto;
+            padding: 8px;
+        }
+
+        .track-button {
+            width: 100%;
+            min-height: 42px;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            display: grid;
+            grid-template-columns: 28px minmax(0, 1fr);
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            color: var(--ink);
+        }
+
+        .track-button:hover {
+            background: var(--surface-2);
+        }
+
+        .track-button.active {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        .track-number {
+            color: inherit;
+            opacity: 0.68;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .track-title {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 700;
+        }
+
+        .workspace {
+            min-width: 0;
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr);
+        }
+
+        .topbar {
+            min-width: 0;
+            border-bottom: 1px solid var(--line);
+            background: rgba(247, 245, 239, 0.96);
+            display: grid;
+            grid-template-columns: minmax(230px, 1fr) auto;
+            gap: 14px;
+            align-items: center;
+            padding: 10px 14px;
+        }
+
+        .track-heading {
+            min-width: 0;
+        }
+
+        .track-heading h2 {
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 20px;
+            line-height: 1.15;
+        }
+
+        .track-heading p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .segmented {
+            display: inline-flex;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 0;
+            background: var(--surface);
+        }
+
+        .segmented button {
+            border: 0;
+            border-radius: 0;
+            min-width: 58px;
+        }
+
+        .zoom-control {
+            width: 150px;
+        }
+
+        .editor-grid {
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 354px;
+        }
+
+        .timeline-pane {
+            min-width: 0;
+            min-height: 0;
+            display: grid;
+            grid-template-rows: auto auto minmax(0, 1fr);
+            background: var(--paper);
+        }
+
+        .transport {
+            display: grid;
+            grid-template-columns: auto auto minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+            padding: 12px 14px;
+        }
+
+        .time-readout {
+            font-variant-numeric: tabular-nums;
+            color: var(--muted);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .seek-strip {
+            height: 8px;
+            background: var(--surface-2);
+            overflow: hidden;
+        }
+
+        .seek-strip span {
+            display: block;
+            width: 0;
+            height: 100%;
+            background: var(--accent);
+        }
+
+        .status-pill {
+            color: var(--muted);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .index-preview {
+            min-height: 42px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto auto;
+            gap: 10px;
+            align-items: center;
+            padding: 8px 14px;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            background: var(--surface);
+        }
+
+        .current-lyric {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--ink);
+            font-size: 14px;
+            opacity: 0.86;
+        }
+
+        .current-chord,
+        .chord-instructions {
+            white-space: nowrap;
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .chord-instructions {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .timeline-scroll {
+            min-width: 0;
+            min-height: 0;
+            overflow: auto;
+            padding: 0;
+            outline: none;
+        }
+
+        .timeline-inner {
+            position: relative;
+            min-width: 1180px;
+            height: 466px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            overflow: hidden;
+            outline: none;
+        }
+
+        .timeline-inner canvas {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        #grid-canvas {
+            top: 0;
+            height: 100%;
+        }
+
+        #waveform-canvas {
+            top: 0;
+            height: var(--waveform-h);
+        }
+
+        .lane-label {
+            position: absolute;
+            left: 10px;
+            width: 76px;
+            height: 22px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.78);
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .lane-label.lyrics {
+            top: calc(var(--lyric-y) - 28px);
+        }
+
+        .lane-label.chords {
+            top: calc(var(--chord-y) - 28px);
+        }
+
+        .lane-label.sections {
+            top: calc(var(--section-y) - 28px);
+        }
+
+        .lane-rule {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--line);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .lane-rule.lyrics {
+            top: calc(var(--lyric-y) - 10px);
+        }
+
+        .lane-rule.chords {
+            top: calc(var(--chord-y) - 10px);
+        }
+
+        .lane-rule.sections {
+            top: calc(var(--section-y) - 10px);
+        }
+
+        .marker-layer,
+        .section-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+        }
+
+        .marker {
+            position: absolute;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            min-width: 26px;
+            max-width: 460px;
+            overflow: hidden;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .marker:active {
+            cursor: grabbing;
+        }
+
+        .marker.selected {
+            outline: 2px solid var(--accent-3);
+            outline-offset: 2px;
+            z-index: 8;
+        }
+
+        .marker.dragging {
+            opacity: 0.78;
+            z-index: 12;
+        }
+
+        .marker.lyric {
+            top: var(--lyric-y);
+            height: 44px;
+            align-items: flex-start;
+            padding: 5px 7px;
+            background: #fff5d6;
+            border-color: #e2c75b;
+            color: #43380e;
+            font-size: 12px;
+            line-height: 1.15;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .marker.chord {
+            top: var(--chord-y);
+            height: 31px;
+            justify-content: center;
+            padding: 0 6px;
+            background: #dff2ef;
+            border-color: rgba(31, 122, 117, 0.32);
+            color: #104946;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .start-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-2);
+            cursor: ew-resize;
+            z-index: 9;
+        }
+
+        .start-handle::before {
+            content: "Offset";
+            position: absolute;
+            top: 9px;
+            left: 7px;
+            height: 24px;
+            display: grid;
+            place-items: center;
+            padding: 0 8px;
+            background: var(--accent-2);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .drop-preview {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent-3);
+            z-index: 13;
+            pointer-events: none;
+        }
+
+        .drop-preview::before {
+            content: "";
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 14px;
+            height: 100%;
+            background: rgba(210, 173, 57, 0.16);
+            border-left: 1px solid var(--accent-3);
+            border-right: 1px solid var(--accent-3);
+        }
+
+        .drop-preview span {
+            position: absolute;
+            top: 26px;
+            left: 8px;
+            height: 22px;
+            padding: 3px 7px;
+            background: var(--accent-3);
+            color: var(--ink);
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .playhead {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--ink);
+            opacity: 0.82;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .playhead::before {
+            content: "";
+            position: absolute;
+            left: -5px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--ink);
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+        }
+
+        .section-band {
+            position: absolute;
+            top: var(--section-y);
+            height: 36px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            background: rgba(32, 33, 36, 0.08);
+            border: 1px solid rgba(32, 33, 36, 0.08);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            pointer-events: none;
+        }
+
+        .empty-state {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 28px;
+            text-align: center;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.72);
+            z-index: 14;
+        }
+
+        .inspector {
+            min-height: 0;
+            border-left: 1px solid var(--line);
+            background: var(--surface);
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr);
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .tabs button {
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+
+        .tabs button.active {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        .panel-scroll {
+            min-height: 0;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px;
+        }
+
+        .panel {
+            display: none;
+            gap: 12px;
+        }
+
+        .panel.active {
+            display: grid;
+            align-content: start;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .field-grid .wide {
+            grid-column: 1 / -1;
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .lyric-list,
+        .chord-grid {
+            display: grid;
+            gap: 8px;
+        }
+
+        .lyric-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 48px 50px 56px 34px;
+            gap: 6px;
+            align-items: center;
+            padding: 7px;
+            border: 1px solid var(--line);
+            background: var(--paper);
+        }
+
+        .lyric-row.selected,
+        .chord-cell.selected {
+            border-color: var(--accent-3);
+            outline: 2px solid rgba(210, 173, 57, 0.42);
+            outline-offset: -2px;
+        }
+
+        .lyric-row input {
+            min-height: 30px;
+            padding: 5px 7px;
+            font-size: 12px;
+        }
+
+        .lyric-row .mini {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .chord-grid {
+            grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
+        }
+
+        .chord-cell {
+            min-width: 0;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            padding: 6px;
+            display: grid;
+            gap: 4px;
+        }
+
+        .chord-cell span {
+            color: var(--muted);
+            font-size: 10px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .chord-cell input {
+            min-height: 28px;
+            padding: 4px 6px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(720px, 100vw);
+            height: 100vh;
+            background: var(--surface);
+            border-left: 1px solid var(--line);
+            transform: translateX(100%);
+            transition: transform 0.2s ease;
+            z-index: 30;
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr);
+        }
+
+        .drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .drawer-head h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .drawer-body {
+            min-height: 0;
+            overflow: auto;
+            padding: 14px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .metadata-grid .wide {
+            grid-column: 1 / -1;
+        }
+
+        #json-editor {
+            min-height: 430px;
+            font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 1020px) {
+            .sync-app {
+                grid-template-columns: 230px minmax(0, 1fr);
+            }
+
+            .editor-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .inspector {
+                border-left: 0;
+                border-top: 1px solid var(--line);
+                min-height: 360px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            body {
+                overflow: auto;
+            }
+
+            .sync-app {
+                min-height: 100vh;
+                height: auto;
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                max-height: 340px;
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+            }
+
+            .topbar {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sync-app">
+        <aside class="sidebar">
+            <div class="brand">
+                <h1 id="album-heading">3000 Sync</h1>
+                <p id="source-label">album.json</p>
+            </div>
+            <div class="file-actions">
+                <button id="open-file" type="button"><i class="fa-solid fa-folder-open" aria-hidden="true"></i><span>Open album.json</span></button>
+                <button id="save-file" class="primary" type="button"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span>Save album.json</span></button>
+                <button id="download-file" type="button"><i class="fa-solid fa-download" aria-hidden="true"></i><span>Download</span></button>
+                <button id="data-menu" type="button"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>Data</span></button>
+            </div>
+            <div class="track-list" id="track-list" aria-label="Tracks"></div>
+        </aside>
+
+        <main class="workspace">
+            <header class="topbar">
+                <div class="track-heading">
+                    <h2 id="track-heading">No track loaded</h2>
+                    <p id="track-meta">Waiting for album.json</p>
+                </div>
+                <div class="toolbar">
+                    <div class="segmented" aria-label="Snap mode">
+                        <button id="snap-beat" type="button" aria-pressed="true" title="Snap drag targets to beats">Beat</button>
+                        <button id="snap-bar" type="button" aria-pressed="false" title="Snap drag targets to bars">Bar</button>
+                    </div>
+                    <label class="zoom-control">
+                        Zoom
+                        <input id="zoom" type="range" min="6" max="36" step="1" value="14">
+                    </label>
+                </div>
+            </header>
+
+            <section class="editor-grid">
+                <div class="timeline-pane">
+                    <div class="transport">
+                        <button id="play-toggle" class="icon" type="button" title="Play or pause" disabled><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                        <div class="time-readout" id="time-readout">0:00.000 / 0:00.000</div>
+                        <div class="seek-strip" aria-hidden="true"><span id="seek-progress"></span></div>
+                        <div class="status-pill" id="status-label">Idle</div>
+                    </div>
+
+                    <div class="index-preview" aria-label="Current index page lyric display">
+                        <span class="current-lyric" id="current-lyric-display"></span>
+                        <span class="current-chord" id="current-chord-display"></span>
+                        <span class="chord-instructions" id="chord-instructions-display"></span>
+                    </div>
+
+                    <div class="timeline-scroll" id="timeline-scroll">
+                        <div class="timeline-inner" id="timeline-inner" tabindex="0">
+                            <canvas id="grid-canvas"></canvas>
+                            <canvas id="waveform-canvas"></canvas>
+                            <div class="lane-label lyrics">Lyrics</div>
+                            <div class="lane-label chords">Chords</div>
+                            <div class="lane-label sections">Sections</div>
+                            <div class="lane-rule lyrics"></div>
+                            <div class="lane-rule chords"></div>
+                            <div class="lane-rule sections"></div>
+                            <div class="section-layer" id="section-layer"></div>
+                            <div class="marker-layer" id="marker-layer"></div>
+                            <div class="start-handle" id="start-handle" title="Start offset"></div>
+                            <div class="drop-preview hidden" id="drop-preview"><span id="drop-preview-label"></span></div>
+                            <div class="playhead" id="playhead"></div>
+                            <div class="empty-state hidden" id="empty-state">Open album.json to begin.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="inspector">
+                    <div class="tabs" role="tablist">
+                        <button id="tab-lyrics" class="active" type="button" role="tab" data-panel="lyrics-panel">Lyrics</button>
+                        <button id="tab-chords" type="button" role="tab" data-panel="chords-panel">Chords</button>
+                        <button id="tab-timing" type="button" role="tab" data-panel="timing-panel">Timing</button>
+                    </div>
+                    <div class="panel-scroll">
+                        <section class="panel active" id="lyrics-panel">
+                            <div class="action-row">
+                                <button id="add-lyric" type="button"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>Lyric</span></button>
+                                <button id="remove-lyric" class="danger" type="button"><i class="fa-solid fa-trash" aria-hidden="true"></i><span>Lyric</span></button>
+                            </div>
+                            <div class="field-grid" id="lyric-detail">
+                                <label class="wide">Line<input id="detail-lyric-line" type="text"></label>
+                                <label>Bar<input id="detail-lyric-bar" type="number" step="1"></label>
+                                <label>Length<input id="detail-lyric-length" type="number" step="0.25" min="0.25"></label>
+                                <label>Offset<input id="detail-lyric-offset" type="number" step="0.001"></label>
+                                <label>Stanza<input id="detail-lyric-stanza" type="checkbox"></label>
+                            </div>
+                            <div class="lyric-list" id="lyric-list"></div>
+                        </section>
+
+                        <section class="panel" id="chords-panel">
+                            <div class="action-row">
+                                <button id="add-section" type="button"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>Section</span></button>
+                                <button id="remove-section" class="danger" type="button"><i class="fa-solid fa-trash" aria-hidden="true"></i><span>Section</span></button>
+                            </div>
+                            <div class="field-grid">
+                                <label class="wide">Section<select id="section-select"></select></label>
+                                <label class="wide">Label<input id="section-label-input" type="text"></label>
+                            </div>
+                            <div class="action-row">
+                                <button id="add-chord-playhead" type="button"><i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i><span>Add</span></button>
+                                <button id="add-chord-after" type="button"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i><span>Add</span></button>
+                                <button id="remove-chord" class="danger" type="button"><i class="fa-solid fa-trash" aria-hidden="true"></i><span>Chord</span></button>
+                            </div>
+                            <div class="field-grid">
+                                <label>Selected chord<input id="detail-chord-value" type="text"></label>
+                                <label>Offset<input id="detail-chord-offset" type="number" step="0.001"></label>
+                            </div>
+                            <div class="chord-grid" id="chord-grid"></div>
+                        </section>
+
+                        <section class="panel" id="timing-panel">
+                            <div class="field-grid">
+                                <label>Start offset<input id="track-start-offset" type="number" step="0.001"></label>
+                                <label>Tempo<input id="track-tempo" type="number" step="0.001" min="1"></label>
+                                <label>Time signature<input id="track-signature" type="text"></label>
+                                <label>Audio path<input id="track-audio" type="text"></label>
+                                <label class="wide">Backing path<input id="track-backing" type="text"></label>
+                            </div>
+                        </section>
+                    </div>
+                </aside>
+            </section>
+        </main>
+    </div>
+
+    <aside class="drawer" id="data-drawer" aria-hidden="true">
+        <div class="drawer-head">
+            <h2>Album Data</h2>
+            <button id="close-data" class="icon" type="button"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <div class="drawer-body">
+            <div class="metadata-grid" id="metadata-grid"></div>
+            <div class="action-row">
+                <button id="refresh-json" type="button"><i class="fa-solid fa-rotate" aria-hidden="true"></i><span>Refresh JSON</span></button>
+                <button id="apply-json" class="primary" type="button"><i class="fa-solid fa-check" aria-hidden="true"></i><span>Apply JSON</span></button>
+            </div>
+            <textarea id="json-editor" spellcheck="false"></textarea>
+        </div>
+    </aside>
+
+    <audio id="audio" preload="metadata"></audio>
+
+    <script>
+        const albumUrl = "album.json";
+        const emptyStructureLabel = "Structure";
+        const restChord = "\uD834\uDD3D";
+
+        const els = {
+            albumHeading: document.getElementById("album-heading"),
+            sourceLabel: document.getElementById("source-label"),
+            openFile: document.getElementById("open-file"),
+            saveFile: document.getElementById("save-file"),
+            downloadFile: document.getElementById("download-file"),
+            dataMenu: document.getElementById("data-menu"),
+            trackList: document.getElementById("track-list"),
+            trackHeading: document.getElementById("track-heading"),
+            trackMeta: document.getElementById("track-meta"),
+            snapBeat: document.getElementById("snap-beat"),
+            snapBar: document.getElementById("snap-bar"),
+            zoom: document.getElementById("zoom"),
+            playToggle: document.getElementById("play-toggle"),
+            timeReadout: document.getElementById("time-readout"),
+            seekProgress: document.getElementById("seek-progress"),
+            statusLabel: document.getElementById("status-label"),
+            timelineScroll: document.getElementById("timeline-scroll"),
+            timelineInner: document.getElementById("timeline-inner"),
+            gridCanvas: document.getElementById("grid-canvas"),
+            waveformCanvas: document.getElementById("waveform-canvas"),
+            sectionLayer: document.getElementById("section-layer"),
+            markerLayer: document.getElementById("marker-layer"),
+            startHandle: document.getElementById("start-handle"),
+            dropPreview: document.getElementById("drop-preview"),
+            dropPreviewLabel: document.getElementById("drop-preview-label"),
+            playhead: document.getElementById("playhead"),
+            emptyState: document.getElementById("empty-state"),
+            currentLyricDisplay: document.getElementById("current-lyric-display"),
+            currentChordDisplay: document.getElementById("current-chord-display"),
+            chordInstructionsDisplay: document.getElementById("chord-instructions-display"),
+            addLyric: document.getElementById("add-lyric"),
+            removeLyric: document.getElementById("remove-lyric"),
+            lyricLine: document.getElementById("detail-lyric-line"),
+            lyricBar: document.getElementById("detail-lyric-bar"),
+            lyricLength: document.getElementById("detail-lyric-length"),
+            lyricOffset: document.getElementById("detail-lyric-offset"),
+            lyricStanza: document.getElementById("detail-lyric-stanza"),
+            lyricList: document.getElementById("lyric-list"),
+            addSection: document.getElementById("add-section"),
+            removeSection: document.getElementById("remove-section"),
+            sectionSelect: document.getElementById("section-select"),
+            sectionLabelInput: document.getElementById("section-label-input"),
+            addChordPlayhead: document.getElementById("add-chord-playhead"),
+            addChordAfter: document.getElementById("add-chord-after"),
+            removeChord: document.getElementById("remove-chord"),
+            chordValue: document.getElementById("detail-chord-value"),
+            chordOffset: document.getElementById("detail-chord-offset"),
+            chordGrid: document.getElementById("chord-grid"),
+            trackStartOffset: document.getElementById("track-start-offset"),
+            trackTempo: document.getElementById("track-tempo"),
+            trackSignature: document.getElementById("track-signature"),
+            trackAudio: document.getElementById("track-audio"),
+            trackBacking: document.getElementById("track-backing"),
+            dataDrawer: document.getElementById("data-drawer"),
+            closeData: document.getElementById("close-data"),
+            metadataGrid: document.getElementById("metadata-grid"),
+            refreshJson: document.getElementById("refresh-json"),
+            applyJson: document.getElementById("apply-json"),
+            jsonEditor: document.getElementById("json-editor"),
+            audio: document.getElementById("audio")
+        };
+
+        let albumData = null;
+        let albumHandle = null;
+        let activeTrackIndex = 0;
+        let activeSectionIndex = 0;
+        let selected = { type: null, index: -1 };
+        let snapMode = "beat";
+        let pixelsPerSecond = Number(els.zoom.value);
+        let timelineDuration = 0;
+        let waveformCache = new Map();
+        let audioContext = null;
+        let audioLoadToken = 0;
+        let animationFrame = 0;
+        let dragState = null;
+        let rawEditorDirty = false;
+        let dirty = false;
+
+        function getTracks() {
+            return Array.isArray(albumData?.tracks) ? albumData.tracks : [];
+        }
+
+        function getTrack() {
+            return getTracks()[activeTrackIndex] || null;
+        }
+
+        function clamp(value, min, max) {
+            return Math.min(max, Math.max(min, value));
+        }
+
+        function parseFinite(value, fallback = 0) {
+            const parsed = Number.parseFloat(value);
+            return Number.isFinite(parsed) ? parsed : fallback;
+        }
+
+        function roundTime(value) {
+            return Math.round(parseFinite(value) * 1000) / 1000;
+        }
+
+        function formatTime(seconds) {
+            const safe = Math.max(0, parseFinite(seconds));
+            const minutes = Math.floor(safe / 60);
+            const wholeSeconds = Math.floor(safe % 60);
+            const millis = Math.floor((safe - Math.floor(safe)) * 1000);
+            return `${minutes}:${String(wholeSeconds).padStart(2, "0")}.${String(millis).padStart(3, "0")}`;
+        }
+
+        function setStatus(text) {
+            els.statusLabel.textContent = text;
+        }
+
+        function markDirty() {
+            dirty = true;
+            setStatus("Unsaved");
+            refreshRawJson(false);
+        }
+
+        function getTiming(track) {
+            const bpm = Math.max(1, parseFinite(track?.tempo, 120));
+            const signatureText = String(track?.timeSignature || "4/4");
+            const parts = signatureText.split("/");
+            const numerator = Number.parseInt(parts[0], 10);
+            const isSixEight = signatureText.trim() === "6/8";
+            const beatsPerBar = isSixEight ? 2 : (Number.isFinite(numerator) && numerator > 0 ? numerator : 4);
+            const beatDuration = isSixEight ? (60 / bpm) * 1.5 : (60 / bpm);
+            return {
+                bpm,
+                signature: signatureText,
+                beatsPerBar,
+                beatDuration,
+                barDuration: beatDuration * beatsPerBar,
+                startOffset: parseFinite(track?.startOffset, 0)
+            };
+        }
+
+        function getSections(track) {
+            if (!track.structure || typeof track.structure !== "object") {
+                track.structure = { sections: [] };
+            }
+            if (!Array.isArray(track.structure.sections)) {
+                track.structure.sections = [];
+            }
+            return track.structure.sections;
+        }
+
+        function ensureSection(track) {
+            const sections = getSections(track);
+            if (!sections.length) {
+                sections.push({ label: emptyStructureLabel, chords: [] });
+            }
+            activeSectionIndex = clamp(activeSectionIndex, 0, sections.length - 1);
+            const section = sections[activeSectionIndex];
+            if (!Array.isArray(section.chords)) {
+                section.chords = [];
+            }
+            return section;
+        }
+
+        function getTotalBeats(track) {
+            return getSections(track).reduce((sum, section) => {
+                return sum + (Array.isArray(section.chords) ? section.chords.length : 0);
+            }, 0);
+        }
+
+        function getMaxLyricTime(track) {
+            const timing = getTiming(track);
+            return (Array.isArray(track?.lyrics) ? track.lyrics : []).reduce((max, lyric) => {
+                return Math.max(max, getLyricStartTime(track, lyric) + parseFinite(lyric?.barLength, 1) * timing.barDuration);
+            }, 0);
+        }
+
+        function getEstimatedTrackDuration(track) {
+            const timing = getTiming(track);
+            const structureTime = timing.startOffset + getTotalBeats(track) * timing.beatDuration;
+            return Math.max(60, structureTime, getMaxLyricTime(track), parseFinite(els.audio.duration, 0));
+        }
+
+        function getLyricStartTime(track, lyric) {
+            const timing = getTiming(track);
+            const barNumber = parseFinite(lyric?.barNumber, 0);
+            const offset = parseFinite(lyric?.offset, 0);
+            return timing.startOffset + (barNumber * timing.barDuration) + offset;
+        }
+
+        function getLyricWidth(track, lyric) {
+            const timing = getTiming(track);
+            return Math.max(46, parseFinite(lyric?.barLength, 1) * timing.barDuration * pixelsPerSecond);
+        }
+
+        function assignLyricRows(track) {
+            const rows = [];
+            const assignments = new Map();
+            const lyrics = Array.isArray(track?.lyrics) ? track.lyrics : [];
+            const entries = lyrics.map((lyric, index) => ({
+                index,
+                start: getLyricStartTime(track, lyric),
+                end: getLyricStartTime(track, lyric) + parseFinite(lyric?.barLength, 1) * getTiming(track).barDuration
+            })).sort((left, right) => (left.start - right.start) || (left.index - right.index));
+
+            entries.forEach((entry) => {
+                let rowIndex = rows.findIndex((rowEnd) => entry.start >= rowEnd);
+                if (rowIndex === -1) {
+                    rowIndex = rows.length;
+                    rows.push(0);
+                }
+                rows[rowIndex] = Math.max(entry.end, entry.start + 0.001);
+                assignments.set(entry.index, rowIndex);
+            });
+
+            return {
+                assignments,
+                rowCount: Math.max(1, rows.length)
+            };
+        }
+
+        function buildLyricPlaybackEntries(track) {
+            const timing = getTiming(track);
+            const lyrics = Array.isArray(track?.lyrics) ? track.lyrics : [];
+            const entries = lyrics.map((lyric, order) => {
+                const parsedBarNumber = Number.parseFloat(lyric?.barNumber);
+                const barNumber = parsedBarNumber || 1;
+                const offset = parseFinite(lyric?.offset, 0);
+                const length = Math.max(0.25, parseFinite(lyric?.barLength, 1));
+                const startTime = getLyricStartTime(track, lyric);
+                const naturalEndTime = startTime + (length * timing.barDuration);
+
+                return {
+                    order,
+                    text: String(lyric?.line || ""),
+                    barNumber,
+                    offset,
+                    startTime,
+                    endTime: naturalEndTime
+                };
+            }).sort((left, right) => (left.startTime - right.startTime) || (left.order - right.order));
+
+            entries.forEach((entry, entryIndex) => {
+                for (let nextIndex = entryIndex + 1; nextIndex < entries.length; nextIndex += 1) {
+                    const nextEntry = entries[nextIndex];
+                    if (nextEntry.startTime >= entry.endTime) break;
+                    if (nextEntry.barNumber === entry.barNumber) continue;
+
+                    if (entry.offset !== 0 || nextEntry.offset !== 0) {
+                        entry.endTime = Math.min(entry.endTime, nextEntry.startTime);
+                        break;
+                    }
+                }
+            });
+
+            return entries;
+        }
+
+        function getChordMap() {
+            const map = new Map();
+            const chordEntries = Array.isArray(albumData?.chords) ? albumData.chords : [];
+            chordEntries.forEach((entry) => {
+                const [name, instructions] = Object.entries(entry || {})[0] || [];
+                if (name) {
+                    map.set(name, { instructions: instructions || "" });
+                }
+            });
+            return map;
+        }
+
+        function timeToX(seconds) {
+            return Math.max(0, seconds * pixelsPerSecond);
+        }
+
+        function xToTime(x) {
+            return Math.max(0, x / pixelsPerSecond);
+        }
+
+        function getPointerTime(event) {
+            const rect = els.timelineInner.getBoundingClientRect();
+            return xToTime(clamp(event.clientX - rect.left, 0, rect.width));
+        }
+
+        function snapAudioTime(track, audioTime, altKey) {
+            if (altKey) {
+                return roundTime(audioTime);
+            }
+            const timing = getTiming(track);
+            const unit = snapMode === "bar" ? timing.barDuration : timing.beatDuration;
+            return roundTime(Math.max(0, Math.round(audioTime / unit) * unit));
+        }
+
+        function timeToLyricFields(track, audioTime, altKey) {
+            const timing = getTiming(track);
+            let gridTime = Math.max(0, audioTime - timing.startOffset);
+
+            if (!altKey) {
+                const unit = snapMode === "bar" ? timing.barDuration : timing.beatDuration;
+                gridTime = Math.max(0, Math.round(gridTime / unit) * unit);
+            }
+
+            const barNumber = Math.max(0, Math.floor(gridTime / timing.barDuration));
+            const offset = roundTime(gridTime - (barNumber * timing.barDuration));
+            return {
+                barNumber,
+                offset: !altKey && snapMode === "bar" ? 0 : offset
+            };
+        }
+
+        function normalizeChordOffsets(section) {
+            if (!Array.isArray(section.chordOffsets)) {
+                return [];
+            }
+            while (section.chordOffsets.length < section.chords.length) {
+                section.chordOffsets.push(0);
+            }
+            if (section.chordOffsets.length > section.chords.length) {
+                section.chordOffsets.length = section.chords.length;
+            }
+            return section.chordOffsets;
+        }
+
+        function getChordOffset(section, chordIndex) {
+            const offsets = Array.isArray(section.chordOffsets) ? section.chordOffsets : [];
+            return parseFinite(offsets[chordIndex], 0);
+        }
+
+        function setChordOffset(section, chordIndex, offset) {
+            const safeOffset = roundTime(offset);
+            if (safeOffset === 0 && !Array.isArray(section.chordOffsets)) {
+                return;
+            }
+            if (!Array.isArray(section.chordOffsets)) {
+                section.chordOffsets = Array(section.chords.length).fill(0);
+            }
+            normalizeChordOffsets(section);
+            section.chordOffsets[chordIndex] = safeOffset;
+            if (section.chordOffsets.every((value) => parseFinite(value, 0) === 0)) {
+                delete section.chordOffsets;
+            }
+        }
+
+        function flattenChords(track) {
+            let beatIndex = 0;
+            const items = [];
+            getSections(track).forEach((section, sectionIndex) => {
+                const chords = Array.isArray(section.chords) ? section.chords : [];
+                chords.forEach((value, chordIndex) => {
+                    items.push({
+                        flatIndex: beatIndex,
+                        beatIndex,
+                        sectionIndex,
+                        chordIndex,
+                        value: String(value || ""),
+                        offset: getChordOffset(section, chordIndex)
+                    });
+                    beatIndex += 1;
+                });
+            });
+            return items;
+        }
+
+        function locateChord(track, flatIndex) {
+            let cursor = 0;
+            const sections = getSections(track);
+            for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex += 1) {
+                const section = sections[sectionIndex];
+                const chords = Array.isArray(section.chords) ? section.chords : [];
+                if (flatIndex < cursor + chords.length) {
+                    return {
+                        section,
+                        sectionIndex,
+                        chordIndex: flatIndex - cursor,
+                        flatIndex
+                    };
+                }
+                cursor += chords.length;
+            }
+            return null;
+        }
+
+        function getChordStartTime(track, chordItem) {
+            const timing = getTiming(track);
+            return timing.startOffset + chordItem.beatIndex * timing.beatDuration + parseFinite(chordItem.offset, 0);
+        }
+
+        function moveChordToTime(track, flatIndex, audioTime, altKey) {
+            const totalBeats = getTotalBeats(track);
+            if (!totalBeats) {
+                return flatIndex;
+            }
+            const timing = getTiming(track);
+            let gridTime = Math.max(0, audioTime - timing.startOffset);
+            let targetBeat = 0;
+            let offset = 0;
+
+            if (altKey) {
+                targetBeat = Math.floor(gridTime / timing.beatDuration);
+                offset = gridTime - targetBeat * timing.beatDuration;
+            } else if (snapMode === "bar") {
+                targetBeat = Math.round(gridTime / timing.barDuration) * timing.beatsPerBar;
+            } else {
+                targetBeat = Math.round(gridTime / timing.beatDuration);
+            }
+
+            targetBeat = clamp(targetBeat, 0, totalBeats - 1);
+            offset = altKey ? clamp(roundTime(offset), 0, Math.max(0, timing.beatDuration - 0.001)) : 0;
+
+            const from = locateChord(track, flatIndex);
+            const to = locateChord(track, targetBeat);
+            if (!from || !to) {
+                return flatIndex;
+            }
+
+            if (from.flatIndex !== to.flatIndex) {
+                const fromValue = from.section.chords[from.chordIndex];
+                const toValue = to.section.chords[to.chordIndex];
+                const fromOffset = getChordOffset(from.section, from.chordIndex);
+                const toOffset = getChordOffset(to.section, to.chordIndex);
+                from.section.chords[from.chordIndex] = toValue;
+                to.section.chords[to.chordIndex] = fromValue;
+                setChordOffset(from.section, from.chordIndex, toOffset);
+                setChordOffset(to.section, to.chordIndex, offset);
+            } else {
+                setChordOffset(to.section, to.chordIndex, offset);
+            }
+
+            return targetBeat;
+        }
+
+        function stringifyAlbum() {
+            return JSON.stringify(albumData, null, 2) + "\n";
+        }
+
+        function refreshRawJson(force) {
+            if (!albumData || (rawEditorDirty && !force)) {
+                return;
+            }
+            els.jsonEditor.value = stringifyAlbum();
+            rawEditorDirty = false;
+        }
+
+        function renderTrackList() {
+            const tracks = getTracks();
+            els.trackList.innerHTML = "";
+            tracks.forEach((track, index) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = `track-button${index === activeTrackIndex ? " active" : ""}`;
+                button.dataset.trackIndex = String(index);
+                const number = document.createElement("span");
+                number.className = "track-number";
+                number.textContent = String(index + 1).padStart(2, "0");
+                const title = document.createElement("span");
+                title.className = "track-title";
+                title.textContent = track.title || `Track ${index + 1}`;
+                button.append(number, title);
+                els.trackList.appendChild(button);
+            });
+        }
+
+        function renderTrackHeader() {
+            const track = getTrack();
+            if (!track) {
+                els.trackHeading.textContent = "No track loaded";
+                els.trackMeta.textContent = "Waiting for album.json";
+                return;
+            }
+            const timing = getTiming(track);
+            els.trackHeading.textContent = track.title || `Track ${activeTrackIndex + 1}`;
+            els.trackMeta.textContent = `${track.mp3 || "No audio"} | ${timing.bpm} BPM | ${timing.signature} | offset ${roundTime(timing.startOffset)}s`;
+        }
+
+        function renderMetadata() {
+            const track = getTrack();
+            els.metadataGrid.innerHTML = "";
+            if (!track) {
+                return;
+            }
+
+            Object.keys(track).forEach((key) => {
+                if (key === "lyrics" || key === "structure") {
+                    return;
+                }
+                const value = track[key];
+                if (Array.isArray(value) || (value && typeof value === "object")) {
+                    return;
+                }
+                const label = document.createElement("label");
+                label.className = String(value || "").length > 42 ? "wide" : "";
+                label.textContent = key;
+                const input = document.createElement(String(value || "").length > 80 ? "textarea" : "input");
+                input.value = value ?? "";
+                input.dataset.metaKey = key;
+                label.appendChild(input);
+                els.metadataGrid.appendChild(label);
+            });
+        }
+
+        function setTimelineWidth(track) {
+            timelineDuration = getEstimatedTrackDuration(track) + 6;
+            const width = Math.max(1180, Math.ceil(timelineDuration * pixelsPerSecond));
+            const lyricRows = assignLyricRows(track).rowCount;
+            const lyricY = 226;
+            const lyricRowHeight = 48;
+            const chordY = lyricY + (lyricRows * lyricRowHeight) + 34;
+            const sectionY = chordY + 66;
+            const height = sectionY + 74;
+            els.timelineInner.style.width = `${width}px`;
+            els.timelineInner.style.height = `${height}px`;
+            els.timelineInner.style.setProperty("--lyric-y", `${lyricY}px`);
+            els.timelineInner.style.setProperty("--chord-y", `${chordY}px`);
+            els.timelineInner.style.setProperty("--section-y", `${sectionY}px`);
+            return width;
+        }
+
+        function resizeCanvas(canvas, width, height) {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = Math.max(1, Math.floor(width * dpr));
+            canvas.height = Math.max(1, Math.floor(height * dpr));
+            canvas.style.width = `${width}px`;
+            canvas.style.height = `${height}px`;
+            const ctx = canvas.getContext("2d");
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            return ctx;
+        }
+
+        function drawGrid(track, width) {
+            const height = els.timelineInner.clientHeight;
+            const ctx = resizeCanvas(els.gridCanvas, width, height);
+            const timing = getTiming(track);
+            ctx.clearRect(0, 0, width, height);
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = "#f4f0e7";
+            ctx.fillRect(0, 0, width, parseInt(getComputedStyle(document.documentElement).getPropertyValue("--waveform-h"), 10));
+
+            const totalBeats = Math.ceil((timelineDuration - timing.startOffset) / timing.beatDuration);
+            for (let beat = 0; beat <= totalBeats; beat += 1) {
+                const x = timeToX(timing.startOffset + beat * timing.beatDuration);
+                const isBar = beat % timing.beatsPerBar === 0;
+                ctx.strokeStyle = isBar ? "rgba(31, 122, 117, 0.42)" : "rgba(32, 33, 36, 0.12)";
+                ctx.lineWidth = isBar ? 1.4 : 1;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+
+                if (isBar && beat % (timing.beatsPerBar * 4) === 0) {
+                    ctx.fillStyle = "rgba(32, 33, 36, 0.48)";
+                    ctx.font = "11px Segoe UI, Arial, sans-serif";
+                    ctx.fillText(String(beat / timing.beatsPerBar), x + 4, 20);
+                }
+            }
+        }
+
+        function drawWaveformFallback(track, width) {
+            const height = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--waveform-h"), 10);
+            const ctx = resizeCanvas(els.waveformCanvas, width, height);
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = "rgba(31, 122, 117, 0.42)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, height / 2);
+            ctx.lineTo(width, height / 2);
+            ctx.stroke();
+            ctx.fillStyle = "rgba(32, 33, 36, 0.45)";
+            ctx.font = "13px Segoe UI, Arial, sans-serif";
+            ctx.fillText(track?.mp3 ? "Waveform unavailable" : "No audio path", 14, height / 2 - 12);
+        }
+
+        async function decodeWaveform(track, width) {
+            if (!track?.mp3) {
+                return null;
+            }
+            const cacheKey = `${track.mp3}|${width}`;
+            if (waveformCache.has(cacheKey)) {
+                return waveformCache.get(cacheKey);
+            }
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const response = await fetch(track.mp3, { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error(`Audio fetch failed: ${response.status}`);
+            }
+            const buffer = await response.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(buffer.slice(0));
+            const channel = audioBuffer.getChannelData(0);
+            const samplesPerPixel = Math.max(1, Math.floor(channel.length / width));
+            const peaks = new Array(width);
+
+            for (let x = 0; x < width; x += 1) {
+                const start = x * samplesPerPixel;
+                const end = Math.min(channel.length, start + samplesPerPixel);
+                let min = 1;
+                let max = -1;
+                for (let index = start; index < end; index += 1) {
+                    const sample = channel[index];
+                    if (sample < min) min = sample;
+                    if (sample > max) max = sample;
+                }
+                peaks[x] = { min, max };
+            }
+
+            waveformCache.set(cacheKey, peaks);
+            return peaks;
+        }
+
+        async function drawWaveform(track, width, token) {
+            const height = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--waveform-h"), 10);
+            const ctx = resizeCanvas(els.waveformCanvas, width, height);
+            ctx.clearRect(0, 0, width, height);
+
+            try {
+                const peaks = await decodeWaveform(track, width);
+                if (token !== audioLoadToken || !peaks) {
+                    return;
+                }
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = "rgba(31, 122, 117, 0.11)";
+                ctx.fillRect(0, 0, width, height);
+                ctx.strokeStyle = "#1f7a75";
+                ctx.lineWidth = 1;
+                const center = height / 2;
+                const amp = height * 0.43;
+                peaks.forEach((peak, x) => {
+                    ctx.beginPath();
+                    ctx.moveTo(x, center + peak.min * amp);
+                    ctx.lineTo(x, center + peak.max * amp);
+                    ctx.stroke();
+                });
+                setStatus(dirty ? "Unsaved" : "Ready");
+            } catch (error) {
+                if (token === audioLoadToken) {
+                    drawWaveformFallback(track, width);
+                    setStatus("Audio unavailable");
+                }
+            }
+        }
+
+        function renderSections(track) {
+            const timing = getTiming(track);
+            els.sectionLayer.innerHTML = "";
+            let beatIndex = 0;
+            getSections(track).forEach((section) => {
+                const chords = Array.isArray(section.chords) ? section.chords : [];
+                const start = timing.startOffset + beatIndex * timing.beatDuration;
+                const width = Math.max(28, chords.length * timing.beatDuration * pixelsPerSecond);
+                const band = document.createElement("div");
+                band.className = "section-band";
+                band.style.left = `${timeToX(start)}px`;
+                band.style.width = `${width}px`;
+                band.textContent = section.label || emptyStructureLabel;
+                els.sectionLayer.appendChild(band);
+                beatIndex += chords.length;
+            });
+        }
+
+        function makeMarker(className, left, width, text, type, index) {
+            const marker = document.createElement("div");
+            marker.className = `marker ${className}${selected.type === type && selected.index === index ? " selected" : ""}`;
+            marker.style.left = `${Math.max(0, left)}px`;
+            marker.style.width = `${Math.max(className === "chord" ? 32 : 76, width)}px`;
+            marker.textContent = text;
+            marker.title = text;
+            marker.dataset.type = type;
+            marker.dataset.index = String(index);
+            marker.addEventListener("pointerdown", beginMarkerDrag);
+            return marker;
+        }
+
+        function renderMarkers(track) {
+            const timing = getTiming(track);
+            const lyricRows = assignLyricRows(track).assignments;
+            els.markerLayer.innerHTML = "";
+            els.startHandle.style.left = `${timeToX(timing.startOffset)}px`;
+
+            (Array.isArray(track.lyrics) ? track.lyrics : []).forEach((lyric, index) => {
+                const marker = makeMarker(
+                    "lyric",
+                    timeToX(getLyricStartTime(track, lyric)),
+                    getLyricWidth(track, lyric),
+                    lyric.line || "(empty)",
+                    "lyric",
+                    index
+                );
+                marker.style.top = `calc(var(--lyric-y) + ${(lyricRows.get(index) || 0) * 48}px)`;
+                els.markerLayer.appendChild(marker);
+            });
+
+            flattenChords(track).forEach((chord) => {
+                const marker = makeMarker(
+                    "chord",
+                    timeToX(getChordStartTime(track, chord)),
+                    timing.beatDuration * pixelsPerSecond,
+                    chord.value || restChord,
+                    "chord",
+                    chord.flatIndex
+                );
+                els.markerLayer.appendChild(marker);
+            });
+        }
+
+        function getDragPreview(track, type, index, audioTime, altKey) {
+            const timing = getTiming(track);
+            if (type === "lyric" && track.lyrics?.[index]) {
+                if (altKey) {
+                    const time = roundTime(audioTime);
+                    return {
+                        x: timeToX(time),
+                        width: 2,
+                        time,
+                        label: `${time}s`
+                    };
+                }
+
+                const fields = timeToLyricFields(track, audioTime, false);
+                const time = timing.startOffset + fields.barNumber * timing.barDuration + fields.offset;
+                const barIndex = Math.floor(Math.max(0, time - timing.startOffset) / timing.barDuration);
+                const beatIndex = Math.floor(Math.max(0, time - timing.startOffset) / timing.beatDuration);
+                return {
+                    x: timeToX(time),
+                    width: (snapMode === "bar" ? timing.barDuration : timing.beatDuration) * pixelsPerSecond,
+                    time,
+                    label: snapMode === "bar" ? `bar ${barIndex}` : `beat ${beatIndex}`
+                };
+            }
+
+            if (type === "chord") {
+                const totalBeats = Math.max(1, getTotalBeats(track));
+                let gridTime = Math.max(0, audioTime - timing.startOffset);
+                let targetBeat = 0;
+                let offset = 0;
+
+                if (altKey) {
+                    targetBeat = Math.floor(gridTime / timing.beatDuration);
+                    offset = gridTime - targetBeat * timing.beatDuration;
+                } else if (snapMode === "bar") {
+                    targetBeat = Math.round(gridTime / timing.barDuration) * timing.beatsPerBar;
+                } else {
+                    targetBeat = Math.round(gridTime / timing.beatDuration);
+                }
+
+                targetBeat = clamp(targetBeat, 0, totalBeats - 1);
+                offset = altKey ? clamp(roundTime(offset), 0, Math.max(0, timing.beatDuration - 0.001)) : 0;
+                const time = timing.startOffset + targetBeat * timing.beatDuration + offset;
+                return {
+                    x: timeToX(time),
+                    width: altKey
+                        ? 2
+                        : Math.max(2, (snapMode === "bar" ? timing.barDuration : timing.beatDuration) * pixelsPerSecond),
+                    time,
+                    label: altKey
+                        ? `beat ${targetBeat} +${offset}s`
+                        : (snapMode === "bar" ? `bar ${Math.floor(targetBeat / timing.beatsPerBar)}` : `beat ${targetBeat}`)
+                };
+            }
+
+            if (type === "start") {
+                const time = snapAudioTime(track, audioTime, altKey);
+                return {
+                    x: timeToX(time),
+                    width: altKey ? 2 : (snapMode === "bar" ? timing.barDuration : timing.beatDuration) * pixelsPerSecond,
+                    time,
+                    label: `${roundTime(time)}s`
+                };
+            }
+
+            return null;
+        }
+
+        function showDropPreview(preview) {
+            if (!preview) {
+                hideDropPreview();
+                return;
+            }
+            els.dropPreview.classList.remove("hidden");
+            els.dropPreview.style.left = `${Math.max(0, preview.x)}px`;
+            els.dropPreview.style.width = `${Math.max(2, preview.width)}px`;
+            els.dropPreviewLabel.textContent = preview.label;
+        }
+
+        function hideDropPreview() {
+            els.dropPreview.classList.add("hidden");
+        }
+
+        function renderTimeline() {
+            const track = getTrack();
+            if (!track) {
+                els.emptyState.classList.remove("hidden");
+                return;
+            }
+            els.emptyState.classList.add("hidden");
+            hideDropPreview();
+            const width = setTimelineWidth(track);
+            drawGrid(track, width);
+            renderSections(track);
+            renderMarkers(track);
+            updatePlayhead();
+            void drawWaveform(track, width, audioLoadToken);
+        }
+
+        function updatePlayhead() {
+            const duration = parseFinite(els.audio.duration, timelineDuration);
+            const current = parseFinite(els.audio.currentTime, 0);
+            els.playhead.style.left = `${timeToX(current)}px`;
+            els.timeReadout.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+            els.seekProgress.style.width = `${duration ? clamp(current / duration, 0, 1) * 100 : 0}%`;
+            updateCurrentIndexPreview();
+        }
+
+        function getCurrentChord(track, currentTime) {
+            const timing = getTiming(track);
+            const currentBeat = Math.floor(Math.max(0, currentTime - timing.startOffset) / timing.beatDuration);
+            return flattenChords(track).find((chord) => currentBeat === chord.beatIndex) || null;
+        }
+
+        function getCurrentSection(track, currentTime) {
+            const timing = getTiming(track);
+            const currentBeat = Math.floor(Math.max(0, currentTime - timing.startOffset) / timing.beatDuration);
+            let beatIndex = 0;
+            return getSections(track).find((section) => {
+                const chords = Array.isArray(section.chords) ? section.chords : [];
+                const isCurrent = currentBeat >= beatIndex && currentBeat < beatIndex + chords.length;
+                beatIndex += chords.length;
+                return isCurrent;
+            }) || null;
+        }
+
+        function updateCurrentIndexPreview() {
+            const track = getTrack();
+            if (!track) {
+                els.currentLyricDisplay.textContent = "";
+                els.currentChordDisplay.textContent = "";
+                els.chordInstructionsDisplay.textContent = "";
+                return;
+            }
+
+            const currentTime = parseFinite(els.audio.currentTime, 0);
+            const activeLyrics = buildLyricPlaybackEntries(track)
+                .filter((entry) => currentTime >= entry.startTime && currentTime < entry.endTime)
+                .map((entry) => entry.text)
+                .filter(Boolean);
+            const chord = getCurrentChord(track, currentTime);
+            const chordMap = getChordMap();
+            const chordData = chord ? chordMap.get(chord.value) : null;
+            const section = getCurrentSection(track, currentTime);
+
+            els.currentLyricDisplay.textContent = activeLyrics.join(" / ");
+            els.currentChordDisplay.textContent = chord?.value || "";
+            els.chordInstructionsDisplay.textContent = chordData?.instructions || section?.label || "";
+        }
+
+        function setPlayIcon(isPlaying) {
+            els.playToggle.innerHTML = isPlaying
+                ? '<i class="fa-solid fa-pause" aria-hidden="true"></i>'
+                : '<i class="fa-solid fa-play" aria-hidden="true"></i>';
+        }
+
+        function renderLyricDetail() {
+            const track = getTrack();
+            const lyric = selected.type === "lyric" && track?.lyrics ? track.lyrics[selected.index] : null;
+            const disabled = !lyric;
+            [els.lyricLine, els.lyricBar, els.lyricLength, els.lyricOffset, els.lyricStanza].forEach((input) => {
+                input.disabled = disabled;
+            });
+            els.removeLyric.disabled = disabled;
+            els.lyricLine.value = lyric?.line || "";
+            els.lyricBar.value = lyric ? parseFinite(lyric.barNumber, 0) : "";
+            els.lyricLength.value = lyric ? parseFinite(lyric.barLength, 1) : "";
+            els.lyricOffset.value = lyric ? parseFinite(lyric.offset, 0) : "";
+            els.lyricStanza.checked = Boolean(lyric?.stanzaEnd);
+        }
+
+        function renderLyricList() {
+            const track = getTrack();
+            els.lyricList.innerHTML = "";
+            if (!track) {
+                return;
+            }
+            if (!Array.isArray(track.lyrics)) {
+                track.lyrics = [];
+            }
+            track.lyrics.forEach((lyric, index) => {
+                const row = document.createElement("div");
+                row.className = `lyric-row${selected.type === "lyric" && selected.index === index ? " selected" : ""}`;
+                row.dataset.index = String(index);
+
+                const line = document.createElement("input");
+                line.value = lyric.line || "";
+                line.dataset.field = "line";
+                line.title = "Line";
+
+                const bar = document.createElement("input");
+                bar.type = "number";
+                bar.step = "1";
+                bar.value = parseFinite(lyric.barNumber, 0);
+                bar.dataset.field = "barNumber";
+                bar.title = "Bar";
+
+                const length = document.createElement("input");
+                length.type = "number";
+                length.step = "0.25";
+                length.min = "0.25";
+                length.value = parseFinite(lyric.barLength, 1);
+                length.dataset.field = "barLength";
+                length.title = "Length";
+
+                const offset = document.createElement("input");
+                offset.type = "number";
+                offset.step = "0.001";
+                offset.value = parseFinite(lyric.offset, 0);
+                offset.dataset.field = "offset";
+                offset.title = "Offset";
+
+                const remove = document.createElement("button");
+                remove.type = "button";
+                remove.className = "icon danger";
+                remove.innerHTML = '<i class="fa-solid fa-trash" aria-hidden="true"></i>';
+                remove.dataset.action = "remove-lyric-row";
+                remove.title = "Remove";
+
+                row.append(line, bar, length, offset, remove);
+                row.addEventListener("pointerdown", () => {
+                    selected = { type: "lyric", index };
+                    renderSelection();
+                });
+                els.lyricList.appendChild(row);
+            });
+        }
+
+        function renderChordPanel() {
+            const track = getTrack();
+            els.sectionSelect.innerHTML = "";
+            els.chordGrid.innerHTML = "";
+            if (!track) {
+                return;
+            }
+            const sections = getSections(track);
+            if (!sections.length) {
+                activeSectionIndex = 0;
+            } else {
+                activeSectionIndex = clamp(activeSectionIndex, 0, sections.length - 1);
+            }
+            sections.forEach((section, index) => {
+                const option = document.createElement("option");
+                option.value = String(index);
+                option.textContent = section.label || `Section ${index + 1}`;
+                els.sectionSelect.appendChild(option);
+            });
+            els.sectionSelect.value = String(activeSectionIndex);
+            const section = sections[activeSectionIndex] || null;
+            els.sectionLabelInput.value = section?.label || "";
+            els.removeSection.disabled = !section;
+
+            if (!section) {
+                return;
+            }
+            if (!Array.isArray(section.chords)) {
+                section.chords = [];
+            }
+
+            const sectionStart = sections.slice(0, activeSectionIndex).reduce((sum, entry) => {
+                return sum + (Array.isArray(entry.chords) ? entry.chords.length : 0);
+            }, 0);
+
+            section.chords.forEach((value, index) => {
+                const flatIndex = sectionStart + index;
+                const cell = document.createElement("div");
+                cell.className = `chord-cell${selected.type === "chord" && selected.index === flatIndex ? " selected" : ""}`;
+                cell.dataset.flatIndex = String(flatIndex);
+                const beat = document.createElement("span");
+                beat.textContent = `Beat ${flatIndex}`;
+                const input = document.createElement("input");
+                input.value = value || "";
+                input.dataset.sectionIndex = String(activeSectionIndex);
+                input.dataset.chordIndex = String(index);
+                cell.append(beat, input);
+                cell.addEventListener("pointerdown", () => {
+                    selected = { type: "chord", index: flatIndex };
+                    renderSelection();
+                });
+                els.chordGrid.appendChild(cell);
+            });
+
+            renderChordDetail();
+        }
+
+        function renderChordDetail() {
+            const track = getTrack();
+            const location = selected.type === "chord" ? locateChord(track, selected.index) : null;
+            const disabled = !location;
+            [els.chordValue, els.chordOffset].forEach((input) => {
+                input.disabled = disabled;
+            });
+            els.removeChord.disabled = disabled;
+            els.addChordAfter.disabled = !track;
+            els.chordValue.value = location ? location.section.chords[location.chordIndex] || "" : "";
+            els.chordOffset.value = location ? getChordOffset(location.section, location.chordIndex) : "";
+        }
+
+        function renderTimingPanel() {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            els.trackStartOffset.value = parseFinite(track.startOffset, 0);
+            els.trackTempo.value = parseFinite(track.tempo, 120);
+            els.trackSignature.value = track.timeSignature || "4/4";
+            els.trackAudio.value = track.mp3 || "";
+            els.trackBacking.value = track.backingmp3 || "";
+        }
+
+        function renderSelection() {
+            renderMarkers(getTrack());
+            renderLyricDetail();
+            renderLyricList();
+            renderChordPanel();
+        }
+
+        function renderInspectors() {
+            renderLyricDetail();
+            renderLyricList();
+            renderChordPanel();
+            renderTimingPanel();
+            renderMetadata();
+            refreshRawJson(true);
+        }
+
+        function renderAll() {
+            if (albumData?.album?.title) {
+                els.albumHeading.textContent = `${albumData.album.title} Sync`;
+            }
+            renderTrackList();
+            renderTrackHeader();
+            renderTimeline();
+            renderInspectors();
+        }
+
+        async function loadAudioForTrack(track) {
+            audioLoadToken += 1;
+            const token = audioLoadToken;
+            els.playToggle.disabled = true;
+            setPlayIcon(false);
+            els.audio.pause();
+
+            if (!track?.mp3) {
+                els.audio.removeAttribute("src");
+                renderTimeline();
+                setStatus("No audio");
+                return;
+            }
+
+            setStatus("Loading audio");
+            els.audio.src = track.mp3;
+            els.audio.load();
+
+            await new Promise((resolve) => {
+                const done = () => resolve();
+                els.audio.addEventListener("loadedmetadata", done, { once: true });
+                els.audio.addEventListener("error", done, { once: true });
+                window.setTimeout(done, 1600);
+            });
+
+            if (token !== audioLoadToken) {
+                return;
+            }
+            els.playToggle.disabled = !Number.isFinite(els.audio.duration);
+            renderTimeline();
+        }
+
+        async function selectTrack(index) {
+            const tracks = getTracks();
+            activeTrackIndex = clamp(index, 0, Math.max(0, tracks.length - 1));
+            activeSectionIndex = 0;
+            selected = { type: null, index: -1 };
+            renderTrackList();
+            renderTrackHeader();
+            renderInspectors();
+            await loadAudioForTrack(getTrack());
+        }
+
+        function updateLyricFromDetail() {
+            const track = getTrack();
+            const lyric = selected.type === "lyric" ? track?.lyrics?.[selected.index] : null;
+            if (!lyric) {
+                return;
+            }
+            lyric.line = els.lyricLine.value;
+            lyric.barNumber = parseFinite(els.lyricBar.value, 0);
+            lyric.barLength = Math.max(0.25, parseFinite(els.lyricLength.value, 1));
+            lyric.offset = roundTime(els.lyricOffset.value);
+            if (els.lyricStanza.checked) {
+                lyric.stanzaEnd = true;
+            } else {
+                delete lyric.stanzaEnd;
+            }
+            markDirty();
+            renderTimeline();
+            renderLyricList();
+        }
+
+        function addLyricAtPlayhead() {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            if (!Array.isArray(track.lyrics)) {
+                track.lyrics = [];
+            }
+            const fields = timeToLyricFields(track, parseFinite(els.audio.currentTime, 0), false);
+            const lyric = {
+                line: "",
+                barNumber: fields.barNumber,
+                barLength: 1,
+                offset: fields.offset
+            };
+            track.lyrics.push(lyric);
+            selected = { type: "lyric", index: track.lyrics.length - 1 };
+            markDirty();
+            renderAll();
+        }
+
+        function removeSelectedLyric() {
+            const track = getTrack();
+            if (!track?.lyrics || selected.type !== "lyric") {
+                return;
+            }
+            track.lyrics.splice(selected.index, 1);
+            selected = { type: null, index: -1 };
+            markDirty();
+            renderAll();
+        }
+
+        function addSection() {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            const sections = getSections(track);
+            sections.splice(activeSectionIndex + 1, 0, { label: `Section ${sections.length + 1}`, chords: [] });
+            activeSectionIndex += 1;
+            markDirty();
+            renderAll();
+        }
+
+        function removeSection() {
+            const track = getTrack();
+            const sections = track ? getSections(track) : [];
+            if (!sections.length) {
+                return;
+            }
+            sections.splice(activeSectionIndex, 1);
+            activeSectionIndex = clamp(activeSectionIndex, 0, Math.max(0, sections.length - 1));
+            selected = { type: null, index: -1 };
+            markDirty();
+            renderAll();
+        }
+
+        function getPlayheadBeat(track) {
+            const timing = getTiming(track);
+            const gridTime = Math.max(0, parseFinite(els.audio.currentTime, 0) - timing.startOffset);
+            return snapMode === "bar"
+                ? Math.round(gridTime / timing.barDuration) * timing.beatsPerBar
+                : Math.round(gridTime / timing.beatDuration);
+        }
+
+        function addChordAt(flatIndex, value = restChord) {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            const sections = getSections(track);
+            ensureSection(track);
+            const total = getTotalBeats(track);
+            let target = clamp(flatIndex, 0, Math.max(0, total));
+
+            if (total === 0) {
+                const section = ensureSection(track);
+                section.chords.push(value);
+                activeSectionIndex = getSections(track).indexOf(section);
+                selected = { type: "chord", index: 0 };
+            } else {
+                if (target >= total) {
+                    const section = sections[sections.length - 1];
+                    if (!Array.isArray(section.chords)) section.chords = [];
+                    section.chords.push(value);
+                    if (Array.isArray(section.chordOffsets)) {
+                        section.chordOffsets.push(0);
+                    }
+                    selected = { type: "chord", index: total };
+                    activeSectionIndex = sections.length - 1;
+                } else {
+                    const location = locateChord(track, target);
+                    location.section.chords.splice(location.chordIndex, 0, value);
+                    if (Array.isArray(location.section.chordOffsets)) {
+                        location.section.chordOffsets.splice(location.chordIndex, 0, 0);
+                    }
+                    selected = { type: "chord", index: target };
+                    activeSectionIndex = location.sectionIndex;
+                }
+            }
+            markDirty();
+            renderAll();
+        }
+
+        function removeSelectedChord() {
+            const track = getTrack();
+            if (!track || selected.type !== "chord") {
+                return;
+            }
+            const location = locateChord(track, selected.index);
+            if (!location) {
+                return;
+            }
+            location.section.chords.splice(location.chordIndex, 1);
+            if (Array.isArray(location.section.chordOffsets)) {
+                location.section.chordOffsets.splice(location.chordIndex, 1);
+                normalizeChordOffsets(location.section);
+            }
+            selected = { type: null, index: -1 };
+            markDirty();
+            renderAll();
+        }
+
+        function updateChordDetail() {
+            const track = getTrack();
+            const location = selected.type === "chord" ? locateChord(track, selected.index) : null;
+            if (!location) {
+                return;
+            }
+            location.section.chords[location.chordIndex] = els.chordValue.value;
+            setChordOffset(location.section, location.chordIndex, parseFinite(els.chordOffset.value, 0));
+            markDirty();
+            renderTimeline();
+            renderChordPanel();
+        }
+
+        function updateTimingPanel() {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            track.startOffset = roundTime(els.trackStartOffset.value);
+            track.tempo = String(parseFinite(els.trackTempo.value, 120));
+            track.timeSignature = els.trackSignature.value || "4/4";
+            track.mp3 = els.trackAudio.value;
+            track.backingmp3 = els.trackBacking.value;
+            markDirty();
+            renderTrackHeader();
+            renderTimeline();
+        }
+
+        function getElementLeft(element) {
+            const inlineLeft = Number.parseFloat(element?.style?.left);
+            if (Number.isFinite(inlineLeft)) {
+                return inlineLeft;
+            }
+            const elementRect = element.getBoundingClientRect();
+            const hostRect = els.timelineInner.getBoundingClientRect();
+            return elementRect.left - hostRect.left;
+        }
+
+        function getDragAudioTime(event) {
+            if (!dragState || dragState.type === "start") {
+                return getPointerTime(event);
+            }
+
+            const hostRect = els.timelineInner.getBoundingClientRect();
+            const rawLeft = clamp(event.clientX - hostRect.left - (dragState.pointerOffset || 0), 0, hostRect.width);
+            return xToTime(rawLeft);
+        }
+
+        function updateDragDisplay(event) {
+            const track = getTrack();
+            if (!dragState || !track) {
+                return null;
+            }
+            const preview = getDragPreview(track, dragState.type, dragState.index, getDragAudioTime(event), event.altKey);
+            showDropPreview(preview);
+            if (preview) {
+                dragState.dropTime = preview.time;
+                if (dragState.element) {
+                    dragState.element.style.transform = `translateX(${preview.x - dragState.originLeft}px)`;
+                }
+            }
+            return preview;
+        }
+
+        function beginTimelinePan(event) {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            event.preventDefault();
+            els.timelineInner.focus({ preventScroll: true });
+            dragState = {
+                type: "pan",
+                index: -1,
+                element: null,
+                originX: event.clientX,
+                startScrollLeft: els.timelineScroll.scrollLeft,
+                moved: false
+            };
+            els.timelineInner.setPointerCapture?.(event.pointerId);
+        }
+
+        function beginMarkerDrag(event) {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            if (event.button === 2) {
+                beginTimelinePan(event);
+                return;
+            }
+            if (event.button !== 0) {
+                return;
+            }
+            event.preventDefault();
+            const marker = event.currentTarget;
+            const markerRect = marker.getBoundingClientRect();
+            selected = {
+                type: marker.dataset.type,
+                index: Number.parseInt(marker.dataset.index, 10)
+            };
+            dragState = {
+                type: selected.type,
+                index: selected.index,
+                element: marker,
+                originX: event.clientX,
+                originLeft: getElementLeft(marker),
+                pointerOffset: event.clientX - markerRect.left,
+                moved: false
+            };
+            els.markerLayer.querySelectorAll(".marker.selected").forEach((item) => item.classList.remove("selected"));
+            marker.classList.add("selected", "dragging");
+            marker.setPointerCapture(event.pointerId);
+            renderLyricDetail();
+            renderLyricList();
+            renderChordPanel();
+            updateDragDisplay(event);
+        }
+
+        function beginStartDrag(event) {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            if (event.button === 2) {
+                beginTimelinePan(event);
+                return;
+            }
+            if (event.button !== 0) {
+                return;
+            }
+            event.preventDefault();
+            dragState = {
+                type: "start",
+                index: -1,
+                element: els.startHandle,
+                originX: event.clientX,
+                originLeft: getElementLeft(els.startHandle),
+                pointerOffset: 0,
+                moved: false
+            };
+            els.startHandle.setPointerCapture(event.pointerId);
+            updateDragDisplay(event);
+        }
+
+        function commitDrag(event) {
+            const track = getTrack();
+            if (!dragState || !track) {
+                return;
+            }
+            const preview = updateDragDisplay(event);
+            const time = preview?.time ?? dragState.dropTime ?? getDragAudioTime(event);
+
+            if (dragState.type === "lyric" && track.lyrics?.[dragState.index]) {
+                const fields = timeToLyricFields(track, time, event.altKey);
+                track.lyrics[dragState.index].barNumber = fields.barNumber;
+                track.lyrics[dragState.index].offset = fields.offset;
+                selected = { type: "lyric", index: dragState.index };
+                markDirty();
+            } else if (dragState.type === "chord") {
+                const newIndex = moveChordToTime(track, dragState.index, time, event.altKey);
+                selected = { type: "chord", index: newIndex };
+                const location = locateChord(track, newIndex);
+                if (location) {
+                    activeSectionIndex = location.sectionIndex;
+                }
+                markDirty();
+            } else if (dragState.type === "start") {
+                track.startOffset = snapAudioTime(track, time, event.altKey);
+                markDirty();
+            }
+
+            dragState.element?.classList.remove("dragging");
+            if (dragState.element) {
+                dragState.element.style.transform = "";
+            }
+            dragState = null;
+            hideDropPreview();
+            renderAll();
+        }
+
+        function handlePointerMove(event) {
+            if (!dragState) {
+                return;
+            }
+
+            if (dragState.type === "scrub") {
+                seekTo(getPointerTime(event));
+                return;
+            }
+
+            if (dragState.type === "pan") {
+                const delta = event.clientX - dragState.originX;
+                if (Math.abs(delta) > 1) {
+                    dragState.moved = true;
+                }
+                els.timelineScroll.scrollLeft = dragState.startScrollLeft - delta;
+                return;
+            }
+
+            if (Math.abs(event.clientX - dragState.originX) > 1) {
+                dragState.moved = true;
+            }
+            updateDragDisplay(event);
+        }
+
+        function handlePointerUp(event) {
+            if (!dragState) {
+                return;
+            }
+            if (dragState.type === "scrub") {
+                dragState = null;
+                return;
+            }
+            if (dragState.type === "pan") {
+                dragState = null;
+                return;
+            }
+            commitDrag(event);
+        }
+
+        function seekTo(seconds) {
+            const duration = parseFinite(els.audio.duration, timelineDuration);
+            els.audio.currentTime = clamp(parseFinite(seconds, 0), 0, Math.max(0, duration));
+            updatePlayhead();
+        }
+
+        function beginTimelineScrub(event) {
+            if (event.target.closest(".marker, .start-handle")) {
+                return;
+            }
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            if (event.button === 2) {
+                beginTimelinePan(event);
+                return;
+            }
+            if (event.button !== 0) {
+                return;
+            }
+            event.preventDefault();
+            els.timelineInner.focus({ preventScroll: true });
+            dragState = {
+                type: "scrub",
+                index: -1,
+                element: null,
+                originX: event.clientX,
+                moved: false
+            };
+            seekTo(getPointerTime(event));
+        }
+
+        function zoomTimeline(nextPixelsPerSecond, anchorTime = parseFinite(els.audio.currentTime, 0), anchorViewportX = els.timelineScroll.clientWidth / 2) {
+            const previous = pixelsPerSecond;
+            pixelsPerSecond = clamp(nextPixelsPerSecond, Number(els.zoom.min), Number(els.zoom.max));
+            if (pixelsPerSecond === previous) {
+                return;
+            }
+            els.zoom.value = String(pixelsPerSecond);
+            renderTimeline();
+            const maxScrollLeft = Math.max(0, els.timelineScroll.scrollWidth - els.timelineScroll.clientWidth);
+            els.timelineScroll.scrollLeft = clamp(timeToX(anchorTime) - anchorViewportX, 0, maxScrollLeft);
+        }
+
+        function handleTimelineWheel(event) {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+
+            if (event.ctrlKey) {
+                event.preventDefault();
+                const anchorTime = getPointerTime(event);
+                const scrollRect = els.timelineScroll.getBoundingClientRect();
+                const anchorViewportX = event.clientX - scrollRect.left;
+                const nextZoom = pixelsPerSecond + (event.deltaY < 0 ? 2 : -2);
+                zoomTimeline(nextZoom, anchorTime, anchorViewportX);
+                return;
+            }
+
+            if (event.altKey) {
+                event.preventDefault();
+                const timing = getTiming(track);
+                const step = event.shiftKey ? timing.barDuration : timing.beatDuration;
+                seekTo(parseFinite(els.audio.currentTime, 0) + (event.deltaY > 0 ? step : -step));
+                return;
+            }
+
+            if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
+                event.preventDefault();
+                els.timelineScroll.scrollLeft += event.deltaY * (event.shiftKey ? 2 : 1);
+            }
+        }
+
+        function handleTimelineKeydown(event) {
+            if (event.target.matches("input, textarea, select")) {
+                return;
+            }
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            const timing = getTiming(track);
+            const fineStep = event.altKey ? 0.05 : timing.beatDuration;
+            const step = event.shiftKey ? timing.barDuration : fineStep;
+
+            if (event.code === "Space") {
+                event.preventDefault();
+                els.playToggle.click();
+            } else if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                seekTo(parseFinite(els.audio.currentTime, 0) - step);
+            } else if (event.key === "ArrowRight") {
+                event.preventDefault();
+                seekTo(parseFinite(els.audio.currentTime, 0) + step);
+            } else if (event.key === "Home") {
+                event.preventDefault();
+                seekTo(0);
+            } else if (event.key === "End") {
+                event.preventDefault();
+                seekTo(parseFinite(els.audio.duration, timelineDuration));
+            } else if (event.key === "+" || event.key === "=") {
+                event.preventDefault();
+                zoomTimeline(pixelsPerSecond + 2);
+            } else if (event.key === "-" || event.key === "_") {
+                event.preventDefault();
+                zoomTimeline(pixelsPerSecond - 2);
+            } else if (event.key === "PageUp") {
+                event.preventDefault();
+                els.timelineScroll.scrollLeft -= els.timelineScroll.clientWidth * 0.75;
+            } else if (event.key === "PageDown") {
+                event.preventDefault();
+                els.timelineScroll.scrollLeft += els.timelineScroll.clientWidth * 0.75;
+            }
+        }
+
+        function playLoop() {
+            updatePlayhead();
+            if (!els.audio.paused) {
+                animationFrame = requestAnimationFrame(playLoop);
+            }
+        }
+
+        async function saveAlbum() {
+            if (!albumData) {
+                return;
+            }
+            const text = stringifyAlbum();
+            try {
+                if (!albumHandle && "showSaveFilePicker" in window) {
+                    albumHandle = await window.showSaveFilePicker({
+                        suggestedName: "album.json",
+                        types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
+                    });
+                }
+
+                if (albumHandle) {
+                    const writable = await albumHandle.createWritable();
+                    await writable.write(text);
+                    await writable.close();
+                    dirty = false;
+                    setStatus("Saved");
+                    els.sourceLabel.textContent = "album.json";
+                    return;
+                }
+            } catch (error) {
+                if (error?.name === "AbortError") {
+                    return;
+                }
+                console.error(error);
+            }
+            downloadAlbum();
+        }
+
+        function downloadAlbum() {
+            if (!albumData) {
+                return;
+            }
+            const blob = new Blob([stringifyAlbum()], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "album.json";
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        async function openAlbumFile() {
+            if (!("showOpenFilePicker" in window)) {
+                setStatus("Use Download fallback");
+                return;
+            }
+            try {
+                const [handle] = await window.showOpenFilePicker({
+                    multiple: false,
+                    types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
+                });
+                const file = await handle.getFile();
+                const text = await file.text();
+                albumData = JSON.parse(text);
+                albumHandle = handle;
+                dirty = false;
+                activeTrackIndex = 0;
+                els.sourceLabel.textContent = file.name;
+                setStatus("Loaded");
+                renderAll();
+                await selectTrack(0);
+            } catch (error) {
+                if (error?.name !== "AbortError") {
+                    console.error(error);
+                    setStatus("Open failed");
+                }
+            }
+        }
+
+        async function loadAlbumFromFetch() {
+            try {
+                const response = await fetch(albumUrl, { cache: "no-store" });
+                if (!response.ok) {
+                    throw new Error(`Fetch failed: ${response.status}`);
+                }
+                albumData = await response.json();
+                dirty = false;
+                els.sourceLabel.textContent = albumUrl;
+                setStatus("Loaded");
+                renderAll();
+                await selectTrack(0);
+            } catch (error) {
+                console.error(error);
+                els.emptyState.classList.remove("hidden");
+                setStatus("Open album.json");
+            }
+        }
+
+        function applyRawJson() {
+            try {
+                albumData = JSON.parse(els.jsonEditor.value);
+                rawEditorDirty = false;
+                dirty = true;
+                activeTrackIndex = clamp(activeTrackIndex, 0, Math.max(0, getTracks().length - 1));
+                selected = { type: null, index: -1 };
+                setStatus("JSON applied");
+                renderAll();
+                void selectTrack(activeTrackIndex);
+            } catch (error) {
+                setStatus("JSON error");
+                console.error(error);
+            }
+        }
+
+        els.trackList.addEventListener("click", (event) => {
+            const button = event.target.closest(".track-button");
+            if (!button) {
+                return;
+            }
+            void selectTrack(Number.parseInt(button.dataset.trackIndex, 10));
+        });
+
+        document.querySelectorAll(".tabs button").forEach((button) => {
+            button.addEventListener("click", () => {
+                document.querySelectorAll(".tabs button").forEach((item) => item.classList.remove("active"));
+                document.querySelectorAll(".panel").forEach((panel) => panel.classList.remove("active"));
+                button.classList.add("active");
+                document.getElementById(button.dataset.panel).classList.add("active");
+            });
+        });
+
+        els.snapBeat.addEventListener("click", () => {
+            snapMode = "beat";
+            els.snapBeat.setAttribute("aria-pressed", "true");
+            els.snapBar.setAttribute("aria-pressed", "false");
+        });
+
+        els.snapBar.addEventListener("click", () => {
+            snapMode = "bar";
+            els.snapBeat.setAttribute("aria-pressed", "false");
+            els.snapBar.setAttribute("aria-pressed", "true");
+        });
+
+        els.zoom.addEventListener("input", () => {
+            const anchorTime = xToTime(els.timelineScroll.scrollLeft + els.timelineScroll.clientWidth / 2);
+            zoomTimeline(Number(els.zoom.value), anchorTime, els.timelineScroll.clientWidth / 2);
+        });
+
+        els.playToggle.addEventListener("click", async () => {
+            if (els.audio.paused) {
+                try {
+                    await els.audio.play();
+                    setPlayIcon(true);
+                    cancelAnimationFrame(animationFrame);
+                    playLoop();
+                } catch (error) {
+                    console.error(error);
+                }
+            } else {
+                els.audio.pause();
+                setPlayIcon(false);
+            }
+        });
+
+        els.audio.addEventListener("pause", () => {
+            setPlayIcon(false);
+            cancelAnimationFrame(animationFrame);
+            updatePlayhead();
+        });
+
+        els.audio.addEventListener("ended", () => {
+            setPlayIcon(false);
+            cancelAnimationFrame(animationFrame);
+            updatePlayhead();
+        });
+
+        els.audio.addEventListener("timeupdate", updatePlayhead);
+
+        els.timelineInner.addEventListener("pointerdown", beginTimelineScrub);
+        els.timelineInner.addEventListener("wheel", handleTimelineWheel, { passive: false });
+        els.timelineInner.addEventListener("keydown", handleTimelineKeydown);
+        els.timelineInner.addEventListener("contextmenu", (event) => event.preventDefault());
+        els.startHandle.addEventListener("pointerdown", beginStartDrag);
+        window.addEventListener("pointermove", handlePointerMove);
+        window.addEventListener("pointerup", handlePointerUp);
+        window.addEventListener("resize", renderTimeline);
+
+        els.lyricLine.addEventListener("input", updateLyricFromDetail);
+        els.lyricBar.addEventListener("input", updateLyricFromDetail);
+        els.lyricLength.addEventListener("input", updateLyricFromDetail);
+        els.lyricOffset.addEventListener("input", updateLyricFromDetail);
+        els.lyricStanza.addEventListener("change", updateLyricFromDetail);
+        els.addLyric.addEventListener("click", addLyricAtPlayhead);
+        els.removeLyric.addEventListener("click", removeSelectedLyric);
+
+        els.lyricList.addEventListener("input", (event) => {
+            const row = event.target.closest(".lyric-row");
+            const track = getTrack();
+            if (!row || !track?.lyrics) {
+                return;
+            }
+            const index = Number.parseInt(row.dataset.index, 10);
+            const field = event.target.dataset.field;
+            const lyric = track.lyrics[index];
+            if (!lyric || !field) {
+                return;
+            }
+            if (field === "line") {
+                lyric.line = event.target.value;
+            } else if (field === "barLength") {
+                lyric[field] = Math.max(0.25, parseFinite(event.target.value, 1));
+            } else if (field === "offset") {
+                lyric[field] = roundTime(event.target.value);
+            } else {
+                lyric[field] = parseFinite(event.target.value, 0);
+            }
+            selected = { type: "lyric", index };
+            markDirty();
+            renderTimeline();
+            renderLyricDetail();
+        });
+
+        els.lyricList.addEventListener("click", (event) => {
+            const remove = event.target.closest("[data-action='remove-lyric-row']");
+            if (!remove) {
+                return;
+            }
+            const row = remove.closest(".lyric-row");
+            const index = Number.parseInt(row.dataset.index, 10);
+            selected = { type: "lyric", index };
+            removeSelectedLyric();
+        });
+
+        els.addSection.addEventListener("click", addSection);
+        els.removeSection.addEventListener("click", removeSection);
+        els.sectionSelect.addEventListener("change", () => {
+            activeSectionIndex = Number.parseInt(els.sectionSelect.value, 10);
+            renderChordPanel();
+        });
+        els.sectionLabelInput.addEventListener("input", () => {
+            const track = getTrack();
+            const section = track ? getSections(track)[activeSectionIndex] : null;
+            if (!section) {
+                return;
+            }
+            section.label = els.sectionLabelInput.value;
+            markDirty();
+            renderTimeline();
+            renderTrackHeader();
+        });
+
+        els.addChordPlayhead.addEventListener("click", () => {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            addChordAt(getPlayheadBeat(track));
+        });
+        els.addChordAfter.addEventListener("click", () => {
+            const track = getTrack();
+            if (!track) {
+                return;
+            }
+            const target = selected.type === "chord" ? selected.index + 1 : getTotalBeats(track);
+            addChordAt(target);
+        });
+        els.removeChord.addEventListener("click", removeSelectedChord);
+        els.chordValue.addEventListener("input", updateChordDetail);
+        els.chordOffset.addEventListener("input", updateChordDetail);
+        els.chordGrid.addEventListener("input", (event) => {
+            const input = event.target.closest("input");
+            if (!input) {
+                return;
+            }
+            const track = getTrack();
+            const sections = track ? getSections(track) : [];
+            const section = sections[Number.parseInt(input.dataset.sectionIndex, 10)];
+            const chordIndex = Number.parseInt(input.dataset.chordIndex, 10);
+            if (!section?.chords) {
+                return;
+            }
+            section.chords[chordIndex] = input.value;
+            selected = { type: "chord", index: Number.parseInt(input.closest(".chord-cell").dataset.flatIndex, 10) };
+            markDirty();
+            renderTimeline();
+            renderChordDetail();
+        });
+
+        [els.trackStartOffset, els.trackTempo, els.trackSignature, els.trackAudio, els.trackBacking].forEach((input) => {
+            input.addEventListener("input", updateTimingPanel);
+        });
+
+        els.openFile.addEventListener("click", openAlbumFile);
+        els.saveFile.addEventListener("click", saveAlbum);
+        els.downloadFile.addEventListener("click", downloadAlbum);
+        els.dataMenu.addEventListener("click", () => {
+            renderMetadata();
+            refreshRawJson(true);
+            els.dataDrawer.classList.add("open");
+            els.dataDrawer.setAttribute("aria-hidden", "false");
+        });
+        els.closeData.addEventListener("click", () => {
+            els.dataDrawer.classList.remove("open");
+            els.dataDrawer.setAttribute("aria-hidden", "true");
+        });
+        els.refreshJson.addEventListener("click", () => refreshRawJson(true));
+        els.applyJson.addEventListener("click", applyRawJson);
+        els.jsonEditor.addEventListener("input", () => {
+            rawEditorDirty = true;
+        });
+        els.metadataGrid.addEventListener("input", (event) => {
+            const input = event.target.closest("[data-meta-key]");
+            const track = getTrack();
+            if (!input || !track) {
+                return;
+            }
+            const key = input.dataset.metaKey;
+            const existing = track[key];
+            if (typeof existing === "number") {
+                track[key] = parseFinite(input.value, existing);
+            } else {
+                track[key] = input.value;
+            }
+            markDirty();
+            renderTrackHeader();
+            renderTrackList();
+        });
+
+        renderAll();
+        void loadAlbumFromFetch();
+    </script>
+</body>
+</html>
