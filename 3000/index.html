@@ -428,6 +428,48 @@
             line-height: 1;
             color: #fff;
         }
+        .version-toggle {
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+            border: 1px solid rgba(var(--club-blue-surface-rgb), 0.34);
+            background: rgba(var(--club-blue-surface-rgb), 0.08);
+            overflow: hidden;
+        }
+        .player-controls .version-toggle__button {
+            width: auto;
+            min-width: 54px;
+            padding: 4px 9px;
+            background: transparent;
+            color: var(--club-blue-strong);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .player-controls .version-toggle__button i {
+            color: currentColor;
+        }
+        .player-controls .version-toggle__button.is-active {
+            background: var(--club-blue);
+            color: #fff;
+        }
+        .player-controls .version-toggle__button:disabled {
+            opacity: 0.35;
+        }
+        .version-toggle__message {
+            color: #7e3c26;
+            font-size: 11px;
+            line-height: 1.2;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .version-toggle__message:empty {
+            display: none;
+        }
         .player-timeline {
             font-size: 14px;
             text-align: right;
@@ -1593,6 +1635,11 @@
         <div class="current-song-name" id="current-song-name"></div>
         <div class="player-controls">
             <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+            <div class="version-toggle" role="group" aria-label="Song version">
+                <button class="version-toggle__button is-active" type="button" data-version="martin" aria-pressed="true" disabled>Martin</button>
+                <button class="version-toggle__button" type="button" data-version="dani" aria-pressed="false" disabled>Dani</button>
+            </div>
+            <span class="version-toggle__message" id="version-toggle-message" aria-live="polite"></span>
             <div class="current-info">
                 <span class="current-section"></span>
                 <span class="current-lyric"></span>
@@ -1968,6 +2015,8 @@
     const glSeek = createSeekRenderer(seekCanvas);
     const audioEngine = new AudioEngine();
     const toggleBtn = playerBasic.querySelector('.toggle-btn');
+    const versionToggleButtons = Array.from(playerBasic.querySelectorAll('.version-toggle__button'));
+    const versionToggleMessage = document.getElementById('version-toggle-message');
     const timeline = playerBasic.querySelector('.player-timeline');
     const seekBar = null;
     const seekFill = null;
@@ -4320,6 +4369,7 @@
     const contextMenu = document.getElementById('context-menu');
     let currentTrack = null;
     let selectedTrackIndex = -1;
+    let activeSongVersion = 'martin';
     let lastUpdateTime = 0;
     let contextTarget = null;
 
@@ -4406,6 +4456,116 @@
         history.replaceState({ song: trackIndex }, '', url);
     }
 
+    function getVersionedAudioSrc(track, version = activeSongVersion) {
+        return getVersionedAudioSources(track, version)[0] || '';
+    }
+
+    function getVersionedAudioSources(track, version = activeSongVersion) {
+        const baseSrc = String(track?.mp3 || '').trim();
+        if (!baseSrc || version !== 'dani') return baseSrc ? [baseSrc] : [];
+
+        const queryIndex = baseSrc.search(/[?#]/);
+        const cleanSrc = queryIndex === -1 ? baseSrc : baseSrc.slice(0, queryIndex);
+        const suffix = queryIndex === -1 ? '' : baseSrc.slice(queryIndex);
+        const slashIndex = Math.max(cleanSrc.lastIndexOf('/'), cleanSrc.lastIndexOf('\\'));
+        const directory = slashIndex === -1 ? '' : cleanSrc.slice(0, slashIndex + 1);
+        const fileName = slashIndex === -1 ? cleanSrc : cleanSrc.slice(slashIndex + 1);
+        const extensionIndex = fileName.lastIndexOf('.');
+        const fileBase = extensionIndex === -1 ? fileName : fileName.slice(0, extensionIndex);
+        const extension = extensionIndex === -1 ? '' : fileName.slice(extensionIndex);
+        const primary = `${directory}dani_${fileName}${suffix}`;
+        const sources = [primary];
+
+        if (extension.toLowerCase() !== '.wav') {
+            sources.push(`${directory}dani_${fileBase}.wav${suffix}`);
+        }
+
+        return sources;
+    }
+
+    function updateVersionToggleState() {
+        versionToggleButtons.forEach(button => {
+            const isActive = button.dataset.version === activeSongVersion;
+            button.classList.toggle('is-active', isActive);
+            button.setAttribute('aria-pressed', String(isActive));
+            button.disabled = !currentTrack;
+        });
+    }
+
+    function setAudioSourceForCurrentVersion(track) {
+        audio.src = getVersionedAudioSrc(track);
+    }
+
+    function setVersionToggleMessage(message = '') {
+        if (!versionToggleMessage) return;
+        versionToggleMessage.textContent = message;
+    }
+
+    function switchSongVersion(nextVersion) {
+        if (!currentTrack || nextVersion === activeSongVersion) return;
+
+        const resumePlayback = !audio.paused;
+        const resumeTime = audio.currentTime || 0;
+        const previousVersion = activeSongVersion;
+        const candidateSources = getVersionedAudioSources(currentTrack, nextVersion);
+        let candidateIndex = 0;
+        let keepMessageOnRestore = false;
+        activeSongVersion = nextVersion;
+        updateVersionToggleState();
+        setToggleIcon(resumePlayback ? false : true);
+        setVersionToggleMessage('');
+
+        const targetTime = Math.min(resumeTime, Math.max(0, audio.duration || resumeTime));
+        const restorePlayback = () => {
+            audio.removeEventListener('error', handleVersionError);
+            audioEngine.attach(audio);
+            if (targetTime > 0 && targetTime < (audio.duration || Infinity)) {
+                audioEngine.seek(targetTime);
+            }
+            if (!keepMessageOnRestore) {
+                setVersionToggleMessage('');
+            }
+            updateProgressBars();
+            updateLiveTelemetryAnalysis(true);
+            if (resumePlayback) {
+                audioEngine.play().then(() => {
+                    setToggleIcon(false);
+                }).catch(err => {
+                    console.error('Audio play error:', err);
+                    toggleBtn.disabled = false;
+                    setToggleIcon(true);
+                });
+            }
+        };
+
+        const handleVersionError = () => {
+            console.error(`Audio error loading ${nextVersion} version for track:`, currentTrack.title);
+            audio.removeEventListener('loadedmetadata', restorePlayback);
+
+            candidateIndex += 1;
+            if (candidateIndex < candidateSources.length) {
+                audio.addEventListener('loadedmetadata', restorePlayback, { once: true });
+                audio.addEventListener('error', handleVersionError, { once: true });
+                audio.src = candidateSources[candidateIndex];
+                audio.load();
+                return;
+            }
+
+            setVersionToggleMessage(`${nextVersion === 'dani' ? 'Dani' : 'Martin'} version unavailable`);
+            keepMessageOnRestore = true;
+            activeSongVersion = previousVersion;
+            updateVersionToggleState();
+            audio.addEventListener('loadedmetadata', restorePlayback, { once: true });
+            setAudioSourceForCurrentVersion(currentTrack);
+            audio.load();
+        };
+
+        audio.addEventListener('loadedmetadata', restorePlayback, { once: true });
+        audio.addEventListener('error', handleVersionError, { once: true });
+        audio.src = candidateSources[candidateIndex] || '';
+        audio.load();
+    }
+
     function selectSong(track, trackIndex, startTime = 0, autoPlay = true) {
         console.log(`Selecting song: ${track.title} (index: ${trackIndex}, startTime: ${startTime}, autoPlay: ${autoPlay})`);
         if (currentTrack) {
@@ -4421,8 +4581,11 @@
         songItem.classList.add('active');
         toggleBtn.disabled = false;
         setToggleIcon(autoPlay ? false : true);
+        activeSongVersion = 'martin';
+        updateVersionToggleState();
+        setVersionToggleMessage('');
 
-        audio.src = track.mp3;
+        setAudioSourceForCurrentVersion(track);
         if (!audio.src) {
             console.error('Invalid audio source for track:', track.title);
             toggleBtn.disabled = false;
@@ -4448,6 +4611,7 @@
         document.getElementById('current-song-name').textContent = `${trackIndex + 1} ${track.title}`;
         currentTrack = track;
         selectedTrackIndex = trackIndex;
+        updateVersionToggleState();
         resetLiveTelemetryHistory(trackIndex);
 
         updateURL(trackIndex);
@@ -5133,6 +5297,7 @@
     // Set startup defaults until a song is selected
     setToggleIcon(true);
     toggleBtn.disabled = true;
+    updateVersionToggleState();
 
     handleQueryParams();
 
@@ -5165,6 +5330,12 @@
             audioEngine.pause();
             setToggleIcon(true);
         }
+    });
+
+    versionToggleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            switchSongVersion(button.dataset.version);
+        });
     });
 
     audio.addEventListener('ended', () => {
