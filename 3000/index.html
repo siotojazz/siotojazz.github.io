@@ -432,20 +432,27 @@
             display: inline-flex;
             align-items: center;
             flex-shrink: 0;
-            border: 1px solid rgba(var(--club-blue-surface-rgb), 0.34);
-            background: rgba(var(--club-blue-surface-rgb), 0.08);
+            gap: 2px;
+            padding: 2px;
+            border: 1px solid rgba(var(--club-blue-surface-rgb), 0.42);
+            background: linear-gradient(180deg, rgba(var(--club-blue-surface-rgb), 0.12), rgba(var(--club-blue-surface-rgb), 0.04));
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
             overflow: hidden;
+        }
+        .version-toggle.is-hidden {
+            display: none;
         }
         .player-controls .version-toggle__button {
             width: auto;
-            min-width: 54px;
-            padding: 4px 9px;
+            min-width: 62px;
+            padding: 4px 10px;
             background: transparent;
             color: var(--club-blue-strong);
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.04em;
+            transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
         }
         .player-controls .version-toggle__button i {
             color: currentColor;
@@ -453,6 +460,10 @@
         .player-controls .version-toggle__button.is-active {
             background: var(--club-blue);
             color: #fff;
+            box-shadow: 0 1px 5px rgba(19, 37, 109, 0.22);
+        }
+        .player-controls .version-toggle__button:not(:disabled):hover {
+            transform: translateY(-1px);
         }
         .player-controls .version-toggle__button:disabled {
             opacity: 0.35;
@@ -1635,7 +1646,7 @@
         <div class="current-song-name" id="current-song-name"></div>
         <div class="player-controls">
             <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
-            <div class="version-toggle" role="group" aria-label="Song version">
+            <div class="version-toggle is-hidden" role="group" aria-label="Song version">
                 <button class="version-toggle__button is-active" type="button" data-version="martin" aria-pressed="true" disabled>Martin</button>
                 <button class="version-toggle__button" type="button" data-version="dani" aria-pressed="false" disabled>Dani</button>
             </div>
@@ -2015,6 +2026,7 @@
     const glSeek = createSeekRenderer(seekCanvas);
     const audioEngine = new AudioEngine();
     const toggleBtn = playerBasic.querySelector('.toggle-btn');
+    const versionToggle = playerBasic.querySelector('.version-toggle');
     const versionToggleButtons = Array.from(playerBasic.querySelectorAll('.version-toggle__button'));
     const versionToggleMessage = document.getElementById('version-toggle-message');
     const timeline = playerBasic.querySelector('.player-timeline');
@@ -2070,6 +2082,8 @@
     const telemetryLiveSpectrum = document.getElementById('telemetry-live-spectrum');
     const trackDurations = new Map();
     const trackAudioAnalysis = new Map();
+    const versionAvailability = new Map();
+    const versionLeadingSilence = new Map();
     const durationFailures = new Set();
     const audioAnalysisFailures = new Set();
     const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
@@ -4370,6 +4384,9 @@
     let currentTrack = null;
     let selectedTrackIndex = -1;
     let activeSongVersion = 'martin';
+    let currentVersionSource = '';
+    let currentDaniSource = '';
+    let versionAnalysisAudioContext = null;
     let lastUpdateTime = 0;
     let contextTarget = null;
 
@@ -4484,16 +4501,22 @@
     }
 
     function updateVersionToggleState() {
+        const hasDaniVersion = Boolean(currentTrack && currentDaniSource);
+        if (versionToggle) {
+            versionToggle.classList.toggle('is-hidden', !hasDaniVersion);
+        }
+
         versionToggleButtons.forEach(button => {
             const isActive = button.dataset.version === activeSongVersion;
             button.classList.toggle('is-active', isActive);
             button.setAttribute('aria-pressed', String(isActive));
-            button.disabled = !currentTrack;
+            button.disabled = !hasDaniVersion;
         });
     }
 
     function setAudioSourceForCurrentVersion(track) {
-        audio.src = getVersionedAudioSrc(track);
+        currentVersionSource = getVersionedAudioSrc(track);
+        audio.src = currentVersionSource;
     }
 
     function setVersionToggleMessage(message = '') {
@@ -4501,24 +4524,184 @@
         versionToggleMessage.textContent = message;
     }
 
-    function switchSongVersion(nextVersion) {
+    function canLoadAudioMetadata(source) {
+        return new Promise(resolve => {
+            if (!source) {
+                resolve(false);
+                return;
+            }
+
+            const probe = new Audio();
+            let settled = false;
+            const settle = value => {
+                if (settled) return;
+                settled = true;
+                probe.removeAttribute('src');
+                probe.load();
+                resolve(value);
+            };
+
+            probe.preload = 'metadata';
+            probe.addEventListener('loadedmetadata', () => settle(true), { once: true });
+            probe.addEventListener('error', () => settle(false), { once: true });
+            probe.src = source;
+            probe.load();
+            window.setTimeout(() => settle(false), 4500);
+        });
+    }
+
+    async function canLoadAudioSource(source) {
+        if (!source) return false;
+        if (versionAvailability.has(source)) {
+            return versionAvailability.get(source);
+        }
+
+        let available = false;
+        try {
+            const response = await fetch(source, { method: 'HEAD', cache: 'no-store' });
+            available = response.ok;
+        } catch {
+            available = false;
+        }
+
+        if (!available) {
+            available = await canLoadAudioMetadata(source);
+        }
+
+        versionAvailability.set(source, available);
+        return available;
+    }
+
+    async function findAvailableAudioSource(sources) {
+        for (const source of sources) {
+            if (await canLoadAudioSource(source)) {
+                return source;
+            }
+        }
+
+        return '';
+    }
+
+    async function updateCurrentVersionAvailability(track, trackIndex) {
+        currentDaniSource = '';
+        updateVersionToggleState();
+        const daniSource = await findAvailableAudioSource(getVersionedAudioSources(track, 'dani'));
+
+        if (currentTrack !== track || selectedTrackIndex !== trackIndex) {
+            return;
+        }
+
+        currentDaniSource = daniSource;
+        updateVersionToggleState();
+    }
+
+    function detectFirstNonSilentSampleTime(channelData, sampleRate) {
+        if (!channelData.length || !channelData[0]?.length || !sampleRate) return 0;
+        const threshold = 0.003;
+        const frameCount = channelData[0].length;
+
+        for (let frame = 0; frame < frameCount; frame += 1) {
+            for (const channel of channelData) {
+                if (Math.abs(channel[frame] || 0) > threshold) {
+                    return frame / sampleRate;
+                }
+            }
+        }
+
+        return frameCount / sampleRate;
+    }
+
+    function getVersionAnalysisContext() {
+        if (!AudioContextCtor) return null;
+        if (!versionAnalysisAudioContext) {
+            versionAnalysisAudioContext = new AudioContextCtor();
+        }
+        return versionAnalysisAudioContext;
+    }
+
+    async function getLeadingSilenceForSource(source, track, version) {
+        if (!source) return 0;
+        if (version === 'martin' && selectedTrackIndex >= 0) {
+            const existingAnalysis = trackAudioAnalysis.get(selectedTrackIndex);
+            if (Number.isFinite(existingAnalysis?.leadingSilence)) {
+                return existingAnalysis.leadingSilence;
+            }
+        }
+        if (versionLeadingSilence.has(source)) {
+            return versionLeadingSilence.get(source);
+        }
+
+        const context = getVersionAnalysisContext();
+        if (!context) return 0;
+
+        try {
+            const response = await fetch(source);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${source}: ${response.status}`);
+            }
+
+            const audioBytes = await response.arrayBuffer();
+            const decodedBuffer = await context.decodeAudioData(audioBytes.slice(0));
+            const channels = Array.from(
+                { length: decodedBuffer.numberOfChannels },
+                (_, channelIndex) => decodedBuffer.getChannelData(channelIndex)
+            );
+            const leadingSilence = Math.min(detectFirstNonSilentSampleTime(channels, decodedBuffer.sampleRate), decodedBuffer.duration || 0);
+            versionLeadingSilence.set(source, leadingSilence);
+            return leadingSilence;
+        } catch (err) {
+            console.warn('Could not measure version leading silence:', err);
+            versionLeadingSilence.set(source, 0);
+            return 0;
+        }
+    }
+
+    async function getSyncedVersionTime(track, resumeTime, previousVersion, nextVersion, targetSource) {
+        const previousSource = currentVersionSource || getVersionedAudioSrc(track, previousVersion);
+        const [previousLead, nextLead] = await Promise.all([
+            getLeadingSilenceForSource(previousSource, track, previousVersion),
+            getLeadingSilenceForSource(targetSource, track, nextVersion)
+        ]);
+        const musicalTime = Math.max(0, resumeTime - previousLead);
+        return Math.max(0, nextLead + musicalTime);
+    }
+
+    async function switchSongVersion(nextVersion) {
         if (!currentTrack || nextVersion === activeSongVersion) return;
 
+        const trackAtSwitch = currentTrack;
+        const trackIndexAtSwitch = selectedTrackIndex;
         const resumePlayback = !audio.paused;
         const resumeTime = audio.currentTime || 0;
         const previousVersion = activeSongVersion;
-        const candidateSources = getVersionedAudioSources(currentTrack, nextVersion);
-        let candidateIndex = 0;
+        const targetSource = nextVersion === 'dani'
+            ? currentDaniSource
+            : getVersionedAudioSrc(trackAtSwitch, 'martin');
+
+        if (!targetSource) {
+            setVersionToggleMessage(`${nextVersion === 'dani' ? 'Dani' : 'Martin'} version unavailable`);
+            updateVersionToggleState();
+            return;
+        }
+
         let keepMessageOnRestore = false;
         activeSongVersion = nextVersion;
         updateVersionToggleState();
         setToggleIcon(resumePlayback ? false : true);
         setVersionToggleMessage('');
 
-        const targetTime = Math.min(resumeTime, Math.max(0, audio.duration || resumeTime));
+        const syncedTime = await getSyncedVersionTime(trackAtSwitch, resumeTime, previousVersion, nextVersion, targetSource);
+        if (currentTrack !== trackAtSwitch || selectedTrackIndex !== trackIndexAtSwitch) {
+            return;
+        }
+
         const restorePlayback = () => {
+            if (currentTrack !== trackAtSwitch || selectedTrackIndex !== trackIndexAtSwitch) {
+                return;
+            }
             audio.removeEventListener('error', handleVersionError);
             audioEngine.attach(audio);
+            const targetTime = Math.min(syncedTime, Math.max(0, audio.duration || syncedTime));
             if (targetTime > 0 && targetTime < (audio.duration || Infinity)) {
                 audioEngine.seek(targetTime);
             }
@@ -4539,30 +4722,24 @@
         };
 
         const handleVersionError = () => {
-            console.error(`Audio error loading ${nextVersion} version for track:`, currentTrack.title);
-            audio.removeEventListener('loadedmetadata', restorePlayback);
-
-            candidateIndex += 1;
-            if (candidateIndex < candidateSources.length) {
-                audio.addEventListener('loadedmetadata', restorePlayback, { once: true });
-                audio.addEventListener('error', handleVersionError, { once: true });
-                audio.src = candidateSources[candidateIndex];
-                audio.load();
+            if (currentTrack !== trackAtSwitch || selectedTrackIndex !== trackIndexAtSwitch) {
                 return;
             }
-
+            console.error(`Audio error loading ${nextVersion} version for track:`, trackAtSwitch.title);
+            audio.removeEventListener('loadedmetadata', restorePlayback);
             setVersionToggleMessage(`${nextVersion === 'dani' ? 'Dani' : 'Martin'} version unavailable`);
             keepMessageOnRestore = true;
             activeSongVersion = previousVersion;
             updateVersionToggleState();
             audio.addEventListener('loadedmetadata', restorePlayback, { once: true });
-            setAudioSourceForCurrentVersion(currentTrack);
+            setAudioSourceForCurrentVersion(trackAtSwitch);
             audio.load();
         };
 
         audio.addEventListener('loadedmetadata', restorePlayback, { once: true });
         audio.addEventListener('error', handleVersionError, { once: true });
-        audio.src = candidateSources[candidateIndex] || '';
+        currentVersionSource = targetSource;
+        audio.src = targetSource;
         audio.load();
     }
 
@@ -4582,6 +4759,7 @@
         toggleBtn.disabled = false;
         setToggleIcon(autoPlay ? false : true);
         activeSongVersion = 'martin';
+        currentDaniSource = '';
         updateVersionToggleState();
         setVersionToggleMessage('');
 
@@ -4612,6 +4790,7 @@
         currentTrack = track;
         selectedTrackIndex = trackIndex;
         updateVersionToggleState();
+        void updateCurrentVersionAvailability(track, trackIndex);
         resetLiveTelemetryHistory(trackIndex);
 
         updateURL(trackIndex);
