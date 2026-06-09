@@ -337,6 +337,18 @@
             background: var(--club-blue-strong);
             color: #fff;
         }
+        .song-item.version-unavailable {
+            opacity: 0.34;
+            filter: grayscale(0.65);
+        }
+        .song-item.version-unavailable .song-status::after {
+            content: ' · no Dani';
+        }
+        .song-item.version-unavailable:hover {
+            background: #fff;
+            color: var(--club-blue-strong);
+            cursor: not-allowed;
+        }
 
         /* ── Player Bar (always visible) ── */
         .player-basic {
@@ -428,45 +440,61 @@
             line-height: 1;
             color: #fff;
         }
-        .version-toggle {
+        .player-controls .version-toggle {
             display: inline-flex;
             align-items: center;
+            justify-content: space-between;
             flex-shrink: 0;
-            gap: 2px;
-            padding: 2px;
-            border: 1px solid rgba(var(--club-blue-surface-rgb), 0.42);
-            background: linear-gradient(180deg, rgba(var(--club-blue-surface-rgb), 0.12), rgba(var(--club-blue-surface-rgb), 0.04));
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
-            overflow: hidden;
-        }
-        .version-toggle.is-hidden {
-            display: none;
-        }
-        .player-controls .version-toggle__button {
+            gap: 8px;
             width: auto;
-            min-width: 62px;
-            padding: 4px 10px;
-            background: transparent;
+            min-width: 122px;
+            height: 28px;
+            padding: 3px 4px 3px 9px;
+            border: 1px solid rgba(var(--club-blue-surface-rgb), 0.42);
+            background: rgba(var(--club-blue-surface-rgb), 0.08);
             color: var(--club-blue-strong);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72), 0 1px 5px rgba(19, 37, 109, 0.08);
+            overflow: hidden;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+            transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
         }
-        .player-controls .version-toggle__button i {
-            color: currentColor;
-        }
-        .player-controls .version-toggle__button.is-active {
+        .player-controls .version-toggle.is-dani {
             background: var(--club-blue);
             color: #fff;
-            box-shadow: 0 1px 5px rgba(19, 37, 109, 0.22);
+            box-shadow: 0 1px 7px rgba(19, 37, 109, 0.28);
         }
-        .player-controls .version-toggle__button:not(:disabled):hover {
+        .version-toggle__label {
+            white-space: nowrap;
+        }
+        .version-toggle__knob {
+            width: 36px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2px;
+            background: rgba(255, 255, 255, 0.72);
+            flex-shrink: 0;
+        }
+        .version-toggle__knob::before {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background: currentColor;
+            transition: transform 0.18s ease;
+        }
+        .version-toggle.is-dani .version-toggle__knob::before {
+            transform: translateX(16px);
+        }
+        .player-controls .version-toggle:not(:disabled):hover {
             transform: translateY(-1px);
         }
-        .player-controls .version-toggle__button:disabled {
-            opacity: 0.35;
+        .player-controls .version-toggle:disabled {
+            opacity: 0.45;
+            cursor: default;
         }
         .version-toggle__message {
             color: #7e3c26;
@@ -1646,10 +1674,10 @@
         <div class="current-song-name" id="current-song-name"></div>
         <div class="player-controls">
             <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
-            <div class="version-toggle is-hidden" role="group" aria-label="Song version">
-                <button class="version-toggle__button is-active" type="button" data-version="martin" aria-pressed="true" disabled>Martin</button>
-                <button class="version-toggle__button" type="button" data-version="dani" aria-pressed="false" disabled>Dani</button>
-            </div>
+            <button class="version-toggle" id="version-toggle" type="button" data-version="martin" aria-pressed="false" disabled>
+                <span class="version-toggle__label">Martin</span>
+                <span class="version-toggle__knob" aria-hidden="true"></span>
+            </button>
             <span class="version-toggle__message" id="version-toggle-message" aria-live="polite"></span>
             <div class="current-info">
                 <span class="current-section"></span>
@@ -2026,8 +2054,8 @@
     const glSeek = createSeekRenderer(seekCanvas);
     const audioEngine = new AudioEngine();
     const toggleBtn = playerBasic.querySelector('.toggle-btn');
-    const versionToggle = playerBasic.querySelector('.version-toggle');
-    const versionToggleButtons = Array.from(playerBasic.querySelectorAll('.version-toggle__button'));
+    const versionToggle = document.getElementById('version-toggle');
+    const versionToggleLabel = versionToggle?.querySelector('.version-toggle__label');
     const versionToggleMessage = document.getElementById('version-toggle-message');
     const timeline = playerBasic.querySelector('.player-timeline');
     const seekBar = null;
@@ -2084,6 +2112,7 @@
     const trackAudioAnalysis = new Map();
     const versionAvailability = new Map();
     const versionLeadingSilence = new Map();
+    const trackDaniSources = new Map();
     const durationFailures = new Set();
     const audioAnalysisFailures = new Set();
     const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
@@ -4500,22 +4529,10 @@
         return sources;
     }
 
-    function updateVersionToggleState() {
-        const hasDaniVersion = Boolean(currentTrack && currentDaniSource);
-        if (versionToggle) {
-            versionToggle.classList.toggle('is-hidden', !hasDaniVersion);
-        }
-
-        versionToggleButtons.forEach(button => {
-            const isActive = button.dataset.version === activeSongVersion;
-            button.classList.toggle('is-active', isActive);
-            button.setAttribute('aria-pressed', String(isActive));
-            button.disabled = !hasDaniVersion;
-        });
-    }
-
     function setAudioSourceForCurrentVersion(track) {
-        currentVersionSource = getVersionedAudioSrc(track);
+        currentVersionSource = activeSongVersion === 'dani' && selectedTrackIndex >= 0
+            ? trackDaniSources.get(selectedTrackIndex) || ''
+            : getVersionedAudioSrc(track, 'martin');
         audio.src = currentVersionSource;
     }
 
@@ -4582,16 +4599,62 @@
         return '';
     }
 
+    function updateTrackVersionRows() {
+        const isDaniMode = activeSongVersion === 'dani';
+        Array.from(songList.children).forEach((songItem, trackIndex) => {
+            const unavailable = isDaniMode && !trackDaniSources.has(trackIndex);
+            songItem.classList.toggle('version-unavailable', unavailable);
+            songItem.setAttribute(
+                'aria-disabled',
+                unavailable ? 'true' : 'false'
+            );
+        });
+    }
+
+    async function updateTrackDaniAvailability(track, trackIndex) {
+        const daniSource = await findAvailableAudioSource(getVersionedAudioSources(track, 'dani'));
+        if (daniSource) {
+            trackDaniSources.set(trackIndex, daniSource);
+        } else {
+            trackDaniSources.delete(trackIndex);
+        }
+        updateTrackVersionRows();
+        return daniSource;
+    }
+
+    function updateVersionToggleState() {
+        const isDaniMode = activeSongVersion === 'dani';
+        if (versionToggle) {
+            versionToggle.classList.toggle('is-dani', isDaniMode);
+            versionToggle.dataset.version = activeSongVersion;
+            versionToggle.setAttribute('aria-pressed', String(isDaniMode));
+            versionToggle.disabled = !data.tracks.length;
+            versionToggle.setAttribute('aria-label', `Switch to ${isDaniMode ? 'Martin' : 'Dani'} versions`);
+        }
+        if (versionToggleLabel) {
+            versionToggleLabel.textContent = isDaniMode ? 'Dani' : 'Martin';
+        }
+        updateTrackVersionRows();
+    }
+
     async function updateCurrentVersionAvailability(track, trackIndex) {
         currentDaniSource = '';
         updateVersionToggleState();
-        const daniSource = await findAvailableAudioSource(getVersionedAudioSources(track, 'dani'));
+        const daniSource = await updateTrackDaniAvailability(track, trackIndex);
 
         if (currentTrack !== track || selectedTrackIndex !== trackIndex) {
             return;
         }
 
         currentDaniSource = daniSource;
+        updateVersionToggleState();
+    }
+
+    async function scanDaniVersionAvailability() {
+        await Promise.all(data.tracks.map((track, trackIndex) => updateTrackDaniAvailability(track, trackIndex)));
+        if (currentTrack && selectedTrackIndex >= 0) {
+            currentDaniSource = trackDaniSources.get(selectedTrackIndex) || '';
+        }
         updateVersionToggleState();
     }
 
@@ -4667,20 +4730,33 @@
     }
 
     async function switchSongVersion(nextVersion) {
-        if (!currentTrack || nextVersion === activeSongVersion) return;
+        if (nextVersion === activeSongVersion) return;
+
+        if (!currentTrack) {
+            activeSongVersion = nextVersion;
+            updateVersionToggleState();
+            setVersionToggleMessage('');
+            return;
+        }
 
         const trackAtSwitch = currentTrack;
         const trackIndexAtSwitch = selectedTrackIndex;
         const resumePlayback = !audio.paused;
         const resumeTime = audio.currentTime || 0;
         const previousVersion = activeSongVersion;
+        if (nextVersion === 'dani' && !currentDaniSource) {
+            currentDaniSource = await updateTrackDaniAvailability(trackAtSwitch, trackIndexAtSwitch);
+            updateVersionToggleState();
+        }
+
         const targetSource = nextVersion === 'dani'
             ? currentDaniSource
             : getVersionedAudioSrc(trackAtSwitch, 'martin');
 
         if (!targetSource) {
-            setVersionToggleMessage(`${nextVersion === 'dani' ? 'Dani' : 'Martin'} version unavailable`);
+            activeSongVersion = nextVersion;
             updateVersionToggleState();
+            setVersionToggleMessage(`${nextVersion === 'dani' ? 'Dani' : 'Martin'} version unavailable for this song`);
             return;
         }
 
@@ -4745,21 +4821,30 @@
 
     function selectSong(track, trackIndex, startTime = 0, autoPlay = true) {
         console.log(`Selecting song: ${track.title} (index: ${trackIndex}, startTime: ${startTime}, autoPlay: ${autoPlay})`);
-        if (currentTrack) {
-            audioEngine.stop();
-            audio.src = '';
-        }
-        document.querySelectorAll('.song-item').forEach(item => item.classList.remove('active'));
         const songItem = songList.children[trackIndex];
         if (!songItem) {
             console.error(`No song item found for index: ${trackIndex}`);
             return;
         }
+
+        const daniSource = trackDaniSources.get(trackIndex) || '';
+        if (activeSongVersion === 'dani' && !daniSource) {
+            setVersionToggleMessage('Dani version unavailable for this song');
+            updateTrackVersionRows();
+            return;
+        }
+
+        if (currentTrack) {
+            audioEngine.stop();
+            audio.src = '';
+        }
+        document.querySelectorAll('.song-item').forEach(item => item.classList.remove('active'));
         songItem.classList.add('active');
         toggleBtn.disabled = false;
         setToggleIcon(autoPlay ? false : true);
-        activeSongVersion = 'martin';
-        currentDaniSource = '';
+        currentTrack = track;
+        selectedTrackIndex = trackIndex;
+        currentDaniSource = daniSource;
         updateVersionToggleState();
         setVersionToggleMessage('');
 
@@ -4787,8 +4872,6 @@
         chordInstructionsDisplay.textContent = '';
         currentSectionDisplay.textContent = '';
         document.getElementById('current-song-name').textContent = `${trackIndex + 1} ${track.title}`;
-        currentTrack = track;
-        selectedTrackIndex = trackIndex;
         updateVersionToggleState();
         void updateCurrentVersionAvailability(track, trackIndex);
         resetLiveTelemetryHistory(trackIndex);
@@ -5477,6 +5560,7 @@
     setToggleIcon(true);
     toggleBtn.disabled = true;
     updateVersionToggleState();
+    void scanDaniVersionAvailability();
 
     handleQueryParams();
 
@@ -5511,10 +5595,8 @@
         }
     });
 
-    versionToggleButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            switchSongVersion(button.dataset.version);
-        });
+    versionToggle?.addEventListener('click', () => {
+        switchSongVersion(activeSongVersion === 'dani' ? 'martin' : 'dani');
     });
 
     audio.addEventListener('ended', () => {
