@@ -781,6 +781,96 @@ function renderError(error) {
     shell.replaceChildren(message);
 }
 
+function setupPitchMotion() {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealItems = [];
+
+    const registerReveal = (elements, options = {}) => {
+        Array.from(elements).forEach((element, index) => {
+            element.classList.add('motion-reveal');
+            if (options.variant) element.classList.add(`motion-reveal--${options.variant}`);
+            element.style.setProperty('--reveal-order', String(options.order?.(index) ?? index));
+            revealItems.push(element);
+        });
+    };
+
+    document.querySelectorAll('.pitch-collage__tile').forEach((tile, index) => {
+        tile.style.setProperty('--tile-order', String(index % 16));
+    });
+
+    registerReveal(document.querySelectorAll('.pitch-section__header'), { order: () => 0 });
+    registerReveal(document.querySelectorAll('.track-preview'), { order: (index) => index % 4 });
+    registerReveal(document.querySelectorAll('.track-index__row'), {
+        variant: 'left',
+        order: (index) => Math.min(index, 6)
+    });
+    registerReveal(document.querySelectorAll('.band-profile__image'), { variant: 'left', order: () => 0 });
+    registerReveal(document.querySelectorAll('.band-profile__body'), { variant: 'scale', order: () => 1 });
+    registerReveal(document.querySelectorAll('.pulse-item'), { variant: 'scale', order: (index) => index });
+    registerReveal(document.querySelectorAll('.pitch-cta__content'), { variant: 'scale', order: () => 0 });
+
+    window.requestAnimationFrame(() => {
+        document.body.classList.add('pitch-loaded');
+    });
+
+    if (reducedMotion) {
+        revealItems.forEach((item) => item.classList.add('is-revealed'));
+        return;
+    }
+
+    if ('IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-revealed');
+                observer.unobserve(entry.target);
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -4% 0px'
+        });
+
+        revealItems.forEach((item) => revealObserver.observe(item));
+    } else {
+        revealItems.forEach((item) => item.classList.add('is-revealed'));
+    }
+
+    const trackParallaxImages = Array.from(document.querySelectorAll('.track-preview__image'));
+    const bandParallaxImage = document.querySelector('.band-profile__image img');
+
+    const updateElementParallax = (element, strength, limit) => {
+        if (!element) return;
+        const frame = element.parentElement?.getBoundingClientRect();
+        if (!frame || frame.bottom < -120 || frame.top > window.innerHeight + 120) return;
+        const centerDelta = (frame.top + frame.height / 2) - window.innerHeight / 2;
+        const normalized = centerDelta / Math.max(window.innerHeight, 1);
+        const offset = Math.max(-limit, Math.min(limit, normalized * strength));
+        element.style.setProperty('--parallax-y', `${offset.toFixed(2)}px`);
+    };
+
+    let scrollFrame = 0;
+    const updateScrollMotion = () => {
+        scrollFrame = 0;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        document.body.style.setProperty('--page-progress', String(Math.min(1, scrollTop / scrollRange)));
+
+        heroCollage?.style.setProperty('--parallax-y', `${Math.min(46, scrollTop * 0.055).toFixed(2)}px`);
+        updateElementParallax(footerCollage, -32, 34);
+        trackParallaxImages.forEach((image) => updateElementParallax(image, -24, 18));
+        updateElementParallax(bandParallaxImage, -38, 30);
+    };
+
+    const requestScrollMotion = () => {
+        if (scrollFrame) return;
+        scrollFrame = window.requestAnimationFrame(updateScrollMotion);
+    };
+
+    window.addEventListener('scroll', requestScrollMotion, { passive: true });
+    window.addEventListener('resize', requestScrollMotion, { passive: true });
+    updateScrollMotion();
+}
+
 async function bootstrap() {
     try {
         const response = await fetch(albumUrl, { cache: 'no-store' });
@@ -807,8 +897,9 @@ async function bootstrap() {
         renderTrackReel(tracks, pitch);
         renderTrackIndex(tracks, pitch);
         renderProductionPulse(tracks, pitch);
-        showPreviewNotice(pitch);
         renderCta(pitch);
+        setupPitchMotion();
+        showPreviewNotice(pitch);
     } catch (error) {
         renderError(error);
     }
