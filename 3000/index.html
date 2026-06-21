@@ -1650,19 +1650,39 @@
                 font-size: 16px;
             }
         }
+
+        /* Public page: keep the shareable listening experience intentionally simple. */
+        .song-item {
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+        .song-item .song-section,
+        .song-item .song-status {
+            display: none;
+        }
+        .album-total-time {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            padding: 10px 12px;
+            background: #000;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+        .deluxe-section-heading {
+            flex: 1 1 100%;
+            padding: 12px;
+            background: #000;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
-    <div class="confidential-notice" id="confidential-notice">
-        <div class="confidential-content">
-            <p>CONFIDENTIAL: This page is confidential and shouldn't be shared with anyone unless you get direct permission from a band member.</p>
-            <button class="confidential-close" onclick="document.getElementById('confidential-notice').style.display='none'">I Understand</button>
-            <div class="copyright">
-                &copy; 2025 Sioto Jazz. All rights reserved.
-            </div>
-        </div>
-    </div>
-
     <div class="app-container">
     <header>
         <div class="title-container">
@@ -1674,11 +1694,6 @@
         <div class="current-song-name" id="current-song-name"></div>
         <div class="player-controls">
             <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
-            <button class="version-toggle" id="version-toggle" type="button" data-version="martin" aria-pressed="false" disabled>
-                <span class="version-toggle__label">Martin</span>
-                <span class="version-toggle__knob" aria-hidden="true"></span>
-            </button>
-            <span class="version-toggle__message" id="version-toggle-message" aria-live="polite"></span>
             <div class="current-info">
                 <span class="current-section"></span>
                 <span class="current-lyric"></span>
@@ -1702,19 +1717,14 @@
             <i class="tab-icon fa-solid fa-music" aria-hidden="true"></i>
             <span class="tab-label">Lyrics</span>
         </button>
-        <button class="tab-btn" data-tab="telemetry" aria-label="Telemetry">
-            <i class="tab-icon fa-solid fa-chart-column" aria-hidden="true"></i>
-            <span class="tab-label">Telemetry</span>
-        </button>
-        <button class="tab-btn" data-tab="moodboard" aria-label="Moodboard">
-            <i class="tab-icon fa-solid fa-clone" aria-hidden="true"></i>
-            <span class="tab-label">Moodboard</span>
-        </button>
     </nav>
 
     <div class="tab-content">
         <div class="tab-panel active" id="tab-tracklist">
             <section class="song-list" id="song-list"></section>
+            <div class="album-total-time" aria-live="polite">
+                <span id="album-total-time">Calculating&hellip;</span>
+            </div>
         </div>
 
         <div class="tab-panel" id="tab-lyrics">
@@ -1867,42 +1877,6 @@
             </section>
         </div>
 
-        <div class="tab-panel" id="tab-moodboard">
-            <div class="moodboard">
-                <div class="moodboard-grid" id="moodboard-grid">
-                    <img src="moodboard/a_life_less_ordinary.webp" alt="a_life_less_ordinary">
-                    <img src="moodboard/blur_blur.webp" alt="blur_blur">
-                    <img src="moodboard/brian_eno_music_for_airports.webp" alt="brian_eno_music_for_airports">
-                    <img src="moodboard/cloud_watch.webp" alt="cloud_watch">
-                    <img src="moodboard/clubbed_out.webp" alt="clubbed_out">
-                    <img src="moodboard/clublife.webp" alt="clublife">
-                    <img src="moodboard/depeche_mode_the_singles.webp" alt="depeche_mode_the_singles">
-                    <img src="moodboard/dreamcast_magazine.webp" alt="dreamcast_magazine">
-                    <img src="moodboard/everything_but_the_girl.webp" alt="everything_but_the_girl">
-                    <img src="moodboard/every_little_thing.webp" alt="every_little_thing">
-                    <img src="moodboard/excursion.webp" alt="excursion">
-                    <img src="moodboard/faultline_closer_colder.webp" alt="faultline_closer_colder">
-                    <img src="moodboard/groove_coverage.webp" alt="groove_coverage">
-                    <img src="moodboard/his.webp" alt="his">
-                    <img src="moodboard/idealism_one.webp" alt="idealism_one">
-                    <img src="moodboard/identity_only_human.webp" alt="identity_only_human">
-                    <img src="moodboard/kent_isola.webp" alt="kent_isola">
-                    <img src="moodboard/landslide.webp" alt="landslide">
-                    <img src="moodboard/logandi_ljos.webp" alt="logandi_ljos">
-                    <img src="moodboard/mark_clement.webp" alt="mark_clement">
-                    <img src="moodboard/melanie_b.webp" alt="melanie_b">
-                    <img src="moodboard/next_to_you_stephanie_maica.webp" alt="next_to_you_stephanie_maica">
-                    <img src="moodboard/nick_warren.webp" alt="nick_warren">
-                    <img src="moodboard/nine_days.webp" alt="nine_days">
-                    <img src="moodboard/progress.webp" alt="progress">
-                    <img src="moodboard/simpletone.webp" alt="simpletone">
-                    <img src="moodboard/supreme_particles.webp" alt="supreme_particles">
-                    <img src="moodboard/uk_garage.webp" alt="uk_garage">
-                    <img src="moodboard/vigilance.webp" alt="vigilance">
-                    <img src="moodboard/wamdue_project_program_yourself.webp" alt="wamdue_project_program_yourself">
-                </div>
-            </div>
-        </div>
     </div>
 
     </div>
@@ -2047,6 +2021,7 @@
     }
 
     const songList = document.getElementById('song-list');
+    const albumTotalTime = document.getElementById('album-total-time');
     const player = document.getElementById('player');
     const playerBasic = document.getElementById('player-basic');
     const audio = document.getElementById('audio-player');
@@ -2116,6 +2091,13 @@
     const durationFailures = new Set();
     const audioAnalysisFailures = new Set();
     const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+
+    function updateAlbumTotalTime() {
+        const resolvedTrackCount = trackDurations.size + durationFailures.size;
+        if (resolvedTrackCount < data.tracks.length) return;
+        const totalSeconds = Array.from(trackDurations.values()).reduce((sum, duration) => sum + duration, 0);
+        albumTotalTime.textContent = formatTime(totalSeconds);
+    }
     const NOTE_TO_SEMITONE = Object.freeze({
         'C': 0,
         'C#': 1,
@@ -4601,7 +4583,7 @@
 
     function updateTrackVersionRows() {
         const isDaniMode = activeSongVersion === 'dani';
-        Array.from(songList.children).forEach((songItem, trackIndex) => {
+        songList.querySelectorAll('.song-item').forEach((songItem, trackIndex) => {
             const unavailable = isDaniMode && !trackDaniSources.has(trackIndex);
             songItem.classList.toggle('version-unavailable', unavailable);
             songItem.setAttribute(
@@ -4820,12 +4802,12 @@
     }
 
     function selectSong(track, trackIndex, startTime = 0, autoPlay = true) {
-        console.log(`Selecting song: ${track.title} (index: ${trackIndex}, startTime: ${startTime}, autoPlay: ${autoPlay})`);
-        const songItem = songList.children[trackIndex];
-        if (!songItem) {
+        const songItem = songList.querySelector(`.song-item[data-track-index="${trackIndex}"]`);
+        if (!track || !songItem) {
             console.error(`No song item found for index: ${trackIndex}`);
             return;
         }
+        console.log(`Selecting song: ${track.title} (index: ${trackIndex}, startTime: ${startTime}, autoPlay: ${autoPlay})`);
 
         const daniSource = trackDaniSources.get(trackIndex) || '';
         if (activeSongVersion === 'dani' && !daniSource) {
@@ -4873,14 +4855,11 @@
         currentSectionDisplay.textContent = '';
         document.getElementById('current-song-name').textContent = `${trackIndex + 1} ${track.title}`;
         updateVersionToggleState();
-        void updateCurrentVersionAvailability(track, trackIndex);
         resetLiveTelemetryHistory(trackIndex);
 
         updateURL(trackIndex);
         updateLiveTelemetryAnalysis(true);
 
-        const telemetryMetrics = data.tracks.map(getTrackMetrics);
-        structureContent.insertAdjacentHTML('beforeend', renderSongInfoPanel(telemetryMetrics[trackIndex]));
         structureContent.appendChild(chordsCanvas);
 
         track.lyrics.forEach((line, index) => {
@@ -5038,17 +5017,12 @@
         const params = new URLSearchParams(window.location.search);
         const songIndex = parseInt(params.get('song'));
         const time = parseFloat(params.get('time'));
-        let songItem = null;
+        const trackIndex = !isNaN(songIndex) && songIndex >= 0 && songIndex < data.tracks.length
+            ? songIndex
+            : 0;
+        const track = data.tracks[trackIndex];
 
-        if (!isNaN(songIndex) && songIndex >= 0 && songIndex < data.tracks.length) {
-            songItem = songList.children[songIndex];
-        } else if (data.tracks.length > 0) {
-            songItem = songList.children[0];
-        }
-
-        if (songItem) {
-            const trackIndex = parseInt(songItem.dataset.trackIndex);
-            const track = data.tracks[trackIndex];
+        if (track) {
             const startTime = !isNaN(time) && time >= 0 ? time : 0;
             selectSong(track, trackIndex, startTime, true);
         }
@@ -5490,6 +5464,13 @@
     renderTelemetry();
 
     data.tracks.forEach((track, trackIndex) => {
+        if (trackIndex === data.album.standardTrackCount) {
+            const deluxeHeading = document.createElement('div');
+            deluxeHeading.className = 'deluxe-section-heading';
+            deluxeHeading.textContent = 'Deluxe edition extras';
+            songList.appendChild(deluxeHeading);
+        }
+
         const songItem = document.createElement('div');
         songItem.className = 'song-item';
         songItem.dataset.trackIndex = trackIndex;
@@ -5514,8 +5495,6 @@
         songSection.textContent = '';
 
         songItem.appendChild(songTitle);
-        songItem.appendChild(songSection);
-        songItem.appendChild(songStatus);
         songItem.appendChild(songLength);
         // songItem context menu handled by global listener
         songItem.addEventListener('click', () => {
@@ -5534,24 +5513,29 @@
                         trackDurations.set(trackIndex, tempAudio.duration);
                         durationFailures.delete(trackIndex);
                         songLength.textContent = formatTime(tempAudio.duration);
+                        updateAlbumTotalTime();
                         renderTelemetry();
                     } else {
                         durationFailures.add(trackIndex);
+                        updateAlbumTotalTime();
                         renderTelemetry();
                     }
                 }, { once: true });
                 tempAudio.addEventListener('error', () => {
                     durationFailures.add(trackIndex);
+                    updateAlbumTotalTime();
                     renderTelemetry();
                 }, { once: true });
             } catch {
                 durationFailures.add(trackIndex);
                 songLength.textContent = '0:00';
+                updateAlbumTotalTime();
                 renderTelemetry();
             }
         } else {
             durationFailures.add(trackIndex);
             songLength.textContent = '0:00';
+            updateAlbumTotalTime();
             renderTelemetry();
         }
     });
@@ -5560,7 +5544,6 @@
     setToggleIcon(true);
     toggleBtn.disabled = true;
     updateVersionToggleState();
-    void scanDaniVersionAvailability();
 
     handleQueryParams();
 

@@ -604,9 +604,8 @@ function renderTrackReel(tracks, pitch) {
     previewQueue = [];
 
     tracks.forEach((track, index) => {
-        const status = pitch.productionLabels[String(track.id)] || deriveStatus(track.status);
+        const status = 'studio demo';
         const clip = getClipForTrack(track, pitch, status);
-        const language = getTrackLanguage(track);
         const card = createElement('article', 'track-preview');
         card.dataset.trackId = String(track.id);
         card.style.setProperty('--progress', '0');
@@ -666,19 +665,8 @@ function renderTrackReel(tracks, pitch) {
         const title = document.createElement('h3');
         title.className = 'track-preview__title';
         title.textContent = track.title;
-        const meta = createElement('div', 'track-preview__meta');
-        const state = document.createElement('span');
-        state.textContent = status;
-        const languageLabel = createElement('span', 'track-preview__meta-language');
-        languageLabel.textContent = getTrackLanguageFlag(language);
-        languageLabel.setAttribute('aria-label', language);
-        languageLabel.title = language;
-        const scoreMeter = createClipMeter(clip.score, clip.scoreLabel, {
-            className: 'track-preview__score'
-        });
-        meta.append(languageLabel, state, scoreMeter);
 
-        content.append(number, title, meta);
+        content.append(number, title);
         card.append(image, button, content, progress);
         fragment.append(card);
         previewQueue.push({ track, clip, card, button, progressElement: progress });
@@ -691,7 +679,7 @@ function renderTrackIndex(tracks, pitch) {
     const fragment = document.createDocumentFragment();
 
     tracks.forEach((track, index) => {
-        const status = pitch.productionLabels[String(track.id)] || deriveStatus(track.status);
+        const status = 'studio demo';
         const clip = getClipForTrack(track, pitch, status);
         const language = getTrackLanguage(track);
         const row = createElement('li', 'track-index__row');
@@ -801,10 +789,16 @@ async function bootstrap() {
         }
 
         const data = await response.json();
+        const standardTrackCount = Number.parseInt(data.album?.standardTrackCount, 10);
         const tracks = Array.isArray(data.tracks)
-            ? sortPitchTracks(data.tracks)
+            ? sortPitchTracks(data.tracks.filter((track) => (
+                !Number.isFinite(standardTrackCount) || track.id <= standardTrackCount
+            )))
             : [];
         const pitch = normalizePitch(data);
+        if (pitch.heroTags.length) {
+            pitch.heroTags[0] = `${tracks.length} tracks`;
+        }
 
         renderCollage(heroCollage, pitch.moodboard, 16, 0);
         renderCollage(footerCollage, pitch.moodboard, 12, 12);

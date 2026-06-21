@@ -3,7 +3,9 @@
     "title": "3000",
     "band": "Sioto Jazz",
     "moment": "TBD",
-    "coverImage": "album_cover.png"
+    "coverImage": "album_cover.png",
+    "standardTrackCount": 11,
+    "deluxeTrackCount": 15
   },
   "pitch": {
     "contactEmail": "siotojazz@gmail.com",
@@ -14,7 +16,7 @@
     "workingTitleLabel": "(Working title of the album)",
     "subheadline": "Sioto Jazz",
     "heroTags": [
-      "13 tracks",
+      "11 tracks + 4 deluxe tracks",
       "Bitola, Macedonia",
       "Alternative rock / trip hop / downtempo"
     ],
@@ -99,18 +101,20 @@
     ],
     "productionLabels": {
       "1": "studio demo",
-      "2": "home demo",
+      "2": "studio demo",
       "3": "studio demo",
       "4": "studio demo",
-      "5": "reference demo",
-      "6": "home demo",
+      "5": "studio demo",
+      "6": "studio demo",
       "7": "studio demo",
-      "8": "home demo",
-      "9": "home demo",
+      "8": "studio demo",
+      "9": "studio demo",
       "10": "studio demo",
-      "11": "home demo",
-      "12": "studio unmixed",
-      "13": "outtake"
+      "11": "studio demo",
+      "12": "studio demo",
+      "13": "studio demo",
+      "14": "studio demo",
+      "15": "studio demo"
     },
     "clips": {
       "Импулс": {
@@ -432,6 +436,44 @@
     }
   ],
   "tracks": [
+    {
+      "id": 13,
+      "title": "Промена",
+      "status": "deluxe track",
+      "mp3": "audio/Promena.wav",
+      "backingmp3": "audio/backing/promena_backing.mp3",
+      "startOffset": 0,
+      "lyrics": [],
+      "moment": "TBD",
+      "worldCoordinates": "",
+      "written": "",
+      "recorded": "",
+      "notes": "",
+      "tempo": "120",
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": []
+      }
+    },
+    {
+      "id": 15,
+      "title": "Дестинација",
+      "status": "deluxe track",
+      "mp3": "audio/Destinacija.wav",
+      "backingmp3": "audio/backing/destinacija_backing.mp3",
+      "startOffset": 0,
+      "lyrics": [],
+      "moment": "TBD",
+      "worldCoordinates": "",
+      "written": "",
+      "recorded": "",
+      "notes": "",
+      "tempo": "120",
+      "timeSignature": "4/4",
+      "structure": {
+        "sections": []
+      }
+    },
     {
       "id": 1,
       "title": "Импулс",
@@ -2413,7 +2455,7 @@
       }
     },
     {
-      "id": 11,
+      "id": 10,
       "title": "Quite Unreal",
       "status": "missing recorded vocals from mix",
       "mp3": "audio/quite_unreal.mp3",
@@ -4290,7 +4332,7 @@
       }
     },
     {
-      "id": 10,
+      "id": 9,
       "title": "My Innocent Sea",
       "status": "missing recorded vocals and violins from mix",
       "mp3": "audio/my_innocent_sea.mp3",
@@ -5632,7 +5674,7 @@
       }
     },
     {
-      "id": 12,
+      "id": 11,
       "title": "Roots Apart",
       "status": "studio version, unmixed",
       "mp3": "audio/roots_apart.mp3",
@@ -6407,7 +6449,7 @@
       }
     },
     {
-      "id": 9,
+      "id": 14,
       "title": "Колку далеку?",
       "status": "home demo, stiched together",
       "mp3": "audio/kolku_daleku.mp3",
@@ -7892,10 +7934,10 @@
       }
     },
     {
-      "id": 13,
+      "id": 12,
       "title": "Одмор",
       "status": "outtake",
-      "mp3": "audio/odmor.mp3",
+      "mp3": "audio/Odmor.wav",
       "backingmp3": "audio/odmor_backing.mp3",
       "startOffset": 0,
       "lyrics": [
