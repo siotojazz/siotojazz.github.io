@@ -1662,13 +1662,23 @@
         .album-total-time {
             display: flex;
             justify-content: flex-end;
-            gap: 16px;
+            flex-wrap: wrap;
+            gap: 8px 20px;
             padding: 10px 12px;
-            background: #000;
-            color: #fff;
+            background: #fff;
+            color: #000;
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.04em;
+        }
+        .song-list > .album-total-time {
+            flex: 1 1 100%;
+            box-sizing: border-box;
+        }
+        .album-runtime-label {
+            opacity: 0.65;
+            margin-right: 5px;
+            text-transform: uppercase;
         }
         .deluxe-section-heading {
             flex: 1 1 100%;
@@ -1723,7 +1733,7 @@
         <div class="tab-panel active" id="tab-tracklist">
             <section class="song-list" id="song-list"></section>
             <div class="album-total-time" aria-live="polite">
-                <span id="album-total-time">Calculating&hellip;</span>
+                <span><span class="album-runtime-label">Total</span><span id="album-total-time">Calculating&hellip;</span></span>
             </div>
         </div>
 
@@ -2095,7 +2105,18 @@
     function updateAlbumTotalTime() {
         const resolvedTrackCount = trackDurations.size + durationFailures.size;
         if (resolvedTrackCount < data.tracks.length) return;
-        const totalSeconds = Array.from(trackDurations.values()).reduce((sum, duration) => sum + duration, 0);
+        const standardTrackCount = Number.parseInt(data.album.standardTrackCount, 10) || data.tracks.length;
+        let standardSeconds = 0;
+        let deluxeExtrasSeconds = 0;
+        trackDurations.forEach((duration, trackIndex) => {
+            if (trackIndex < standardTrackCount) standardSeconds += duration;
+            else deluxeExtrasSeconds += duration;
+        });
+        const totalSeconds = standardSeconds + deluxeExtrasSeconds;
+        const standardTotalTime = document.getElementById('standard-total-time');
+        const deluxeExtrasTime = document.getElementById('deluxe-extras-time');
+        if (standardTotalTime) standardTotalTime.textContent = formatTime(standardSeconds);
+        if (deluxeExtrasTime) deluxeExtrasTime.textContent = formatTime(deluxeExtrasSeconds);
         albumTotalTime.textContent = formatTime(totalSeconds);
     }
     const NOTE_TO_SEMITONE = Object.freeze({
@@ -5465,6 +5486,11 @@
 
     data.tracks.forEach((track, trackIndex) => {
         if (trackIndex === data.album.standardTrackCount) {
+            const standardTime = document.createElement('div');
+            standardTime.className = 'album-total-time';
+            standardTime.innerHTML = '<span id="standard-total-time">Calculating&hellip;</span>';
+            songList.appendChild(standardTime);
+
             const deluxeHeading = document.createElement('div');
             deluxeHeading.className = 'deluxe-section-heading';
             deluxeHeading.textContent = 'Deluxe edition extras';
@@ -5539,6 +5565,12 @@
             renderTelemetry();
         }
     });
+
+    const deluxeExtrasTime = document.createElement('div');
+    deluxeExtrasTime.className = 'album-total-time';
+    deluxeExtrasTime.innerHTML = '<span id="deluxe-extras-time">Calculating&hellip;</span>';
+    songList.appendChild(deluxeExtrasTime);
+    updateAlbumTotalTime();
 
     // Set startup defaults until a song is selected
     setToggleIcon(true);
