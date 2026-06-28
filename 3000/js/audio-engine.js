@@ -2,6 +2,7 @@ class AudioEngine {
     constructor() {
         this.context = null;
         this.sourceNode = null;
+        this.sourceNodes = new Map();
         this.mediaElement = null;
         this.gainNode = null;
         this.analyserNode = null;
@@ -9,28 +10,42 @@ class AudioEngine {
         this.frequencyData = null;
     }
 
-    attach(mediaElement) {
+    ensureContext() {
         if (!this.context) {
             this.context = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'playback' });
         }
-        this.mediaElement = mediaElement;
-        // Create or reuse nodes
-        if (!this.sourceNode) {
-            this.sourceNode = this.context.createMediaElementSource(this.mediaElement);
+        if (!this.gainNode) {
             this.gainNode = this.context.createGain();
             this.analyserNode = this.context.createAnalyser();
             this.analyserNode.fftSize = 2048;
             this.analyserNode.smoothingTimeConstant = 0.72;
-            this.sourceNode.connect(this.gainNode);
             this.gainNode.connect(this.analyserNode);
             this.analyserNode.connect(this.context.destination);
         }
     }
 
-    async play() {
-        if (!this.context) {
-            this.context = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'playback' });
+    prime(mediaElement) {
+        if (!mediaElement) return null;
+        this.ensureContext();
+
+        let sourceNode = this.sourceNodes.get(mediaElement);
+        if (!sourceNode) {
+            sourceNode = this.context.createMediaElementSource(mediaElement);
+            sourceNode.connect(this.gainNode);
+            this.sourceNodes.set(mediaElement, sourceNode);
         }
+
+        return sourceNode;
+    }
+
+    attach(mediaElement) {
+        const sourceNode = this.prime(mediaElement);
+        this.mediaElement = mediaElement;
+        this.sourceNode = sourceNode;
+    }
+
+    async play() {
+        this.ensureContext();
         if (this.context.state === 'suspended') {
             await this.context.resume();
         }
