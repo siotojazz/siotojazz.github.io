@@ -18,6 +18,9 @@ function createSeekRenderer(canvas) {
     const theme = {
         surface: getThemeRgb('--club-blue-surface-rgb', '224, 230, 247'),
         fill: getThemeRgb('--club-blue-rgb', '27, 53, 156'),
+        fillBright: getThemeRgb('--club-blue-bright-rgb', '35, 107, 208'),
+        deep: getThemeRgb('--club-blue-deep-rgb', '17, 71, 159'),
+        night: getThemeRgb('--club-blue-night-rgb', '8, 32, 94'),
         border: getThemeRgb('--club-blue-strong-rgb', '19, 37, 109')
     };
 
@@ -73,6 +76,8 @@ function createSeekRenderer(canvas) {
     const prog = gl.createProgram();
     gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
     gl.useProgram(prog);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     const a_pos = gl.getAttribLocation(prog, 'a_pos');
     const u_res = gl.getUniformLocation(prog, 'u_res');
@@ -105,16 +110,44 @@ function createSeekRenderer(canvas) {
         gl.uniform2f(u_res, W, H);
         gl.clearColor(theme.surface[0], theme.surface[1], theme.surface[2], 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        // Border
-        gl.uniform4f(u_color, theme.border[0], theme.border[1], theme.border[2], 1);
+        const frame = Math.max(2, Math.floor(H * 0.14));
+        const innerX = frame;
+        const innerY = frame;
+        const innerW = Math.max(0, W - frame * 2);
+        const innerH = Math.max(0, H - frame * 2);
+        const topSheen = Math.max(1, Math.floor(innerH * 0.34));
+        const bottomShade = Math.max(1, Math.floor(innerH * 0.18));
+
+        // Raised square shell
+        gl.uniform4f(u_color, 1, 1, 1, 0.78);
         rect(0, 0, W, 1);
-        rect(0, H-1, W, 1);
         rect(0, 0, 1, H);
-        rect(W-1, 0, 1, H);
+        gl.uniform4f(u_color, theme.night[0], theme.night[1], theme.night[2], 0.48);
+        rect(0, H - 1, W, 1);
+        rect(W - 1, 0, 1, H);
+
+        // Track well
+        gl.uniform4f(u_color, theme.night[0], theme.night[1], theme.night[2], 0.18);
+        rect(innerX, innerY, innerW, innerH);
+        gl.uniform4f(u_color, 1, 1, 1, 0.44);
+        rect(innerX, innerY, innerW, 1);
+        gl.uniform4f(u_color, theme.border[0], theme.border[1], theme.border[2], 0.3);
+        rect(innerX, innerY + innerH - 1, innerW, 1);
+
         // Fill progress
-        const filled = Math.max(0, Math.min(1, progress)) * (W-2);
-        gl.uniform4f(u_color, theme.fill[0], theme.fill[1], theme.fill[2], 1);
-        rect(1, 1, filled, H-2);
+        const filled = Math.max(0, Math.min(1, progress)) * innerW;
+        if (filled > 0) {
+            gl.uniform4f(u_color, theme.deep[0], theme.deep[1], theme.deep[2], 1);
+            rect(innerX, innerY, filled, innerH);
+            gl.uniform4f(u_color, theme.fillBright[0], theme.fillBright[1], theme.fillBright[2], 0.92);
+            rect(innerX, innerY, filled, topSheen);
+            gl.uniform4f(u_color, theme.night[0], theme.night[1], theme.night[2], 0.32);
+            rect(innerX, innerY + innerH - bottomShade, filled, bottomShade);
+            gl.uniform4f(u_color, 1, 1, 1, 0.34);
+            rect(innerX, innerY, Math.max(1, Math.floor(filled)), 1);
+            gl.uniform4f(u_color, theme.night[0], theme.night[1], theme.night[2], 0.42);
+            rect(Math.min(W - frame - 1, innerX + filled), innerY, 1, innerH);
+        }
     }
 
     window.addEventListener('resize', () => render(0));
@@ -122,7 +155,8 @@ function createSeekRenderer(canvas) {
     const style = canvas.style;
     style.display = 'block';
     style.width = '100%';
-    style.height = '12px';
+    style.height = '14px';
+    style.borderRadius = '0';
 
     return { render };
 }

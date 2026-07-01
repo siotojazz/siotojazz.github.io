@@ -20,28 +20,56 @@
             font-style: normal;
         }
         :root {
-            --theme-color: #000416;
-            --theme-color-rgb: 0, 4, 22;
-            --theme-font-color: #13256d;
-            --theme-font-color-rgb: 19, 37, 109;
-            --theme-surface-rgb: 224, 230, 247;
-            --theme-progress-rgb: 0, 4, 22;
-            --theme-shadow: rgba(19, 37, 109, 0.3);
-            --theme-font-muted: rgba(19, 37, 109, 0.62);
+            --theme-color: #1f56b4;
+            --theme-color-rgb: 31, 86, 180;
+            --theme-font-color: #07398f;
+            --theme-font-color-rgb: 7, 57, 143;
+            --theme-surface-rgb: 245, 248, 255;
+            --theme-progress-rgb: 31, 86, 180;
+            --theme-shadow: rgba(7, 57, 143, 0.34);
+            --theme-font-muted: rgba(7, 57, 143, 0.66);
             --theme-on-color: #fff;
             --club-blue: var(--theme-color);
-            --club-blue-strong: var(--theme-color);
+            --club-blue-strong: var(--theme-font-color);
+            --club-blue-deep: #11479f;
+            --club-blue-night: #08205e;
+            --club-blue-bright: #236bd0;
+            --club-blue-soft: #5f8bd9;
+            --club-blue-mist: #d7e2fb;
+            --club-blue-ice: #eef4ff;
+            --club-blue-deep-rgb: 17, 71, 159;
+            --club-blue-night-rgb: 8, 32, 94;
+            --club-blue-bright-rgb: 35, 107, 208;
+            --club-blue-soft-rgb: 95, 139, 217;
             --club-blue-rgb: var(--theme-color-rgb);
             --club-blue-strong-rgb: var(--theme-font-color-rgb);
             --club-blue-surface-rgb: var(--theme-surface-rgb);
             --club-blue-progress-rgb: var(--theme-progress-rgb);
             --club-blue-shadow: var(--theme-shadow);
             --club-blue-muted: var(--theme-font-muted);
+            --button-outset-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.36),
+                inset 0 -2px 0 rgba(var(--club-blue-night-rgb), 0.38),
+                0 3px 0 rgba(var(--club-blue-night-rgb), 0.42),
+                0 8px 16px rgba(var(--club-blue-night-rgb), 0.18);
+            --button-inset-shadow:
+                inset 0 2px 4px rgba(var(--club-blue-night-rgb), 0.58),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.16),
+                0 1px 0 rgba(255, 255, 255, 0.18);
+            --button-light-outset-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                inset 0 -2px 0 rgba(var(--club-blue-rgb), 0.24),
+                0 3px 0 rgba(var(--club-blue-rgb), 0.16),
+                0 7px 14px rgba(var(--club-blue-rgb), 0.12);
+            --button-press-transform: translateY(2px);
         }
         body {
             font-family: 'Garet', Arial, sans-serif;
             letter-spacing: -0.5px;
-            background: url('resources/background.png') center center / cover no-repeat fixed;
+            background:
+                radial-gradient(circle at 82% 8%, rgba(var(--club-blue-bright-rgb), 0.58), rgba(var(--club-blue-bright-rgb), 0) 31%),
+                linear-gradient(135deg, rgba(var(--club-blue-night-rgb), 0.2) 0%, rgba(var(--club-blue-bright-rgb), 0.26) 38%, rgba(var(--club-blue-rgb), 0.34) 68%, rgba(var(--club-blue-deep-rgb), 0.18) 100%),
+                url('resources/background.png') center center / cover no-repeat fixed;
             background-color: var(--club-blue-strong);
             color: var(--club-blue-strong);
             margin: 0;
@@ -64,6 +92,8 @@
             flex-direction: column;
             overflow: hidden;
             padding: 10px 60px 0 10px;
+            position: relative;
+            isolation: isolate;
         }
         .app-container.telemetry-expanded {
             max-width: none;
@@ -82,6 +112,7 @@
             background: transparent;
             font-size: 40px;
             margin: 10px 0px;
+            filter: drop-shadow(0 8px 18px rgba(var(--club-blue-rgb), 0.22));
         }
         span#album-title {
             font-weight: 100;
@@ -89,6 +120,7 @@
             font-family: "Garet", sans-serif;
             display: inline-block !important;
             margin-left: 10px;
+            text-shadow: 0 8px 24px rgba(var(--club-blue-rgb), 0.32);
         }
         span#album-band {
             color: #fff;
@@ -96,6 +128,7 @@
             text-transform: uppercase;
             line-height: 22px;
             display: inline-block !important;
+            text-shadow: 0 8px 24px rgba(var(--club-blue-rgb), 0.36);
         }
         header img {
             height: 100%;
@@ -114,14 +147,31 @@
             display: flex;
             width: 100%;
             flex-shrink: 0;
+            background: linear-gradient(90deg, var(--club-blue-night), var(--club-blue-deep), var(--club-blue));
+            box-shadow: 0 8px 24px rgba(var(--club-blue-rgb), 0.14);
+            position: relative;
+            overflow: hidden;
             /* border-bottom: 2px solid #000;
             border-top: 2px solid #000;  */
             /* border: 2px solid #000; */
         }
+        .tab-nav::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 9px),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 42%);
+            opacity: 0.24;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
         .tab-btn {
             flex: 1;
             padding: 8px 12px;
-            background: var(--club-blue);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 46%),
+                linear-gradient(135deg, var(--club-blue-deep) 0%, var(--club-blue) 48%, var(--club-blue-night) 100%);
             color: #fff;
             border: none;
             cursor: pointer;
@@ -137,6 +187,12 @@
             justify-content: center;
             gap: 8px;
             white-space: nowrap;
+            box-shadow: var(--button-outset-shadow);
+            transform: translateY(0);
+        }
+        .tab-btn > * {
+            position: relative;
+            z-index: 2;
         }
         .tab-icon {
             font-size: 12px;
@@ -168,32 +224,35 @@
             transition: left 0.3s ease;
         }
         .tab-btn:hover {
-            background: var(--club-blue-strong);
-            filter: saturate(1.04);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 52%),
+                linear-gradient(135deg, var(--club-blue), var(--club-blue-bright) 44%, var(--club-blue-deep));
+            filter: saturate(1.08);
+            transform: translateY(-1px);
+        }
+        .tab-btn:active {
+            box-shadow: var(--button-inset-shadow);
+            transform: var(--button-press-transform);
         }
         @keyframes tab-sweep {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
         }
         .tab-btn.active {
-            background: var(--club-blue);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 38%, rgba(255, 255, 255, 0) 100%),
+                linear-gradient(135deg, var(--club-blue-night) 0%, var(--club-blue-deep) 48%, var(--club-blue) 100%);
             color: #fff;
             font-weight: bold;
-        }
-        .tab-btn.active::before {
-            left: 0;
-            width: 100%;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(var(--club-blue-surface-rgb), 0.08) 30%,
-                rgba(var(--club-blue-surface-rgb), 0.16) 50%,
-                rgba(var(--club-blue-surface-rgb), 0.08) 70%,
-                transparent 100%);
-            filter: blur(10px);
-            animation: tab-sweep 4s ease-in-out infinite;
+            text-shadow: 0 1px 0 rgba(var(--club-blue-night-rgb), 0.5);
+            box-shadow: var(--button-inset-shadow);
+            transform: var(--button-press-transform);
         }
         .tab-btn.active:hover {
-            background: var(--club-blue);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 42%, rgba(255, 255, 255, 0) 100%),
+                linear-gradient(135deg, var(--club-blue-night) 0%, var(--club-blue-deep) 48%, var(--club-blue) 100%);
+            transform: var(--button-press-transform);
         }
         .tab-content {
             flex: 1;
@@ -219,10 +278,17 @@
             filter: blur(0) saturate(1);
             pointer-events: auto;
         }
+        #tab-tracklist {
+            margin: 0;
+            padding: 0;
+            gap: 0;
+        }
 
         /* ── Song List (Tracklist tab) ── */
         .song-list {
-            background-color: #FFF;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 0.97) 48%, rgba(230, 237, 255, 0.92) 100%),
+                repeating-linear-gradient(0deg, rgba(var(--club-blue-rgb), 0.055) 0 1px, transparent 1px var(--row-h));
             /* background-color: #FFFFFF16; */
             /* backdrop-filter: blur(6px); */
             width: 100%;
@@ -230,6 +296,10 @@
             flex-wrap: wrap;
             overflow-y: auto;
             --row-h: 34px;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            box-shadow: inset 10px 0 22px rgba(var(--club-blue-soft-rgb), 0.08);
         }
         .song-item {
             color: var(--club-blue-strong);
@@ -245,6 +315,7 @@
             position: relative;
             overflow: hidden;
             height: var(--row-h);
+            border-bottom: 1px solid rgba(var(--club-blue-rgb), 0.08);
         }
         /* Set consistent row line-height for inner cells */
         .song-title, .song-length { line-height: var(--row-h); }
@@ -272,6 +343,12 @@
         .song-item > * {
             position: relative;
             z-index: 2;
+        }
+        .song-item:nth-child(4n + 1) {
+            background: linear-gradient(90deg, rgba(var(--club-blue-rgb), 0.07), rgba(var(--club-blue-rgb), 0) 48%);
+        }
+        .song-item:nth-child(4n + 3) {
+            background: linear-gradient(90deg, rgba(var(--club-blue-soft-rgb), 0.12), rgba(255, 255, 255, 0) 58%);
         }
         .song-title {
             padding: 0;
@@ -317,11 +394,15 @@
             line-height: var(--row-h);
             padding: 0;
             text-align: right;
-            opacity: 0.5;
+            color: rgba(var(--club-blue-deep-rgb), 0.68);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.02em;
+            opacity: 0.72;
             min-width: 42px;
         }
         .song-item:hover {
-            background: var(--club-blue);
+            background:
+                linear-gradient(90deg, var(--club-blue-night) 0%, var(--club-blue-deep) 48%, var(--club-blue) 100%);
             color: #fff;
         }
         .song-item:hover .song-status,
@@ -329,13 +410,32 @@
             color: #fff;
             opacity: 0.6;
         }
+        .song-item:hover .song-length,
+        .song-item.active .song-length {
+            color: #fff;
+            opacity: 0.9;
+        }
         .song-item:hover::before {
             left: 100%;
             transition: left 0.4s ease;
         }
         .song-item.active {
-            background: var(--club-blue-strong);
+            background:
+                linear-gradient(90deg, var(--club-blue-night) 0%, var(--club-blue-deep) 54%, var(--club-blue-bright) 100%);
             color: #fff;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38), inset 0 -1px 0 rgba(23, 63, 147, 0.28);
+        }
+        .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active::before {
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.06) 24%,
+                rgba(255, 255, 255, 0.26) 50%,
+                rgba(var(--club-blue-soft-rgb), 0.2) 72%,
+                transparent 100%);
+            filter: blur(10px);
+            animation: tab-sweep 4s ease-in-out infinite;
         }
         .song-item.version-unavailable {
             opacity: 0.34;
@@ -345,14 +445,16 @@
             content: ' · no Dani';
         }
         .song-item.version-unavailable:hover {
-            background: #fff;
+            background: linear-gradient(90deg, #fff, var(--club-blue-ice));
             color: var(--club-blue-strong);
             cursor: not-allowed;
         }
 
         /* ── Player Bar (always visible) ── */
         .player-basic {
-            background-color: #FFF;
+            background:
+                radial-gradient(circle at 16% 0%, rgba(var(--club-blue-bright-rgb), 0.3), rgba(var(--club-blue-bright-rgb), 0) 32%),
+                linear-gradient(180deg, rgba(246, 250, 255, 0.96), rgba(225, 235, 255, 0.94));
             backdrop-filter: blur(20px);
             width: 100%;
             padding: 0;
@@ -360,12 +462,13 @@
             position: relative;
             z-index: 1;
             flex-shrink: 0;
+            box-shadow: 0 -10px 24px rgba(var(--club-blue-rgb), 0.08);
         }
         .player-basic .player-controls {
             padding: 8px;
         }
         .player-basic .seek-bar-container {
-            padding: 0 8px 8px 8px;
+            padding: 0 8px 10px 8px;
         }
         .player-wrap {
             width: 100%;
@@ -373,7 +476,8 @@
             overflow-y: auto;
         }
         .player {
-            background-color: #FFF;
+            background:
+                linear-gradient(180deg, #fff, var(--club-blue-ice));
             width: 100%;
             padding: 8px;
         }
@@ -393,6 +497,12 @@
             flex-wrap: nowrap;
             gap: 12px;
         }
+        .transport-buttons {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
         .player-controls button {
             padding: 4px 8px;
             cursor: pointer;
@@ -406,8 +516,16 @@
             border: 0px;
             position: relative;
             overflow: hidden;
-            background-color: var(--club-blue);
+            background:
+                linear-gradient(135deg, var(--club-blue-night), var(--club-blue-deep) 54%, var(--club-blue-bright));
             color: #fff;
+            box-shadow: var(--button-outset-shadow);
+            transform: translateY(0);
+            transition: background 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, transform 0.18s ease, filter 0.18s ease;
+        }
+        .player-controls .track-nav-btn {
+            width: 32px;
+            padding-inline: 6px;
         }
         .player-controls button::before {
             content: '';
@@ -430,9 +548,25 @@
             left: 100%;
             transition: left 0.3s ease;
         }
+        .player-controls button:not(:disabled):hover {
+            filter: saturate(1.08);
+            transform: translateY(-1px);
+        }
+        .player-controls button:not(:disabled):active,
+        .player-basic.playing .toggle-btn {
+            box-shadow: var(--button-inset-shadow);
+            transform: var(--button-press-transform);
+        }
+        .player-basic.playing .toggle-btn:hover {
+            transform: var(--button-press-transform);
+        }
         .player-controls button:disabled {
             opacity: 0.4;
             cursor: default;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.18),
+                inset 0 -1px 0 rgba(var(--club-blue-night-rgb), 0.18);
+            transform: translateY(0);
         }
 
         .player-controls button i {
@@ -450,21 +584,25 @@
             min-width: 122px;
             height: 28px;
             padding: 3px 4px 3px 9px;
-            border: 1px solid rgba(var(--club-blue-surface-rgb), 0.42);
-            background: rgba(var(--club-blue-surface-rgb), 0.08);
+            border: 0;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(230, 237, 255, 0.68));
             color: var(--club-blue-strong);
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72), 0 1px 5px rgba(19, 37, 109, 0.08);
+            box-shadow: var(--button-light-outset-shadow);
             overflow: hidden;
             font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+            transform: translateY(0);
+            transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, filter 0.18s ease;
         }
         .player-controls .version-toggle.is-dani {
-            background: var(--club-blue);
+            background:
+                linear-gradient(135deg, var(--club-blue-deep), var(--club-blue) 52%, var(--club-blue-bright));
             color: #fff;
-            box-shadow: 0 1px 7px rgba(19, 37, 109, 0.28);
+            box-shadow: var(--button-inset-shadow);
+            transform: var(--button-press-transform);
         }
         .version-toggle__label {
             white-space: nowrap;
@@ -490,11 +628,23 @@
             transform: translateX(16px);
         }
         .player-controls .version-toggle:not(:disabled):hover {
+            filter: saturate(1.06);
             transform: translateY(-1px);
+        }
+        .player-controls .version-toggle.is-dani:not(:disabled):hover {
+            transform: var(--button-press-transform);
+        }
+        .player-controls .version-toggle:not(:disabled):active {
+            box-shadow: var(--button-inset-shadow);
+            transform: var(--button-press-transform);
         }
         .player-controls .version-toggle:disabled {
             opacity: 0.45;
             cursor: default;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.42),
+                inset 0 -1px 0 rgba(var(--club-blue-rgb), 0.14);
+            transform: translateY(0);
         }
         .version-toggle__message {
             color: #7e3c26;
@@ -563,6 +713,25 @@
             margin: 0;
             padding: 0;
             position: relative;
+        }
+        #seek-gl {
+            display: block;
+            width: 100%;
+            height: 14px;
+            cursor: pointer;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(var(--club-blue-soft-rgb), 0.3));
+            box-shadow: var(--button-light-outset-shadow);
+            border-radius: 0;
+            transform: translateY(0);
+            transition: box-shadow 0.16s ease, transform 0.16s ease, filter 0.16s ease;
+        }
+        #seek-gl:hover {
+            filter: saturate(1.06);
+        }
+        #seek-gl:active {
+            box-shadow: var(--button-inset-shadow);
+            transform: var(--button-press-transform);
         }
 
         /* ── Lyrics & Structure (Lyrics tab) ── */
@@ -645,7 +814,8 @@
             padding: 5px 10px;
             font-size: 16px;
             color: #fff;
-            background: var(--club-blue);
+            background:
+                linear-gradient(90deg, var(--club-blue-night), var(--club-blue-deep), var(--club-blue));
             width: 100%;
             display: block;
             text-transform: uppercase;
@@ -678,7 +848,8 @@
             filter: blur(8px);
         }
         .lyrics-line:hover {
-            background: var(--club-blue);
+            background:
+                linear-gradient(90deg, var(--club-blue-night), var(--club-blue-bright));
             color: #fff;
         }
         .lyrics-line:hover::before {
@@ -686,7 +857,8 @@
             transition: left 0.4s ease;
         }
         .lyrics-line.active {
-            background: var(--club-blue);
+            background:
+                linear-gradient(90deg, var(--club-blue-deep), var(--club-blue-bright));
             color: #fff;
         }
         .lyrics-line.passed {
@@ -726,11 +898,13 @@
             transition: left 0.4s ease;
         }
         .structure-chord:not(.passed):hover {
-            background: var(--club-blue);
+            background:
+                linear-gradient(90deg, var(--club-blue-night), var(--club-blue-bright));
             color: #fff;
         }
         .structure-chord.active {
-            background: var(--club-blue);
+            background:
+                linear-gradient(90deg, var(--club-blue-deep), var(--club-blue-bright));
             color: #fff;
             padding-right: 16px;
             font-weight: 900;
@@ -778,7 +952,8 @@
             bottom: calc(100% + 20px);
             left: 50%;
             transform: translateX(-50%);
-            background: var(--club-blue-strong);
+            background:
+                linear-gradient(135deg, var(--club-blue-night), var(--club-blue-bright));
             color: #fff;
             padding: 2px 4px;
             font-size: 10px;
@@ -791,7 +966,8 @@
             bottom: calc(100% + 40px);
             left: 50%;
             transform: translateX(-50%);
-            background: var(--club-blue-strong);
+            background:
+                linear-gradient(135deg, var(--club-blue-night), var(--club-blue-bright));
             color: #fff;
             padding: 4px;
             font-size: 10px;
@@ -841,7 +1017,8 @@
             font-size: 18px;
             font-weight: 900;
             color: #fff;
-            background: var(--club-blue-strong);
+            background:
+                linear-gradient(90deg, var(--club-blue-night), var(--club-blue-deep) 52%, var(--club-blue));
             text-transform: uppercase;
             letter-spacing: 1px;
             white-space: nowrap;
@@ -849,6 +1026,8 @@
             text-overflow: ellipsis;
             padding: 8px;
             min-height: 0;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), inset 0 -1px 0 rgba(23, 63, 147, 0.24);
+            position: relative;
         }
         .current-song-name:empty {
             display: none;
@@ -1132,7 +1311,9 @@
             gap: 6px;
             position: relative;
             overflow: hidden;
-            background: var(--club-blue);
+            background:
+                radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0) 30%),
+                linear-gradient(135deg, var(--club-blue-night), var(--club-blue-deep) 52%, var(--club-blue));
             color: #fff;
         }
         .telemetry-card::before {
@@ -1274,7 +1455,8 @@
         .telemetry-song-table thead th {
             position: sticky;
             top: 0;
-            background: var(--club-blue);
+            background:
+                linear-gradient(180deg, var(--club-blue), var(--club-blue-night));
             color: #fff;
             font-size: 10px;
             letter-spacing: 0.9px;
@@ -1499,7 +1681,8 @@
         }
 
         .menu-item:hover {
-            background: var(--club-blue);
+            background:
+                linear-gradient(90deg, var(--club-blue-night), var(--club-blue-bright));
             color: #fff;
         }
         .menu-item:hover::before {
@@ -1534,7 +1717,8 @@
         .confidential-close {
             margin-top: 15px;
             padding: 10px 20px;
-            background-color: var(--club-blue-strong);
+            background:
+                linear-gradient(135deg, var(--club-blue-night), var(--club-blue-bright));
             color: #fff;
             border: none;
             cursor: pointer;
@@ -1662,33 +1846,106 @@
         .album-total-time {
             display: flex;
             justify-content: flex-end;
-            flex-wrap: wrap;
-            gap: 8px 20px;
-            padding: 10px 12px;
-            background: #fff;
-            color: #000;
+            align-items: baseline;
+            padding: 9px 12px 10px;
+            background:
+                linear-gradient(90deg, #fff 0%, rgba(var(--club-blue-soft-rgb), 0.2) 44%, var(--club-blue-mist) 100%);
+            color: var(--club-blue-strong);
+            border-top: 1px solid rgba(var(--club-blue-rgb), 0.26);
             font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.04em;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.08em;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+            position: relative;
+            overflow: hidden;
+        }
+        .album-total-time::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            width: min(52%, 320px);
+            height: 1px;
+            background: linear-gradient(90deg, rgba(var(--club-blue-deep-rgb), 0.78), rgba(var(--club-blue-rgb), 0.48) 58%, transparent 100%);
+            opacity: 0.82;
+            pointer-events: none;
+        }
+        .album-total-time::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(108deg, transparent 0%, transparent 72%, rgba(255, 255, 255, 0.48) 72%, rgba(255, 255, 255, 0.48) 76%, transparent 76%);
+            opacity: 0.52;
+            pointer-events: none;
+        }
+        .album-total-time > * {
+            position: relative;
+            z-index: 2;
         }
         .song-list > .album-total-time {
             flex: 1 1 100%;
             box-sizing: border-box;
         }
+        #tab-tracklist > .album-total-time {
+            border-top: 2px solid var(--club-blue);
+            background:
+                linear-gradient(90deg, #fff 0%, rgba(var(--club-blue-soft-rgb), 0.26) 42%, var(--club-blue-mist) 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68), 0 -8px 18px rgba(var(--club-blue-rgb), 0.06);
+        }
         .album-runtime-label {
-            opacity: 0.65;
-            margin-right: 5px;
+            display: inline-block;
+            margin-right: 8px;
+            padding: 2px 6px 1px;
+            background:
+                linear-gradient(135deg, var(--club-blue-night), var(--club-blue-deep) 58%, var(--club-blue-bright));
+            color: #fff;
+            font-size: 8px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
         }
         .deluxe-section-heading {
             flex: 1 1 100%;
-            padding: 12px;
-            background: #000;
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-start;
+            padding: 13px 12px 11px;
+            background:
+                linear-gradient(90deg, var(--club-blue-night) 0%, var(--club-blue-deep) 46%, var(--club-blue) 100%);
             color: #fff;
-            font-size: 11px;
+            border-top: 1px solid rgba(255, 255, 255, 0.86);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.86);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34), inset 0 -1px 0 rgba(23, 63, 147, 0.24);
+            font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        .deluxe-section-heading > * {
+            position: relative;
+            z-index: 2;
+        }
+        .deluxe-section-title {
+            min-width: 0;
+            text-shadow: 0 1px 0 rgba(var(--club-blue-night-rgb), 0.42);
+        }
+        .deluxe-section-title::after {
+            content: '';
+            display: inline-block;
+            width: 22px;
+            margin-left: 8px;
+            border-top: 1px solid currentColor;
+            vertical-align: middle;
+            opacity: 0.78;
+        }
+        @media (max-width: 420px) {
+            .deluxe-section-heading {
+                padding-right: 10px;
+            }
         }
     </style>
 </head>
@@ -1703,7 +1960,11 @@
     <div class="player-basic" id="player-basic">
         <div class="current-song-name" id="current-song-name"></div>
         <div class="player-controls">
-            <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+            <div class="transport-buttons" aria-label="Playback controls">
+                <button class="track-nav-btn prev-track-btn" disabled aria-label="Previous song"><i class="fa-solid fa-backward-step" aria-hidden="true"></i></button>
+                <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                <button class="track-nav-btn next-track-btn" disabled aria-label="Next song"><i class="fa-solid fa-forward-step" aria-hidden="true"></i></button>
+            </div>
             <div class="current-info">
                 <span class="current-section"></span>
                 <span class="current-lyric"></span>
@@ -1925,6 +2186,7 @@
 
     <script src="js/audio-engine.js"></script>
     <script src="js/progress-gl.js"></script>
+    <script src="js/song-motifs.js"></script>
     <script>
         
         fetch('album.json')
@@ -2041,6 +2303,8 @@
     let standbyAudio = createGaplessAudioElement();
     audio.preload = 'auto';
     const toggleBtn = playerBasic.querySelector('.toggle-btn');
+    const prevTrackBtn = playerBasic.querySelector('.prev-track-btn');
+    const nextTrackBtn = playerBasic.querySelector('.next-track-btn');
     const versionToggle = document.getElementById('version-toggle');
     const versionToggleLabel = versionToggle?.querySelector('.version-toggle__label');
     const versionToggleMessage = document.getElementById('version-toggle-message');
@@ -2049,6 +2313,7 @@
     const seekFill = null;
     const lyricsContent = player.querySelector('.lyrics-content');
     const structureContent = player.querySelector('.structure-content');
+    const currentSongNameDisplay = document.getElementById('current-song-name');
     const currentLyricDisplay = playerBasic.querySelector('.current-lyric');
     const currentChordDisplay = playerBasic.querySelector('.current-chord');
     const currentSectionDisplay = playerBasic.querySelector('.current-section');
@@ -2095,6 +2360,8 @@
         brightnessDrift: document.getElementById('telemetry-live-brightness-drift-ref')
     };
     const telemetryLiveSpectrum = document.getElementById('telemetry-live-spectrum');
+    const createSongMotifForTrack = window.SiotoJazzSongMotifs?.createSongMotif
+        || (() => document.createElement('span'));
     const trackDurations = new Map();
     const trackAudioAnalysis = new Map();
     const versionAvailability = new Map();
@@ -2112,6 +2379,19 @@
     let gaplessAnalysisContext = null;
     const gaplessAnalysisPromises = new Map();
     let selectSongLoadToken = 0;
+
+    function updatePlayerSongMotif(track, trackIndex) {
+        if (!currentSongNameDisplay) return;
+
+        currentSongNameDisplay.textContent = track ? `${trackIndex + 1} ${track.title}` : '';
+        currentSongNameDisplay.classList.toggle('has-player-motif', Boolean(track));
+
+        if (!track) return;
+
+        const motif = createSongMotifForTrack(trackIndex);
+        motif.classList.add('song-motif--player');
+        currentSongNameDisplay.appendChild(motif);
+    }
 
     function updateAlbumTotalTime() {
         const resolvedTrackCount = trackDurations.size + durationFailures.size;
@@ -4433,6 +4713,20 @@
     let lastUpdateTime = 0;
     let contextTarget = null;
 
+    function updateTrackNavButtons() {
+        const hasSelection = selectedTrackIndex >= 0 && selectedTrackIndex < data.tracks.length;
+        if (prevTrackBtn) prevTrackBtn.disabled = !hasSelection || selectedTrackIndex <= 0;
+        if (nextTrackBtn) nextTrackBtn.disabled = !hasSelection || selectedTrackIndex >= data.tracks.length - 1;
+    }
+
+    function goToAdjacentTrack(direction) {
+        if (selectedTrackIndex < 0) return;
+        const nextIndex = selectedTrackIndex + direction;
+        if (nextIndex < 0 || nextIndex >= data.tracks.length) return;
+        const shouldAutoPlay = currentTrack ? !audio.paused : false;
+        selectSong(data.tracks[nextIndex], nextIndex, 0, shouldAutoPlay);
+    }
+
     function getTrackStartOffset(track) {
         const offset = Number.parseFloat(track?.startOffset);
         return Number.isFinite(offset) ? offset : 0;
@@ -5185,6 +5479,7 @@
         currentTrack = track;
         selectedTrackIndex = trackIndex;
         currentDaniSource = daniSource;
+        updateTrackNavButtons();
         updateVersionToggleState();
         setVersionToggleMessage('');
 
@@ -5216,7 +5511,7 @@
         currentChordDisplay.textContent = '';
         chordInstructionsDisplay.textContent = '';
         currentSectionDisplay.textContent = '';
-        document.getElementById('current-song-name').textContent = `${trackIndex + 1} ${track.title}`;
+        updatePlayerSongMotif(track, trackIndex);
         updateVersionToggleState();
         resetLiveTelemetryHistory(trackIndex);
 
@@ -5851,7 +6146,9 @@
 
             const deluxeHeading = document.createElement('div');
             deluxeHeading.className = 'deluxe-section-heading';
-            deluxeHeading.textContent = 'Deluxe edition extras';
+            deluxeHeading.innerHTML = `
+                <span class="deluxe-section-title">Deluxe edition</span>
+            `;
             songList.appendChild(deluxeHeading);
         }
 
@@ -5879,6 +6176,7 @@
         songSection.textContent = '';
 
         songItem.appendChild(songTitle);
+        songItem.appendChild(createSongMotifForTrack(trackIndex));
         songItem.appendChild(songLength);
         // songItem context menu handled by global listener
         songItem.addEventListener('click', () => {
@@ -5933,6 +6231,7 @@
     // Set startup defaults until a song is selected
     setToggleIcon(true);
     toggleBtn.disabled = true;
+    updateTrackNavButtons();
     updateVersionToggleState();
 
     handleQueryParams();
@@ -5966,6 +6265,14 @@
             audioEngine.pause();
             setToggleIcon(true);
         }
+    });
+
+    prevTrackBtn?.addEventListener('click', () => {
+        goToAdjacentTrack(-1);
+    });
+
+    nextTrackBtn?.addEventListener('click', () => {
+        goToAdjacentTrack(1);
     });
 
     versionToggle?.addEventListener('click', () => {
