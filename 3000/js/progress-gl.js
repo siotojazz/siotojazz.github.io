@@ -2,7 +2,8 @@ function createSeekRenderer(canvas) {
     const gl = canvas.getContext('webgl', { antialias: false, preserveDrawingBuffer: false });
     if (!gl) {
         return {
-            render: () => {}
+            render: () => {},
+            setSections: () => {}
         };
     }
 
@@ -23,6 +24,33 @@ function createSeekRenderer(canvas) {
         night: getThemeRgb('--club-blue-night-rgb', '8, 32, 94'),
         border: getThemeRgb('--club-blue-strong-rgb', '19, 37, 109')
     };
+    const sectionPalette = [
+        theme.fillBright,
+        theme.fill,
+        theme.deep,
+        theme.border,
+        theme.night,
+        theme.fill,
+        theme.deep,
+        theme.fillBright
+    ];
+    let currentSections = [];
+    let lastProgress = 0;
+
+    function getSectionColor(section) {
+        return sectionPalette[(section.index || 0) % sectionPalette.length];
+    }
+
+    function setSections(sections = []) {
+        currentSections = sections
+            .map((section, index) => ({
+                start: Math.max(0, Math.min(1, Number.parseFloat(section.start))),
+                end: Math.max(0, Math.min(1, Number.parseFloat(section.end))),
+                index: Number.isFinite(section.index) ? section.index : index
+            }))
+            .filter(section => section.end > section.start);
+        render(lastProgress);
+    }
 
     // Resize helper
     let needsResize = true;
@@ -103,7 +131,17 @@ function createSeekRenderer(canvas) {
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
+    function drawProgressFill(x, y, w, h, color, topSheen, bottomShade, alpha = 1) {
+        gl.uniform4f(u_color, color[0], color[1], color[2], alpha);
+        rect(x, y, w, h);
+        gl.uniform4f(u_color, 1, 1, 1, 0.28 * alpha);
+        rect(x, y, w, topSheen);
+        gl.uniform4f(u_color, theme.night[0], theme.night[1], theme.night[2], 0.28 * alpha);
+        rect(x, y + h - bottomShade, w, bottomShade);
+    }
+
     function render(progress){
+        lastProgress = Math.max(0, Math.min(1, Number.parseFloat(progress) || 0));
         resize();
         const W = gl.drawingBufferWidth;
         const H = gl.drawingBufferHeight;
@@ -134,15 +172,42 @@ function createSeekRenderer(canvas) {
         gl.uniform4f(u_color, theme.border[0], theme.border[1], theme.border[2], 0.3);
         rect(innerX, innerY + innerH - 1, innerW, 1);
 
+        for (const section of currentSections) {
+            const color = getSectionColor(section);
+            const x = innerX + section.start * innerW;
+            const w = Math.max(1, (section.end - section.start) * innerW);
+            gl.uniform4f(u_color, color[0], color[1], color[2], 0.34);
+            rect(x, innerY, w, innerH);
+            gl.uniform4f(u_color, 1, 1, 1, 0.22);
+            rect(x, innerY, w, topSheen);
+            gl.uniform4f(u_color, theme.night[0], theme.night[1], theme.night[2], 0.24);
+            rect(x, innerY + innerH - 1, w, 1);
+        }
+
+        for (const section of currentSections) {
+            const x = Math.round(innerX + section.start * innerW);
+            if (x <= innerX || x >= innerX + innerW) continue;
+            gl.uniform4f(u_color, 1, 1, 1, 0.45);
+            rect(x, innerY, 1, innerH);
+            gl.uniform4f(u_color, theme.night[0], theme.night[1], theme.night[2], 0.28);
+            rect(x + 1, innerY, 1, innerH);
+        }
+
         // Fill progress
-        const filled = Math.max(0, Math.min(1, progress)) * innerW;
+        const filled = lastProgress * innerW;
         if (filled > 0) {
-            gl.uniform4f(u_color, theme.deep[0], theme.deep[1], theme.deep[2], 1);
-            rect(innerX, innerY, filled, innerH);
-            gl.uniform4f(u_color, theme.fillBright[0], theme.fillBright[1], theme.fillBright[2], 0.92);
-            rect(innerX, innerY, filled, topSheen);
-            gl.uniform4f(u_color, theme.night[0], theme.night[1], theme.night[2], 0.32);
-            rect(innerX, innerY + innerH - bottomShade, filled, bottomShade);
+            drawProgressFill(innerX, innerY, filled, innerH, theme.deep, topSheen, bottomShade, currentSections.length ? 0.64 : 1);
+            if (currentSections.length) {
+                for (const section of currentSections) {
+                    if (lastProgress <= section.start) continue;
+                    const color = getSectionColor(section);
+                    const start = section.start;
+                    const end = Math.min(section.end, lastProgress);
+                    const x = innerX + start * innerW;
+                    const w = Math.max(1, (end - start) * innerW);
+                    drawProgressFill(x, innerY, w, innerH, color, topSheen, bottomShade, 0.98);
+                }
+            }
             gl.uniform4f(u_color, 1, 1, 1, 0.34);
             rect(innerX, innerY, Math.max(1, Math.floor(filled)), 1);
             gl.uniform4f(u_color, theme.night[0], theme.night[1], theme.night[2], 0.42);
@@ -150,7 +215,7 @@ function createSeekRenderer(canvas) {
         }
     }
 
-    window.addEventListener('resize', () => render(0));
+    window.addEventListener('resize', () => render(lastProgress));
     // Initial style sizing
     const style = canvas.style;
     style.display = 'block';
@@ -158,7 +223,7 @@ function createSeekRenderer(canvas) {
     style.height = '14px';
     style.borderRadius = '0';
 
-    return { render };
+    return { render, setSections };
 }
 
 window.createSeekRenderer = createSeekRenderer;

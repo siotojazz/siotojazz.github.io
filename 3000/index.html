@@ -47,18 +47,27 @@
             --club-blue-progress-rgb: var(--theme-progress-rgb);
             --club-blue-shadow: var(--theme-shadow);
             --club-blue-muted: var(--theme-font-muted);
+            --button-resting-ledge: 0 -2px 0 rgba(var(--club-blue-night-rgb), 0);
+            --button-pressed-ledge: 0 -2px 0 rgba(var(--club-blue-night-rgb), 0.9);
             --button-outset-shadow:
+                var(--button-resting-ledge),
                 inset 0 1px 0 rgba(255, 255, 255, 0.36),
                 inset 0 -2px 0 rgba(var(--club-blue-night-rgb), 0.38),
+                inset 0 -1px 0 rgba(255, 255, 255, 0),
                 0 3px 0 rgba(var(--club-blue-night-rgb), 0.42),
                 0 8px 16px rgba(var(--club-blue-night-rgb), 0.18);
             --button-inset-shadow:
+                var(--button-pressed-ledge),
+                inset 0 2px 0 rgba(var(--club-blue-night-rgb), 0.76),
                 inset 0 2px 4px rgba(var(--club-blue-night-rgb), 0.58),
                 inset 0 -1px 0 rgba(255, 255, 255, 0.16),
-                0 1px 0 rgba(255, 255, 255, 0.18);
+                0 1px 0 rgba(255, 255, 255, 0.18),
+                0 8px 16px rgba(var(--club-blue-night-rgb), 0);
             --button-light-outset-shadow:
+                var(--button-resting-ledge),
                 inset 0 1px 0 rgba(255, 255, 255, 0.9),
                 inset 0 -2px 0 rgba(var(--club-blue-rgb), 0.24),
+                inset 0 -1px 0 rgba(255, 255, 255, 0),
                 0 3px 0 rgba(var(--club-blue-rgb), 0.16),
                 0 7px 14px rgba(var(--club-blue-rgb), 0.12);
             --button-press-transform: translateY(2px);
@@ -228,7 +237,7 @@
                 linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 52%),
                 linear-gradient(135deg, var(--club-blue), var(--club-blue-bright) 44%, var(--club-blue-deep));
             filter: saturate(1.08);
-            transform: translateY(-1px);
+            transform: translateY(0);
         }
         .tab-btn:active {
             box-shadow: var(--button-inset-shadow);
@@ -363,6 +372,26 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+        .song-title__main {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .song-feature {
+            margin-left: 7px;
+            color: inherit;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            opacity: 0.64;
+            text-transform: none;
+            white-space: nowrap;
+            line-height: 1;
         }
         .song-status {
             display: block;
@@ -504,9 +533,17 @@
         }
         .transport-buttons {
             display: inline-flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0;
             flex-shrink: 0;
+            padding-bottom: 2px;
+            filter: drop-shadow(0 3px 0 rgba(var(--club-blue-night-rgb), 0.18));
+        }
+        .player-controls .transport-buttons button {
+            transform: none;
+        }
+        .player-controls .transport-buttons button + button {
+            border-left: 1px solid rgba(255, 255, 255, 0.16);
         }
         .player-controls button {
             padding: 4px 8px;
@@ -522,7 +559,8 @@
             position: relative;
             overflow: hidden;
             background:
-                linear-gradient(135deg, var(--club-blue-night), var(--club-blue-deep) 54%, var(--club-blue-bright));
+                linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.02) 44%, rgba(var(--club-blue-night-rgb), 0.12)),
+                linear-gradient(135deg, var(--club-blue-bright) 0%, var(--club-blue) 42%, var(--club-blue-deep) 70%, var(--club-blue-night) 100%);
             color: #fff;
             box-shadow: var(--button-outset-shadow);
             transform: translateY(0);
@@ -555,14 +593,24 @@
         }
         .player-controls button:not(:disabled):hover {
             filter: saturate(1.08);
-            transform: translateY(-1px);
+            transform: translateY(0);
         }
         .player-controls button:not(:disabled):active,
-        .player-basic.playing .toggle-btn {
+        .player-basic.playing .toggle-btn[aria-label="Pause"] {
+            background:
+                linear-gradient(180deg, rgba(var(--club-blue-night-rgb), 0.42), rgba(255, 255, 255, 0.08) 100%),
+                linear-gradient(135deg, var(--club-blue-night) 0%, var(--club-blue-deep) 52%, var(--club-blue) 100%);
             box-shadow: var(--button-inset-shadow);
             transform: var(--button-press-transform);
         }
-        .player-basic.playing .toggle-btn:hover {
+        .player-controls .transport-buttons button:not(:disabled):hover {
+            transform: none;
+        }
+        .player-controls .transport-buttons button:not(:disabled):active,
+        .player-basic.playing .transport-buttons .toggle-btn[aria-label="Pause"] {
+            transform: var(--button-press-transform);
+        }
+        .player-basic.playing .toggle-btn[aria-label="Pause"]:hover {
             transform: var(--button-press-transform);
         }
         .player-controls button:disabled {
@@ -634,7 +682,7 @@
         }
         .player-controls .version-toggle:not(:disabled):hover {
             filter: saturate(1.06);
-            transform: translateY(-1px);
+            transform: translateY(0);
         }
         .player-controls .version-toggle.is-dani:not(:disabled):hover {
             transform: var(--button-press-transform);
@@ -695,29 +743,37 @@
             opacity: 0.8;
             min-width: 0;
         }
-        .current-chord {
-            color: var(--club-blue-strong);
-            font-weight: bold;
-            transition: opacity 0.1875s ease-in-out, transform 0.1875s ease-in-out, color 0.1875s ease-in-out;
-            font-size: 12px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            line-height: 1;
-        }
-        .chord-instructions {
-            color: var(--club-blue-muted);
-            font-style: italic;
-            transition: opacity 0.1875s ease-in-out, transform 0.1875s ease-in-out, color 0.1875s ease-in-out;
-            font-size: 12px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            line-height: 1;
-        }
         .seek-bar-container {
             width: 100%;
             margin: 0;
             padding: 0;
             position: relative;
+        }
+        .seek-section-tooltip {
+            --tooltip-shift: 0px;
+            position: absolute;
+            left: 0;
+            bottom: calc(100% + 6px);
+            transform: translate(calc(-50% + var(--tooltip-shift)), -2px);
+            padding: 4px 7px;
+            background: rgba(var(--club-blue-night-rgb), 0.94);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.18),
+                0 5px 12px rgba(var(--club-blue-night-rgb), 0.24);
+            transition: opacity 0.12s ease, transform 0.12s ease;
+            z-index: 4;
+        }
+        .seek-section-tooltip.is-visible {
+            opacity: 1;
+            transform: translate(calc(-50% + var(--tooltip-shift)), 0);
         }
         #seek-gl {
             display: block;
@@ -1009,14 +1065,6 @@
         audio {
             display: none;
         }
-        .current-section {
-            color: var(--club-blue-strong);
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
         .current-song-name {
             font-family: 'Garet', Arial, sans-serif;
             font-size: 18px;
@@ -1033,6 +1081,24 @@
             min-height: 0;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), inset 0 -1px 0 rgba(23, 63, 147, 0.24);
             position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .current-song-name__main {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .current-song-name__feature {
+            margin-left: 8px;
+            font-family: inherit;
+            font-size: 0.64em;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            opacity: 0.72;
+            text-transform: none;
+            line-height: 1;
+            white-space: nowrap;
         }
         .current-song-name:empty {
             display: none;
@@ -1805,7 +1871,6 @@
             }
             .current-info { font-size: 20px; }
             .current-lyric { font-size: 16px; }
-            .current-chord, .chord-instructions { font-size: 14px; }
             .lyrics, .structure, .lyrics h4, .structure h4, .tempo-info, .section-label { font-size: 16px; }
             .player-timeline { font-size: 16px; }
             .moodboard-grid { grid-template-columns: 1fr; }
@@ -1971,15 +2036,13 @@
                 <button class="track-nav-btn next-track-btn" disabled aria-label="Next song"><i class="fa-solid fa-forward-step" aria-hidden="true"></i></button>
             </div>
             <div class="current-info">
-                <span class="current-section"></span>
                 <span class="current-lyric"></span>
-                <span class="current-chord"></span>
-                <span class="chord-instructions"></span>
             </div>
             <span class="player-timeline">0:00 / 0:00</span>
         </div>
         <div class="seek-bar-container">
             <canvas id="seek-gl" width="600" height="16"></canvas>
+            <div class="seek-section-tooltip" id="seek-section-tooltip" role="tooltip"></div>
         </div>
         <audio id="audio-player" crossorigin="anonymous"></audio>
     </div>
@@ -2303,6 +2366,7 @@
     const playerBasic = document.getElementById('player-basic');
     let audio = document.getElementById('audio-player');
     const seekCanvas = document.getElementById('seek-gl');
+    const seekSectionTooltip = document.getElementById('seek-section-tooltip');
     const glSeek = createSeekRenderer(seekCanvas);
     const audioEngine = new AudioEngine();
     let standbyAudio = createGaplessAudioElement();
@@ -2320,9 +2384,6 @@
     const structureContent = player.querySelector('.structure-content');
     const currentSongNameDisplay = document.getElementById('current-song-name');
     const currentLyricDisplay = playerBasic.querySelector('.current-lyric');
-    const currentChordDisplay = playerBasic.querySelector('.current-chord');
-    const currentSectionDisplay = playerBasic.querySelector('.current-section');
-    const chordInstructionsDisplay = playerBasic.querySelector('.chord-instructions');
     const playerWrap = document.querySelector('.player-wrap');
     const moodboardEl = document.querySelector('.moodboard');
     const appContainer = document.querySelector('.app-container');
@@ -2385,13 +2446,42 @@
     const gaplessAnalysisPromises = new Map();
     let selectSongLoadToken = 0;
 
+    function appendTrackTitleParts(container, trackIndex, track) {
+        container.replaceChildren();
+        if (!track) return;
+
+        const main = document.createElement('span');
+        main.className = 'song-title__main';
+        main.textContent = `${trackIndex + 1} ${track.title}`;
+        container.appendChild(main);
+
+        if (track.feature) {
+            const feature = document.createElement('span');
+            feature.className = 'song-feature';
+            feature.textContent = track.feature;
+            container.appendChild(feature);
+        }
+    }
+
     function updatePlayerSongMotif(track, trackIndex) {
         if (!currentSongNameDisplay) return;
 
-        currentSongNameDisplay.textContent = track ? `${trackIndex + 1} ${track.title}` : '';
+        currentSongNameDisplay.replaceChildren();
         currentSongNameDisplay.classList.toggle('has-player-motif', Boolean(track));
 
         if (!track) return;
+
+        const main = document.createElement('span');
+        main.className = 'current-song-name__main';
+        main.textContent = `${trackIndex + 1} ${track.title}`;
+        currentSongNameDisplay.appendChild(main);
+
+        if (track.feature) {
+            const feature = document.createElement('span');
+            feature.className = 'current-song-name__feature';
+            feature.textContent = track.feature;
+            currentSongNameDisplay.appendChild(feature);
+        }
 
         const motif = createSongMotifForTrack(trackIndex);
         motif.classList.add('song-motif--player');
@@ -4710,6 +4800,7 @@
         }
     const contextMenu = document.getElementById('context-menu');
     let currentTrack = null;
+    let currentSeekSections = [];
     let selectedTrackIndex = -1;
     let activeSongVersion = 'martin';
     let currentVersionSource = '';
@@ -4749,6 +4840,81 @@
 
     function getSongGridTime(track, audioTime) {
         return (Number.parseFloat(audioTime) || 0) - getTrackStartOffset(track);
+    }
+
+    function buildSeekSectionRanges(track, duration) {
+        const safeDuration = Number.parseFloat(duration);
+        const sections = Array.isArray(track?.structure?.sections)
+            ? track.structure.sections
+            : [];
+        if (!Number.isFinite(safeDuration) || safeDuration <= 0 || !sections.length) {
+            return [];
+        }
+
+        const { beatDuration, startOffset } = getTrackTiming(track);
+        let beatIndex = 0;
+        return sections.map((section, sectionIndex) => {
+            const beatCount = Array.isArray(section.chords) ? section.chords.length : 0;
+            const startTime = startOffset + beatIndex * beatDuration;
+            const endTime = startTime + beatCount * beatDuration;
+            beatIndex += beatCount;
+
+            const start = Math.max(0, Math.min(1, startTime / safeDuration));
+            const end = Math.max(0, Math.min(1, endTime / safeDuration));
+            return {
+                label: section.label || `Section ${sectionIndex + 1}`,
+                start,
+                end,
+                index: sectionIndex
+            };
+        }).filter(section => section.end > section.start);
+    }
+
+    function refreshSeekSections(track = currentTrack, duration = audio.duration || trackDurations.get(selectedTrackIndex) || 0) {
+        currentSeekSections = buildSeekSectionRanges(track, duration);
+        if (typeof glSeek.setSections === 'function') {
+            glSeek.setSections(currentSeekSections);
+        }
+    }
+
+    function getSeekSectionAtRatio(ratio) {
+        if (!currentSeekSections.length) return null;
+        const clampedRatio = Math.max(0, Math.min(1, ratio));
+        return currentSeekSections.find(section => clampedRatio >= section.start && clampedRatio <= section.end) || null;
+    }
+
+    function hideSeekSectionTooltip() {
+        if (!seekSectionTooltip) return;
+        seekSectionTooltip.classList.remove('is-visible');
+    }
+
+    function updateSeekSectionTooltip(event) {
+        if (!currentTrack || !seekSectionTooltip) return;
+        const rect = seekCanvas.getBoundingClientRect();
+        if (!rect.width) return;
+
+        const x = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
+        const section = getSeekSectionAtRatio(x / rect.width);
+        if (!section) {
+            hideSeekSectionTooltip();
+            return;
+        }
+
+        seekSectionTooltip.textContent = section.label;
+        seekSectionTooltip.style.left = `${x}px`;
+        seekSectionTooltip.style.setProperty('--tooltip-shift', '0px');
+        seekSectionTooltip.classList.add('is-visible');
+
+        const tooltipRect = seekSectionTooltip.getBoundingClientRect();
+        const containerRect = seekSectionTooltip.parentElement.getBoundingClientRect();
+        const inset = 4;
+        let shift = 0;
+        if (tooltipRect.left < containerRect.left + inset) {
+            shift = containerRect.left + inset - tooltipRect.left;
+        } else if (tooltipRect.right > containerRect.right - inset) {
+            shift = containerRect.right - inset - tooltipRect.right;
+        }
+        seekSectionTooltip.style.setProperty('--tooltip-shift', `${shift}px`);
     }
 
     function createGaplessAudioElement() {
@@ -5273,9 +5439,6 @@
         setToggleIcon(true);
         glSeek.render(0);
         currentLyricDisplay.textContent = '';
-        currentChordDisplay.textContent = '';
-        chordInstructionsDisplay.textContent = '';
-        currentSectionDisplay.textContent = '';
         lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
             line.classList.remove('active');
             line.classList.add('passed');
@@ -5513,12 +5676,11 @@
         chordsCanvas.style.height = '100%';
         chordsCanvas.style.pointerEvents = 'none';
         currentLyricDisplay.textContent = '';
-        currentChordDisplay.textContent = '';
-        chordInstructionsDisplay.textContent = '';
-        currentSectionDisplay.textContent = '';
         updatePlayerSongMotif(track, trackIndex);
         updateVersionToggleState();
         resetLiveTelemetryHistory(trackIndex);
+        refreshSeekSections(track, audio.duration || trackDurations.get(trackIndex) || 0);
+        hideSeekSectionTooltip();
 
         updateURL(trackIndex);
         updateLiveTelemetryAnalysis(true);
@@ -5635,6 +5797,8 @@
                 return;
             }
             audioEngine.attach(audio);
+            refreshSeekSections(track, audio.duration || trackDurations.get(trackIndex) || 0);
+            glSeek.render(audio.duration ? audio.currentTime / audio.duration : 0);
             updateLiveTelemetryAnalysis(true);
             
             // Cache DOM elements for performance
@@ -6137,6 +6301,9 @@
         });
         setToggleIcon(false);
     });
+    seekCanvas.addEventListener('mousemove', updateSeekSectionTooltip);
+    seekCanvas.addEventListener('mouseleave', hideSeekSectionTooltip);
+    seekCanvas.addEventListener('blur', hideSeekSectionTooltip);
 
     // seekCanvas context menu handled by global listener
 
@@ -6163,7 +6330,7 @@
 
         const songTitle = document.createElement('div');
         songTitle.className = 'song-title';
-        songTitle.textContent = `${trackIndex + 1} ${track.title}`;
+        appendTrackTitleParts(songTitle, trackIndex, track);
 
         const songStatus = document.createElement('div');
         songStatus.className = 'song-status';
@@ -6364,7 +6531,6 @@
             }
             beatIndex += sectionBeats;
         }
-        setAnimatedText(currentSectionDisplay, currentSection);
         
         // Update song item section display
         const activeSongItem = document.querySelector('.song-item.active');
@@ -6446,10 +6612,6 @@
                 chord.classList.add('active');
                 chord.classList.remove('passed');
                 lastActiveChord = chord;
-                const chordName = chord.querySelector('.chord').textContent;
-                const chordData = chordMap.get(chordName) || { instructions: 'N/A' };
-                setAnimatedText(currentChordDisplay, chordName);
-                setAnimatedText(chordInstructionsDisplay, chordData.instructions ? `${chordData.instructions}` : '');
             } else if (isPassed && !chord.classList.contains('passed')) {
                 chord.classList.remove('active');
                 chord.classList.add('passed');
@@ -6494,6 +6656,12 @@
         updateLiveTelemetryAnalysis(true);
     }
 
+    function handleAudioLoadedMetadata(event) {
+        if (event.currentTarget !== audio || !currentTrack) return;
+        refreshSeekSections(currentTrack, audio.duration || trackDurations.get(selectedTrackIndex) || 0);
+        glSeek.render(audio.duration ? audio.currentTime / audio.duration : 0);
+    }
+
     function handleAudioError(event) {
         if (event.currentTarget !== audio) return;
         console.error('Audio error:', audio.error);
@@ -6506,6 +6674,7 @@
         element.addEventListener('play', handleAudioPlay);
         element.addEventListener('pause', handleAudioPause);
         element.addEventListener('seeking', handleAudioSeeking);
+        element.addEventListener('loadedmetadata', handleAudioLoadedMetadata);
         element.addEventListener('error', handleAudioError);
     }
 

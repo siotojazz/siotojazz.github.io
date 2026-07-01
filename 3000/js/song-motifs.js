@@ -37,6 +37,38 @@
             transform-box: fill-box;
             transform-origin: center;
         }
+        .song-motif .motif-root-branch {
+            stroke: #fff;
+            opacity: 0.82;
+        }
+        .song-motif .motif-root-seed,
+        .song-motif .motif-root-main-left,
+        .song-motif .motif-root-main-right,
+        .song-motif .motif-root-main-center,
+        .song-motif .motif-root-branches-left,
+        .song-motif .motif-root-branches-right,
+        .song-motif .motif-root-branches-center {
+            transform-box: fill-box;
+        }
+        .song-motif .motif-root-seed {
+            transform-origin: center;
+        }
+        .song-motif .motif-root-main-left {
+            transform-origin: top right;
+        }
+        .song-motif .motif-root-main-right {
+            transform-origin: top left;
+        }
+        .song-motif .motif-root-main-center,
+        .song-motif .motif-root-branches-center {
+            transform-origin: top center;
+        }
+        .song-motif .motif-root-branches-left {
+            transform-origin: top right;
+        }
+        .song-motif .motif-root-branches-right {
+            transform-origin: top left;
+        }
         .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active .song-motif {
             opacity: 0.94;
             transform: translateY(-50%) scale(1);
@@ -189,6 +221,34 @@
         .player-basic.playing .song-motif--player .motif-light {
             animation: motif-light 1.6s ease-in-out infinite alternate;
         }
+        .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active .motif-root-seed,
+        .player-basic.playing .song-motif--player .motif-root-seed {
+            animation: motif-root-seed 2.8s ease-in-out infinite;
+        }
+        .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active .motif-root-main-left,
+        .player-basic.playing .song-motif--player .motif-root-main-left {
+            animation: motif-root-main-left 2.8s ease-in-out infinite;
+        }
+        .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active .motif-root-main-right,
+        .player-basic.playing .song-motif--player .motif-root-main-right {
+            animation: motif-root-main-right 2.8s ease-in-out infinite;
+        }
+        .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active .motif-root-main-center,
+        .player-basic.playing .song-motif--player .motif-root-main-center {
+            animation: motif-root-main-center 2.8s ease-in-out infinite;
+        }
+        .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active .motif-root-branches-left,
+        .player-basic.playing .song-motif--player .motif-root-branches-left {
+            animation: motif-root-branches-left 2.8s ease-in-out infinite;
+        }
+        .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active .motif-root-branches-right,
+        .player-basic.playing .song-motif--player .motif-root-branches-right {
+            animation: motif-root-branches-right 2.8s ease-in-out infinite;
+        }
+        .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active .motif-root-branches-center,
+        .player-basic.playing .song-motif--player .motif-root-branches-center {
+            animation: motif-root-branches-center 2.8s ease-in-out infinite;
+        }
         @keyframes motif-pulse {
             0% { opacity: 0.78; transform: scale(0.6); }
             70%, 100% { opacity: 0; transform: scale(1.42); }
@@ -276,6 +336,41 @@
             from { opacity: 0.22; transform: scaleX(0.76); }
             to { opacity: 0.78; transform: scaleX(1.08); }
         }
+        @keyframes motif-root-seed {
+            0%, 12% { opacity: 1; transform: scale(0.58); }
+            44%, 82% { opacity: 0.74; transform: scale(1); }
+            100% { opacity: 1; transform: scale(0.58); }
+        }
+        @keyframes motif-root-main-left {
+            0%, 16% { opacity: 0; transform: scale(0.12) rotate(8deg); }
+            48%, 82% { opacity: 1; transform: scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: scale(0.12) rotate(8deg); }
+        }
+        @keyframes motif-root-main-right {
+            0%, 18% { opacity: 0; transform: scale(0.12) rotate(-8deg); }
+            50%, 82% { opacity: 1; transform: scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: scale(0.12) rotate(-8deg); }
+        }
+        @keyframes motif-root-main-center {
+            0%, 14% { opacity: 0; transform: scaleY(0.18); }
+            44%, 82% { opacity: 0.92; transform: scaleY(1); }
+            100% { opacity: 0; transform: scaleY(0.18); }
+        }
+        @keyframes motif-root-branches-left {
+            0%, 36% { opacity: 0; transform: scale(0.16) rotate(5deg); }
+            64%, 82% { opacity: 0.82; transform: scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: scale(0.16) rotate(5deg); }
+        }
+        @keyframes motif-root-branches-right {
+            0%, 38% { opacity: 0; transform: scale(0.16) rotate(-5deg); }
+            66%, 82% { opacity: 0.82; transform: scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: scale(0.16) rotate(-5deg); }
+        }
+        @keyframes motif-root-branches-center {
+            0%, 40% { opacity: 0; transform: scale(0.18); }
+            68%, 82% { opacity: 0.76; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.18); }
+        }
     `;
 
     const motifs = [
@@ -317,7 +412,7 @@
         },
         {
             name: 'two-roots',
-            svg: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="motif-stroke" d="M3.5 10.2h17"/><g class="motif-sway motif-origin"><path class="motif-stroke" d="M8.2 10.2V6.3m7.6 3.9V6.3"/><path class="motif-fill motif-soft" d="M5.7 6.5c.8-3.4 4.2-3.4 5 0-1.4 1.1-3.5 1.1-5 0Zm7.6 0c.8-3.4 4.2-3.4 5 0-1.4 1.1-3.5 1.1-5 0Z"/><path class="motif-stroke" d="M5.7 6.5c.8-3.4 4.2-3.4 5 0m2.6 0c.8-3.4 4.2-3.4 5 0"/></g><g class="motif-grow-left"><path class="motif-stroke" d="M8.2 10.2c-1.3 1.7-2.1 3.8-2.5 6.4-.1.9-.5 1.8-1.2 2.7"/><path class="motif-stroke" d="M8.2 10.3c.1 1.6.6 3.1 1.5 4.7.5.9.5 2.1-.1 3.4"/><path class="motif-stroke motif-soft" d="M7.2 12.4 5.4 14m1.2-3 2.3 1.4m-2.7 2.4-2.4-.4m2.1.3 2.1 1.2m-2.5.7-2.5 1.2m2.7-1.3 1.6 1.7m2-3.1 2.1-.8m-1.6 2.2 1.7 1.1m-5.8-5.2-1.3-.9m.9 6.7-1.4 1.4m5.4-1.3-1 1.7"/></g><g class="motif-grow-right"><path class="motif-stroke" d="M15.8 10.2c1.3 1.7 2.1 3.8 2.5 6.4.1.9.5 1.8 1.2 2.7"/><path class="motif-stroke" d="M15.8 10.3c-.1 1.6-.6 3.1-1.5 4.7-.5.9-.5 2.1.1 3.4"/><path class="motif-stroke motif-soft" d="M16.8 12.4l1.8 1.6m-1.2-3-2.3 1.4m2.7 2.4 2.4-.4m-2.1.3-2.1 1.2m2.5.7 2.5 1.2m-2.7-1.3-1.6 1.7m-2-3.1-2.1-.8m1.6 2.2-1.7 1.1m5.8-5.2 1.3-.9m-.9 6.7 1.4 1.4m-5.4-1.3 1 1.7"/></g></svg>'
+            svg: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="motif-stroke" d="M4.3 10.1h15.4"/><g class="motif-sway motif-origin"><path class="motif-stroke" d="M8.6 10.1V6.8m6.8 3.3V6.8"/><path class="motif-fill motif-soft" d="M6.4 7c.7-2.9 3.7-2.9 4.4 0-1.2.9-3.1.9-4.4 0Zm6.8 0c.7-2.9 3.7-2.9 4.4 0-1.2.9-3.1.9-4.4 0Z"/><path class="motif-stroke" d="M6.4 7c.7-2.9 3.7-2.9 4.4 0m2.4 0c.7-2.9 3.7-2.9 4.4 0"/></g><g class="motif-root-main-left"><path class="motif-stroke" d="M8.6 10.1c-1.1 1.5-1.9 3.4-2.2 5.8-.1.8-.5 1.6-1.1 2.4"/><path class="motif-stroke" d="M8.6 10.2c.1 1.4.5 2.8 1.3 4.2.5.8.5 1.9-.1 3.1"/></g><g class="motif-root-branches-left"><path class="motif-stroke motif-root-branch" d="M7.7 12.1 6 13.5m1.1-2.7 2.1 1.3m-2.5 2.2-2.1-.4m1.9.3 1.9 1.1m-2.3.6-2.2 1.1m2.4-1.1 1.5 1.5m1.8-2.8 1.9-.8m-1.5 2 1.6 1m-5.2-4.7-1.2-.8m.8 6-1.4 1.2m4.8-1.2-.9 1.5M7.1 13.2l-2.6 1.2m4.1-.2 1.1 2.1"/></g><g class="motif-root-main-right"><path class="motif-stroke" d="M15.4 10.1c1.1 1.5 1.9 3.4 2.2 5.8.1.8.5 1.6 1.1 2.4"/><path class="motif-stroke" d="M15.4 10.2c-.1 1.4-.5 2.8-1.3 4.2-.5.8-.5 1.9.1 3.1"/></g><g class="motif-root-branches-right"><path class="motif-stroke motif-root-branch" d="M16.3 12.1l1.7 1.4m-1.1-2.7-2.1 1.3m2.5 2.2 2.1-.4m-1.9.3-1.9 1.1m2.3.6 2.2 1.1m-2.4-1.1-1.5 1.5m-1.8-2.8-1.9-.8m1.5 2-1.6 1m5.2-4.7 1.2-.8m-.8 6 1.4 1.2m-4.8-1.2.9 1.5m1.4-5.6 2.6 1.2m-4.1-.2-1.1 2.1"/></g></svg>'
         },
         {
             name: 'rest',

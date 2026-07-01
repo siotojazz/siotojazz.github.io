@@ -501,6 +501,20 @@ img {
     overflow-wrap: anywhere;
 }
 
+.track-title__main,
+.track-title__feature {
+    display: block;
+}
+
+.track-title__feature {
+    margin-top: 6px;
+    color: var(--paper-dim);
+    font-family: inherit;
+    font-size: 0.46em;
+    line-height: 1.15;
+    text-transform: none;
+}
+
 .track-preview__meta {
     display: flex;
     flex-wrap: wrap;
@@ -725,6 +739,11 @@ img {
     font-size: 1.15rem;
     text-transform: uppercase;
     overflow-wrap: anywhere;
+}
+
+.track-index__title .track-title__feature {
+    margin-top: 4px;
+    font-size: 0.62em;
 }
 
 .pulse-grid {

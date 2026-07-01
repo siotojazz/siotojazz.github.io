@@ -95,6 +95,22 @@ function formatIndex(index) {
     return String(index + 1).padStart(2, '0');
 }
 
+function appendTrackTitleWithFeature(element, track) {
+    element.replaceChildren();
+
+    const title = document.createElement('span');
+    title.className = 'track-title__main';
+    title.textContent = track.title;
+    element.appendChild(title);
+
+    if (track.feature) {
+        const feature = document.createElement('span');
+        feature.className = 'track-title__feature';
+        feature.textContent = track.feature;
+        element.appendChild(feature);
+    }
+}
+
 function containsCyrillic(value) {
     return /[\u0400-\u04FF]/.test(String(value || ''));
 }
@@ -664,7 +680,7 @@ function renderTrackReel(tracks, pitch) {
         number.textContent = formatIndex(index);
         const title = document.createElement('h3');
         title.className = 'track-preview__title';
-        title.textContent = track.title;
+        appendTrackTitleWithFeature(title, track);
 
         content.append(number, title);
         card.append(image, button, content, progress);
@@ -686,7 +702,7 @@ function renderTrackIndex(tracks, pitch) {
         const number = createElement('span', 'track-index__number');
         number.textContent = formatIndex(index);
         const title = createElement('span', 'track-index__title');
-        title.textContent = track.title;
+        appendTrackTitleWithFeature(title, track);
         const rowLanguage = createElement('span', 'track-index__language');
         rowLanguage.textContent = language === 'Macedonian' ? 'Macedonian' : '';
         const rowStatus = createElement('span', 'track-index__status');
