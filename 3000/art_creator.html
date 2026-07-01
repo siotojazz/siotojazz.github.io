@@ -1,0 +1,2696 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cover Art Creator</title>
+    <style>
+        @font-face {
+            font-family: 'Astrella';
+            src: url('../fonts/Astrella.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'UniversCnRg';
+            src: url('resources/UniversCnRg.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        :root {
+            --ink: #151514;
+            --muted: #68665e;
+            --line: #cbc9c1;
+            --panel: #f3f3f0;
+            --panel-strong: #e3e2dc;
+            --field: #ffffff;
+            --stage: #242522;
+            --accent: #2e7668;
+            --accent-dark: #24584f;
+            --warn: #8c452e;
+            --focus: #111111;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: #191a18;
+            font-family: 'UniversCnRg', Arial, Helvetica, sans-serif;
+            letter-spacing: 0;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            min-height: 36px;
+            border: 1px solid #a7a195;
+            border-radius: 6px;
+            color: var(--ink);
+            background: #ffffff;
+            cursor: pointer;
+            transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+        }
+
+        button:hover:not(:disabled) {
+            border-color: #69645b;
+            background: #eeeeea;
+        }
+
+        button:disabled {
+            color: #99958b;
+            cursor: not-allowed;
+            background: #e3e2dc;
+        }
+
+        button.primary {
+            border-color: var(--accent);
+            color: #ffffff;
+            background: var(--accent);
+        }
+
+        button.primary:hover:not(:disabled) {
+            border-color: var(--accent-dark);
+            background: var(--accent-dark);
+        }
+
+        button.danger {
+            border-color: #b99484;
+            color: var(--warn);
+        }
+
+        input[type='text'],
+        input[type='number'],
+        input[type='color'],
+        select {
+            width: 100%;
+            min-height: 36px;
+            border: 1px solid #bfb8aa;
+            border-radius: 6px;
+            color: var(--ink);
+            background: var(--field);
+        }
+
+        input[type='text'],
+        input[type='number'],
+        select {
+            padding: 0 10px;
+        }
+
+        input[type='range'] {
+            width: 100%;
+            accent-color: var(--accent);
+        }
+
+        .range-control {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 74px;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .range-control input[type='number'] {
+            min-height: 32px;
+            padding: 0 8px;
+        }
+
+        .range-control input:disabled {
+            color: #918d84;
+            background: #e7e6df;
+        }
+
+        input:focus-visible,
+        button:focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .app {
+            display: grid;
+            grid-template-columns: 300px minmax(380px, 1fr) 320px;
+            min-height: 100vh;
+        }
+
+        .panel {
+            overflow: auto;
+            border-color: var(--line);
+            background: var(--panel);
+        }
+
+        .panel.left {
+            border-right: 1px solid var(--line);
+        }
+
+        .panel.right {
+            border-left: 1px solid var(--line);
+        }
+
+        .panel-inner {
+            display: grid;
+            gap: 18px;
+            padding: 18px;
+        }
+
+        .brand {
+            display: grid;
+            gap: 4px;
+            padding-bottom: 2px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-family: 'Astrella', Georgia, serif;
+            font-size: 32px;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .brand span {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .control-group {
+            display: grid;
+            gap: 10px;
+        }
+
+        .control-title {
+            margin: 0;
+            color: #33312d;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .field label,
+        .field-row label {
+            color: #3e3b35;
+            font-size: 13px;
+        }
+
+        .field output,
+        .field-row output {
+            color: var(--muted);
+            font-size: 12px;
+            tab-size: 2;
+        }
+
+        .path-chip {
+            display: inline-flex;
+            width: fit-content;
+            max-width: 100%;
+            min-height: 28px;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid #cbc5b8;
+            border-radius: 6px;
+            padding: 0 8px;
+            color: #49453d;
+            background: var(--panel-strong);
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 12px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .stage-column {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            min-width: 0;
+            background: var(--stage);
+        }
+
+        .stage-topbar,
+        .stage-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            min-height: 56px;
+            padding: 10px 16px;
+            color: #ede8dd;
+            background: #1d1e1b;
+        }
+
+        .stage-topbar strong {
+            overflow: hidden;
+            font-size: 14px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .status {
+            min-width: 0;
+            overflow: hidden;
+            color: #c8c2b4;
+            font-size: 13px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .stage-tools {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .stage-tools button {
+            min-height: 32px;
+            border-color: #57544e;
+            color: #f8f3e8;
+            background: #2d2e2b;
+        }
+
+        .stage-tools button:hover:not(:disabled) {
+            border-color: #a8a094;
+            background: #393a35;
+        }
+
+        .workbench {
+            display: grid;
+            min-height: 0;
+            place-items: center;
+            overflow: auto;
+            padding: 24px;
+        }
+
+        .cover-stage {
+            position: relative;
+            width: min(74vh, 92%);
+            min-width: min(340px, 92vw);
+            max-width: 920px;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background: #d7d7d0;
+            box-shadow: 0 26px 70px rgba(0, 0, 0, 0.45);
+            touch-action: none;
+            user-select: none;
+        }
+
+        .cover-stage.is-dragover {
+            outline: 3px solid #fffdf8;
+            outline-offset: 8px;
+        }
+
+        .layers {
+            position: absolute;
+            inset: 0;
+        }
+
+        .slot {
+            position: absolute;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            cursor: pointer;
+            isolation: isolate;
+        }
+
+        .slot.selected {
+            z-index: 10;
+            outline: 2px solid #111;
+            outline-offset: -2px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.92);
+        }
+
+        .slot-frame {
+            position: absolute;
+            display: grid;
+            place-items: center;
+            transform-origin: center;
+            cursor: grab;
+            will-change: left, top, width, height, transform;
+        }
+
+        .slot-frame:active {
+            cursor: grabbing;
+        }
+
+        .slot-frame img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .slot-frame::after {
+            position: absolute;
+            inset: -2px;
+            display: none;
+            border: 2px solid #111;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.95);
+            content: '';
+            pointer-events: none;
+        }
+
+        .slot.selected .slot-frame::after {
+            display: block;
+        }
+
+        .slot-empty {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            color: rgba(34, 34, 31, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .handle {
+            position: absolute;
+            z-index: 4;
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #111;
+            border-radius: 50%;
+            background: #fffdf8;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .slot.selected .handle {
+            display: block;
+        }
+
+        .scale-handle {
+            right: -10px;
+            bottom: -10px;
+            cursor: nwse-resize;
+        }
+
+        .rotate-handle {
+            top: -36px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: crosshair;
+        }
+
+        .rotate-handle::after {
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: #111;
+            content: '';
+            transform: translateX(-50%);
+        }
+
+        .title-strip {
+            position: absolute;
+            right: 0;
+            left: 0;
+            z-index: 20;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            background: #fff;
+            pointer-events: none;
+        }
+
+        .title-text {
+            position: absolute;
+            inset: 0;
+            color: #111;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        .strip-band,
+        .strip-album {
+            position: absolute;
+            top: 50%;
+            display: block;
+            max-width: 54%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            letter-spacing: 0;
+        }
+
+        .strip-band {
+            font-family: 'Astrella', Georgia, serif;
+            font-weight: 400;
+            line-height: 0.88;
+        }
+
+        .strip-album {
+            font-family: 'UniversCnRg', Arial, Helvetica, sans-serif;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .empty-note {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: grid;
+            place-items: center;
+            padding: 28px;
+            color: #6d675b;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .empty-note span {
+            max-width: 240px;
+            padding: 14px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.74);
+        }
+
+        .stage-footer {
+            min-height: 44px;
+            color: #c8c2b4;
+            font-size: 12px;
+        }
+
+        .layer-list {
+            display: grid;
+            gap: 8px;
+            min-height: 44px;
+        }
+
+        .layer-row {
+            display: grid;
+            grid-template-columns: 42px 1fr;
+            gap: 10px;
+            align-items: center;
+            min-height: 48px;
+            border: 1px solid #cbc5b8;
+            border-radius: 8px;
+            padding: 5px;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        .layer-row:hover {
+            border-color: #777065;
+        }
+
+        .layer-row.selected {
+            border-color: #111;
+            box-shadow: inset 0 0 0 1px #111;
+        }
+
+        .layer-thumb {
+            width: 36px;
+            height: 36px;
+            overflow: hidden;
+            border-radius: 5px;
+            background: #ded8ca;
+        }
+
+        .layer-thumb img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .layer-name {
+            min-width: 0;
+            overflow: hidden;
+            color: #2c2925;
+            font-size: 13px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .empty-list {
+            min-height: 44px;
+            border: 1px dashed #bbb3a5;
+            border-radius: 8px;
+            padding: 13px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .selected-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .selected-actions .wide {
+            grid-column: 1 / -1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 1160px) {
+            .app {
+                grid-template-columns: 260px minmax(360px, 1fr);
+            }
+
+            .panel.right {
+                grid-column: 1 / -1;
+                border-top: 1px solid var(--line);
+                border-left: 0;
+            }
+
+            .panel.right .panel-inner {
+                grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
+            }
+        }
+
+        @media (max-width: 780px) {
+            .app {
+                grid-template-columns: 1fr;
+            }
+
+            .panel.left,
+            .panel.right {
+                border-right: 0;
+                border-left: 0;
+            }
+
+            .stage-column {
+                min-height: 78vh;
+            }
+
+            .panel.right .panel-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .stage-topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .stage-tools {
+                justify-content: flex-start;
+            }
+
+            .workbench {
+                padding: 16px;
+            }
+
+            .cover-stage {
+                width: min(86vw, 68vh);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="app">
+        <aside class="panel left">
+            <div class="panel-inner">
+                <header class="brand">
+                    <h1>Cover Art Creator</h1>
+                    <span>Square collage editor</span>
+                </header>
+
+                <section class="control-group" aria-labelledby="imagesTitle">
+                    <h2 id="imagesTitle" class="control-title">Images</h2>
+                    <span class="path-chip">cover-art-images</span>
+                    <div class="control-grid">
+                        <button id="folderButton" type="button">Import Folder</button>
+                        <button id="fileButton" type="button">Add Images</button>
+                    </div>
+                    <div class="control-grid">
+                        <button id="shuffleButton" type="button">Auto Fill</button>
+                        <button id="clearButton" class="danger" type="button">Clear All</button>
+                    </div>
+                    <input id="folderInput" class="hidden" type="file" accept="image/*" multiple webkitdirectory directory>
+                    <input id="fileInput" class="hidden" type="file" accept="image/*" multiple>
+                </section>
+
+                <section class="control-group" aria-labelledby="textTitle">
+                    <h2 id="textTitle" class="control-title">Text</h2>
+                    <div class="field">
+                        <label for="bandInput">Band name</label>
+                        <input id="bandInput" type="text" value="SIOTO JAZZ" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="albumInput">Album name</label>
+                        <input id="albumInput" type="text" value="3000" autocomplete="off">
+                    </div>
+                </section>
+
+                <section class="control-group" aria-labelledby="stripTitle">
+                    <h2 id="stripTitle" class="control-title">White Strip</h2>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="stripYInput">Position</label>
+                            <output id="stripYValue">50%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="stripYInput" type="range" min="28" max="72" step="0.5" value="50">
+                            <input id="stripYNumber" type="number" min="28" max="72" step="0.5" value="50" aria-label="Exact strip position">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="stripHeightInput">Height</label>
+                            <output id="stripHeightValue">14%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="stripHeightInput" type="range" min="2" max="24" step="0.5" value="14">
+                            <input id="stripHeightNumber" type="number" min="2" max="24" step="0.5" value="14" aria-label="Exact strip height">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="slotGapInput">Slot gap</label>
+                            <output id="slotGapValue">1.4%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="slotGapInput" type="range" min="0" max="5" step="0.1" value="1.4">
+                            <input id="slotGapNumber" type="number" min="0" max="5" step="0.1" value="1.4" aria-label="Exact slot gap">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="bandXInput">Band X</label>
+                            <output id="bandXValue">37%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="bandXInput" type="range" min="4" max="96" step="0.5" value="37">
+                            <input id="bandXNumber" type="number" min="4" max="96" step="0.5" value="37" aria-label="Exact band horizontal position">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="albumXInput">Album X</label>
+                            <output id="albumXValue">67%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="albumXInput" type="range" min="4" max="96" step="0.5" value="67">
+                            <input id="albumXNumber" type="number" min="4" max="96" step="0.5" value="67" aria-label="Exact album horizontal position">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="bandSizeInput">Band size</label>
+                            <output id="bandSizeValue">7.2%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="bandSizeInput" type="range" min="3" max="12" step="0.1" value="7.2">
+                            <input id="bandSizeNumber" type="number" min="3" max="12" step="0.1" value="7.2" aria-label="Exact band text size">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="albumSizeInput">Album size</label>
+                            <output id="albumSizeValue">2.8%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="albumSizeInput" type="range" min="1.2" max="5.5" step="0.1" value="2.8">
+                            <input id="albumSizeNumber" type="number" min="1.2" max="5.5" step="0.1" value="2.8" aria-label="Exact album text size">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="control-group" aria-labelledby="exportTitle">
+                    <h2 id="exportTitle" class="control-title">Export</h2>
+                    <div class="field">
+                        <label for="sizeInput">Square resolution</label>
+                        <input id="sizeInput" type="number" min="1000" max="9000" step="100" value="3000">
+                    </div>
+                    <div class="field">
+                        <label for="backgroundInput">Background</label>
+                        <input id="backgroundInput" type="color" value="#d7d7d0">
+                    </div>
+                    <button id="exportButton" class="primary" type="button">Export PNG</button>
+                </section>
+            </div>
+        </aside>
+
+        <section class="stage-column" aria-label="Cover art workbench">
+            <div class="stage-topbar">
+                <strong id="selectionName">Slot 1: empty</strong>
+                <div class="stage-tools">
+                    <button id="centerButton" type="button">Center</button>
+                    <button id="fillButton" type="button">Fit Slot</button>
+                    <button id="resetButton" type="button">Reset Slot</button>
+                </div>
+            </div>
+
+            <div class="workbench">
+                <div id="coverStage" class="cover-stage">
+                    <div id="layers" class="layers"></div>
+                    <div id="titleStrip" class="title-strip">
+                        <div class="title-text">
+                            <span id="stripBand" class="strip-band">SIOTO JAZZ</span>
+                            <span id="stripAlbum" class="strip-album">3000</span>
+                        </div>
+                    </div>
+                    <div id="emptyNote" class="empty-note">
+                        <span>Drop images or import a folder</span>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="stage-footer">
+                <span id="statusText" class="status">Ready</span>
+                <span id="countText">0 images</span>
+            </footer>
+        </section>
+
+        <aside class="panel right">
+            <div class="panel-inner">
+                <section class="control-group" aria-labelledby="layerListTitle">
+                    <h2 id="layerListTitle" class="control-title">Slots</h2>
+                    <div id="layerList" class="layer-list"></div>
+                </section>
+
+                <section class="control-group" aria-labelledby="selectedTitle">
+                    <h2 id="selectedTitle" class="control-title">Selected Slot</h2>
+                    <div class="field">
+                        <label for="slotImageSelect">Image in slot</label>
+                        <select id="slotImageSelect" disabled>
+                            <option value="">No images loaded</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="xInput">Offset X</label>
+                            <output id="xValue">0%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="xInput" type="range" min="-70" max="70" step="0.1" value="0" disabled>
+                            <input id="xNumber" type="number" min="-70" max="70" step="0.1" value="0" disabled aria-label="Exact slot image X offset">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="yInput">Offset Y</label>
+                            <output id="yValue">0%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="yInput" type="range" min="-70" max="70" step="0.1" value="0" disabled>
+                            <input id="yNumber" type="number" min="-70" max="70" step="0.1" value="0" disabled aria-label="Exact slot image Y offset">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="scaleInput">Scale</label>
+                            <output id="scaleValue">100%</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="scaleInput" type="range" min="0.1" max="4" step="0.01" value="1" disabled>
+                            <input id="scaleNumber" type="number" min="0.1" max="4" step="0.01" value="1" disabled aria-label="Exact slot image scale">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-row">
+                            <label for="rotationInput">Rotate</label>
+                            <output id="rotationValue">0 deg</output>
+                        </div>
+                        <div class="range-control">
+                            <input id="rotationInput" type="range" min="-180" max="180" step="0.1" value="0" disabled>
+                            <input id="rotationNumber" type="number" min="-180" max="180" step="0.1" value="0" disabled aria-label="Exact slot image rotation">
+                        </div>
+                    </div>
+                    <div class="selected-actions">
+                        <button id="backwardButton" type="button">Prev Slot</button>
+                        <button id="forwardButton" type="button">Next Slot</button>
+                        <button id="duplicateButton" type="button" disabled>Next Image</button>
+                        <button id="removeButton" class="danger" type="button" disabled>Clear Slot</button>
+                    </div>
+                </section>
+            </div>
+        </aside>
+    </main>
+
+    <script type="application/json" id="legacy-art-creator-script">
+        (() => {
+            const state = {
+                layers: [],
+                selectedId: null,
+                background: '#d7d7d0',
+                strip: {
+                    y: 50,
+                    height: 14
+                },
+                text: {
+                    band: 'SIOTO JAZZ',
+                    album: '3000',
+                    bandSize: 7.2,
+                    albumSize: 2.8
+                }
+            };
+
+            const els = {
+                folderButton: document.getElementById('folderButton'),
+                fileButton: document.getElementById('fileButton'),
+                shuffleButton: document.getElementById('shuffleButton'),
+                clearButton: document.getElementById('clearButton'),
+                folderInput: document.getElementById('folderInput'),
+                fileInput: document.getElementById('fileInput'),
+                bandInput: document.getElementById('bandInput'),
+                albumInput: document.getElementById('albumInput'),
+                stripYInput: document.getElementById('stripYInput'),
+                stripHeightInput: document.getElementById('stripHeightInput'),
+                bandSizeInput: document.getElementById('bandSizeInput'),
+                albumSizeInput: document.getElementById('albumSizeInput'),
+                stripYValue: document.getElementById('stripYValue'),
+                stripHeightValue: document.getElementById('stripHeightValue'),
+                bandSizeValue: document.getElementById('bandSizeValue'),
+                albumSizeValue: document.getElementById('albumSizeValue'),
+                sizeInput: document.getElementById('sizeInput'),
+                backgroundInput: document.getElementById('backgroundInput'),
+                exportButton: document.getElementById('exportButton'),
+                centerButton: document.getElementById('centerButton'),
+                fillButton: document.getElementById('fillButton'),
+                resetButton: document.getElementById('resetButton'),
+                selectionName: document.getElementById('selectionName'),
+                coverStage: document.getElementById('coverStage'),
+                layers: document.getElementById('layers'),
+                titleStrip: document.getElementById('titleStrip'),
+                stripBand: document.getElementById('stripBand'),
+                stripAlbum: document.getElementById('stripAlbum'),
+                emptyNote: document.getElementById('emptyNote'),
+                statusText: document.getElementById('statusText'),
+                countText: document.getElementById('countText'),
+                layerList: document.getElementById('layerList'),
+                xInput: document.getElementById('xInput'),
+                yInput: document.getElementById('yInput'),
+                scaleInput: document.getElementById('scaleInput'),
+                rotationInput: document.getElementById('rotationInput'),
+                xValue: document.getElementById('xValue'),
+                yValue: document.getElementById('yValue'),
+                scaleValue: document.getElementById('scaleValue'),
+                rotationValue: document.getElementById('rotationValue'),
+                backwardButton: document.getElementById('backwardButton'),
+                forwardButton: document.getElementById('forwardButton'),
+                duplicateButton: document.getElementById('duplicateButton'),
+                removeButton: document.getElementById('removeButton')
+            };
+
+            const nodes = new Map();
+            let activePointer = null;
+            let renderQueued = false;
+
+            function clamp(value, min, max) {
+                return Math.min(max, Math.max(min, value));
+            }
+
+            function formatPercent(value, digits = 0) {
+                return `${Number(value).toFixed(digits)}%`;
+            }
+
+            function readBoundedValue(input) {
+                const min = Number(input.min);
+                const max = Number(input.max);
+                const fallback = Number(input.defaultValue || input.value || min || 0);
+                const raw = Number(input.value);
+                return clamp(Number.isFinite(raw) ? raw : fallback, min, max);
+            }
+
+            function setPairedValue(range, number, value) {
+                const raw = Number(value);
+                const fallback = Number(range.value || range.defaultValue || range.min || 0);
+                const bounded = clamp(Number.isFinite(raw) ? raw : fallback, Number(range.min), Number(range.max));
+                const text = String(bounded);
+                range.value = text;
+                number.value = text;
+                return Number(range.value);
+            }
+
+            function bindSliderNumber(range, number, onChange) {
+                const syncFrom = (input) => {
+                    setPairedValue(range, number, readBoundedValue(input));
+                    onChange();
+                };
+                range.addEventListener('input', () => syncFrom(range));
+                number.addEventListener('input', () => syncFrom(number));
+                number.addEventListener('change', () => syncFrom(number));
+                setPairedValue(range, number, range.value);
+            }
+
+            function selectedLayer() {
+                return state.layers.find((layer) => layer.id === state.selectedId) || null;
+            }
+
+            function createId() {
+                return `layer-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+            }
+
+            function imageFilesFrom(fileList) {
+                const imagePattern = /\.(avif|bmp|gif|jpe?g|png|webp)$/i;
+                return Array.from(fileList || []).filter((file) => file.type.startsWith('image/') || imagePattern.test(file.name));
+            }
+
+            function setStatus(message) {
+                els.statusText.textContent = message;
+            }
+
+            function loadImageFile(file) {
+                return new Promise((resolve, reject) => {
+                    const url = URL.createObjectURL(file);
+                    const image = new Image();
+                    image.onload = () => {
+                        resolve({
+                            id: createId(),
+                            name: file.webkitRelativePath || file.name,
+                            fileName: file.name,
+                            url,
+                            image,
+                            naturalWidth: image.naturalWidth,
+                            naturalHeight: image.naturalHeight,
+                            x: 50,
+                            y: 50,
+                            baseSize: 52,
+                            scale: 1,
+                            rotation: 0
+                        });
+                    };
+                    image.onerror = () => {
+                        URL.revokeObjectURL(url);
+                        reject(new Error(`Could not load ${file.name}`));
+                    };
+                    image.src = url;
+                });
+            }
+
+            async function addFiles(fileList) {
+                const files = imageFilesFrom(fileList);
+                if (!files.length) {
+                    setStatus('No image files found');
+                    return;
+                }
+
+                setStatus(`Loading ${files.length} image${files.length === 1 ? '' : 's'}`);
+                try {
+                    const loaded = await Promise.all(files.map(loadImageFile));
+                    state.layers.push(...loaded);
+                    state.selectedId = loaded[loaded.length - 1].id;
+                    layoutCollage();
+                    setStatus(`Loaded ${loaded.length} image${loaded.length === 1 ? '' : 's'}`);
+                    render();
+                } catch (error) {
+                    setStatus(error.message);
+                }
+            }
+
+            function seededNoise(index, salt) {
+                const value = Math.sin((index + 1) * (salt + 17.371)) * 10000;
+                return value - Math.floor(value);
+            }
+
+            function layoutCollage() {
+                const count = state.layers.length;
+                if (!count) {
+                    render();
+                    return;
+                }
+
+                const columns = Math.ceil(Math.sqrt(count));
+                const rows = Math.ceil(count / columns);
+                const targetLongEdge = clamp(130 / Math.max(columns, rows), 27, 68);
+
+                state.layers.forEach((layer, index) => {
+                    const column = index % columns;
+                    const row = Math.floor(index / columns);
+                    const cellX = 100 / columns;
+                    const cellY = 100 / rows;
+                    const jitterX = (seededNoise(index, 3) - 0.5) * cellX * 0.22;
+                    const jitterY = (seededNoise(index, 7) - 0.5) * cellY * 0.22;
+                    const rotation = (seededNoise(index, 11) - 0.5) * 17;
+
+                    layer.x = clamp((column + 0.5) * cellX + jitterX, 2, 98);
+                    layer.y = clamp((row + 0.5) * cellY + jitterY, 2, 98);
+                    layer.baseSize = targetLongEdge;
+                    layer.scale = 1;
+                    layer.rotation = Number(rotation.toFixed(2));
+                });
+            }
+
+            function shuffleCollage() {
+                if (!state.layers.length) {
+                    setStatus('No images to shuffle');
+                    return;
+                }
+
+                state.layers.sort(() => Math.random() - 0.5);
+                layoutCollage();
+                setStatus('Collage shuffled');
+                render();
+            }
+
+            function layerDimensions(layer, stageSize) {
+                const longEdge = Math.max(layer.naturalWidth, layer.naturalHeight) || 1;
+                const longEdgePixels = stageSize * (layer.baseSize / 100) * layer.scale;
+                return {
+                    width: (layer.naturalWidth / longEdge) * longEdgePixels,
+                    height: (layer.naturalHeight / longEdge) * longEdgePixels
+                };
+            }
+
+            function queueRender() {
+                if (renderQueued) {
+                    return;
+                }
+
+                renderQueued = true;
+                requestAnimationFrame(() => {
+                    renderQueued = false;
+                    render();
+                });
+            }
+
+            function render() {
+                renderStage();
+                renderStrip();
+                renderLayerList();
+                renderInspector();
+            }
+
+            function renderStage() {
+                const stageSize = els.coverStage.getBoundingClientRect().width || 1;
+                els.coverStage.style.background = state.background;
+                els.emptyNote.classList.toggle('hidden', state.layers.length > 0);
+
+                const alive = new Set();
+                state.layers.forEach((layer, index) => {
+                    let node = nodes.get(layer.id);
+                    if (!node) {
+                        node = document.createElement('div');
+                        node.className = 'image-layer';
+                        node.dataset.id = layer.id;
+
+                        const image = document.createElement('img');
+                        image.src = layer.url;
+                        image.alt = layer.fileName;
+                        image.draggable = false;
+                        node.appendChild(image);
+
+                        const rotateHandle = document.createElement('span');
+                        rotateHandle.className = 'handle rotate-handle';
+                        rotateHandle.dataset.handle = 'rotate';
+                        node.appendChild(rotateHandle);
+
+                        const scaleHandle = document.createElement('span');
+                        scaleHandle.className = 'handle scale-handle';
+                        scaleHandle.dataset.handle = 'scale';
+                        node.appendChild(scaleHandle);
+
+                        els.layers.appendChild(node);
+                        nodes.set(layer.id, node);
+                    }
+
+                    const dims = layerDimensions(layer, stageSize);
+                    alive.add(layer.id);
+                    node.classList.toggle('selected', layer.id === state.selectedId);
+                    node.style.left = `${layer.x}%`;
+                    node.style.top = `${layer.y}%`;
+                    node.style.width = `${dims.width}px`;
+                    node.style.height = `${dims.height}px`;
+                    node.style.zIndex = String(index + 1);
+                    node.style.transform = `translate(-50%, -50%) rotate(${layer.rotation}deg)`;
+                });
+
+                for (const [id, node] of nodes) {
+                    if (!alive.has(id)) {
+                        node.remove();
+                        nodes.delete(id);
+                    }
+                }
+
+                els.countText.textContent = `${state.layers.length} image${state.layers.length === 1 ? '' : 's'}`;
+            }
+
+            function renderStrip() {
+                const stageSize = els.coverStage.getBoundingClientRect().width || 1;
+                const stripHeight = stageSize * (state.strip.height / 100);
+
+                els.titleStrip.style.top = `${state.strip.y}%`;
+                els.titleStrip.style.height = `${state.strip.height}%`;
+                els.titleStrip.style.transform = 'translateY(-50%)';
+                els.stripBand.textContent = state.text.band || ' ';
+                els.stripAlbum.textContent = state.text.album || ' ';
+                els.stripBand.style.fontSize = `${stageSize * (state.text.bandSize / 100)}px`;
+                els.stripAlbum.style.fontSize = `${stageSize * (state.text.albumSize / 100)}px`;
+                els.titleStrip.querySelector('.title-text').style.gap = `${Math.max(1, stripHeight * 0.035)}px`;
+
+                fitDomText(els.stripBand, stageSize * 0.84, stageSize * (state.text.bandSize / 100), 12);
+                fitDomText(els.stripAlbum, stageSize * 0.84, stageSize * (state.text.albumSize / 100), 10);
+            }
+
+            function fitDomText(element, maxWidth, startingSize, minimumSize) {
+                let size = startingSize;
+                element.style.fontSize = `${size}px`;
+                while (element.scrollWidth > maxWidth && size > minimumSize) {
+                    size *= 0.96;
+                    element.style.fontSize = `${size}px`;
+                }
+            }
+
+            function renderLayerList() {
+                els.layerList.innerHTML = '';
+                if (!state.layers.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-list';
+                    empty.textContent = 'No image layers';
+                    els.layerList.appendChild(empty);
+                    return;
+                }
+
+                [...state.layers].reverse().forEach((layer) => {
+                    const row = document.createElement('button');
+                    row.type = 'button';
+                    row.className = `layer-row${layer.id === state.selectedId ? ' selected' : ''}`;
+                    row.dataset.id = layer.id;
+
+                    const thumb = document.createElement('span');
+                    thumb.className = 'layer-thumb';
+                    const image = document.createElement('img');
+                    image.src = layer.url;
+                    image.alt = '';
+                    thumb.appendChild(image);
+
+                    const name = document.createElement('span');
+                    name.className = 'layer-name';
+                    name.textContent = layer.fileName;
+
+                    row.append(thumb, name);
+                    els.layerList.appendChild(row);
+                });
+            }
+
+            function renderInspector() {
+                const layer = selectedLayer();
+                const hasSelection = Boolean(layer);
+                const selectedIndex = layer ? state.layers.indexOf(layer) : -1;
+
+                els.selectionName.textContent = layer ? layer.fileName : 'No image selected';
+                [els.xInput, els.yInput, els.scaleInput, els.rotationInput, els.backwardButton, els.forwardButton, els.duplicateButton, els.removeButton, els.centerButton, els.fillButton, els.resetButton].forEach((control) => {
+                    control.disabled = !hasSelection;
+                });
+
+                if (!layer) {
+                    els.xValue.textContent = '50%';
+                    els.yValue.textContent = '50%';
+                    els.scaleValue.textContent = '100%';
+                    els.rotationValue.textContent = '0 deg';
+                    return;
+                }
+
+                els.xInput.value = String(layer.x);
+                els.yInput.value = String(layer.y);
+                els.scaleInput.value = String(layer.scale);
+                els.rotationInput.value = String(normalizeRotation(layer.rotation));
+                els.xValue.textContent = formatPercent(layer.x, 1);
+                els.yValue.textContent = formatPercent(layer.y, 1);
+                els.scaleValue.textContent = formatPercent(layer.scale * 100, 0);
+                els.rotationValue.textContent = `${Math.round(normalizeRotation(layer.rotation))} deg`;
+                els.backwardButton.disabled = selectedIndex <= 0;
+                els.forwardButton.disabled = selectedIndex < 0 || selectedIndex >= state.layers.length - 1;
+            }
+
+            function normalizeRotation(value) {
+                let rotation = value % 360;
+                if (rotation > 180) {
+                    rotation -= 360;
+                }
+                if (rotation < -180) {
+                    rotation += 360;
+                }
+                return rotation;
+            }
+
+            function updateStripControls() {
+                state.strip.y = Number(els.stripYInput.value);
+                state.strip.height = Number(els.stripHeightInput.value);
+                state.text.bandSize = Number(els.bandSizeInput.value);
+                state.text.albumSize = Number(els.albumSizeInput.value);
+                els.stripYValue.textContent = formatPercent(state.strip.y, state.strip.y % 1 ? 1 : 0);
+                els.stripHeightValue.textContent = formatPercent(state.strip.height, state.strip.height % 1 ? 1 : 0);
+                els.bandSizeValue.textContent = formatPercent(state.text.bandSize, 1);
+                els.albumSizeValue.textContent = formatPercent(state.text.albumSize, 1);
+                renderStrip();
+            }
+
+            function updateSelectedFromInputs() {
+                const layer = selectedLayer();
+                if (!layer) {
+                    return;
+                }
+
+                layer.x = Number(els.xInput.value);
+                layer.y = Number(els.yInput.value);
+                layer.scale = Number(els.scaleInput.value);
+                layer.rotation = Number(els.rotationInput.value);
+                render();
+            }
+
+            function selectLayer(id) {
+                state.selectedId = id;
+                render();
+            }
+
+            function removeLayer(id) {
+                const index = state.layers.findIndex((layer) => layer.id === id);
+                if (index < 0) {
+                    return;
+                }
+
+                const [removed] = state.layers.splice(index, 1);
+                if (!state.layers.some((layer) => layer.url === removed.url)) {
+                    URL.revokeObjectURL(removed.url);
+                }
+                if (state.selectedId === id) {
+                    const next = state.layers[index] || state.layers[index - 1] || null;
+                    state.selectedId = next ? next.id : null;
+                }
+                setStatus('Layer removed');
+                render();
+            }
+
+            function clearLayers() {
+                const urls = new Set(state.layers.map((layer) => layer.url));
+                urls.forEach((url) => URL.revokeObjectURL(url));
+                state.layers = [];
+                state.selectedId = null;
+                setStatus('Canvas cleared');
+                render();
+            }
+
+            function moveSelected(direction) {
+                const layer = selectedLayer();
+                if (!layer) {
+                    return;
+                }
+
+                const index = state.layers.indexOf(layer);
+                const nextIndex = index + direction;
+                if (nextIndex < 0 || nextIndex >= state.layers.length) {
+                    return;
+                }
+
+                state.layers.splice(index, 1);
+                state.layers.splice(nextIndex, 0, layer);
+                render();
+            }
+
+            function duplicateSelected() {
+                const layer = selectedLayer();
+                if (!layer) {
+                    return;
+                }
+
+                const copy = {
+                    ...layer,
+                    id: createId(),
+                    x: layer.x + 4,
+                    y: layer.y + 4,
+                    rotation: layer.rotation + 3
+                };
+                const index = state.layers.indexOf(layer);
+                state.layers.splice(index + 1, 0, copy);
+                state.selectedId = copy.id;
+                setStatus('Layer duplicated');
+                render();
+            }
+
+            function centerSelected() {
+                const layer = selectedLayer();
+                if (!layer) {
+                    return;
+                }
+
+                layer.x = 50;
+                layer.y = 50;
+                render();
+            }
+
+            function fitWideSelected() {
+                const layer = selectedLayer();
+                if (!layer) {
+                    return;
+                }
+
+                layer.baseSize = 104;
+                layer.scale = 1;
+                layer.x = 50;
+                layer.y = 50;
+                render();
+            }
+
+            function resetSelected() {
+                const layer = selectedLayer();
+                if (!layer) {
+                    return;
+                }
+
+                layer.x = 50;
+                layer.y = 50;
+                layer.baseSize = 58;
+                layer.scale = 1;
+                layer.rotation = 0;
+                render();
+            }
+
+            function getStagePoint(event) {
+                const rect = els.coverStage.getBoundingClientRect();
+                return {
+                    x: event.clientX - rect.left,
+                    y: event.clientY - rect.top,
+                    size: rect.width
+                };
+            }
+
+            function beginPointer(event) {
+                const layerNode = event.target.closest('.image-layer');
+                if (!layerNode) {
+                    if (event.target === els.coverStage || event.target === els.layers) {
+                        state.selectedId = null;
+                        render();
+                    }
+                    return;
+                }
+
+                event.preventDefault();
+                const layer = state.layers.find((item) => item.id === layerNode.dataset.id);
+                if (!layer) {
+                    return;
+                }
+
+                state.selectedId = layer.id;
+                const point = getStagePoint(event);
+                const center = {
+                    x: (layer.x / 100) * point.size,
+                    y: (layer.y / 100) * point.size
+                };
+                const action = event.target.dataset.handle || 'move';
+                const startAngle = Math.atan2(point.y - center.y, point.x - center.x) * 180 / Math.PI;
+                const startDistance = Math.hypot(point.x - center.x, point.y - center.y);
+
+                activePointer = {
+                    pointerId: event.pointerId,
+                    action,
+                    layer,
+                    startPoint: point,
+                    startX: layer.x,
+                    startY: layer.y,
+                    startScale: layer.scale,
+                    startRotation: layer.rotation,
+                    startAngle,
+                    startDistance: Math.max(12, startDistance)
+                };
+
+                layerNode.setPointerCapture(event.pointerId);
+                render();
+            }
+
+            function movePointer(event) {
+                if (!activePointer || event.pointerId !== activePointer.pointerId) {
+                    return;
+                }
+
+                event.preventDefault();
+                const point = getStagePoint(event);
+                const layer = activePointer.layer;
+
+                if (activePointer.action === 'move') {
+                    const dx = ((point.x - activePointer.startPoint.x) / point.size) * 100;
+                    const dy = ((point.y - activePointer.startPoint.y) / point.size) * 100;
+                    layer.x = clamp(activePointer.startX + dx, -25, 125);
+                    layer.y = clamp(activePointer.startY + dy, -25, 125);
+                } else if (activePointer.action === 'scale') {
+                    const center = {
+                        x: (layer.x / 100) * point.size,
+                        y: (layer.y / 100) * point.size
+                    };
+                    const distance = Math.hypot(point.x - center.x, point.y - center.y);
+                    layer.scale = clamp(activePointer.startScale * (distance / activePointer.startDistance), 0.1, 4);
+                } else if (activePointer.action === 'rotate') {
+                    const center = {
+                        x: (layer.x / 100) * point.size,
+                        y: (layer.y / 100) * point.size
+                    };
+                    const angle = Math.atan2(point.y - center.y, point.x - center.x) * 180 / Math.PI;
+                    layer.rotation = normalizeRotation(activePointer.startRotation + angle - activePointer.startAngle);
+                }
+
+                queueRender();
+            }
+
+            function endPointer(event) {
+                if (!activePointer || event.pointerId !== activePointer.pointerId) {
+                    return;
+                }
+
+                activePointer = null;
+                render();
+            }
+
+            function handleKeydown(event) {
+                const layer = selectedLayer();
+                const tagName = document.activeElement ? document.activeElement.tagName : '';
+                const inField = ['INPUT', 'TEXTAREA', 'SELECT'].includes(tagName);
+                if (!layer || inField) {
+                    return;
+                }
+
+                const step = event.shiftKey ? 2 : 0.5;
+                if (event.key === 'Delete' || event.key === 'Backspace') {
+                    event.preventDefault();
+                    removeLayer(layer.id);
+                } else if (event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    layer.x = clamp(layer.x - step, -25, 125);
+                    render();
+                } else if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    layer.x = clamp(layer.x + step, -25, 125);
+                    render();
+                } else if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    layer.y = clamp(layer.y - step, -25, 125);
+                    render();
+                } else if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    layer.y = clamp(layer.y + step, -25, 125);
+                    render();
+                }
+            }
+
+            async function loadFonts() {
+                if (!document.fonts) {
+                    return;
+                }
+
+                await Promise.allSettled([
+                    document.fonts.load('180px Astrella'),
+                    document.fonts.load('84px UniversCnRg')
+                ]);
+                await document.fonts.ready;
+            }
+
+            function setCanvasFont(ctx, size, family) {
+                ctx.font = `${size}px "${family}", Arial, Helvetica, sans-serif`;
+            }
+
+            function fitCanvasText(ctx, text, startingSize, family, maxWidth, minimumSize) {
+                let size = startingSize;
+                setCanvasFont(ctx, size, family);
+                while (ctx.measureText(text).width > maxWidth && size > minimumSize) {
+                    size *= 0.96;
+                    setCanvasFont(ctx, size, family);
+                }
+                return size;
+            }
+
+            function drawLayer(ctx, layer, size) {
+                const longEdge = Math.max(layer.naturalWidth, layer.naturalHeight) || 1;
+                const longEdgePixels = size * (layer.baseSize / 100) * layer.scale;
+                const width = (layer.naturalWidth / longEdge) * longEdgePixels;
+                const height = (layer.naturalHeight / longEdge) * longEdgePixels;
+
+                ctx.save();
+                ctx.translate(size * (layer.x / 100), size * (layer.y / 100));
+                ctx.rotate(layer.rotation * Math.PI / 180);
+                ctx.drawImage(layer.image, -width / 2, -height / 2, width, height);
+                ctx.restore();
+            }
+
+            function drawTitleStrip(ctx, size) {
+                const stripHeight = size * (state.strip.height / 100);
+                const stripCenter = size * (state.strip.y / 100);
+                const stripTop = stripCenter - stripHeight / 2;
+                const maxTextWidth = size * 0.84;
+                const bandText = (state.text.band || '').toUpperCase();
+                const albumText = (state.text.album || '').toUpperCase();
+
+                ctx.save();
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, stripTop, size, stripHeight);
+                ctx.fillStyle = '#111111';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                const bandBase = size * (state.text.bandSize / 100);
+                const albumBase = size * (state.text.albumSize / 100);
+                const bandSize = fitCanvasText(ctx, bandText, bandBase, 'Astrella', maxTextWidth, size * 0.012);
+                ctx.fillText(bandText, size / 2, stripCenter - stripHeight * 0.14);
+
+                fitCanvasText(ctx, albumText, albumBase, 'UniversCnRg', maxTextWidth, size * 0.008);
+                ctx.fillText(albumText, size / 2, stripCenter + stripHeight * 0.27);
+                ctx.restore();
+
+                return bandSize;
+            }
+
+            async function exportPng() {
+                const size = clamp(Number(els.sizeInput.value) || 3000, 1000, 9000);
+                els.sizeInput.value = String(size);
+
+                if (!state.layers.length) {
+                    setStatus('Exporting strip without image layers');
+                } else {
+                    setStatus(`Rendering ${size} x ${size}`);
+                }
+
+                els.exportButton.disabled = true;
+                await loadFonts();
+
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d', { alpha: false });
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.fillStyle = state.background;
+                ctx.fillRect(0, 0, size, size);
+
+                state.layers.forEach((layer) => drawLayer(ctx, layer, size));
+                drawTitleStrip(ctx, size);
+
+                canvas.toBlob((blob) => {
+                    els.exportButton.disabled = false;
+                    if (!blob) {
+                        setStatus('Export failed');
+                        return;
+                    }
+
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    const safeAlbum = (state.text.album || 'cover').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'cover';
+                    link.href = url;
+                    link.download = `${safeAlbum}-${size}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    setStatus(`Exported ${size} x ${size} PNG`);
+                }, 'image/png');
+            }
+
+            function bindEvents() {
+                els.folderButton.addEventListener('click', () => els.folderInput.click());
+                els.fileButton.addEventListener('click', () => els.fileInput.click());
+                els.folderInput.addEventListener('change', (event) => {
+                    addFiles(event.target.files);
+                    event.target.value = '';
+                });
+                els.fileInput.addEventListener('change', (event) => {
+                    addFiles(event.target.files);
+                    event.target.value = '';
+                });
+                els.shuffleButton.addEventListener('click', shuffleCollage);
+                els.clearButton.addEventListener('click', clearLayers);
+                els.exportButton.addEventListener('click', exportPng);
+
+                els.bandInput.addEventListener('input', () => {
+                    state.text.band = els.bandInput.value;
+                    renderStrip();
+                });
+                els.albumInput.addEventListener('input', () => {
+                    state.text.album = els.albumInput.value;
+                    renderStrip();
+                });
+                [els.stripYInput, els.stripHeightInput, els.bandSizeInput, els.albumSizeInput].forEach((input) => {
+                    input.addEventListener('input', updateStripControls);
+                });
+                els.backgroundInput.addEventListener('input', () => {
+                    state.background = els.backgroundInput.value;
+                    renderStage();
+                });
+
+                [els.xInput, els.yInput, els.scaleInput, els.rotationInput].forEach((input) => {
+                    input.addEventListener('input', updateSelectedFromInputs);
+                });
+
+                els.layerList.addEventListener('click', (event) => {
+                    const row = event.target.closest('.layer-row');
+                    if (row) {
+                        selectLayer(row.dataset.id);
+                    }
+                });
+
+                els.layers.addEventListener('pointerdown', beginPointer);
+                document.addEventListener('pointermove', movePointer);
+                document.addEventListener('pointerup', endPointer);
+                document.addEventListener('pointercancel', endPointer);
+                document.addEventListener('keydown', handleKeydown);
+                window.addEventListener('resize', render);
+
+                els.coverStage.addEventListener('dragover', (event) => {
+                    event.preventDefault();
+                    els.coverStage.classList.add('is-dragover');
+                });
+                els.coverStage.addEventListener('dragleave', () => {
+                    els.coverStage.classList.remove('is-dragover');
+                });
+                els.coverStage.addEventListener('drop', (event) => {
+                    event.preventDefault();
+                    els.coverStage.classList.remove('is-dragover');
+                    addFiles(event.dataTransfer.files);
+                });
+
+                els.backwardButton.addEventListener('click', () => moveSelected(-1));
+                els.forwardButton.addEventListener('click', () => moveSelected(1));
+                els.duplicateButton.addEventListener('click', duplicateSelected);
+                els.removeButton.addEventListener('click', () => {
+                    const layer = selectedLayer();
+                    if (layer) {
+                        removeLayer(layer.id);
+                    }
+                });
+                els.centerButton.addEventListener('click', centerSelected);
+                els.fillButton.addEventListener('click', fitWideSelected);
+                els.resetButton.addEventListener('click', resetSelected);
+            }
+
+            bindEvents();
+            updateStripControls();
+            loadFonts().then(render).catch(render);
+        })();
+    </script>
+    <script>
+        (() => {
+            const SLOT_BLUEPRINTS = [
+                { zone: 'top', x: 0, y: 0, width: 34, height: 58 },
+                { zone: 'top', x: 34, y: 0, width: 32, height: 58 },
+                { zone: 'top', x: 66, y: 0, width: 34, height: 100 },
+                { zone: 'top', x: 0, y: 58, width: 66, height: 42 },
+                { zone: 'bottom', x: 0, y: 0, width: 28, height: 100 },
+                { zone: 'bottom', x: 28, y: 0, width: 44, height: 46 },
+                { zone: 'bottom', x: 72, y: 0, width: 28, height: 46 },
+                { zone: 'bottom', x: 28, y: 46, width: 34, height: 54 },
+                { zone: 'bottom', x: 62, y: 46, width: 38, height: 54 }
+            ];
+            const SLOT_COUNT = SLOT_BLUEPRINTS.length;
+
+            const state = {
+                images: [],
+                slots: createSlots(),
+                selectedSlotId: 'slot-1',
+                background: '#d7d7d0',
+                strip: {
+                    y: 50,
+                    height: 14
+                },
+                layout: {
+                    gap: 1.4
+                },
+                text: {
+                    band: 'SIOTO JAZZ',
+                    album: '3000',
+                    bandX: 37,
+                    albumX: 67,
+                    bandSize: 7.2,
+                    albumSize: 2.8
+                }
+            };
+
+            const els = {
+                folderButton: document.getElementById('folderButton'),
+                fileButton: document.getElementById('fileButton'),
+                shuffleButton: document.getElementById('shuffleButton'),
+                clearButton: document.getElementById('clearButton'),
+                folderInput: document.getElementById('folderInput'),
+                fileInput: document.getElementById('fileInput'),
+                bandInput: document.getElementById('bandInput'),
+                albumInput: document.getElementById('albumInput'),
+                stripYInput: document.getElementById('stripYInput'),
+                stripHeightInput: document.getElementById('stripHeightInput'),
+                slotGapInput: document.getElementById('slotGapInput'),
+                bandXInput: document.getElementById('bandXInput'),
+                albumXInput: document.getElementById('albumXInput'),
+                bandSizeInput: document.getElementById('bandSizeInput'),
+                albumSizeInput: document.getElementById('albumSizeInput'),
+                stripYNumber: document.getElementById('stripYNumber'),
+                stripHeightNumber: document.getElementById('stripHeightNumber'),
+                slotGapNumber: document.getElementById('slotGapNumber'),
+                bandXNumber: document.getElementById('bandXNumber'),
+                albumXNumber: document.getElementById('albumXNumber'),
+                bandSizeNumber: document.getElementById('bandSizeNumber'),
+                albumSizeNumber: document.getElementById('albumSizeNumber'),
+                stripYValue: document.getElementById('stripYValue'),
+                stripHeightValue: document.getElementById('stripHeightValue'),
+                slotGapValue: document.getElementById('slotGapValue'),
+                bandXValue: document.getElementById('bandXValue'),
+                albumXValue: document.getElementById('albumXValue'),
+                bandSizeValue: document.getElementById('bandSizeValue'),
+                albumSizeValue: document.getElementById('albumSizeValue'),
+                sizeInput: document.getElementById('sizeInput'),
+                backgroundInput: document.getElementById('backgroundInput'),
+                exportButton: document.getElementById('exportButton'),
+                centerButton: document.getElementById('centerButton'),
+                fillButton: document.getElementById('fillButton'),
+                resetButton: document.getElementById('resetButton'),
+                selectionName: document.getElementById('selectionName'),
+                coverStage: document.getElementById('coverStage'),
+                layers: document.getElementById('layers'),
+                titleStrip: document.getElementById('titleStrip'),
+                stripBand: document.getElementById('stripBand'),
+                stripAlbum: document.getElementById('stripAlbum'),
+                emptyNote: document.getElementById('emptyNote'),
+                statusText: document.getElementById('statusText'),
+                countText: document.getElementById('countText'),
+                layerList: document.getElementById('layerList'),
+                slotImageSelect: document.getElementById('slotImageSelect'),
+                xInput: document.getElementById('xInput'),
+                yInput: document.getElementById('yInput'),
+                scaleInput: document.getElementById('scaleInput'),
+                rotationInput: document.getElementById('rotationInput'),
+                xNumber: document.getElementById('xNumber'),
+                yNumber: document.getElementById('yNumber'),
+                scaleNumber: document.getElementById('scaleNumber'),
+                rotationNumber: document.getElementById('rotationNumber'),
+                xValue: document.getElementById('xValue'),
+                yValue: document.getElementById('yValue'),
+                scaleValue: document.getElementById('scaleValue'),
+                rotationValue: document.getElementById('rotationValue'),
+                backwardButton: document.getElementById('backwardButton'),
+                forwardButton: document.getElementById('forwardButton'),
+                duplicateButton: document.getElementById('duplicateButton'),
+                removeButton: document.getElementById('removeButton')
+            };
+
+            const slotNodes = new Map();
+            let activePointer = null;
+            let renderQueued = false;
+
+            function createSlots() {
+                return SLOT_BLUEPRINTS.map((blueprint, index) => ({
+                    id: `slot-${index + 1}`,
+                    label: `Slot ${index + 1}`,
+                    blueprint,
+                    imageId: null,
+                    offsetX: 0,
+                    offsetY: 0,
+                    scale: 1,
+                    rotation: 0
+                }));
+            }
+
+            function clamp(value, min, max) {
+                return Math.min(max, Math.max(min, value));
+            }
+
+            function formatPercent(value, digits = 0) {
+                return `${Number(value).toFixed(digits)}%`;
+            }
+
+            function readBoundedValue(input) {
+                const min = Number(input.min);
+                const max = Number(input.max);
+                const fallback = Number(input.defaultValue || input.value || min || 0);
+                const raw = Number(input.value);
+                return clamp(Number.isFinite(raw) ? raw : fallback, min, max);
+            }
+
+            function setPairedValue(range, number, value) {
+                const raw = Number(value);
+                const fallback = Number(range.value || range.defaultValue || range.min || 0);
+                const bounded = clamp(Number.isFinite(raw) ? raw : fallback, Number(range.min), Number(range.max));
+                const text = String(bounded);
+                range.value = text;
+                number.value = text;
+                return Number(range.value);
+            }
+
+            function bindSliderNumber(range, number, onChange) {
+                const syncFrom = (input) => {
+                    setPairedValue(range, number, readBoundedValue(input));
+                    onChange();
+                };
+                range.addEventListener('input', () => syncFrom(range));
+                number.addEventListener('input', () => syncFrom(number));
+                number.addEventListener('change', () => syncFrom(number));
+                setPairedValue(range, number, range.value);
+            }
+
+            function createId(prefix) {
+                return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+            }
+
+            function selectedSlot() {
+                return state.slots.find((slot) => slot.id === state.selectedSlotId) || state.slots[0];
+            }
+
+            function imageById(id) {
+                return state.images.find((image) => image.id === id) || null;
+            }
+
+            function selectedImage() {
+                const slot = selectedSlot();
+                return slot ? imageById(slot.imageId) : null;
+            }
+
+            function assignedSlotCount() {
+                return state.slots.filter((slot) => slot.imageId).length;
+            }
+
+            function imageFilesFrom(fileList) {
+                const imagePattern = /\.(avif|bmp|gif|jpe?g|png|webp)$/i;
+                return Array.from(fileList || []).filter((file) => file.type.startsWith('image/') || imagePattern.test(file.name));
+            }
+
+            function setStatus(message) {
+                els.statusText.textContent = message;
+            }
+
+            function slotRect(slot, size) {
+                const blueprint = slot.blueprint;
+                const gap = state.layout.gap;
+                const stripTop = state.strip.y - state.strip.height / 2;
+                const stripBottom = state.strip.y + state.strip.height / 2;
+                const topZoneHeight = clamp(stripTop - gap / 2, 6, 94);
+                const bottomZoneY = clamp(stripBottom + gap / 2, 6, 94);
+                const bottomZoneHeight = clamp(100 - bottomZoneY, 6, 94);
+                const zone = blueprint.zone === 'top'
+                    ? { x: 0, y: 0, width: 100, height: topZoneHeight }
+                    : { x: 0, y: bottomZoneY, width: 100, height: bottomZoneHeight };
+                const inset = gap / 2;
+                const xPercent = zone.x + zone.width * (blueprint.x / 100) + inset;
+                const yPercent = zone.y + zone.height * (blueprint.y / 100) + inset;
+                const widthPercent = Math.max(3, zone.width * (blueprint.width / 100) - gap);
+                const heightPercent = Math.max(3, zone.height * (blueprint.height / 100) - gap);
+
+                return {
+                    x: size * (xPercent / 100),
+                    y: size * (yPercent / 100),
+                    width: size * (widthPercent / 100),
+                    height: size * (heightPercent / 100)
+                };
+            }
+
+            function resetSlotTransform(slot) {
+                slot.offsetX = 0;
+                slot.offsetY = 0;
+                slot.scale = 1;
+                slot.rotation = 0;
+            }
+
+            function loadImageFile(file) {
+                return new Promise((resolve, reject) => {
+                    const url = URL.createObjectURL(file);
+                    const image = new Image();
+                    image.onload = () => {
+                        resolve({
+                            id: createId('image'),
+                            name: file.webkitRelativePath || file.name,
+                            fileName: file.name,
+                            url,
+                            image,
+                            naturalWidth: image.naturalWidth,
+                            naturalHeight: image.naturalHeight
+                        });
+                    };
+                    image.onerror = () => {
+                        URL.revokeObjectURL(url);
+                        reject(new Error(`Could not load ${file.name}`));
+                    };
+                    image.src = url;
+                });
+            }
+
+            async function addFiles(fileList) {
+                const files = imageFilesFrom(fileList);
+                if (!files.length) {
+                    setStatus('No image files found');
+                    return;
+                }
+
+                setStatus(`Loading ${files.length} image${files.length === 1 ? '' : 's'}`);
+                try {
+                    const loaded = await Promise.all(files.map(loadImageFile));
+                    state.images.push(...loaded);
+                    assignLoadedImagesToEmptySlots(loaded);
+                    setStatus(`Loaded ${loaded.length} image${loaded.length === 1 ? '' : 's'}`);
+                    render();
+                } catch (error) {
+                    setStatus(error.message);
+                }
+            }
+
+            function assignLoadedImagesToEmptySlots(images) {
+                let imageIndex = 0;
+                let firstAssigned = null;
+
+                for (const slot of state.slots) {
+                    if (slot.imageId || imageIndex >= images.length) {
+                        continue;
+                    }
+
+                    slot.imageId = images[imageIndex].id;
+                    resetSlotTransform(slot);
+                    firstAssigned = firstAssigned || slot;
+                    imageIndex += 1;
+                }
+
+                if (firstAssigned) {
+                    state.selectedSlotId = firstAssigned.id;
+                }
+            }
+
+            function autoFillSlots() {
+                if (!state.images.length) {
+                    setStatus('Import images before filling slots');
+                    return;
+                }
+
+                state.slots.forEach((slot, index) => {
+                    slot.imageId = state.images[index % state.images.length].id;
+                    resetSlotTransform(slot);
+                });
+                setStatus(`Filled ${state.slots.length} fixed slots`);
+                render();
+            }
+
+            function slotFrameDimensions(slot, image, stageSize) {
+                const rect = slotRect(slot, stageSize);
+                const coverScale = Math.max(rect.width / image.naturalWidth, rect.height / image.naturalHeight);
+                return {
+                    width: image.naturalWidth * coverScale * slot.scale,
+                    height: image.naturalHeight * coverScale * slot.scale
+                };
+            }
+
+            function queueRender() {
+                if (renderQueued) {
+                    return;
+                }
+
+                renderQueued = true;
+                requestAnimationFrame(() => {
+                    renderQueued = false;
+                    render();
+                });
+            }
+
+            function render() {
+                renderStage();
+                renderStrip();
+                renderSlotList();
+                renderInspector();
+            }
+
+            function ensureSlotNode(slot) {
+                let node = slotNodes.get(slot.id);
+                if (node) {
+                    return node;
+                }
+
+                node = document.createElement('div');
+                node.className = 'slot';
+                node.dataset.id = slot.id;
+
+                const empty = document.createElement('span');
+                empty.className = 'slot-empty';
+                node.appendChild(empty);
+
+                const frame = document.createElement('div');
+                frame.className = 'slot-frame';
+
+                const image = document.createElement('img');
+                image.alt = '';
+                image.draggable = false;
+                frame.appendChild(image);
+
+                const rotateHandle = document.createElement('span');
+                rotateHandle.className = 'handle rotate-handle';
+                rotateHandle.dataset.handle = 'rotate';
+                frame.appendChild(rotateHandle);
+
+                const scaleHandle = document.createElement('span');
+                scaleHandle.className = 'handle scale-handle';
+                scaleHandle.dataset.handle = 'scale';
+                frame.appendChild(scaleHandle);
+
+                node.appendChild(frame);
+                els.layers.appendChild(node);
+                slotNodes.set(slot.id, node);
+                return node;
+            }
+
+            function renderStage() {
+                const stageSize = els.coverStage.getBoundingClientRect().width || 1;
+                els.coverStage.style.background = state.background;
+                els.emptyNote.classList.toggle('hidden', state.images.length > 0);
+
+                state.slots.forEach((slot) => {
+                    const node = ensureSlotNode(slot);
+                    const rect = slotRect(slot, stageSize);
+                    const image = imageById(slot.imageId);
+                    const frame = node.querySelector('.slot-frame');
+                    const img = frame.querySelector('img');
+                    const empty = node.querySelector('.slot-empty');
+
+                    node.classList.toggle('selected', slot.id === state.selectedSlotId);
+                    node.style.left = `${(rect.x / stageSize) * 100}%`;
+                    node.style.top = `${(rect.y / stageSize) * 100}%`;
+                    node.style.width = `${(rect.width / stageSize) * 100}%`;
+                    node.style.height = `${(rect.height / stageSize) * 100}%`;
+                    empty.textContent = slot.label;
+
+                    if (!image) {
+                        frame.classList.add('hidden');
+                        empty.classList.remove('hidden');
+                        img.removeAttribute('src');
+                        return;
+                    }
+
+                    const dims = slotFrameDimensions(slot, image, stageSize);
+                    frame.classList.remove('hidden');
+                    empty.classList.add('hidden');
+                    if (img.src !== image.url) {
+                        img.src = image.url;
+                        img.alt = image.fileName;
+                    }
+                    frame.style.left = `${50 + slot.offsetX}%`;
+                    frame.style.top = `${50 + slot.offsetY}%`;
+                    frame.style.width = `${dims.width}px`;
+                    frame.style.height = `${dims.height}px`;
+                    frame.style.transform = `translate(-50%, -50%) rotate(${slot.rotation}deg)`;
+                });
+
+                els.countText.textContent = `${assignedSlotCount()} / ${state.slots.length} slots filled`;
+            }
+
+            function renderStrip() {
+                const stageSize = els.coverStage.getBoundingClientRect().width || 1;
+                const stripHeight = stageSize * (state.strip.height / 100);
+
+                els.titleStrip.style.top = `${state.strip.y}%`;
+                els.titleStrip.style.height = `${state.strip.height}%`;
+                els.titleStrip.style.transform = 'translateY(-50%)';
+                els.stripBand.textContent = state.text.band || ' ';
+                els.stripAlbum.textContent = state.text.album || ' ';
+                els.stripBand.style.left = `${state.text.bandX}%`;
+                els.stripAlbum.style.left = `${state.text.albumX}%`;
+                els.stripBand.style.fontSize = `${stageSize * (state.text.bandSize / 100)}px`;
+                els.stripAlbum.style.fontSize = `${stageSize * (state.text.albumSize / 100)}px`;
+
+                fitDomText(els.stripBand, maxTextWidthForX(state.text.bandX, stageSize), stageSize * (state.text.bandSize / 100), 12);
+                fitDomText(els.stripAlbum, maxTextWidthForX(state.text.albumX, stageSize), stageSize * (state.text.albumSize / 100), 10);
+                els.titleStrip.style.minHeight = `${Math.max(24, stripHeight)}px`;
+            }
+
+            function maxTextWidthForX(x, stageSize) {
+                const edgeRoom = Math.min(x, 100 - x) / 100 * stageSize * 2 - stageSize * 0.04;
+                return clamp(edgeRoom, stageSize * 0.14, stageSize * 0.52);
+            }
+
+            function fitDomText(element, maxWidth, startingSize, minimumSize) {
+                let size = startingSize;
+                element.style.maxWidth = `${maxWidth}px`;
+                element.style.fontSize = `${size}px`;
+                while (element.scrollWidth > maxWidth && size > minimumSize) {
+                    size *= 0.96;
+                    element.style.fontSize = `${size}px`;
+                }
+            }
+
+            function renderSlotList() {
+                els.layerList.innerHTML = '';
+
+                state.slots.forEach((slot) => {
+                    const image = imageById(slot.imageId);
+                    const row = document.createElement('button');
+                    row.type = 'button';
+                    row.className = `layer-row${slot.id === state.selectedSlotId ? ' selected' : ''}`;
+                    row.dataset.id = slot.id;
+
+                    const thumb = document.createElement('span');
+                    thumb.className = 'layer-thumb';
+                    if (image) {
+                        const img = document.createElement('img');
+                        img.src = image.url;
+                        img.alt = '';
+                        thumb.appendChild(img);
+                    }
+
+                    const name = document.createElement('span');
+                    name.className = 'layer-name';
+                    name.textContent = `${slot.label}: ${image ? image.fileName : 'empty'}`;
+
+                    row.append(thumb, name);
+                    els.layerList.appendChild(row);
+                });
+            }
+
+            function renderImageOptions(slot) {
+                els.slotImageSelect.innerHTML = '';
+
+                if (!state.images.length) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = 'No images loaded';
+                    els.slotImageSelect.appendChild(option);
+                    els.slotImageSelect.disabled = true;
+                    return;
+                }
+
+                const noneOption = document.createElement('option');
+                noneOption.value = '';
+                noneOption.textContent = 'Empty slot';
+                els.slotImageSelect.appendChild(noneOption);
+
+                state.images.forEach((image, index) => {
+                    const option = document.createElement('option');
+                    option.value = image.id;
+                    option.textContent = `${index + 1}. ${image.fileName}`;
+                    els.slotImageSelect.appendChild(option);
+                });
+
+                els.slotImageSelect.disabled = !slot;
+                els.slotImageSelect.value = slot && slot.imageId ? slot.imageId : '';
+            }
+
+            function renderInspector() {
+                const slot = selectedSlot();
+                const image = slot ? imageById(slot.imageId) : null;
+                const slotIndex = slot ? state.slots.indexOf(slot) : -1;
+                const hasImage = Boolean(image);
+
+                els.selectionName.textContent = slot ? `${slot.label}: ${image ? image.fileName : 'empty'}` : 'No slot selected';
+                renderImageOptions(slot);
+
+                [els.xInput, els.yInput, els.scaleInput, els.rotationInput, els.xNumber, els.yNumber, els.scaleNumber, els.rotationNumber, els.centerButton, els.fillButton, els.resetButton].forEach((control) => {
+                    control.disabled = !hasImage;
+                });
+                els.duplicateButton.disabled = !slot || !state.images.length;
+                els.removeButton.disabled = !hasImage;
+                els.backwardButton.disabled = slotIndex <= 0;
+                els.forwardButton.disabled = slotIndex < 0 || slotIndex >= state.slots.length - 1;
+
+                if (!slot || !hasImage) {
+                    setPairedValue(els.xInput, els.xNumber, 0);
+                    setPairedValue(els.yInput, els.yNumber, 0);
+                    setPairedValue(els.scaleInput, els.scaleNumber, 1);
+                    setPairedValue(els.rotationInput, els.rotationNumber, 0);
+                    els.xValue.textContent = '0%';
+                    els.yValue.textContent = '0%';
+                    els.scaleValue.textContent = '100%';
+                    els.rotationValue.textContent = '0 deg';
+                    return;
+                }
+
+                setPairedValue(els.xInput, els.xNumber, slot.offsetX);
+                setPairedValue(els.yInput, els.yNumber, slot.offsetY);
+                setPairedValue(els.scaleInput, els.scaleNumber, slot.scale);
+                setPairedValue(els.rotationInput, els.rotationNumber, normalizeRotation(slot.rotation));
+                els.xValue.textContent = formatPercent(slot.offsetX, 1);
+                els.yValue.textContent = formatPercent(slot.offsetY, 1);
+                els.scaleValue.textContent = formatPercent(slot.scale * 100, 0);
+                els.rotationValue.textContent = `${Math.round(normalizeRotation(slot.rotation))} deg`;
+            }
+
+            function normalizeRotation(value) {
+                let rotation = value % 360;
+                if (rotation > 180) {
+                    rotation -= 360;
+                }
+                if (rotation < -180) {
+                    rotation += 360;
+                }
+                return rotation;
+            }
+
+            function updateStripControls() {
+                state.strip.y = Number(els.stripYInput.value);
+                state.strip.height = Number(els.stripHeightInput.value);
+                state.layout.gap = Number(els.slotGapInput.value);
+                state.text.bandX = Number(els.bandXInput.value);
+                state.text.albumX = Number(els.albumXInput.value);
+                state.text.bandSize = Number(els.bandSizeInput.value);
+                state.text.albumSize = Number(els.albumSizeInput.value);
+                els.stripYValue.textContent = formatPercent(state.strip.y, state.strip.y % 1 ? 1 : 0);
+                els.stripHeightValue.textContent = formatPercent(state.strip.height, state.strip.height % 1 ? 1 : 0);
+                els.slotGapValue.textContent = formatPercent(state.layout.gap, state.layout.gap % 1 ? 1 : 0);
+                els.bandXValue.textContent = formatPercent(state.text.bandX, state.text.bandX % 1 ? 1 : 0);
+                els.albumXValue.textContent = formatPercent(state.text.albumX, state.text.albumX % 1 ? 1 : 0);
+                els.bandSizeValue.textContent = formatPercent(state.text.bandSize, 1);
+                els.albumSizeValue.textContent = formatPercent(state.text.albumSize, 1);
+                render();
+            }
+
+            function updateSelectedSlotFromInputs() {
+                const slot = selectedSlot();
+                if (!slot || !slot.imageId) {
+                    return;
+                }
+
+                slot.offsetX = Number(els.xInput.value);
+                slot.offsetY = Number(els.yInput.value);
+                slot.scale = Number(els.scaleInput.value);
+                slot.rotation = Number(els.rotationInput.value);
+                render();
+            }
+
+            function selectSlot(id) {
+                if (state.slots.some((slot) => slot.id === id)) {
+                    state.selectedSlotId = id;
+                    render();
+                }
+            }
+
+            function assignImageToSelectedSlot(imageId) {
+                const slot = selectedSlot();
+                if (!slot) {
+                    return;
+                }
+
+                if (slot.imageId !== imageId) {
+                    slot.imageId = imageId || null;
+                    resetSlotTransform(slot);
+                }
+                setStatus(imageId ? `${slot.label} assigned` : `${slot.label} cleared`);
+                render();
+            }
+
+            function clearSelectedSlot() {
+                const slot = selectedSlot();
+                if (!slot) {
+                    return;
+                }
+
+                slot.imageId = null;
+                resetSlotTransform(slot);
+                setStatus(`${slot.label} cleared`);
+                render();
+            }
+
+            function cycleSelectedSlotImage() {
+                const slot = selectedSlot();
+                if (!slot || !state.images.length) {
+                    return;
+                }
+
+                const currentIndex = state.images.findIndex((image) => image.id === slot.imageId);
+                const nextImage = state.images[(currentIndex + 1 + state.images.length) % state.images.length];
+                slot.imageId = nextImage.id;
+                resetSlotTransform(slot);
+                setStatus(`${slot.label}: ${nextImage.fileName}`);
+                render();
+            }
+
+            function clearAll() {
+                const urls = new Set(state.images.map((image) => image.url));
+                urls.forEach((url) => URL.revokeObjectURL(url));
+                state.images = [];
+                state.slots.forEach((slot) => {
+                    slot.imageId = null;
+                    resetSlotTransform(slot);
+                });
+                setStatus('All images cleared');
+                render();
+            }
+
+            function selectAdjacentSlot(direction) {
+                const slot = selectedSlot();
+                const index = state.slots.indexOf(slot);
+                const next = state.slots[clamp(index + direction, 0, state.slots.length - 1)];
+                if (next) {
+                    state.selectedSlotId = next.id;
+                    render();
+                }
+            }
+
+            function centerSelectedSlot() {
+                const slot = selectedSlot();
+                if (!slot || !slot.imageId) {
+                    return;
+                }
+
+                slot.offsetX = 0;
+                slot.offsetY = 0;
+                render();
+            }
+
+            function fitSelectedSlot() {
+                const slot = selectedSlot();
+                if (!slot || !slot.imageId) {
+                    return;
+                }
+
+                slot.offsetX = 0;
+                slot.offsetY = 0;
+                slot.scale = 1;
+                slot.rotation = 0;
+                render();
+            }
+
+            function resetSelectedSlot() {
+                const slot = selectedSlot();
+                if (!slot || !slot.imageId) {
+                    return;
+                }
+
+                resetSlotTransform(slot);
+                render();
+            }
+
+            function beginPointer(event) {
+                const slotNode = event.target.closest('.slot');
+                if (!slotNode) {
+                    return;
+                }
+
+                const slot = state.slots.find((item) => item.id === slotNode.dataset.id);
+                if (!slot) {
+                    return;
+                }
+
+                event.preventDefault();
+                state.selectedSlotId = slot.id;
+
+                if (!slot.imageId) {
+                    render();
+                    return;
+                }
+
+                const rect = slotNode.getBoundingClientRect();
+                const center = {
+                    x: rect.left + rect.width * (0.5 + slot.offsetX / 100),
+                    y: rect.top + rect.height * (0.5 + slot.offsetY / 100)
+                };
+                const action = event.target.dataset.handle || 'move';
+                const startAngle = Math.atan2(event.clientY - center.y, event.clientX - center.x) * 180 / Math.PI;
+                const startDistance = Math.hypot(event.clientX - center.x, event.clientY - center.y);
+
+                activePointer = {
+                    pointerId: event.pointerId,
+                    action,
+                    slot,
+                    rect,
+                    startClientX: event.clientX,
+                    startClientY: event.clientY,
+                    startOffsetX: slot.offsetX,
+                    startOffsetY: slot.offsetY,
+                    startScale: slot.scale,
+                    startRotation: slot.rotation,
+                    center,
+                    startAngle,
+                    startDistance: Math.max(12, startDistance)
+                };
+
+                slotNode.setPointerCapture(event.pointerId);
+                render();
+            }
+
+            function movePointer(event) {
+                if (!activePointer || event.pointerId !== activePointer.pointerId) {
+                    return;
+                }
+
+                event.preventDefault();
+                const slot = activePointer.slot;
+
+                if (activePointer.action === 'move') {
+                    const dx = ((event.clientX - activePointer.startClientX) / activePointer.rect.width) * 100;
+                    const dy = ((event.clientY - activePointer.startClientY) / activePointer.rect.height) * 100;
+                    slot.offsetX = clamp(activePointer.startOffsetX + dx, -70, 70);
+                    slot.offsetY = clamp(activePointer.startOffsetY + dy, -70, 70);
+                } else if (activePointer.action === 'scale') {
+                    const distance = Math.hypot(event.clientX - activePointer.center.x, event.clientY - activePointer.center.y);
+                    slot.scale = clamp(activePointer.startScale * (distance / activePointer.startDistance), 0.1, 4);
+                } else if (activePointer.action === 'rotate') {
+                    const angle = Math.atan2(event.clientY - activePointer.center.y, event.clientX - activePointer.center.x) * 180 / Math.PI;
+                    slot.rotation = normalizeRotation(activePointer.startRotation + angle - activePointer.startAngle);
+                }
+
+                queueRender();
+            }
+
+            function endPointer(event) {
+                if (!activePointer || event.pointerId !== activePointer.pointerId) {
+                    return;
+                }
+
+                activePointer = null;
+                render();
+            }
+
+            function handleKeydown(event) {
+                const slot = selectedSlot();
+                const tagName = document.activeElement ? document.activeElement.tagName : '';
+                const inField = ['INPUT', 'TEXTAREA', 'SELECT'].includes(tagName);
+                if (!slot || inField) {
+                    return;
+                }
+
+                if ((event.key === 'Delete' || event.key === 'Backspace') && slot.imageId) {
+                    event.preventDefault();
+                    clearSelectedSlot();
+                    return;
+                }
+
+                if (!slot.imageId) {
+                    return;
+                }
+
+                const step = event.shiftKey ? 4 : 1;
+                if (event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    slot.offsetX = clamp(slot.offsetX - step, -70, 70);
+                    render();
+                } else if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    slot.offsetX = clamp(slot.offsetX + step, -70, 70);
+                    render();
+                } else if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    slot.offsetY = clamp(slot.offsetY - step, -70, 70);
+                    render();
+                } else if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    slot.offsetY = clamp(slot.offsetY + step, -70, 70);
+                    render();
+                }
+            }
+
+            async function loadFonts() {
+                if (!document.fonts) {
+                    return;
+                }
+
+                await Promise.allSettled([
+                    document.fonts.load('180px Astrella'),
+                    document.fonts.load('84px UniversCnRg')
+                ]);
+                await document.fonts.ready;
+            }
+
+            function setCanvasFont(ctx, size, family) {
+                ctx.font = `${size}px "${family}", Arial, Helvetica, sans-serif`;
+            }
+
+            function fitCanvasText(ctx, text, startingSize, family, maxWidth, minimumSize) {
+                let size = startingSize;
+                setCanvasFont(ctx, size, family);
+                while (ctx.measureText(text).width > maxWidth && size > minimumSize) {
+                    size *= 0.96;
+                    setCanvasFont(ctx, size, family);
+                }
+                return size;
+            }
+
+            function drawSlot(ctx, slot, size) {
+                const image = imageById(slot.imageId);
+                const rect = slotRect(slot, size);
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(rect.x, rect.y, rect.width, rect.height);
+                ctx.clip();
+
+                if (image) {
+                    const dims = slotFrameDimensions(slot, image, size);
+                    const centerX = rect.x + rect.width * (0.5 + slot.offsetX / 100);
+                    const centerY = rect.y + rect.height * (0.5 + slot.offsetY / 100);
+                    ctx.translate(centerX, centerY);
+                    ctx.rotate(slot.rotation * Math.PI / 180);
+                    ctx.drawImage(image.image, -dims.width / 2, -dims.height / 2, dims.width, dims.height);
+                }
+
+                ctx.restore();
+            }
+
+            function drawTitleStrip(ctx, size) {
+                const stripHeight = size * (state.strip.height / 100);
+                const stripCenter = size * (state.strip.y / 100);
+                const stripTop = stripCenter - stripHeight / 2;
+                const textY = stripCenter;
+                const bandText = (state.text.band || '').toUpperCase();
+                const albumText = (state.text.album || '').toUpperCase();
+
+                ctx.save();
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, stripTop, size, stripHeight);
+                ctx.fillStyle = '#111111';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                fitCanvasText(ctx, bandText, size * (state.text.bandSize / 100), 'Astrella', maxTextWidthForX(state.text.bandX, size), size * 0.012);
+                ctx.fillText(bandText, size * (state.text.bandX / 100), textY);
+
+                fitCanvasText(ctx, albumText, size * (state.text.albumSize / 100), 'UniversCnRg', maxTextWidthForX(state.text.albumX, size), size * 0.008);
+                ctx.fillText(albumText, size * (state.text.albumX / 100), textY);
+                ctx.restore();
+            }
+
+            async function exportPng() {
+                const size = clamp(Number(els.sizeInput.value) || 3000, 1000, 9000);
+                els.sizeInput.value = String(size);
+                setStatus(`Rendering ${size} x ${size}`);
+                els.exportButton.disabled = true;
+
+                await loadFonts();
+
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d', { alpha: false });
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.fillStyle = state.background;
+                ctx.fillRect(0, 0, size, size);
+
+                state.slots.forEach((slot) => drawSlot(ctx, slot, size));
+                drawTitleStrip(ctx, size);
+
+                canvas.toBlob((blob) => {
+                    els.exportButton.disabled = false;
+                    if (!blob) {
+                        setStatus('Export failed');
+                        return;
+                    }
+
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    const safeAlbum = (state.text.album || 'cover').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'cover';
+                    link.href = url;
+                    link.download = `${safeAlbum}-${size}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    setStatus(`Exported ${size} x ${size} PNG`);
+                }, 'image/png');
+            }
+
+            function bindEvents() {
+                els.folderButton.addEventListener('click', () => els.folderInput.click());
+                els.fileButton.addEventListener('click', () => els.fileInput.click());
+                els.folderInput.addEventListener('change', (event) => {
+                    addFiles(event.target.files);
+                    event.target.value = '';
+                });
+                els.fileInput.addEventListener('change', (event) => {
+                    addFiles(event.target.files);
+                    event.target.value = '';
+                });
+                els.shuffleButton.addEventListener('click', autoFillSlots);
+                els.clearButton.addEventListener('click', clearAll);
+                els.exportButton.addEventListener('click', exportPng);
+
+                els.bandInput.addEventListener('input', () => {
+                    state.text.band = els.bandInput.value;
+                    renderStrip();
+                });
+                els.albumInput.addEventListener('input', () => {
+                    state.text.album = els.albumInput.value;
+                    renderStrip();
+                });
+                bindSliderNumber(els.stripYInput, els.stripYNumber, updateStripControls);
+                bindSliderNumber(els.stripHeightInput, els.stripHeightNumber, updateStripControls);
+                bindSliderNumber(els.slotGapInput, els.slotGapNumber, updateStripControls);
+                bindSliderNumber(els.bandXInput, els.bandXNumber, updateStripControls);
+                bindSliderNumber(els.albumXInput, els.albumXNumber, updateStripControls);
+                bindSliderNumber(els.bandSizeInput, els.bandSizeNumber, updateStripControls);
+                bindSliderNumber(els.albumSizeInput, els.albumSizeNumber, updateStripControls);
+                els.backgroundInput.addEventListener('input', () => {
+                    state.background = els.backgroundInput.value;
+                    renderStage();
+                });
+                els.slotImageSelect.addEventListener('change', () => {
+                    assignImageToSelectedSlot(els.slotImageSelect.value);
+                });
+                bindSliderNumber(els.xInput, els.xNumber, updateSelectedSlotFromInputs);
+                bindSliderNumber(els.yInput, els.yNumber, updateSelectedSlotFromInputs);
+                bindSliderNumber(els.scaleInput, els.scaleNumber, updateSelectedSlotFromInputs);
+                bindSliderNumber(els.rotationInput, els.rotationNumber, updateSelectedSlotFromInputs);
+
+                els.layerList.addEventListener('click', (event) => {
+                    const row = event.target.closest('.layer-row');
+                    if (row) {
+                        selectSlot(row.dataset.id);
+                    }
+                });
+
+                els.layers.addEventListener('pointerdown', beginPointer);
+                document.addEventListener('pointermove', movePointer);
+                document.addEventListener('pointerup', endPointer);
+                document.addEventListener('pointercancel', endPointer);
+                document.addEventListener('keydown', handleKeydown);
+                window.addEventListener('resize', render);
+
+                els.coverStage.addEventListener('dragover', (event) => {
+                    event.preventDefault();
+                    els.coverStage.classList.add('is-dragover');
+                });
+                els.coverStage.addEventListener('dragleave', () => {
+                    els.coverStage.classList.remove('is-dragover');
+                });
+                els.coverStage.addEventListener('drop', (event) => {
+                    event.preventDefault();
+                    els.coverStage.classList.remove('is-dragover');
+                    addFiles(event.dataTransfer.files);
+                });
+
+                els.backwardButton.addEventListener('click', () => selectAdjacentSlot(-1));
+                els.forwardButton.addEventListener('click', () => selectAdjacentSlot(1));
+                els.duplicateButton.addEventListener('click', cycleSelectedSlotImage);
+                els.removeButton.addEventListener('click', clearSelectedSlot);
+                els.centerButton.addEventListener('click', centerSelectedSlot);
+                els.fillButton.addEventListener('click', fitSelectedSlot);
+                els.resetButton.addEventListener('click', resetSelectedSlot);
+            }
+
+            bindEvents();
+            updateStripControls();
+            loadFonts().then(render).catch(render);
+        })();
+    </script>
+</body>
+</html>
