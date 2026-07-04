@@ -2327,14 +2327,6 @@
 
         <div class="tab-panel" id="tab-credits">
             <section class="credits" aria-labelledby="credits-heading">
-                <div class="credits-header">
-                    <p class="credits-kicker">Album credits</p>
-                    <h2 class="credits-title" id="credits-heading">
-                        <span class="credits-title-line credits-title-line--en">In a Race Against Time</span>
-                        <span class="credits-title-line credits-title-line--mk">Во Трка со Времето</span>
-                    </h2>
-                    <p class="credits-band" id="credits-band">Sioto Jazz</p>
-                </div>
                 <div class="credits-content" id="credits-content"></div>
             </section>
         </div>
@@ -2864,17 +2856,8 @@
     }
 
     function renderAlbumCredits(albumData) {
-        const creditsTitle = document.getElementById('credits-heading');
-        const creditsBand = document.getElementById('credits-band');
         const creditsContent = document.getElementById('credits-content');
         if (!creditsContent) return;
-
-        creditsTitle.innerHTML = `
-            <span class="credits-title-line credits-title-line--en">In a Race Against Time</span>
-            <span class="credits-title-line credits-title-line--mk">Во Трка со Времето</span>
-        `;
-        syncStackedAlbumTitle(creditsTitle);
-        creditsBand.textContent = 'Sioto Jazz';
 
         creditsContent.innerHTML = `
             <section class="credits-language" lang="en" aria-labelledby="credits-english-heading">
