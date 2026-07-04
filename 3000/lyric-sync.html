@@ -3,9 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3000 Lyric Sync Editor</title>
+    <title>In a Race Against Time Во Трка со Времето Lyric Sync Editor</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
     <style>
+        @font-face {
+            font-family: 'Astrella';
+            src: url('../fonts/Astrella.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'UniversCnRg';
+            src: url('resources/UniversCnRg.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
         :root {
             --ink: #202124;
             --muted: #686b73;
@@ -149,8 +161,44 @@
 
         .brand h1 {
             margin: 0;
-            font-size: 23px;
-            line-height: 1.05;
+            font-family: 'UniversCnRg', Inter, "Segoe UI", Arial, sans-serif;
+            font-size: 25px;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .album-title-block {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+        }
+
+        .album-title-line {
+            display: block;
+            white-space: nowrap;
+        }
+
+        .album-title-line--en {
+            font-size: 1em;
+            letter-spacing: 0;
+        }
+
+        .album-title-line--mk {
+            margin-top: 1px;
+            font-size: 0.62em;
+            letter-spacing: 0;
+        }
+
+        .album-tool-label {
+            display: block;
+            margin-top: 5px;
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
         }
 
         .brand p {
@@ -848,7 +896,13 @@
     <div class="sync-app">
         <aside class="sidebar">
             <div class="brand">
-                <h1 id="album-heading">3000 Sync</h1>
+                <h1 id="album-heading">
+                    <span class="album-title-block">
+                        <span class="album-title-line album-title-line--en">In a Race Against Time</span>
+                        <span class="album-title-line album-title-line--mk">Во Трка со Времето</span>
+                    </span>
+                    <span class="album-tool-label">Sync</span>
+                </h1>
                 <p id="source-label">album.json</p>
             </div>
             <div class="file-actions">
@@ -2021,12 +2075,23 @@
 
         function renderAll() {
             if (albumData?.album?.title) {
-                els.albumHeading.textContent = `${albumData.album.title} Sync`;
+                renderAlbumHeading();
             }
             renderTrackList();
             renderTrackHeader();
             renderTimeline();
             renderInspectors();
+        }
+
+        function renderAlbumHeading() {
+            els.albumHeading.innerHTML = `
+                <span class="album-title-block">
+                    <span class="album-title-line album-title-line--en">In a Race Against Time</span>
+                    <span class="album-title-line album-title-line--mk">Во Трка со Времето</span>
+                </span>
+                <span class="album-tool-label">Sync</span>
+            `;
+            syncStackedAlbumTitle(els.albumHeading);
         }
 
         async function loadAudioForTrack(track) {
@@ -2880,6 +2945,30 @@
             renderTrackHeader();
             renderTrackList();
         });
+
+        function syncStackedAlbumTitle(target) {
+            if (!target) return;
+            const english = target.querySelector(".album-title-line--en");
+            const macedonian = target.querySelector(".album-title-line--mk");
+            if (!english || !macedonian) return;
+
+            macedonian.style.letterSpacing = "0px";
+            const letterGaps = Math.max((macedonian.textContent || "").trim().length - 1, 1);
+            const targetWidth = english.getBoundingClientRect().width;
+            let spacing = Math.max(0, (targetWidth - macedonian.getBoundingClientRect().width) / letterGaps);
+            for (let i = 0; i < 3; i += 1) {
+                macedonian.style.letterSpacing = `${spacing}px`;
+                spacing = Math.max(0, spacing + ((targetWidth - macedonian.getBoundingClientRect().width) / letterGaps));
+            }
+            macedonian.style.letterSpacing = `${spacing}px`;
+        }
+
+        const albumHeading = document.getElementById("album-heading");
+        syncStackedAlbumTitle(albumHeading);
+        if (document.fonts?.ready) {
+            document.fonts.ready.then(() => syncStackedAlbumTitle(albumHeading));
+        }
+        window.addEventListener("resize", () => syncStackedAlbumTitle(albumHeading));
 
         renderAll();
         void loadAlbumFromFetch();

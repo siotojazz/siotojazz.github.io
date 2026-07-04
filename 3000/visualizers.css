@@ -12,6 +12,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'UniversCnRg';
+    src: url('resources/UniversCnRg.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 :root {
     --page-bg: #05070a;
     --page-bg-soft: #0c141d;
@@ -94,6 +101,47 @@ a {
 
 .visualizer-eyebrow {
     font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--panel-muted);
+}
+
+.visualizer-eyebrow--album {
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.album-title-block {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    font-family: 'UniversCnRg', Arial, Helvetica, sans-serif;
+    color: var(--panel-text);
+}
+
+.album-title-line {
+    display: block;
+    line-height: 0.95;
+    white-space: nowrap;
+}
+
+.album-title-line--en {
+    font-size: 18px;
+    letter-spacing: 0;
+}
+
+.album-title-line--mk {
+    margin-top: 1px;
+    font-size: 11px;
+    letter-spacing: 0;
+}
+
+.visualizer-tool-label {
+    display: block;
+    margin-top: 7px;
+    font-family: 'Garet', sans-serif;
+    font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--panel-muted);

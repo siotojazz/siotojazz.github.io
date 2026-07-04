@@ -167,8 +167,8 @@ function normalizePitch(data) {
         infoUrl: pitch.infoUrl || '../index.html',
         visualMode: pitch.visualMode || 'moodboard',
         kicker: pitch.kicker || 'Visual album pitch',
-        headline: pitch.headline || data.album?.title || '3000',
-        workingTitleLabel: pitch.workingTitleLabel || 'Working title of the album',
+        headline: pitch.headline || data.album?.title || 'In a Race Against Time Во Трка со Времето',
+        workingTitleLabel: pitch.workingTitleLabel || '',
         subheadline: pitch.subheadline || data.album?.band || 'Sioto Jazz',
         heroTags: Array.isArray(pitch.heroTags) ? pitch.heroTags : [],
         productionPulse: Array.isArray(pitch.productionPulse) ? pitch.productionPulse : [],
@@ -253,12 +253,17 @@ function renderHero(data, pitch, tracks) {
     const label = title.querySelector('#pitch-title-label') || titleLabel;
 
     kicker.textContent = pitch.kicker;
-    if (label) {
+    const englishLine = createElement('span', 'pitch-title-line pitch-title-line--en');
+    const macedonianLine = createElement('span', 'pitch-title-line pitch-title-line--mk');
+    englishLine.textContent = 'In a Race Against Time';
+    macedonianLine.textContent = 'Во Трка со Времето';
+    if (label && pitch.workingTitleLabel) {
         label.textContent = pitch.workingTitleLabel;
-        title.replaceChildren(document.createTextNode(`${pitch.headline} `), label);
+        title.replaceChildren(englishLine, macedonianLine, label);
     } else {
-        title.textContent = `${pitch.headline} ${pitch.workingTitleLabel}`;
+        title.replaceChildren(englishLine, macedonianLine);
     }
+    syncStackedAlbumTitle(title, '.pitch-title-line--en', '.pitch-title-line--mk');
     subtitle.textContent = pitch.subheadline;
 
     const tags = pitch.heroTags.length ? pitch.heroTags : [`${tracks.length} tracks`];
@@ -270,6 +275,36 @@ function renderHero(data, pitch, tracks) {
 
     document.title = `${data.album?.band || 'Sioto Jazz'} - ${pitch.headline} Album Pitch`;
 }
+
+function syncStackedAlbumTitle(target, englishSelector, macedonianSelector) {
+    if (!target) return;
+    const english = target.querySelector(englishSelector);
+    const macedonian = target.querySelector(macedonianSelector);
+    if (!english || !macedonian) return;
+
+    macedonian.style.letterSpacing = '0px';
+    const letterGaps = Math.max((macedonian.textContent || '').trim().length - 1, 1);
+    const targetWidth = english.getBoundingClientRect().width;
+    let spacing = Math.max(0, (targetWidth - macedonian.getBoundingClientRect().width) / letterGaps);
+    for (let i = 0; i < 3; i += 1) {
+        macedonian.style.letterSpacing = `${spacing}px`;
+        spacing = Math.max(0, spacing + ((targetWidth - macedonian.getBoundingClientRect().width) / letterGaps));
+    }
+    macedonian.style.letterSpacing = `${spacing}px`;
+}
+
+if (document.fonts?.ready) {
+    document.fonts.ready.then(() => syncStackedAlbumTitle(
+        document.getElementById('pitch-title'),
+        '.pitch-title-line--en',
+        '.pitch-title-line--mk'
+    ));
+}
+window.addEventListener('resize', () => syncStackedAlbumTitle(
+    document.getElementById('pitch-title'),
+    '.pitch-title-line--en',
+    '.pitch-title-line--mk'
+));
 
 function renderBandProfile(pitch) {
     if (!bandProfile) return;

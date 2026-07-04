@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sioto Jazz - 3000</title>
+    <title>Sioto Jazz - In a Race Against Time Во Трка со Времето</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" />
     <style>
@@ -16,6 +16,12 @@
         @font-face {
             font-family: 'Garet';
             src: url('../fonts/Garet.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'UniversCnRg';
+            src: url('resources/UniversCnRg.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
@@ -86,9 +92,30 @@
         span#album-title {
             font-weight: 100;
             color: #fff;
-            font-family: "Garet", sans-serif;
-            display: inline-block !important;
+            font-family: 'UniversCnRg', Arial, Helvetica, sans-serif;
+            display: inline-flex !important;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 0;
             margin-left: 10px;
+            vertical-align: middle;
+        }
+        .album-title-line {
+            display: block;
+            line-height: 0.92;
+            white-space: nowrap;
+        }
+        .album-title-line--en {
+            font-size: 26px;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+        .album-title-line--mk {
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 0;
+            opacity: 0.92;
         }
         span#album-band {
             color: #fff;
@@ -1741,7 +1768,7 @@
                 <div class="telemetry-header">
                     <div>
                         <p class="telemetry-kicker">Album telemetry</p>
-                        <h2 id="telemetry-heading">3000 system readout</h2>
+                        <h2 id="telemetry-heading">In a Race Against Time Во Трка со Времето system readout</h2>
                     </div>
                     <p class="telemetry-status" id="telemetry-status" aria-live="polite">Scanning master durations...</p>
                 </div>
@@ -1964,8 +1991,12 @@
     if (Array.isArray(data.tracks)) {
         data.tracks.sort((a, b) => (a.id || 9999) - (b.id || 9999));
     }
-    document.getElementById('album-title').textContent = data.album.title;
+    document.getElementById('album-title').innerHTML = `
+        <span class="album-title-line album-title-line--en">In a Race Against Time</span>
+        <span class="album-title-line album-title-line--mk">Во Трка со Времето</span>
+    `;
     document.getElementById('album-band').textContent = data.album.band;
+    syncStackedAlbumTitle(document.getElementById('album-title'));
 
     const chordMap = new Map(data.chords.map(chordObj => {
         const chordName = Object.keys(chordObj)[0];
@@ -2034,6 +2065,29 @@
 
         return diagram;
     }
+
+    function syncStackedAlbumTitle(target) {
+        if (!target) return;
+        const english = target.querySelector('.album-title-line--en');
+        const macedonian = target.querySelector('.album-title-line--mk');
+        if (!english || !macedonian) return;
+
+        macedonian.style.letterSpacing = '0px';
+        const letterGaps = Math.max((macedonian.textContent || '').trim().length - 1, 1);
+        const targetWidth = english.getBoundingClientRect().width;
+        let spacing = Math.max(0, (targetWidth - macedonian.getBoundingClientRect().width) / letterGaps);
+        for (let i = 0; i < 3; i += 1) {
+            macedonian.style.letterSpacing = `${spacing}px`;
+            spacing = Math.max(0, spacing + ((targetWidth - macedonian.getBoundingClientRect().width) / letterGaps));
+        }
+        macedonian.style.letterSpacing = `${spacing}px`;
+    }
+
+    const resyncAlbumTitles = () => syncStackedAlbumTitle(document.getElementById('album-title'));
+    if (document.fonts?.ready) {
+        document.fonts.ready.then(resyncAlbumTitles);
+    }
+    window.addEventListener('resize', resyncAlbumTitles);
 
     function getTrackStatusLabel(status) {
         return typeof status === 'string' ? status.trim().replace(/\s+/g, ' ') : '';

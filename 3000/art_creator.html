@@ -478,6 +478,25 @@
             line-height: 1;
         }
 
+        .strip-album-title-block {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+            line-height: 0.95;
+        }
+
+        .strip-album-title-line {
+            display: block;
+            white-space: nowrap;
+        }
+
+        .strip-album-title-line--mk {
+            margin-top: 1px;
+            font-size: 0.62em;
+            letter-spacing: 0;
+        }
+
         .empty-note {
             position: absolute;
             inset: 0;
@@ -666,7 +685,7 @@
                     </div>
                     <div class="field">
                         <label for="albumInput">Album name</label>
-                        <input id="albumInput" type="text" value="3000" autocomplete="off">
+                        <input id="albumInput" type="text" value="In a Race Against Time Во Трка со Времето" autocomplete="off">
                     </div>
                 </section>
 
@@ -775,7 +794,7 @@
                     <div id="titleStrip" class="title-strip">
                         <div class="title-text">
                             <span id="stripBand" class="strip-band">SIOTO JAZZ</span>
-                            <span id="stripAlbum" class="strip-album">3000</span>
+                            <span id="stripAlbum" class="strip-album">In a Race Against Time Во Трка со Времето</span>
                         </div>
                     </div>
                     <div id="emptyNote" class="empty-note">
@@ -868,7 +887,7 @@
                 },
                 text: {
                     band: 'SIOTO JAZZ',
-                    album: '3000',
+                    album: 'In a Race Against Time Во Трка со Времето',
                     bandSize: 7.2,
                     albumSize: 2.8
                 }
@@ -1162,13 +1181,42 @@
                 els.titleStrip.style.height = `${state.strip.height}%`;
                 els.titleStrip.style.transform = 'translateY(-50%)';
                 els.stripBand.textContent = state.text.band || ' ';
-                els.stripAlbum.textContent = state.text.album || ' ';
+                renderAlbumTitleBlock(els.stripAlbum, state.text.album);
                 els.stripBand.style.fontSize = `${stageSize * (state.text.bandSize / 100)}px`;
                 els.stripAlbum.style.fontSize = `${stageSize * (state.text.albumSize / 100)}px`;
                 els.titleStrip.querySelector('.title-text').style.gap = `${Math.max(1, stripHeight * 0.035)}px`;
 
                 fitDomText(els.stripBand, stageSize * 0.84, stageSize * (state.text.bandSize / 100), 12);
                 fitDomText(els.stripAlbum, stageSize * 0.84, stageSize * (state.text.albumSize / 100), 10);
+                syncStripAlbumTitle(els.stripAlbum);
+            }
+
+            function renderAlbumTitleBlock(target, value) {
+                if ((value || '').includes('Во Трка со Времето')) {
+                    target.innerHTML = `
+                        <span class="strip-album-title-block">
+                            <span class="strip-album-title-line strip-album-title-line--en">In a Race Against Time</span>
+                            <span class="strip-album-title-line strip-album-title-line--mk">Во Трка со Времето</span>
+                        </span>
+                    `;
+                } else {
+                    target.textContent = value || ' ';
+                }
+            }
+
+            function syncStripAlbumTitle(target) {
+                const english = target.querySelector('.strip-album-title-line--en');
+                const macedonian = target.querySelector('.strip-album-title-line--mk');
+                if (!english || !macedonian) return;
+                macedonian.style.letterSpacing = '0px';
+                const letterGaps = Math.max((macedonian.textContent || '').trim().length - 1, 1);
+                const targetWidth = english.getBoundingClientRect().width;
+                let spacing = Math.max(0, (targetWidth - macedonian.getBoundingClientRect().width) / letterGaps);
+                for (let i = 0; i < 3; i += 1) {
+                    macedonian.style.letterSpacing = `${spacing}px`;
+                    spacing = Math.max(0, spacing + ((targetWidth - macedonian.getBoundingClientRect().width) / letterGaps));
+                }
+                macedonian.style.letterSpacing = `${spacing}px`;
             }
 
             function fitDomText(element, maxWidth, startingSize, minimumSize) {
@@ -1731,7 +1779,7 @@
                 },
                 text: {
                     band: 'SIOTO JAZZ',
-                    album: '3000',
+                    album: 'In a Race Against Time Во Трка со Времето',
                     bandX: 37,
                     albumX: 67,
                     bandSize: 7.2,
@@ -2114,7 +2162,7 @@
                 els.titleStrip.style.height = `${state.strip.height}%`;
                 els.titleStrip.style.transform = 'translateY(-50%)';
                 els.stripBand.textContent = state.text.band || ' ';
-                els.stripAlbum.textContent = state.text.album || ' ';
+                renderAlbumTitleBlock(els.stripAlbum, state.text.album);
                 els.stripBand.style.left = `${state.text.bandX}%`;
                 els.stripAlbum.style.left = `${state.text.albumX}%`;
                 els.stripBand.style.fontSize = `${stageSize * (state.text.bandSize / 100)}px`;
@@ -2122,12 +2170,41 @@
 
                 fitDomText(els.stripBand, maxTextWidthForX(state.text.bandX, stageSize), stageSize * (state.text.bandSize / 100), 12);
                 fitDomText(els.stripAlbum, maxTextWidthForX(state.text.albumX, stageSize), stageSize * (state.text.albumSize / 100), 10);
+                syncStripAlbumTitle(els.stripAlbum);
                 els.titleStrip.style.minHeight = `${Math.max(24, stripHeight)}px`;
             }
 
             function maxTextWidthForX(x, stageSize) {
                 const edgeRoom = Math.min(x, 100 - x) / 100 * stageSize * 2 - stageSize * 0.04;
                 return clamp(edgeRoom, stageSize * 0.14, stageSize * 0.52);
+            }
+
+            function renderAlbumTitleBlock(target, value) {
+                if ((value || '').includes('Во Трка со Времето')) {
+                    target.innerHTML = `
+                        <span class="strip-album-title-block">
+                            <span class="strip-album-title-line strip-album-title-line--en">In a Race Against Time</span>
+                            <span class="strip-album-title-line strip-album-title-line--mk">Во Трка со Времето</span>
+                        </span>
+                    `;
+                } else {
+                    target.textContent = value || ' ';
+                }
+            }
+
+            function syncStripAlbumTitle(target) {
+                const english = target.querySelector('.strip-album-title-line--en');
+                const macedonian = target.querySelector('.strip-album-title-line--mk');
+                if (!english || !macedonian) return;
+                macedonian.style.letterSpacing = '0px';
+                const letterGaps = Math.max((macedonian.textContent || '').trim().length - 1, 1);
+                const targetWidth = english.getBoundingClientRect().width;
+                let spacing = Math.max(0, (targetWidth - macedonian.getBoundingClientRect().width) / letterGaps);
+                for (let i = 0; i < 3; i += 1) {
+                    macedonian.style.letterSpacing = `${spacing}px`;
+                    spacing = Math.max(0, spacing + ((targetWidth - macedonian.getBoundingClientRect().width) / letterGaps));
+                }
+                macedonian.style.letterSpacing = `${spacing}px`;
             }
 
             function fitDomText(element, maxWidth, startingSize, minimumSize) {

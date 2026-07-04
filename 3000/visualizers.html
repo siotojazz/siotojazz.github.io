@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3000 Visualizer Studio</title>
-    <link rel="stylesheet" href="visualizers.css">
+    <title>In a Race Against Time Во Трка со Времето Visualizer Studio</title>
+    <link rel="stylesheet" href="visualizers.css?v=title-block">
 </head>
 <body class="visualizer-app-page">
     <div class="visualizer-app-shell">
         <aside class="visualizer-rail">
             <div class="visualizer-rail__header">
-                <div class="visualizer-eyebrow">3000 / Visualizer Studio</div>
+                <div class="visualizer-eyebrow visualizer-eyebrow--album">
+                    <span class="album-title-block">
+                        <span class="album-title-line album-title-line--en">In a Race Against Time</span>
+                        <span class="album-title-line album-title-line--mk">Во Трка со Времето</span>
+                    </span>
+                    <span class="visualizer-tool-label">Visualizer Studio</span>
+                </div>
                 <h1 class="visualizer-heading">Seeded video masks for every track on the record.</h1>
                 <p class="visualizer-copy">Each song gets one deterministic background video, a Tycho-leaning stack of inset rectangles, and synced lyrics driven from the album timing data.</p>
             </div>
@@ -71,6 +77,31 @@
 
     <audio id="visualizer-audio" preload="metadata"></audio>
 
+    <script>
+        function syncStackedAlbumTitle(target) {
+            if (!target) return;
+            const english = target.querySelector('.album-title-line--en');
+            const macedonian = target.querySelector('.album-title-line--mk');
+            if (!english || !macedonian) return;
+
+            macedonian.style.letterSpacing = '0px';
+            const letterGaps = Math.max((macedonian.textContent || '').trim().length - 1, 1);
+            const targetWidth = english.getBoundingClientRect().width;
+            let spacing = Math.max(0, (targetWidth - macedonian.getBoundingClientRect().width) / letterGaps);
+            for (let i = 0; i < 3; i += 1) {
+                macedonian.style.letterSpacing = `${spacing}px`;
+                spacing = Math.max(0, spacing + ((targetWidth - macedonian.getBoundingClientRect().width) / letterGaps));
+            }
+            macedonian.style.letterSpacing = `${spacing}px`;
+        }
+
+        const visualizerAlbumTitle = document.querySelector('.visualizer-eyebrow--album .album-title-block');
+        syncStackedAlbumTitle(visualizerAlbumTitle);
+        if (document.fonts?.ready) {
+            document.fonts.ready.then(() => syncStackedAlbumTitle(visualizerAlbumTitle));
+        }
+        window.addEventListener('resize', () => syncStackedAlbumTitle(visualizerAlbumTitle));
+    </script>
     <script type="module" src="js/visualizer-page.js"></script>
 </body>
 </html>

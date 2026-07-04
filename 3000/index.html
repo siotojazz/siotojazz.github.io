@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sioto Jazz - 3000</title>
+    <title>Sioto Jazz - In a Race Against Time Во Трка со Времето</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" />
     <style>
@@ -16,6 +16,12 @@
         @font-face {
             font-family: 'Garet';
             src: url('../fonts/Garet.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'UniversCnRg';
+            src: url('resources/UniversCnRg.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
@@ -77,22 +83,66 @@
             letter-spacing: -0.5px;
             background:
                 radial-gradient(circle at 82% 8%, rgba(var(--club-blue-bright-rgb), 0.58), rgba(var(--club-blue-bright-rgb), 0) 31%),
-                linear-gradient(135deg, rgba(var(--club-blue-night-rgb), 0.2) 0%, rgba(var(--club-blue-bright-rgb), 0.26) 38%, rgba(var(--club-blue-rgb), 0.34) 68%, rgba(var(--club-blue-deep-rgb), 0.18) 100%),
-                url('resources/background.png') center center / cover no-repeat fixed;
+                linear-gradient(135deg, rgba(var(--club-blue-night-rgb), 0.42) 0%, rgba(var(--club-blue-bright-rgb), 0.34) 38%, rgba(var(--club-blue-rgb), 0.42) 68%, rgba(var(--club-blue-deep-rgb), 0.28) 100%);
             background-color: var(--club-blue-strong);
             color: var(--club-blue-strong);
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
+            align-items: stretch;
             -webkit-text-size-adjust: 100%;
             overflow: hidden;
             height: 100vh;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: -44px;
+            z-index: -2;
+            background: url('resources/background.jpg') center center no-repeat;
+            filter: blur(0px);
+            transform: scale(1.06);
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            /* background:
+                radial-gradient(circle at 18% 18%, rgba(var(--club-blue-bright-rgb), 0.36), transparent 34%),
+                linear-gradient(135deg, rgba(var(--club-blue-night-rgb), 0.58), rgba(var(--club-blue-rgb), 0.42) 52%, rgba(var(--club-blue-deep-rgb), 0.5)); */
+            pointer-events: none;
         }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+        .album-listening-shell {
+            width: min(100vw, 760px);
+            height: 100vh;
+            display: flex;
+            justify-content: end;
+            align-items: stretch;
+            padding: 10px 60px 0 10px;
+        }
+        .player-cover {
+            flex: 0 0 33.333%;
+            width: 33.333%;
+            align-self: stretch;
+            min-height: 0;
+            background: rgba(var(--club-blue-night-rgb), 0.18);
+            box-shadow:
+                inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+                0 10px 26px rgba(var(--club-blue-night-rgb), 0.16);
+        }
+        .player-cover img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .app-container {
             max-width: 700px;
@@ -100,13 +150,17 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            padding: 10px 60px 0 10px;
+            padding: 0;
             position: relative;
             isolation: isolate;
         }
         .app-container.telemetry-expanded {
             max-width: none;
-            padding: 10px 10px 0 10px;
+            padding: 0;
+        }
+        .album-listening-shell:has(.app-container.telemetry-expanded) {
+            width: 100vw;
+            padding-right: 10px;
         }
         header {
             display: flex;
@@ -126,10 +180,31 @@
         span#album-title {
             font-weight: 100;
             color: #fff;
-            font-family: "Garet", sans-serif;
-            display: inline-block !important;
+            font-family: 'UniversCnRg', Arial, Helvetica, sans-serif;
+            display: inline-flex !important;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 0;
             margin-left: 10px;
+            vertical-align: middle;
             text-shadow: 0 8px 24px rgba(var(--club-blue-rgb), 0.32);
+        }
+        .album-title-line {
+            display: block;
+            line-height: 0.92;
+            white-space: nowrap;
+        }
+        .album-title-line--en {
+            font-size: 26px;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+        .album-title-line--mk {
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 0;
+            opacity: 0.92;
         }
         span#album-band {
             color: #fff;
@@ -492,17 +567,88 @@
             backdrop-filter: blur(20px);
             width: 100%;
             padding: 0;
+            display: flex;
+            align-items: stretch;
             transition: all 0.3s ease;
             position: relative;
             z-index: 1;
             flex-shrink: 0;
             box-shadow: 0 -10px 24px rgba(var(--club-blue-rgb), 0.08);
         }
+        .player-main {
+            min-width: 0;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
         .player-basic .player-controls {
-            padding: 8px;
+            padding: 8px 8px 4px;
         }
         .player-basic .seek-bar-container {
-            padding: 0 8px 10px 8px;
+            padding: 2px 8px 5px;
+        }
+        .live-lyrics {
+            flex: 1 1 auto;
+            min-height: 80px;
+            padding: 2px 14px 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1px;
+            color: var(--club-blue-strong);
+            mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+            -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+        }
+        .live-lyrics-line {
+            min-height: 13px;
+            width: 100%;
+            font-size: 11px;
+            line-height: 1.18;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            cursor: pointer;
+            opacity: 0.42;
+            transform: translate3d(0, 0, 0) scale(0.98);
+            transition: opacity 0.34s ease, transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), color 0.34s ease;
+            will-change: opacity, transform;
+        }
+        .live-lyrics-line.is-near {
+            opacity: 0.62;
+        }
+        .live-lyrics-line.is-active {
+            min-height: 18px;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.25;
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+            color: var(--club-blue-night);
+        }
+        .live-lyrics-line:hover {
+            opacity: 0.9;
+            color: var(--club-blue);
+        }
+        .live-lyrics.is-changing .live-lyrics-line {
+            animation: live-lyric-shift 0.44s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        @keyframes live-lyric-shift {
+            0% {
+                opacity: 0;
+                transform: translate3d(0, 9px, 0) scale(0.985);
+                filter: blur(3px);
+            }
+            55% {
+                filter: blur(0);
+            }
+            100% {
+                opacity: var(--live-lyric-opacity, 0.48);
+                transform: translate3d(0, 0, 0) scale(var(--live-lyric-scale, 0.98));
+                filter: blur(0);
+            }
         }
         .player-wrap {
             width: 100%;
@@ -530,6 +676,7 @@
             align-items: center;
             flex-wrap: nowrap;
             gap: 12px;
+            justify-content: space-between;
         }
         .transport-buttons {
             display: inline-flex;
@@ -924,6 +1071,72 @@
         }
         .lyrics-line.passed {
             opacity: 0.56;
+        }
+        .credits {
+            min-height: 100%;
+            padding: 10px 13px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 255, 0.97) 52%, rgba(230, 237, 255, 0.92) 100%),
+                repeating-linear-gradient(0deg, rgba(var(--club-blue-rgb), 0.045) 0 1px, transparent 1px 34px);
+            color: var(--club-blue-strong);
+            font-family: 'Garet', Arial, sans-serif;
+        }
+        .credits-header {
+            margin-bottom: 6px;
+        }
+        .credits-kicker {
+            margin: 0 0 2px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            opacity: 0.66;
+        }
+        .credits-title {
+            margin: 0;
+            max-width: max-content;
+            font-family: 'UniversCnRg', Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            line-height: 1.2;
+            font-weight: 400;
+        }
+        .credits-title-line {
+            display: block;
+        }
+        .credits-title-line--en {
+            font-size: 14px;
+            line-height: 1.12;
+        }
+        .credits-title-line--mk {
+            margin-top: 1px;
+            font-size: 10px;
+            line-height: 1.2;
+            letter-spacing: 0;
+        }
+        .credits-band {
+            display: none;
+        }
+        .credits-language {
+            margin: 0;
+        }
+        .credits-language-title {
+            display: none;
+        }
+        .credits-copy {
+            max-width: 78ch;
+            font-size: 10.5px;
+            line-height: 1.3;
+        }
+        .credits-copy p {
+            margin: 0 0 4px;
+        }
+        .credits-divider {
+            width: 100%;
+            max-width: 78ch;
+            height: 1px;
+            margin: 7px 0 8px;
+            border: 0;
+            background: linear-gradient(90deg, rgba(var(--club-blue-deep-rgb), 0.72), rgba(var(--club-blue-rgb), 0.32), transparent);
         }
         .structure-chord {
             display: block;
@@ -1807,8 +2020,24 @@
 
         /* ── Responsive ── */
         @media (max-width: 768px) {
+            body {
+                overflow: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+            .album-listening-shell {
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                padding: 10px;
+            }
+            .player-cover {
+                flex-basis: 33.333%;
+                width: 33.333%;
+            }
             .app-container {
-                padding-right: 10px;
+                min-height: 0;
+                height: calc(100vh - 10px);
             }
             .title-container {
                 font-size: 24px;
@@ -1872,6 +2101,15 @@
             .current-info { font-size: 20px; }
             .current-lyric { font-size: 16px; }
             .lyrics, .structure, .lyrics h4, .structure h4, .tempo-info, .section-label { font-size: 16px; }
+            .credits {
+                padding: 10px;
+            }
+            .credits-title {
+                font-size: 13px;
+            }
+            .credits-copy {
+                font-size: 10.5px;
+            }
             .player-timeline { font-size: 16px; }
             .moodboard-grid { grid-template-columns: 1fr; }
             .tab-btn {
@@ -2020,29 +2258,27 @@
     </style>
 </head>
 <body>
+    <main class="album-listening-shell">
     <div class="app-container">
-    <header>
-        <div class="title-container">
-            <span id="album-band"></span><span id="album-title"></span>
-        </div>
-    </header>
-
     <div class="player-basic" id="player-basic">
-        <div class="current-song-name" id="current-song-name"></div>
-        <div class="player-controls">
-            <div class="transport-buttons" aria-label="Playback controls">
-                <button class="track-nav-btn prev-track-btn" disabled aria-label="Previous song"><i class="fa-solid fa-backward-step" aria-hidden="true"></i></button>
-                <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
-                <button class="track-nav-btn next-track-btn" disabled aria-label="Next song"><i class="fa-solid fa-forward-step" aria-hidden="true"></i></button>
-            </div>
-            <div class="current-info">
-                <span class="current-lyric"></span>
-            </div>
-            <span class="player-timeline">0:00 / 0:00</span>
+        <div class="player-cover" aria-label="Album cover">
+            <img src="album_cover.png" alt="Sioto Jazz album cover">
         </div>
-        <div class="seek-bar-container">
-            <canvas id="seek-gl" width="600" height="16"></canvas>
-            <div class="seek-section-tooltip" id="seek-section-tooltip" role="tooltip"></div>
+        <div class="player-main">
+            <div class="current-song-name" id="current-song-name"></div>
+            <div class="player-controls">
+                <div class="transport-buttons" aria-label="Playback controls">
+                    <button class="track-nav-btn prev-track-btn" disabled aria-label="Previous song"><i class="fa-solid fa-backward-step" aria-hidden="true"></i></button>
+                    <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                    <button class="track-nav-btn next-track-btn" disabled aria-label="Next song"><i class="fa-solid fa-forward-step" aria-hidden="true"></i></button>
+                </div>
+                <span class="player-timeline">0:00 / 0:00</span>
+            </div>
+            <div class="seek-bar-container">
+                <canvas id="seek-gl" width="600" height="16"></canvas>
+                <div class="seek-section-tooltip" id="seek-section-tooltip" role="tooltip"></div>
+            </div>
+            <div class="live-lyrics" id="live-lyrics" aria-live="polite"></div>
         </div>
         <audio id="audio-player" crossorigin="anonymous"></audio>
     </div>
@@ -2055,6 +2291,10 @@
         <button class="tab-btn" data-tab="lyrics" aria-label="Lyrics">
             <i class="tab-icon fa-solid fa-music" aria-hidden="true"></i>
             <span class="tab-label">Lyrics</span>
+        </button>
+        <button class="tab-btn" data-tab="credits" aria-label="Credits">
+            <i class="tab-icon fa-solid fa-users" aria-hidden="true"></i>
+            <span class="tab-label">Credits</span>
         </button>
     </nav>
 
@@ -2085,12 +2325,26 @@
             </div>
         </div>
 
+        <div class="tab-panel" id="tab-credits">
+            <section class="credits" aria-labelledby="credits-heading">
+                <div class="credits-header">
+                    <p class="credits-kicker">Album credits</p>
+                    <h2 class="credits-title" id="credits-heading">
+                        <span class="credits-title-line credits-title-line--en">In a Race Against Time</span>
+                        <span class="credits-title-line credits-title-line--mk">Во Трка со Времето</span>
+                    </h2>
+                    <p class="credits-band" id="credits-band">Sioto Jazz</p>
+                </div>
+                <div class="credits-content" id="credits-content"></div>
+            </section>
+        </div>
+
         <div class="tab-panel" id="tab-telemetry">
             <section class="telemetry" aria-labelledby="telemetry-heading">
                 <div class="telemetry-header">
                     <div>
                         <p class="telemetry-kicker">Album telemetry</p>
-                        <h2 id="telemetry-heading">3000 system readout</h2>
+                        <h2 id="telemetry-heading">In a Race Against Time Во Трка со Времето system readout</h2>
                     </div>
                     <p class="telemetry-status" id="telemetry-status" aria-live="polite">Scanning master durations...</p>
                 </div>
@@ -2219,6 +2473,7 @@
     </div>
 
     </div>
+    </main>
 
     <div id="context-menu" class="context-menu">
         <!-- Lyrics Actions -->
@@ -2278,8 +2533,12 @@
     if (Array.isArray(data.tracks)) {
         data.tracks.sort((a, b) => (a.id || 9999) - (b.id || 9999));
     }
-    document.getElementById('album-title').textContent = data.album.title;
-    document.getElementById('album-band').textContent = data.album.band;
+    renderAlbumTitle(document.getElementById('album-title'));
+    const albumBandEl = document.getElementById('album-band');
+    if (albumBandEl) {
+        albumBandEl.textContent = data.album.band;
+    }
+    renderAlbumCredits(data);
 
     const chordMap = new Map(data.chords.map(chordObj => {
         const chordName = Object.keys(chordObj)[0];
@@ -2384,6 +2643,9 @@
     const structureContent = player.querySelector('.structure-content');
     const currentSongNameDisplay = document.getElementById('current-song-name');
     const currentLyricDisplay = playerBasic.querySelector('.current-lyric');
+    const liveLyricsDisplay = document.getElementById('live-lyrics');
+    let lastLiveLyricIndex = -1;
+    let lastLiveLyricAnchorIndex = 0;
     const playerWrap = document.querySelector('.player-wrap');
     const moodboardEl = document.querySelector('.moodboard');
     const appContainer = document.querySelector('.app-container');
@@ -2574,6 +2836,85 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
     }
+
+    function renderAlbumTitle(target) {
+        if (!target) return;
+        target.innerHTML = `
+            <span class="album-title-line album-title-line--en">In a Race Against Time</span>
+            <span class="album-title-line album-title-line--mk">Во Трка со Времето</span>
+        `;
+        syncStackedAlbumTitle(target);
+    }
+
+    function syncStackedAlbumTitle(target) {
+        if (!target) return;
+        const english = target.querySelector('.album-title-line--en, .credits-title-line--en');
+        const macedonian = target.querySelector('.album-title-line--mk, .credits-title-line--mk');
+        if (!english || !macedonian) return;
+
+        macedonian.style.letterSpacing = '0px';
+        const letterGaps = Math.max((macedonian.textContent || '').trim().length - 1, 1);
+        const targetWidth = english.getBoundingClientRect().width;
+        let spacing = Math.max(0, (targetWidth - macedonian.getBoundingClientRect().width) / letterGaps);
+        for (let i = 0; i < 3; i += 1) {
+            macedonian.style.letterSpacing = `${spacing}px`;
+            spacing = Math.max(0, spacing + ((targetWidth - macedonian.getBoundingClientRect().width) / letterGaps));
+        }
+        macedonian.style.letterSpacing = `${spacing}px`;
+    }
+
+    function renderAlbumCredits(albumData) {
+        const creditsTitle = document.getElementById('credits-heading');
+        const creditsBand = document.getElementById('credits-band');
+        const creditsContent = document.getElementById('credits-content');
+        if (!creditsContent) return;
+
+        creditsTitle.innerHTML = `
+            <span class="credits-title-line credits-title-line--en">In a Race Against Time</span>
+            <span class="credits-title-line credits-title-line--mk">Во Трка со Времето</span>
+        `;
+        syncStackedAlbumTitle(creditsTitle);
+        creditsBand.textContent = 'Sioto Jazz';
+
+        creditsContent.innerHTML = `
+            <section class="credits-language" lang="en" aria-labelledby="credits-english-heading">
+                <h3 class="credits-language-title" id="credits-english-heading">English</h3>
+                <div class="credits-copy">
+                    <p>All songs written by Sioto Jazz. All lyrics written by Martin Petkovski.</p>
+                    <p>Produced, mixed and mastered by Martin Petkovski.</p>
+                    <p>Recorded by Martin Petkovski at Kamai Sobata Dolu and Daniel Mitrevski at Studio Atelier. All instruments played by Martin Petkovski except where noted.</p>
+                    <p>Cover photography by Tomi Akimovski.</p>
+                    <p>Vocals: Anastasija Trajkovska (tracks 1, 2, 3, 4, 6, 7, 9, 10), Eva Todorovska (tracks 5, 8), Krste Rodjevski (track 3). Backing vocals on tracks 4 and 7 by Irena Dimovska-Mitrevska.</p>
+                    <p>Saxophone on tracks 1, 4, 5, 9 by Ilija Volcheski. Strings on tracks 8 and 10 by Tanja Kotevska.</p>
+                    <p>Special thanks to Blagojche Aceski and Gorazd Hristovski for their creative contributions, Tomi Akimovski for executively producing track 3, Zoki Parket and Dimitar Zhirov for lending us secret equipment, Martin's mom and dad for obvious reasons, Marija Stojkovska (hypegirl #1), Andre Butorac (hypeman #1), Andrej Bogatinoski for being the glue in times of need, Marija Nedelkovska for being cool, Petar Kotevski for being aggressively honest, and Gordon Downie - you were ahead by a century.</p>
+                    <p>&copy; 2026 Sioto Jazz. All rights reserved.</p>
+                </div>
+            </section>
+            <hr class="credits-divider" aria-hidden="true">
+            <section class="credits-language" lang="mk" aria-labelledby="credits-macedonian-heading">
+                <h3 class="credits-language-title" id="credits-macedonian-heading">Македонски</h3>
+                <div class="credits-copy">
+                    <p>Сите песни се напишани од Sioto Jazz. Сите текстови се напишани од Мартин Петковски.</p>
+                    <p>Продукција, микс и мастеринг: Мартин Петковски. Извршен продуцент: Мартин Петковски.</p>
+                    <p>Снимано од Мартин Петковски во Камај Собата Долу и од Даниел Митревски во Studio Atelier. Сите инструменти ги отсвири Мартин Петковски, освен каде што е наведено поинаку.</p>
+                    <p>Фотографија за обвивката: Томи Акимовски.</p>
+                    <p>Вокали: Анастасија Трајковска (песни 1, 2, 3, 4, 6, 7, 9, 10), Ева Тодоровска (песни 5, 8), Крсте Роџевски (песна 3). Придружни вокали на песни 4 и 7: Ирена Димовска-Митревска.</p>
+                    <p>Саксофон на песни 1, 4, 5, 9: Илија Волчески. Жичани инструменти на песни 8 и 10: Тања Котевска.</p>
+                    <p>Посебна благодарност до Благојче Ацески и Горазд Христовски за нивниот креативен придонес, Томи Акимовски за извршното продуцентство на песна 3, Зоки Паркет и Димитар Жиров за тоа што ни позајмија тајна опрема, мајка му и татко му на Мартин од очигледни причини, Марија Стојковска (хајпчупе #1), Андре Буторац (хајпчоек #1), Андреј Богатиноски затоа што е лепакот во најпотребните моменти, Марија Неделковска затоа што е кул, Петар Котевски затоа што е агресивно искрен, и Гордон Дауни - ти беше за век понапред.</p>
+                    <p>&copy; 2026 Сиото Џез. Сите права се задржани.</p>
+                </div>
+            </section>
+        `;
+    }
+
+    const resyncAlbumTitles = () => {
+        syncStackedAlbumTitle(document.getElementById('album-title'));
+        syncStackedAlbumTitle(document.getElementById('credits-heading'));
+    };
+    if (document.fonts?.ready) {
+        document.fonts.ready.then(resyncAlbumTitles);
+    }
+    window.addEventListener('resize', resyncAlbumTitles);
 
     function normalizeWorldCoordinates(value) {
         if (typeof value !== 'string') return '';
@@ -4796,7 +5137,7 @@
 
         // Remove marquee behavior per request
         function updateLyricMarquee() {
-            currentLyricDisplay.classList.remove('marquee');
+        currentLyricDisplay?.classList.remove('marquee');
         }
     const contextMenu = document.getElementById('context-menu');
     let currentTrack = null;
@@ -5438,7 +5779,8 @@
         toggleBtn.disabled = false;
         setToggleIcon(true);
         glSeek.render(0);
-        currentLyricDisplay.textContent = '';
+        if (currentLyricDisplay) currentLyricDisplay.textContent = '';
+        updateLiveLyricsStack([], -1, true);
         lyricsContent.querySelectorAll('.lyrics-line').forEach(line => {
             line.classList.remove('active');
             line.classList.add('passed');
@@ -5675,7 +6017,8 @@
         chordsCanvas.style.width = '100%';
         chordsCanvas.style.height = '100%';
         chordsCanvas.style.pointerEvents = 'none';
-        currentLyricDisplay.textContent = '';
+        if (currentLyricDisplay) currentLyricDisplay.textContent = '';
+        updateLiveLyricsStack([], -1, true);
         updatePlayerSongMotif(track, trackIndex);
         updateVersionToggleState();
         resetLiveTelemetryHistory(trackIndex);
@@ -5805,6 +6148,10 @@
             cachedLyricLines = Array.from(lyricsContent.querySelectorAll('.lyrics-line'));
             cachedLyricTimings = buildLyricTimingEntries(track, cachedLyricLines);
             cachedChordElements = Array.from(structureContent.querySelectorAll('.structure-chord'));
+            const initialLyricIndex = cachedLyricTimings.findIndex(timing =>
+                audio.currentTime >= timing.startTime && audio.currentTime < timing.endTime
+            );
+            updateLiveLyricsStack(cachedLyricTimings, initialLyricIndex >= 0 ? initialLyricIndex : 0, true);
             
             // Pre-compute and cache bounding rects for chord containers
             const containers = structureContent.querySelectorAll('.chord-container');
@@ -6451,6 +6798,26 @@
         switchSongVersion(activeSongVersion === 'dani' ? 'martin' : 'dani');
     });
 
+    liveLyricsDisplay?.addEventListener('click', (event) => {
+        const line = event.target.closest('.live-lyrics-line[data-seek-time]');
+        if (!line || !currentTrack) return;
+        const seekTime = Number.parseFloat(line.dataset.seekTime);
+        if (!Number.isFinite(seekTime)) return;
+
+        audioEngine.seek(seekTime);
+        const lyricIndex = Number.parseInt(line.dataset.lyricIndex, 10);
+        if (Number.isFinite(lyricIndex)) {
+            updateLiveLyricsStack(cachedLyricTimings, lyricIndex, true);
+        }
+        audioEngine.play().catch(err => {
+            console.error('Audio play error:', err);
+            toggleBtn.disabled = false;
+            setToggleIcon(true);
+        });
+        setToggleIcon(false);
+        updateProgressBars();
+    });
+
     function handleAudioEnded(event) {
         if (event.currentTarget !== audio || gaplessTransitioning) return;
         const currentTrackIndex = data.tracks.findIndex(t => t === currentTrack);
@@ -6499,6 +6866,60 @@
     // Recompute when resizing viewport
     window.addEventListener('resize', recomputeChordLayout);
 
+    function updateLiveLyricsStack(lyricTimings, activeIndex, force = false) {
+        if (!liveLyricsDisplay) return;
+        if (!Array.isArray(lyricTimings) || !lyricTimings.length) {
+            if (force || liveLyricsDisplay.childElementCount) {
+                liveLyricsDisplay.replaceChildren();
+                lastLiveLyricIndex = -1;
+                lastLiveLyricAnchorIndex = 0;
+            }
+            return;
+        }
+        const hasActiveLine = activeIndex >= 0;
+        const anchorIndex = hasActiveLine
+            ? activeIndex
+            : Math.max(0, Math.min(lastLiveLyricAnchorIndex, lyricTimings.length - 1));
+        const renderKey = activeIndex >= 0 ? activeIndex : `hold-${anchorIndex}`;
+        if (!force && renderKey === lastLiveLyricIndex) return;
+
+        const fragment = document.createDocumentFragment();
+        const start = Math.max(0, anchorIndex - 2);
+        const end = Math.min(lyricTimings.length - 1, anchorIndex + 2);
+
+        for (let index = start; index <= end; index += 1) {
+            const line = document.createElement('div');
+            const distance = Math.abs(index - anchorIndex);
+            line.className = 'live-lyrics-line';
+            line.dataset.lyricIndex = index;
+            line.dataset.seekTime = String(lyricTimings[index]?.startTime ?? 0);
+            const isCenter = distance === 0;
+            line.textContent = (lyricTimings[index]?.line?.textContent || '').trim();
+            if (isCenter) {
+                line.classList.add('is-active');
+                line.style.setProperty('--live-lyric-opacity', '1');
+                line.style.setProperty('--live-lyric-scale', '1');
+            } else if (distance === 1) {
+                line.classList.add('is-near');
+                line.style.setProperty('--live-lyric-opacity', '0.62');
+                line.style.setProperty('--live-lyric-scale', '0.98');
+            } else {
+                line.style.setProperty('--live-lyric-opacity', '0.42');
+                line.style.setProperty('--live-lyric-scale', '0.96');
+            }
+            fragment.appendChild(line);
+        }
+
+        liveLyricsDisplay.replaceChildren(fragment);
+        liveLyricsDisplay.classList.remove('is-changing');
+        void liveLyricsDisplay.offsetWidth;
+        liveLyricsDisplay.classList.add('is-changing');
+        lastLiveLyricIndex = renderKey;
+        if (hasActiveLine) {
+            lastLiveLyricAnchorIndex = activeIndex;
+        }
+    }
+
     function updateProgressBars() {
         if (!currentTrack || audio.paused) return;
 
@@ -6543,6 +6964,7 @@
 
         // Update lyrics with minimal DOM manipulation
         let currentLyric = '';
+        let activeLyricIndex = -1;
         
         const activeLyricText = [];
         const lyricTimings = cachedLyricTimings.length
@@ -6562,6 +6984,7 @@
             if (isActive) {
                 line.classList.add('active');
                 line.classList.remove('passed');
+                if (activeLyricIndex === -1) activeLyricIndex = i;
                 activeLyricText.push(line.textContent);
             } else if (isPassed && !line.classList.contains('passed')) {
                 line.classList.remove('active');
@@ -6571,7 +6994,8 @@
             }
         }
         currentLyric = activeLyricText.join(' / ');
-        setAnimatedText(currentLyricDisplay, currentLyric);
+        if (currentLyricDisplay) setAnimatedText(currentLyricDisplay, currentLyric);
+        updateLiveLyricsStack(lyricTimings, activeLyricIndex);
 
         // Update chords with minimal DOM manipulation
         let currentChord = '';
