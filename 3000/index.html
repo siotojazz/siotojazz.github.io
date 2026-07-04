@@ -131,7 +131,8 @@
         .player-cover {
             flex: 0 0 33.333%;
             width: 33.333%;
-            align-self: stretch;
+            align-self: flex-start;
+            aspect-ratio: 1 / 1;
             min-height: 0;
             background: rgba(var(--club-blue-night-rgb), 0.18);
             box-shadow:
@@ -141,8 +142,9 @@
         .player-cover img {
             display: block;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
         }
         .app-container {
             max-width: 700px;
@@ -2214,47 +2216,6 @@
             letter-spacing: 0.14em;
             text-transform: uppercase;
         }
-        .deluxe-section-heading {
-            flex: 1 1 100%;
-            display: flex;
-            align-items: baseline;
-            justify-content: flex-start;
-            padding: 13px 12px 11px;
-            background:
-                linear-gradient(90deg, var(--club-blue-night) 0%, var(--club-blue-deep) 46%, var(--club-blue) 100%);
-            color: #fff;
-            border-top: 1px solid rgba(255, 255, 255, 0.86);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.86);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34), inset 0 -1px 0 rgba(23, 63, 147, 0.24);
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
-        }
-        .deluxe-section-heading > * {
-            position: relative;
-            z-index: 2;
-        }
-        .deluxe-section-title {
-            min-width: 0;
-            text-shadow: 0 1px 0 rgba(var(--club-blue-night-rgb), 0.42);
-        }
-        .deluxe-section-title::after {
-            content: '';
-            display: inline-block;
-            width: 22px;
-            margin-left: 8px;
-            border-top: 1px solid currentColor;
-            vertical-align: middle;
-            opacity: 0.78;
-        }
-        @media (max-width: 420px) {
-            .deluxe-section-heading {
-                padding-right: 10px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -2288,9 +2249,9 @@
             <i class="tab-icon fa-solid fa-list" aria-hidden="true"></i>
             <span class="tab-label">Tracklist</span>
         </button>
-        <button class="tab-btn" data-tab="lyrics" aria-label="Lyrics">
+        <button class="tab-btn" data-tab="lyrics" aria-label="Song">
             <i class="tab-icon fa-solid fa-music" aria-hidden="true"></i>
-            <span class="tab-label">Lyrics</span>
+            <span class="tab-label">Song</span>
         </button>
         <button class="tab-btn" data-tab="credits" aria-label="Credits">
             <i class="tab-icon fa-solid fa-users" aria-hidden="true"></i>
@@ -2524,6 +2485,10 @@
     // Prefer ordering by numeric id so album.json id reflects order
     if (Array.isArray(data.tracks)) {
         data.tracks.sort((a, b) => (a.id || 9999) - (b.id || 9999));
+        const standardTrackCount = Number.parseInt(data.album?.standardTrackCount, 10);
+        if (Number.isFinite(standardTrackCount) && standardTrackCount > 0) {
+            data.tracks = data.tracks.slice(0, standardTrackCount);
+        }
     }
     renderAlbumTitle(document.getElementById('album-title'));
     const albumBandEl = document.getElementById('album-band');
@@ -2690,14 +2655,10 @@
     const durationFailures = new Set();
     const audioAnalysisFailures = new Set();
     const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
-    const GAPLESS_PREPARE_AHEAD_SECONDS = 24;
-    const GAPLESS_CUTOVER_LEAD_SECONDS = 0.045;
-    const GAPLESS_FALLBACK_END_TRIM_SECONDS = 0.08;
+    const NEXT_TRACK_PRELOAD_AHEAD_SECONDS = 24;
     let gaplessPrepareToken = 0;
     let gaplessPreparedTrack = null;
     let gaplessTransitioning = false;
-    let gaplessAnalysisContext = null;
-    const gaplessAnalysisPromises = new Map();
     let selectSongLoadToken = 0;
 
     function appendTrackTitleParts(container, trackIndex, track) {
@@ -2745,18 +2706,12 @@
     function updateAlbumTotalTime() {
         const resolvedTrackCount = trackDurations.size + durationFailures.size;
         if (resolvedTrackCount < data.tracks.length) return;
-        const standardTrackCount = Number.parseInt(data.album.standardTrackCount, 10) || data.tracks.length;
-        let standardSeconds = 0;
-        let deluxeExtrasSeconds = 0;
+        let totalSeconds = 0;
         trackDurations.forEach((duration, trackIndex) => {
-            if (trackIndex < standardTrackCount) standardSeconds += duration;
-            else deluxeExtrasSeconds += duration;
+            if (trackIndex >= 0 && trackIndex < data.tracks.length) {
+                totalSeconds += duration;
+            }
         });
-        const totalSeconds = standardSeconds + deluxeExtrasSeconds;
-        const standardTotalTime = document.getElementById('standard-total-time');
-        const deluxeExtrasTime = document.getElementById('deluxe-extras-time');
-        if (standardTotalTime) standardTotalTime.textContent = formatTime(standardSeconds);
-        if (deluxeExtrasTime) deluxeExtrasTime.textContent = formatTime(deluxeExtrasSeconds);
         albumTotalTime.textContent = formatTime(totalSeconds);
     }
     const NOTE_TO_SEMITONE = Object.freeze({
@@ -5564,99 +5519,9 @@
         return Math.max(0, nextLead + musicalTime);
     }
 
-    function getGaplessAnalysisContext() {
-        if (!AudioContextCtor) return null;
-        if (!gaplessAnalysisContext || gaplessAnalysisContext.state === 'closed') {
-            gaplessAnalysisContext = new AudioContextCtor();
-        }
-        return gaplessAnalysisContext;
-    }
-
-    async function ensureGaplessTrackAnalysis(track, trackIndex) {
-        if (trackAudioAnalysis.has(trackIndex)) {
-            return trackAudioAnalysis.get(trackIndex);
-        }
-        if (gaplessAnalysisPromises.has(trackIndex)) {
-            return gaplessAnalysisPromises.get(trackIndex);
-        }
-        if (!track?.mp3) return null;
-
-        const context = getGaplessAnalysisContext();
-        if (!context) return null;
-
-        const promise = fetch(track.mp3)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch ${track.mp3}: ${response.status}`);
-                }
-                return response.arrayBuffer();
-            })
-            .then(async audioBytes => {
-                const decodedBuffer = await context.decodeAudioData(audioBytes.slice(0));
-                const analysis = analyzeAudioBuffer(decodedBuffer, audioBytes.byteLength);
-                trackAudioAnalysis.set(trackIndex, analysis);
-                audioAnalysisFailures.delete(trackIndex);
-                if (!trackDurations.has(trackIndex) && Number.isFinite(analysis.duration) && analysis.duration > 0) {
-                    trackDurations.set(trackIndex, analysis.duration);
-                    if (typeof updateAlbumTotalTime === 'function') {
-                        updateAlbumTotalTime();
-                    }
-                }
-                renderTelemetry();
-                return analysis;
-            })
-            .catch(error => {
-                console.warn(`Gapless scan failed for ${track.title}:`, error);
-                gaplessAnalysisPromises.delete(trackIndex);
-                return null;
-            });
-
-        gaplessAnalysisPromises.set(trackIndex, promise);
-        return promise;
-    }
-
-    async function primeGaplessAnalysisForTrack(trackIndex) {
+    function primeNextTrackPreload(trackIndex) {
         if (trackIndex < 0) return;
-        void prepareGaplessNextTrack(trackIndex);
-
-        const indexes = [trackIndex, trackIndex + 1].filter(index => index >= 0 && index < data.tracks.length);
-        await Promise.all(indexes.map(index => ensureGaplessTrackAnalysis(data.tracks[index], index)));
-
-        if (selectedTrackIndex === trackIndex && !gaplessTransitioning) {
-            void prepareGaplessNextTrack(trackIndex, { force: true });
-        }
-    }
-
-    function getGaplessKnownStartTime(trackIndex) {
-        const analysis = trackAudioAnalysis.get(trackIndex);
-        const duration = analysis?.duration || trackDurations.get(trackIndex) || 0;
-        const leadingSilence = Number.isFinite(analysis?.leadingSilence) ? Math.max(0, analysis.leadingSilence) : 0;
-        if (duration > 0) {
-            return Math.min(leadingSilence, Math.max(0, duration - 0.15));
-        }
-        return leadingSilence;
-    }
-
-    async function getGaplessStartTimeForSource(track, trackIndex, source) {
-        if (activeSongVersion === 'dani' && source) {
-            return getLeadingSilenceForSource(source, track, activeSongVersion);
-        }
-        return getGaplessKnownStartTime(trackIndex);
-    }
-
-    function getGaplessCutoverTime(trackIndex, duration) {
-        const analysis = trackAudioAnalysis.get(trackIndex);
-        const safeDuration = Number.isFinite(duration) && duration > 0
-            ? duration
-            : analysis?.duration || trackDurations.get(trackIndex) || 0;
-        if (!safeDuration) return 0;
-
-        if (analysis && Number.isFinite(analysis.trailingSilence)) {
-            const audibleEnd = safeDuration - Math.max(0, analysis.trailingSilence);
-            return Math.max(0, Math.min(safeDuration, audibleEnd));
-        }
-
-        return Math.max(0, safeDuration - GAPLESS_FALLBACK_END_TRIM_SECONDS);
+        void prepareGaplessNextTrack(trackIndex, { force: true });
     }
 
     function getGaplessSourceForTrack(track, trackIndex) {
@@ -5719,25 +5584,20 @@
             version: activeSongVersion
         };
 
-        const markReady = async () => {
+        const markReady = () => {
             if (token !== gaplessPrepareToken || !gaplessPreparedTrack || selectedTrackIndex !== trackIndex) return;
-            const startTime = await getGaplessStartTimeForSource(nextTrack, nextIndex, source);
-            if (token !== gaplessPrepareToken || !gaplessPreparedTrack || selectedTrackIndex !== trackIndex) return;
-
             try {
-                if (Number.isFinite(startTime) && startTime > 0) {
-                    standbyAudio.currentTime = startTime;
-                }
+                standbyAudio.currentTime = 0;
             } catch {
                 // Some browsers defer seeking until enough data is buffered.
             }
 
-            gaplessPreparedTrack.startTime = Number.isFinite(startTime) ? Math.max(0, startTime) : 0;
+            gaplessPreparedTrack.startTime = 0;
             gaplessPreparedTrack.ready = true;
         };
 
         if (standbyAudio.readyState >= 1) {
-            void markReady();
+            markReady();
         } else {
             standbyAudio.addEventListener('loadedmetadata', markReady, { once: true });
         }
@@ -5745,18 +5605,13 @@
         standbyAudio.load();
     }
 
-    function maybeStartGaplessTransition(currentTime, duration) {
+    function maybePrepareNextTrack(currentTime, duration) {
         if (gaplessTransitioning || selectedTrackIndex < 0 || selectedTrackIndex >= data.tracks.length - 1) return;
         if (!Number.isFinite(duration) || duration <= 0) return;
 
         const remaining = duration - currentTime;
-        if (remaining <= GAPLESS_PREPARE_AHEAD_SECONDS) {
+        if (remaining <= NEXT_TRACK_PRELOAD_AHEAD_SECONDS) {
             void prepareGaplessNextTrack(selectedTrackIndex);
-        }
-
-        const cutoverTime = getGaplessCutoverTime(selectedTrackIndex, duration);
-        if (cutoverTime > 0 && currentTime >= Math.max(0, cutoverTime - GAPLESS_CUTOVER_LEAD_SECONDS)) {
-            void startGaplessTransition();
         }
     }
 
@@ -5836,7 +5691,7 @@
             previousAudio.pause();
             resetAudioElementSource(previousAudio);
 
-            selectSong(prepared.track, prepared.trackIndex, audio.currentTime || prepared.startTime || 0, false, {
+            selectSong(prepared.track, prepared.trackIndex, 0, false, {
                 preserveAudio: true,
                 preservePlayback: true,
                 source: prepared.source
@@ -5907,7 +5762,7 @@
             }
             updateProgressBars();
             updateLiveTelemetryAnalysis(true);
-            void primeGaplessAnalysisForTrack(trackIndexAtSwitch);
+            void primeNextTrackPreload(trackIndexAtSwitch);
             if (resumePlayback) {
                 audioEngine.play().then(() => {
                     setToggleIcon(false);
@@ -6178,7 +6033,7 @@
                 });
                 setToggleIcon(false);
             }
-            void primeGaplessAnalysisForTrack(trackIndex);
+            void primeNextTrackPreload(trackIndex);
         };
 
         if (audio.readyState >= 1) {
@@ -6642,20 +6497,6 @@
     renderTelemetry();
 
     data.tracks.forEach((track, trackIndex) => {
-        if (trackIndex === data.album.standardTrackCount) {
-            const standardTime = document.createElement('div');
-            standardTime.className = 'album-total-time';
-            standardTime.innerHTML = '<span id="standard-total-time">Calculating&hellip;</span>';
-            songList.appendChild(standardTime);
-
-            const deluxeHeading = document.createElement('div');
-            deluxeHeading.className = 'deluxe-section-heading';
-            deluxeHeading.innerHTML = `
-                <span class="deluxe-section-title">Deluxe edition</span>
-            `;
-            songList.appendChild(deluxeHeading);
-        }
-
         const songItem = document.createElement('div');
         songItem.className = 'song-item';
         songItem.dataset.trackIndex = trackIndex;
@@ -6725,11 +6566,6 @@
             renderTelemetry();
         }
     });
-
-    const deluxeExtrasTime = document.createElement('div');
-    deluxeExtrasTime.className = 'album-total-time';
-    deluxeExtrasTime.innerHTML = '<span id="deluxe-extras-time">Calculating&hellip;</span>';
-    songList.appendChild(deluxeExtrasTime);
     updateAlbumTotalTime();
 
     // Set startup defaults until a song is selected
@@ -6910,7 +6746,7 @@
 
         const currentTime = audio.currentTime;
         const duration = audio.duration || 0;
-        maybeStartGaplessTransition(currentTime, duration);
+        maybePrepareNextTrack(currentTime, duration);
         
         // Update timeline text (throttle to reduce DOM writes)
         const timeText = `${formatTime(currentTime)} / ${formatTime(duration)}`;

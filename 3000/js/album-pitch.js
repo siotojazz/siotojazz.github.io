@@ -11,7 +11,7 @@ const audio = document.getElementById('pitch-audio');
 const heroCollage = document.getElementById('pitch-hero-collage');
 const footerCollage = document.getElementById('pitch-footer-collage');
 const heroTags = document.getElementById('pitch-hero-tags');
-const titleLabel = document.getElementById('pitch-title-label');
+const heroCoverImage = document.getElementById('pitch-cover-image');
 const bandProfile = document.getElementById('band-profile');
 const trackReel = document.getElementById('track-reel');
 const trackIndex = document.getElementById('track-index');
@@ -249,22 +249,17 @@ function renderCollage(target, images, count, offset = 0) {
 function renderHero(data, pitch, tracks) {
     const kicker = document.getElementById('pitch-kicker');
     const title = document.getElementById('pitch-title');
-    const subtitle = document.getElementById('pitch-subtitle');
-    const label = title.querySelector('#pitch-title-label') || titleLabel;
 
-    kicker.textContent = pitch.kicker;
-    const englishLine = createElement('span', 'pitch-title-line pitch-title-line--en');
-    const macedonianLine = createElement('span', 'pitch-title-line pitch-title-line--mk');
-    englishLine.textContent = 'In a Race Against Time';
-    macedonianLine.textContent = 'Во Трка со Времето';
-    if (label && pitch.workingTitleLabel) {
-        label.textContent = pitch.workingTitleLabel;
-        title.replaceChildren(englishLine, macedonianLine, label);
-    } else {
-        title.replaceChildren(englishLine, macedonianLine);
+    if (kicker) {
+        kicker.textContent = pitch.kicker;
     }
-    syncStackedAlbumTitle(title, '.pitch-title-line--en', '.pitch-title-line--mk');
-    subtitle.textContent = pitch.subheadline;
+    if (title) {
+        title.textContent = `${data.album?.band || 'Sioto Jazz'} - ${pitch.headline}`;
+    }
+    if (heroCoverImage) {
+        heroCoverImage.src = data.album?.coverImage || 'album_cover.png';
+        heroCoverImage.alt = `${data.album?.band || 'Sioto Jazz'} - ${pitch.headline} album cover`;
+    }
 
     const tags = pitch.heroTags.length ? pitch.heroTags : [`${tracks.length} tracks`];
     heroTags.replaceChildren(...tags.map((tag) => {
@@ -275,36 +270,6 @@ function renderHero(data, pitch, tracks) {
 
     document.title = `${data.album?.band || 'Sioto Jazz'} - ${pitch.headline} Album Pitch`;
 }
-
-function syncStackedAlbumTitle(target, englishSelector, macedonianSelector) {
-    if (!target) return;
-    const english = target.querySelector(englishSelector);
-    const macedonian = target.querySelector(macedonianSelector);
-    if (!english || !macedonian) return;
-
-    macedonian.style.letterSpacing = '0px';
-    const letterGaps = Math.max((macedonian.textContent || '').trim().length - 1, 1);
-    const targetWidth = english.getBoundingClientRect().width;
-    let spacing = Math.max(0, (targetWidth - macedonian.getBoundingClientRect().width) / letterGaps);
-    for (let i = 0; i < 3; i += 1) {
-        macedonian.style.letterSpacing = `${spacing}px`;
-        spacing = Math.max(0, spacing + ((targetWidth - macedonian.getBoundingClientRect().width) / letterGaps));
-    }
-    macedonian.style.letterSpacing = `${spacing}px`;
-}
-
-if (document.fonts?.ready) {
-    document.fonts.ready.then(() => syncStackedAlbumTitle(
-        document.getElementById('pitch-title'),
-        '.pitch-title-line--en',
-        '.pitch-title-line--mk'
-    ));
-}
-window.addEventListener('resize', () => syncStackedAlbumTitle(
-    document.getElementById('pitch-title'),
-    '.pitch-title-line--en',
-    '.pitch-title-line--mk'
-));
 
 function renderBandProfile(pitch) {
     if (!bandProfile) return;

@@ -177,7 +177,7 @@ img {
 .pitch-hero__content {
     position: relative;
     z-index: 2;
-    width: min(960px, 100%);
+    width: min(560px, 100%);
 }
 
 .pitch-kicker {
@@ -209,6 +209,22 @@ img {
     overflow-wrap: normal;
     white-space: nowrap;
     text-transform: none;
+}
+
+.pitch-cover {
+    width: min(46vw, 520px);
+    min-width: min(100%, 280px);
+    margin: 0;
+    background: rgba(7, 7, 6, 0.28);
+    box-shadow:
+        0 28px 80px rgba(0, 4, 22, 0.44),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.pitch-cover img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
 }
 
 .pitch-title-line {
@@ -1793,6 +1809,11 @@ body.pitch-loaded .pitch-fixed-cta {
         font-size: clamp(3.2rem, 20vw, 6rem);
     }
 
+    .pitch-cover {
+        width: min(72vw, 440px);
+        min-width: 0;
+    }
+
     .pitch-subtitle,
     .pitch-section h2,
     .pitch-cta h2 {
@@ -1852,6 +1873,10 @@ body.pitch-loaded .pitch-fixed-cta {
 @media (max-width: 460px) {
     .pitch-title {
         font-size: clamp(2.8rem, 20vw, 4.8rem);
+    }
+
+    .pitch-cover {
+        width: min(82vw, 360px);
     }
 
     .track-preview {
