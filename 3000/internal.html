@@ -1458,7 +1458,319 @@
             color: var(--club-blue-strong);
         }
 
-        /* ── Moodboard (Moodboard tab) ── */
+        /* Mastering (Mastering tab) */
+        .mastering {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 12px;
+            color: var(--club-blue-strong);
+            background: rgba(255, 255, 255, 0.84);
+        }
+        .mastering-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(var(--club-blue-rgb), 0.12);
+        }
+        .mastering-kicker {
+            margin: 0 0 5px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+        }
+        .mastering-header h2 {
+            margin: 0;
+            font-size: clamp(18px, 2.4vw, 28px);
+            line-height: 1;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+        .mastering-status {
+            max-width: 360px;
+            margin: 0;
+            font-size: 11px;
+            line-height: 1.4;
+            text-align: right;
+            opacity: 0.72;
+        }
+        .mastering-workbench {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .mastering-reference-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 8px;
+        }
+        .mastering-reference {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+            padding: 9px;
+            background: #fff;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.12);
+        }
+        .mastering-reference-label,
+        .mastering-section-label,
+        .mastering-song-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.85px;
+            opacity: 0.58;
+        }
+        .mastering-reference-value {
+            font-size: 18px;
+            line-height: 1.1;
+            font-weight: 900;
+        }
+        .mastering-reference-detail {
+            font-size: 10.5px;
+            line-height: 1.35;
+            opacity: 0.74;
+        }
+        .mastering-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .mastering-section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .mastering-section-title {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+        .mastering-section-note {
+            font-size: 11px;
+            line-height: 1.4;
+            opacity: 0.66;
+        }
+        .mastering-table-wrap {
+            overflow: auto;
+            background: #fff;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.14);
+            box-shadow: 0 10px 26px rgba(var(--club-blue-rgb), 0.07);
+        }
+        .mastering-table {
+            width: 100%;
+            min-width: 920px;
+            border-collapse: collapse;
+        }
+        .mastering-table th,
+        .mastering-table td {
+            padding: 8px 7px;
+            border-bottom: 1px solid rgba(var(--club-blue-rgb), 0.1);
+            text-align: left;
+            vertical-align: top;
+            font-size: 11px;
+            line-height: 1.3;
+        }
+        .mastering-table th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: var(--club-blue);
+            color: #fff;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+        }
+        .mastering-table tbody tr:nth-child(even) {
+            background: rgba(var(--club-blue-rgb), 0.03);
+        }
+        .mastering-table tbody tr:hover {
+            background: rgba(245, 158, 11, 0.08);
+        }
+        .mastering-empty {
+            margin: 0;
+            padding: 14px;
+            background: #fff;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.12);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+        .mastering-song-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .mastering-song-row {
+            display: grid;
+            grid-template-columns: minmax(210px, 1.1fr) minmax(160px, 0.65fr) minmax(260px, 1.45fr);
+            gap: 10px;
+            align-items: start;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.12);
+            box-shadow: 0 10px 24px rgba(var(--club-blue-rgb), 0.06);
+        }
+        .mastering-song-row--attention {
+            border-color: rgba(178, 33, 55, 0.2);
+        }
+        .mastering-song-title {
+            display: block;
+            margin-top: 3px;
+            font-size: 14px;
+            line-height: 1.15;
+            font-weight: 900;
+        }
+        .mastering-song-meta,
+        .mastering-overall-detail {
+            display: block;
+            margin-top: 5px;
+            font-size: 10.5px;
+            line-height: 1.35;
+            opacity: 0.72;
+        }
+        .mastering-pill {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            max-width: 100%;
+            padding: 4px 7px;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.14);
+            background: rgba(var(--club-blue-rgb), 0.04);
+            font-size: 10px;
+            line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            font-weight: 800;
+            white-space: normal;
+        }
+        .mastering-pill--raise {
+            color: #047857;
+            background: rgba(4, 120, 87, 0.08);
+            border-color: rgba(4, 120, 87, 0.18);
+        }
+        .mastering-pill--lower,
+        .mastering-pill--watch {
+            color: #b22137;
+            background: rgba(178, 33, 55, 0.08);
+            border-color: rgba(178, 33, 55, 0.18);
+        }
+        .mastering-pill--hold {
+            color: var(--club-blue-strong);
+        }
+        .mastering-issue-list,
+        .mastering-passage-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin: 0;
+            padding: 0;
+        }
+        .mastering-issue-list li,
+        .mastering-passage-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+            min-width: 0;
+            font-size: 11px;
+            line-height: 1.35;
+        }
+        .mastering-issue-list li::before {
+            content: '';
+            flex: 0 0 6px;
+            width: 6px;
+            height: 6px;
+            margin-top: 4px;
+            background: currentColor;
+        }
+        .mastering-issue--raise {
+            color: #047857;
+        }
+        .mastering-issue--lower,
+        .mastering-issue--watch {
+            color: #b22137;
+        }
+        .mastering-issue--hold {
+            color: var(--club-blue-strong);
+        }
+        .mastering-passage-text {
+            min-width: 0;
+            word-break: break-word;
+        }
+        .mastering-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .mastering-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 30px;
+            padding: 6px 10px;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.16);
+            background: rgba(var(--club-blue-rgb), 0.05);
+            color: var(--club-blue-strong);
+            font-family: 'Garet', Arial, sans-serif;
+            font-size: 10px;
+            line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .mastering-toggle:hover,
+        .mastering-toggle:focus-visible {
+            background: var(--club-blue);
+            color: #fff;
+            outline: none;
+        }
+        .mastering-jump {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            flex: 0 0 24px;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.16);
+            background: rgba(var(--club-blue-rgb), 0.05);
+            color: var(--club-blue-strong);
+            cursor: pointer;
+        }
+        .mastering-jump:hover,
+        .mastering-jump:focus-visible {
+            background: var(--club-blue);
+            color: #fff;
+            outline: none;
+        }
+        .mastering-jump i {
+            font-size: 10px;
+            line-height: 1;
+        }
+
+        @media (max-width: 860px) {
+            .mastering-header {
+                flex-direction: column;
+            }
+            .mastering-status {
+                max-width: none;
+                text-align: left;
+            }
+            .mastering-song-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Moodboard (Moodboard tab) */
         .moodboard {
             min-height: 100%;
             display: flex;
@@ -1729,6 +2041,10 @@
             <i class="tab-icon fa-solid fa-music" aria-hidden="true"></i>
             <span class="tab-label">Lyrics</span>
         </button>
+        <button class="tab-btn" data-tab="mastering" aria-label="Mastering">
+            <i class="tab-icon fa-solid fa-sliders" aria-hidden="true"></i>
+            <span class="tab-label">Mastering</span>
+        </button>
         <button class="tab-btn" data-tab="telemetry" aria-label="Telemetry">
             <i class="tab-icon fa-solid fa-chart-column" aria-hidden="true"></i>
             <span class="tab-label">Telemetry</span>
@@ -1761,6 +2077,19 @@
                 </div>
             </section>
             </div>
+        </div>
+
+        <div class="tab-panel" id="tab-mastering">
+            <section class="mastering" aria-labelledby="mastering-heading">
+                <div class="mastering-header">
+                    <div>
+                        <p class="mastering-kicker">Mastering worklist</p>
+                        <h2 id="mastering-heading">Loudness moves</h2>
+                    </div>
+                    <p class="mastering-status" id="mastering-status" aria-live="polite">Open this tab to scan LUFS, true peak, and passage loudness.</p>
+                </div>
+                <div class="mastering-workbench" id="mastering-issues"></div>
+            </section>
         </div>
 
         <div class="tab-panel" id="tab-telemetry">
@@ -2129,6 +2458,8 @@
     const telemetryRecommendations = document.getElementById('telemetry-recommendations');
     const telemetrySongs = document.getElementById('telemetry-songs');
     const telemetryStatus = document.getElementById('telemetry-status');
+    const masteringIssues = document.getElementById('mastering-issues');
+    const masteringStatus = document.getElementById('mastering-status');
     const telemetryLiveTitle = document.getElementById('telemetry-live-title');
     const telemetryLiveMeta = document.getElementById('telemetry-live-meta');
     const telemetryLiveTime = document.getElementById('telemetry-live-time');
@@ -2234,6 +2565,17 @@
     let liveTelemetryTrackIndex = -1;
     let liveTelemetryLastSampleAt = 0;
     let lastLiveAnalysisSnapshot = null;
+    const CORE_ALBUM_TRACK_COUNT = 10;
+    const MASTERING_REFERENCE_MIN_LUFS = -10;
+    const MASTERING_REFERENCE_MAX_LUFS = -8;
+    const MASTERING_REFERENCE_TARGET_LUFS = -9;
+    const MASTERING_TRUE_PEAK_CEILING_DBTP = -1.0;
+    const MASTERING_SONG_TOLERANCE_LU = 0.75;
+    const MASTERING_SECTION_HOT_LU = 3.0;
+    const MASTERING_SECTION_LOW_LU = -5.0;
+    const MASTERING_MIN_PASSAGE_GAIN_DB = 2.0;
+    let showAllMasteringPassages = false;
+    const expandedMasteringSongPassages = new Set();
 
     if (telemetryLiveSpectrum) {
         telemetryLiveSpectrum.innerHTML = Array.from({ length: 24 }, () => '<span class="telemetry-live-spectrum-bar"></span>').join('');
@@ -2553,6 +2895,11 @@
         return `${value.toFixed(1)} ${unit}`;
     }
 
+    function formatLufs(value) {
+        if (!Number.isFinite(value)) return '--';
+        return `${value.toFixed(1)} LUFS`;
+    }
+
     function formatBitrate(value) {
         if (!Number.isFinite(value)) return '--';
         return `${Math.round(value)} kbps`;
@@ -2859,19 +3206,53 @@
         return `<ul class="telemetry-recommendation-list">${items.map(item => `<li class="telemetry-recommendation-item">${item}</li>`).join('')}</ul>`;
     }
 
+    function getCoreAlbumMetrics(metrics) {
+        return metrics.filter(metric => metric.trackIndex < CORE_ALBUM_TRACK_COUNT);
+    }
+
+    function getMasteringReferenceLabel() {
+        return `${formatLufs(MASTERING_REFERENCE_MIN_LUFS)} to ${formatLufs(MASTERING_REFERENCE_MAX_LUFS)}`;
+    }
+
+    function getTargetLufsFromCoreValues(lufsValues) {
+        if (!lufsValues.length) return MASTERING_REFERENCE_TARGET_LUFS;
+        const albumMedian = median(lufsValues);
+        if (!Number.isFinite(albumMedian)) return MASTERING_REFERENCE_TARGET_LUFS;
+        return Math.max(MASTERING_REFERENCE_MIN_LUFS, Math.min(MASTERING_REFERENCE_MAX_LUFS, albumMedian));
+    }
+
     function getAlbumMasteringContext(metrics) {
-        const scannedMetrics = metrics.filter(metric => metric.audioAnalysis && Number.isFinite(metric.audioAnalysis.rmsDb));
+        const coreMetrics = getCoreAlbumMetrics(metrics);
+        const scannedMetrics = coreMetrics.filter(metric => metric.audioAnalysis);
+        const lufsValues = scannedMetrics
+            .map(metric => metric.audioAnalysis.integratedLufs)
+            .filter(value => Number.isFinite(value));
+        const rmsValues = scannedMetrics
+            .map(metric => metric.audioAnalysis.rmsDb)
+            .filter(value => Number.isFinite(value));
+        const lraValues = scannedMetrics
+            .map(metric => metric.audioAnalysis.loudnessRangeLra)
+            .filter(value => Number.isFinite(value));
+        const targetLufs = lufsValues.length
+            ? getTargetLufsFromCoreValues(lufsValues)
+            : rmsValues.length
+                ? Math.max(MASTERING_REFERENCE_MIN_LUFS, Math.min(MASTERING_REFERENCE_MAX_LUFS, median(rmsValues)))
+                : MASTERING_REFERENCE_TARGET_LUFS;
 
         return {
+            coreMetrics,
             scannedMetrics,
-            targetRms: scannedMetrics.length
-                ? median(scannedMetrics.map(metric => metric.audioAnalysis.rmsDb).filter(value => Number.isFinite(value)))
-                : null,
+            targetLufs,
+            targetRms: targetLufs,
             targetCrest: scannedMetrics.length
                 ? median(scannedMetrics.map(metric => metric.audioAnalysis.crestFactorDb).filter(value => Number.isFinite(value)))
                 : null,
             targetHeadroom: scannedMetrics.length
                 ? median(scannedMetrics.map(metric => metric.audioAnalysis.headroomDb).filter(value => Number.isFinite(value)))
+                : null,
+            medianLra: lraValues.length ? median(lraValues) : null,
+            albumReferenceGainDb: Number.isFinite(targetLufs) && lufsValues.length
+                ? MASTERING_REFERENCE_TARGET_LUFS - median(lufsValues)
                 : null
         };
     }
@@ -2896,7 +3277,7 @@
         const quietRegion = getWaveformActionRegions(metric, 'quiet')[0] || null;
 
         if (loudnessDelta > 0.75 || (analysis.headroomDb || 0) < 0.8) {
-            const trimDb = -Math.min(3.0, Math.max(0.4, (loudnessDelta * 0.9) + Math.max(0, 0.8 - (analysis.headroomDb || 0))));
+            const trimDb = -Math.max(0.4, (loudnessDelta * 0.9) + Math.max(0, 0.8 - (analysis.headroomDb || 0)));
             advice.push({
                 tone: 'trim',
                 text: `Trim overall level ${formatGainAdjustment(trimDb)}`
@@ -2945,6 +3326,543 @@
         }
 
         return advice.slice(0, 4);
+    }
+
+    function getAnalysisIntegratedLoudness(analysis) {
+        if (!analysis) return null;
+        if (Number.isFinite(analysis.integratedLufs)) return analysis.integratedLufs;
+        if (Number.isFinite(analysis.rmsDb)) return analysis.rmsDb;
+        return null;
+    }
+
+    function formatDirectionalGain(action, gainDb) {
+        if (!Number.isFinite(gainDb) || Math.abs(gainDb) < 0.05) return 'Hold';
+        const amount = Math.abs(gainDb).toFixed(1);
+        if (action === 'raise') return `Raise +${amount} dB`;
+        if (action === 'lower') return `Lower ${amount} dB`;
+        return formatGainAdjustment(gainDb);
+    }
+
+    function getOverallMasteringMove(metric, masteringContext) {
+        const analysis = metric.audioAnalysis;
+        const loudness = getAnalysisIntegratedLoudness(analysis);
+        const targetLufs = masteringContext.targetLufs;
+        if (!analysis || !Number.isFinite(loudness) || !Number.isFinite(targetLufs)) {
+            return {
+                action: 'watch',
+                gainDb: 0,
+                label: 'Scan pending',
+                detail: 'LUFS scan has not finished for this song.',
+                deltaLufs: null
+            };
+        }
+
+        const deltaLufs = targetLufs - loudness;
+        const truePeakDbtp = Number.isFinite(analysis.truePeakDbtp) ? analysis.truePeakDbtp : analysis.peakDb;
+        const peakOver = Number.isFinite(truePeakDbtp)
+            ? truePeakDbtp - MASTERING_TRUE_PEAK_CEILING_DBTP
+            : 0;
+
+        if (peakOver > 0.05 && deltaLufs <= MASTERING_SONG_TOLERANCE_LU) {
+            const gainDb = -Math.max(0.4, peakOver + 0.2);
+            return {
+                action: 'lower',
+                gainDb,
+                label: formatDirectionalGain('lower', gainDb),
+                detail: `True peak is ${formatDb(truePeakDbtp, 'dBTP')}; ceiling target is ${formatDb(MASTERING_TRUE_PEAK_CEILING_DBTP, 'dBTP')}.`,
+                deltaLufs
+            };
+        }
+
+        if (deltaLufs > MASTERING_SONG_TOLERANCE_LU) {
+            const cleanHeadroom = Number.isFinite(truePeakDbtp)
+                ? Math.max(0, MASTERING_TRUE_PEAK_CEILING_DBTP - truePeakDbtp)
+                : deltaLufs;
+            const gainDb = Math.min(deltaLufs, Math.max(0, cleanHeadroom - 0.1));
+
+            if (gainDb >= 0.35) {
+                return {
+                    action: 'raise',
+                    gainDb,
+                    label: formatDirectionalGain('raise', gainDb),
+                    detail: `${formatLufs(loudness)} is ${Math.abs(deltaLufs).toFixed(1)} LU below the album center.`,
+                    deltaLufs
+                };
+            }
+
+            return {
+                action: 'watch',
+                gainDb: 0,
+                label: 'Needs level, no clean headroom',
+                detail: `${formatLufs(loudness)} is low, but true peak leaves less than 0.4 dB of clean lift.`,
+                deltaLufs
+            };
+        }
+
+        if (deltaLufs < -MASTERING_SONG_TOLERANCE_LU) {
+            const gainDb = -Math.max(0.4, Math.abs(deltaLufs));
+            return {
+                action: 'lower',
+                gainDb,
+                label: formatDirectionalGain('lower', gainDb),
+                detail: `${formatLufs(loudness)} is ${Math.abs(deltaLufs).toFixed(1)} LU above the album center.`,
+                deltaLufs
+            };
+        }
+
+        return {
+            action: 'hold',
+            gainDb: 0,
+            label: 'Hold overall gain',
+            detail: `${formatLufs(loudness)} sits within ${MASTERING_SONG_TOLERANCE_LU.toFixed(2)} LU of the album center.`,
+            deltaLufs
+        };
+    }
+
+    function getCompressorGainMove(metric, masteringContext) {
+        const analysis = metric.audioAnalysis;
+        const loudness = getAnalysisIntegratedLoudness(analysis);
+        const targetLufs = masteringContext.targetLufs;
+        if (!analysis || !Number.isFinite(loudness) || !Number.isFinite(targetLufs)) {
+            return {
+                action: 'watch',
+                gainDb: 0,
+                label: 'Scan pending',
+                detail: 'Integrated LUFS scan has not finished for this song.',
+                loudness,
+                projectedTruePeakDbtp: null
+            };
+        }
+
+        const gainDb = targetLufs - loudness;
+        const action = gainDb > 0.2 ? 'raise' : gainDb < -0.2 ? 'lower' : 'hold';
+        const projectedTruePeakDbtp = Number.isFinite(analysis.truePeakDbtp)
+            ? analysis.truePeakDbtp + gainDb
+            : null;
+        const ceilingNote = Number.isFinite(projectedTruePeakDbtp) && projectedTruePeakDbtp > MASTERING_TRUE_PEAK_CEILING_DBTP
+            ? ` Limiter/clipper must catch ${formatDb(projectedTruePeakDbtp - MASTERING_TRUE_PEAK_CEILING_DBTP, 'dB')} above ceiling after this move.`
+            : '';
+
+        return {
+            action,
+            gainDb,
+            label: action === 'hold' ? 'Hold compressor gain' : `Compressor ${formatGainAdjustment(gainDb)}`,
+            detail: `Match ${formatLufs(loudness)} to the core target ${formatLufs(targetLufs)} using the song-level compressor/input gain.${ceilingNote}`,
+            loudness,
+            projectedTruePeakDbtp
+        };
+    }
+
+    function isInsideMasteringBody(metric, startTime, endTime) {
+        const analysis = metric.audioAnalysis;
+        if (!analysis || !Number.isFinite(analysis.duration) || analysis.duration <= 0) return true;
+        const midpoint = (startTime + endTime) * 0.5;
+        const bodyStart = Math.min(analysis.duration, Math.max(0, (analysis.leadingSilence || 0) + 1));
+        const bodyEnd = Math.max(0, analysis.duration - (analysis.trailingSilence || 0) - 1);
+        return midpoint >= bodyStart && midpoint <= bodyEnd;
+    }
+
+    function getMasteringPassageCandidates(metric, masteringContext, overallGainDb) {
+        const analysis = metric.audioAnalysis;
+        if (
+            !analysis ||
+            !Array.isArray(analysis.shortTermLoudness) ||
+            !analysis.shortTermLoudness.length ||
+            !Number.isFinite(masteringContext.targetLufs)
+        ) {
+            return [];
+        }
+
+        const candidates = [];
+        analysis.shortTermLoudness.forEach(window => {
+            if (!Number.isFinite(window.lufs) || window.lufs < -60) return;
+            if (!isInsideMasteringBody(metric, window.startTime, window.endTime)) return;
+
+            const adjustedLufs = window.lufs + overallGainDb;
+            const adjustedTruePeak = Number.isFinite(window.truePeakDbtp)
+                ? window.truePeakDbtp + overallGainDb
+                : null;
+            const loudnessDelta = adjustedLufs - masteringContext.targetLufs;
+            let action = null;
+            let gainDb = 0;
+            let reason = '';
+            let severity = 0;
+
+            if (Number.isFinite(adjustedTruePeak) && adjustedTruePeak > MASTERING_TRUE_PEAK_CEILING_DBTP + 0.1) {
+                action = 'lower';
+                gainDb = -Math.max(0.5, adjustedTruePeak - MASTERING_TRUE_PEAK_CEILING_DBTP + 0.2);
+                reason = 'true peak ceiling';
+                severity = Math.abs(gainDb) + 2;
+            } else if (loudnessDelta > MASTERING_SECTION_HOT_LU) {
+                action = 'lower';
+                gainDb = -Math.max(0.5, loudnessDelta - (MASTERING_SECTION_HOT_LU - 1));
+                reason = 'short-term loudness above album center';
+                severity = loudnessDelta;
+            } else if (loudnessDelta < MASTERING_SECTION_LOW_LU) {
+                action = 'raise';
+                gainDb = Math.max(0.5, Math.abs(loudnessDelta) - Math.abs(MASTERING_SECTION_LOW_LU) + 0.5);
+                reason = 'short-term loudness buried below album center';
+                severity = Math.abs(loudnessDelta);
+            }
+
+            if (!action || Math.abs(gainDb) <= MASTERING_MIN_PASSAGE_GAIN_DB) return;
+
+            candidates.push({
+                action,
+                gainDb,
+                reason,
+                severity,
+                startTime: window.startTime,
+                endTime: window.endTime,
+                lufs: window.lufs,
+                adjustedLufs,
+                truePeakDbtp: adjustedTruePeak,
+                timeLabel: formatTimeRange(window.startTime, window.endTime)
+            });
+        });
+
+        return candidates;
+    }
+
+    function groupMasteringPassages(candidates) {
+        const groups = [];
+        candidates
+            .sort((a, b) => a.startTime - b.startTime)
+            .forEach(candidate => {
+                const current = groups[groups.length - 1];
+                const canMerge = current &&
+                    current.action === candidate.action &&
+                    candidate.startTime <= current.endTime + 1.25;
+
+                if (!canMerge) {
+                    groups.push({
+                        ...candidate,
+                        count: 1,
+                        lufsValues: [candidate.adjustedLufs],
+                        truePeakValues: Number.isFinite(candidate.truePeakDbtp) ? [candidate.truePeakDbtp] : [],
+                        reasons: new Set([candidate.reason])
+                    });
+                    return;
+                }
+
+                current.endTime = Math.max(current.endTime, candidate.endTime);
+                current.count++;
+                current.severity = Math.max(current.severity, candidate.severity);
+                current.gainDb = current.action === 'raise'
+                    ? Math.max(current.gainDb, candidate.gainDb)
+                    : Math.min(current.gainDb, candidate.gainDb);
+                current.lufsValues.push(candidate.adjustedLufs);
+                if (Number.isFinite(candidate.truePeakDbtp)) {
+                    current.truePeakValues.push(candidate.truePeakDbtp);
+                }
+                current.reasons.add(candidate.reason);
+            });
+
+        return groups
+            .map(group => ({
+                ...group,
+                duration: group.endTime - group.startTime,
+                adjustedLufs: average(group.lufsValues),
+                truePeakDbtp: group.truePeakValues.length ? Math.max(...group.truePeakValues) : null,
+                reason: Array.from(group.reasons).join(', ')
+            }))
+            .filter(group => group.count >= 3 || group.reason.includes('true peak'))
+            .sort((a, b) => b.severity - a.severity || b.duration - a.duration);
+    }
+
+    function getMasteringPassageMoves(metric, masteringContext, overallGainDb) {
+        return groupMasteringPassages(getMasteringPassageCandidates(metric, masteringContext, overallGainDb));
+    }
+
+    function buildMasteringSongReport(metric, masteringContext) {
+        const analysis = metric.audioAnalysis;
+        const overall = getOverallMasteringMove(metric, masteringContext);
+        const compressor = getCompressorGainMove(metric, masteringContext);
+        const passages = getMasteringPassageMoves(metric, masteringContext, compressor.gainDb);
+        const issues = [];
+
+        if (!analysis) {
+            issues.push({ action: 'watch', text: 'Audio scan pending.' });
+            return { metric, overall, compressor, passages, issues, needsAttention: true };
+        }
+
+        if (compressor.action !== 'hold') {
+            issues.push({ action: compressor.action, text: compressor.detail });
+        }
+
+        if (Number.isFinite(analysis.truePeakDbtp) && analysis.truePeakDbtp > MASTERING_TRUE_PEAK_CEILING_DBTP) {
+            issues.push({
+                action: 'lower',
+                text: `True peak exceeds mastering ceiling: ${formatDb(analysis.truePeakDbtp, 'dBTP')}.`
+            });
+        }
+
+        if (Number.isFinite(analysis.loudnessRangeLra)) {
+            if (analysis.loudnessRangeLra < 3.5) {
+                issues.push({
+                    action: 'watch',
+                    text: `Low LRA (${formatDb(analysis.loudnessRangeLra, 'LU')}); check whether limiting is flattening the song.`
+                });
+            } else if (analysis.loudnessRangeLra > 18) {
+                issues.push({
+                    action: 'watch',
+                    text: `Wide LRA (${formatDb(analysis.loudnessRangeLra, 'LU')}); audition transitions on smaller speakers.`
+                });
+            }
+        }
+
+        if (passages.length) {
+            issues.push({
+                action: passages.some(passage => passage.action === 'lower') ? 'lower' : 'raise',
+                text: `${passages.length} passage${passages.length === 1 ? '' : 's'} need section-level gain rides.`
+            });
+        }
+
+        if (!issues.length) {
+            issues.push({ action: 'hold', text: 'No immediate loudness moves flagged.' });
+        }
+
+        return {
+            metric,
+            overall,
+            compressor,
+            passages,
+            issues,
+            needsAttention: issues.some(issue => issue.action !== 'hold')
+        };
+    }
+
+    function renderMasteringJumpButton(trackIndex, startTime, title) {
+        if (!Number.isFinite(startTime)) return '';
+        return `
+            <button class="mastering-jump" type="button" data-mastering-jump="1" data-track-index="${trackIndex}" data-start-time="${startTime.toFixed(3)}" aria-label="Play ${escapeHtml(title)} at ${formatTime(startTime)}" title="Play passage">
+                <i class="fa-solid fa-play" aria-hidden="true"></i>
+            </button>
+        `;
+    }
+
+    function renderMasteringIssueList(issues) {
+        return `
+            <ul class="mastering-issue-list">
+                ${issues.map(issue => `<li class="mastering-issue--${issue.action}"><span>${escapeHtml(issue.text)}</span></li>`).join('')}
+            </ul>
+        `;
+    }
+
+    function renderMasteringPassageList(passages, metric, limit = 5) {
+        if (!passages.length) return '';
+        const isExpanded = expandedMasteringSongPassages.has(metric.trackIndex);
+        const visible = isExpanded ? passages : passages.slice(0, limit);
+        const hiddenCount = Math.max(0, passages.length - visible.length);
+        return `
+            <ul class="mastering-passage-list">
+                ${visible.map(passage => `
+                    <li class="mastering-issue--${passage.action}">
+                        ${renderMasteringJumpButton(metric.trackIndex, passage.startTime, metric.title)}
+                        <span class="mastering-passage-text">
+                            <strong>${formatDirectionalGain(passage.action, passage.gainDb)}</strong>
+                            ${formatTimeRange(passage.startTime, passage.endTime)}
+                            - ${formatLufs(passage.adjustedLufs)} ST, ${Number.isFinite(passage.truePeakDbtp) ? formatDb(passage.truePeakDbtp, 'dBTP') : 'TP n/a'}
+                        </span>
+                    </li>
+                `).join('')}
+                ${passages.length > limit ? `
+                    <li class="mastering-issue--watch">
+                        <button class="mastering-toggle" type="button" data-mastering-toggle-song-passages="1" data-track-index="${metric.trackIndex}">
+                            ${isExpanded ? 'Show fewer passages' : `Show ${hiddenCount} more passage${hiddenCount === 1 ? '' : 's'}`}
+                        </button>
+                    </li>
+                ` : ''}
+            </ul>
+        `;
+    }
+
+    function renderCompressorGainTable(reports, targetLufs) {
+        if (!reports.length) {
+            return '<p class="mastering-empty">No core songs are available for compressor-gain matching.</p>';
+        }
+
+        return `
+            <div class="mastering-table-wrap">
+                <table class="mastering-table">
+                    <thead>
+                        <tr>
+                            <th>Song</th>
+                            <th>Integrated</th>
+                            <th>Target</th>
+                            <th>Compressor gain</th>
+                            <th>Projected TP</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${reports.map(report => {
+                            const metric = report.metric;
+                            const move = report.compressor;
+                            return `
+                                <tr>
+                                    <td>${String(metric.trackIndex + 1).padStart(2, '0')} ${escapeHtml(metric.title)}</td>
+                                    <td>${formatLufs(move.loudness)}</td>
+                                    <td>${formatLufs(targetLufs)}</td>
+                                    <td><span class="mastering-pill mastering-pill--${move.action}">${escapeHtml(move.label)}</span></td>
+                                    <td>${Number.isFinite(move.projectedTruePeakDbtp) ? formatDb(move.projectedTruePeakDbtp, 'dBTP') : 'TP n/a'}</td>
+                                    <td>${escapeHtml(move.detail)}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function renderMasteringPassageTable(passages) {
+        if (!passages.length) {
+            return '<p class="mastering-empty">No sustained passage-level loudness rides are flagged after whole-song gain moves. Still audition the transitions by ear.</p>';
+        }
+
+        return `
+            <div class="mastering-table-wrap">
+                <table class="mastering-table">
+                    <thead>
+                        <tr>
+                            <th>Play</th>
+                            <th>Song</th>
+                            <th>Time</th>
+                            <th>Move</th>
+                            <th>Short-term</th>
+                            <th>Why</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${passages.map(({ metric, passage }) => `
+                            <tr>
+                                <td>${renderMasteringJumpButton(metric.trackIndex, passage.startTime, metric.title)}</td>
+                                <td>${String(metric.trackIndex + 1).padStart(2, '0')} ${escapeHtml(metric.title)}</td>
+                                <td>${formatTimeRange(passage.startTime, passage.endTime)}</td>
+                                <td><span class="mastering-pill mastering-pill--${passage.action}">${formatDirectionalGain(passage.action, passage.gainDb)}</span></td>
+                                <td>${formatLufs(passage.adjustedLufs)} ST - ${Number.isFinite(passage.truePeakDbtp) ? formatDb(passage.truePeakDbtp, 'dBTP') : 'TP n/a'}</td>
+                                <td>${escapeHtml(passage.reason)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function renderMasteringIssues(metrics, waveformDetail) {
+        if (!masteringIssues) return;
+
+        const masteringContext = getAlbumMasteringContext(metrics);
+        const reports = masteringContext.coreMetrics.map(metric => buildMasteringSongReport(metric, masteringContext));
+        const scannedCount = masteringContext.scannedMetrics.length;
+        const totalCount = masteringContext.coreMetrics.length;
+        const targetLufs = masteringContext.targetLufs;
+        const allPassages = reports
+            .flatMap(report => report.passages.map(passage => ({
+                metric: report.metric,
+                passage
+            })))
+            .sort((a, b) => b.passage.severity - a.passage.severity || b.passage.duration - a.passage.duration);
+        const visiblePassages = showAllMasteringPassages ? allPassages : allPassages.slice(0, 32);
+        const attentionCount = reports.filter(report => report.needsAttention).length;
+        const albumGain = masteringContext.albumReferenceGainDb;
+        const albumGainDetail = Number.isFinite(albumGain)
+            ? Math.abs(albumGain) <= 0.75
+                ? 'Core album center is already close to the mastering reference center.'
+                : albumGain > 0
+                    ? 'Core album as a whole is below the mastering reference center.'
+                    : 'Core album as a whole is above the mastering reference center.'
+            : waveformDetail;
+
+        if (masteringStatus) {
+            masteringStatus.textContent = `${scannedCount}/${totalCount} core songs scanned - target ${formatLufs(targetLufs)} - ${attentionCount} song${attentionCount === 1 ? '' : 's'} with loudness moves`;
+        }
+
+        masteringIssues.innerHTML = `
+            <div class="mastering-reference-grid">
+                <div class="mastering-reference">
+                    <span class="mastering-reference-label">Album target</span>
+                    <strong class="mastering-reference-value">${formatLufs(targetLufs)}</strong>
+                    <span class="mastering-reference-detail">Core 10-song target, clamped to the ${getMasteringReferenceLabel()} mastering band; deluxe tracks are excluded.</span>
+                </div>
+                <div class="mastering-reference">
+                    <span class="mastering-reference-label">Mastering reference</span>
+                    <strong class="mastering-reference-value">${getMasteringReferenceLabel()}</strong>
+                    <span class="mastering-reference-detail">${Number.isFinite(albumGain) ? `Move toward ${formatLufs(MASTERING_REFERENCE_TARGET_LUFS)} center: ${formatGainAdjustment(albumGain)}. ${albumGainDetail}` : albumGainDetail}</span>
+                </div>
+                <div class="mastering-reference">
+                    <span class="mastering-reference-label">True peak ceiling</span>
+                    <strong class="mastering-reference-value">${formatDb(MASTERING_TRUE_PEAK_CEILING_DBTP, 'dBTP')}</strong>
+                    <span class="mastering-reference-detail">Used as the safety ceiling for lossy transcodes and final limiter checks.</span>
+                </div>
+                <div class="mastering-reference">
+                    <span class="mastering-reference-label">Scan state</span>
+                    <strong class="mastering-reference-value">${scannedCount}/${totalCount}</strong>
+                    <span class="mastering-reference-detail">${escapeHtml(waveformDetail)}. Only tracks 1-${totalCount} are scanned for mastering. Passage moves use 3-second short-term loudness windows.</span>
+                </div>
+            </div>
+
+            <section class="mastering-section" aria-labelledby="mastering-compressor-title">
+                <div class="mastering-section-head">
+                    <h3 class="mastering-section-title" id="mastering-compressor-title">Song Compressor Gain</h3>
+                    <span class="mastering-section-note">Whole-song input/makeup gain needed to match the core album loudness target, ignoring local section swings.</span>
+                </div>
+                ${renderCompressorGainTable(reports, targetLufs)}
+            </section>
+
+            <section class="mastering-section" aria-labelledby="mastering-passages-title">
+                <div class="mastering-section-head">
+                    <h3 class="mastering-section-title" id="mastering-passages-title">Time-Window Gain Moves</h3>
+                    <span class="mastering-section-note">Pure time ranges, sorted by urgency after each song's compressor gain move. Arrangement labels are ignored.</span>
+                </div>
+                ${renderMasteringPassageTable(visiblePassages)}
+                ${allPassages.length > 32 ? `
+                    <div class="mastering-actions">
+                        <button class="mastering-toggle" type="button" data-mastering-toggle-passages="1">
+                            ${showAllMasteringPassages ? 'Show fewer passage issues' : `Show all passage issues (${allPassages.length})`}
+                        </button>
+                    </div>
+                ` : ''}
+            </section>
+
+            <section class="mastering-section" aria-labelledby="mastering-songs-title">
+                <div class="mastering-section-head">
+                    <h3 class="mastering-section-title" id="mastering-songs-title">Song Issues</h3>
+                    <span class="mastering-section-note">Only the first ${totalCount} core album songs are listed; deluxe tracks are excluded.</span>
+                </div>
+                <div class="mastering-song-list">
+                    ${reports.map(report => {
+                        const metric = report.metric;
+                        const analysis = metric.audioAnalysis;
+                        const loudness = getAnalysisIntegratedLoudness(analysis);
+                        const rowClass = report.needsAttention ? 'mastering-song-row mastering-song-row--attention' : 'mastering-song-row';
+                        return `
+                            <article class="${rowClass}">
+                                <div>
+                                    <span class="mastering-song-label">${String(metric.trackIndex + 1).padStart(2, '0')}</span>
+                                    <strong class="mastering-song-title">${escapeHtml(metric.title)}</strong>
+                                    <span class="mastering-song-meta">
+                                        ${formatLufs(loudness)} integrated - ${analysis ? formatDb(analysis.truePeakDbtp, 'dBTP') : 'TP --'} - ${analysis ? formatDb(analysis.loudnessRangeLra, 'LU LRA') : 'LRA --'}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="mastering-song-label">Compressor gain</span>
+                                    <span class="mastering-pill mastering-pill--${report.compressor.action}">${escapeHtml(report.compressor.label)}</span>
+                                    <span class="mastering-overall-detail">${escapeHtml(report.compressor.detail)}</span>
+                                </div>
+                                <div>
+                                    <span class="mastering-song-label">Issues</span>
+                                    ${renderMasteringIssueList(report.issues)}
+                                    ${renderMasteringPassageList(report.passages, metric)}
+                                </div>
+                            </article>
+                        `;
+                    }).join('')}
+                </div>
+            </section>
+        `;
     }
 
     function renderSongInfoPanel(metric) {
@@ -3006,7 +3924,7 @@
                 return {
                     metric,
                     score,
-                    adjustmentDb: -Math.min(3.0, Math.max(0.5, (loudnessDelta * 0.9) + ceilingPenalty)),
+                    adjustmentDb: -Math.max(0.5, (loudnessDelta * 0.9) + ceilingPenalty),
                     loudnessDelta,
                     headroom: metric.audioAnalysis.headroomDb || 0
                 };
@@ -3020,11 +3938,11 @@
                 const loudnessGap = targetRms - metric.audioAnalysis.rmsDb;
                 const availableLift = Math.max(0, headroom - 0.6);
                 const score = Math.min(loudnessGap, availableLift);
-                if (score <= 0.35) return null;
+                if (score <= MASTERING_MIN_PASSAGE_GAIN_DB) return null;
                 return {
                     metric,
                     score,
-                    adjustmentDb: Math.min(2.5, Math.max(0.4, score)),
+                    adjustmentDb: Math.max(0.4, score),
                     loudnessGap,
                     headroom
                 };
@@ -3486,6 +4404,21 @@
         return `${metric.audioAnalysis.clipBinCount} hot bins`;
     }
 
+    function formatTruePeakDisplay(metric) {
+        if (!metric.audioAnalysis) return getTelemetryScanPlaceholder(metric.trackIndex);
+        const peakPercent = Number.isFinite(metric.audioAnalysis.duration) && metric.audioAnalysis.duration > 0
+            ? Math.round((metric.audioAnalysis.peakTime / metric.audioAnalysis.duration) * 100)
+            : null;
+        const peakDb = Number.isFinite(metric.audioAnalysis.truePeakDbtp)
+            ? `${metric.audioAnalysis.truePeakDbtp.toFixed(1)} dBTP`
+            : Number.isFinite(metric.audioAnalysis.peakDb)
+                ? `${metric.audioAnalysis.peakDb.toFixed(1)} dBFS`
+                : '--';
+        return peakPercent === null
+            ? `${formatTime(metric.audioAnalysis.peakTime)} - ${peakDb}`
+            : `${formatTime(metric.audioAnalysis.peakTime)} - ${peakPercent}% - ${peakDb}`;
+    }
+
     function renderWaveformSvg(metric) {
         if (!metric.audioAnalysis || !Array.isArray(metric.audioAnalysis.waveformBins) || !metric.audioAnalysis.waveformBins.length) {
             return `<div class="telemetry-wave-empty">${escapeHtml(getTelemetryScanPlaceholder(metric.trackIndex))}</div>`;
@@ -3570,11 +4503,248 @@
         return frameCount / sampleRate;
     }
 
+    function clampNumber(value, min, max) {
+        if (!Number.isFinite(value)) return value;
+        return Math.max(min, Math.min(max, value));
+    }
+
+    function loudnessFromMeanSquare(meanSquare) {
+        return meanSquare > 0 ? -0.691 + (10 * Math.log10(meanSquare)) : -Infinity;
+    }
+
+    function meanSquareFromLoudness(lufs) {
+        return Number.isFinite(lufs) ? Math.pow(10, (lufs + 0.691) / 10) : 0;
+    }
+
+    function makeBiquadCoefficients(type, sampleRate, frequency, q, gainDb = 0) {
+        const omega = (2 * Math.PI * frequency) / sampleRate;
+        const sinOmega = Math.sin(omega);
+        const cosOmega = Math.cos(omega);
+        const alpha = sinOmega / (2 * q);
+        let b0;
+        let b1;
+        let b2;
+        let a0;
+        let a1;
+        let a2;
+
+        if (type === 'highpass') {
+            b0 = (1 + cosOmega) / 2;
+            b1 = -(1 + cosOmega);
+            b2 = (1 + cosOmega) / 2;
+            a0 = 1 + alpha;
+            a1 = -2 * cosOmega;
+            a2 = 1 - alpha;
+        } else {
+            const a = Math.pow(10, gainDb / 40);
+            const sqrtA = Math.sqrt(a);
+            b0 = a * ((a + 1) + ((a - 1) * cosOmega) + (2 * sqrtA * alpha));
+            b1 = -2 * a * ((a - 1) + ((a + 1) * cosOmega));
+            b2 = a * ((a + 1) + ((a - 1) * cosOmega) - (2 * sqrtA * alpha));
+            a0 = (a + 1) - ((a - 1) * cosOmega) + (2 * sqrtA * alpha);
+            a1 = 2 * ((a - 1) - ((a + 1) * cosOmega));
+            a2 = (a + 1) - ((a - 1) * cosOmega) - (2 * sqrtA * alpha);
+        }
+
+        return {
+            b0: b0 / a0,
+            b1: b1 / a0,
+            b2: b2 / a0,
+            a1: a1 / a0,
+            a2: a2 / a0
+        };
+    }
+
+    function createBiquadState(coefficients) {
+        return {
+            coefficients,
+            x1: 0,
+            x2: 0,
+            y1: 0,
+            y2: 0
+        };
+    }
+
+    function processBiquadSample(state, sample) {
+        const c = state.coefficients;
+        const output = (c.b0 * sample) + (c.b1 * state.x1) + (c.b2 * state.x2) - (c.a1 * state.y1) - (c.a2 * state.y2);
+        state.x2 = state.x1;
+        state.x1 = sample;
+        state.y2 = state.y1;
+        state.y1 = output;
+        return output;
+    }
+
+    function getLoudnessGateBlocks(blockMeanSquares, windowBlocks = 4, hopBlocks = 1) {
+        const gateBlocks = [];
+        if (!blockMeanSquares.length) return gateBlocks;
+
+        for (let start = 0; start < blockMeanSquares.length; start += hopBlocks) {
+            const end = Math.min(blockMeanSquares.length, start + windowBlocks);
+            const count = end - start;
+            if (count <= 0) continue;
+
+            let sum = 0;
+            for (let index = start; index < end; index++) {
+                sum += blockMeanSquares[index] || 0;
+            }
+            const meanSquare = sum / count;
+            gateBlocks.push({
+                startBlock: start,
+                meanSquare,
+                lufs: loudnessFromMeanSquare(meanSquare)
+            });
+            if (end === blockMeanSquares.length) break;
+        }
+
+        return gateBlocks;
+    }
+
+    function calculateIntegratedLoudness(blockMeanSquares) {
+        const gateBlocks = getLoudnessGateBlocks(blockMeanSquares, 4, 1);
+        const absoluteGated = gateBlocks.filter(block => block.lufs >= -70);
+        if (!absoluteGated.length) return null;
+
+        const preliminaryMeanSquare = average(absoluteGated.map(block => block.meanSquare)) || 0;
+        const relativeGate = loudnessFromMeanSquare(preliminaryMeanSquare) - 10;
+        const gated = absoluteGated.filter(block => block.lufs >= relativeGate);
+        if (!gated.length) return null;
+
+        const gatedMeanSquare = average(gated.map(block => block.meanSquare)) || 0;
+        return loudnessFromMeanSquare(gatedMeanSquare);
+    }
+
+    function calculateShortTermLoudness(blockMeanSquares, blockTruePeaks, blockSeconds, duration) {
+        const windowBlocks = Math.max(1, Math.round(3 / blockSeconds));
+        const hopBlocks = Math.max(1, Math.round(1 / blockSeconds));
+        const windows = [];
+        if (!blockMeanSquares.length) return windows;
+
+        for (let start = 0; start < blockMeanSquares.length; start += hopBlocks) {
+            const end = Math.min(blockMeanSquares.length, start + windowBlocks);
+            const count = end - start;
+            if (count < Math.min(4, windowBlocks)) continue;
+
+            let meanSquareSum = 0;
+            let truePeak = 0;
+            for (let index = start; index < end; index++) {
+                meanSquareSum += blockMeanSquares[index] || 0;
+                truePeak = Math.max(truePeak, blockTruePeaks[index] || 0);
+            }
+
+            const startTime = start * blockSeconds;
+            const endTime = Math.min(duration, end * blockSeconds);
+            const meanSquare = meanSquareSum / count;
+            windows.push({
+                startTime,
+                endTime,
+                meanSquare,
+                lufs: loudnessFromMeanSquare(meanSquare),
+                truePeak,
+                truePeakDbtp: truePeak > 0 ? 20 * Math.log10(truePeak) : null
+            });
+
+            if (end === blockMeanSquares.length) break;
+        }
+
+        return windows;
+    }
+
+    function percentile(sortedValues, ratio) {
+        if (!sortedValues.length) return null;
+        const position = (sortedValues.length - 1) * ratio;
+        const lower = Math.floor(position);
+        const upper = Math.ceil(position);
+        if (lower === upper) return sortedValues[lower];
+        const weight = position - lower;
+        return sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight;
+    }
+
+    function calculateLoudnessRange(shortTermWindows) {
+        const absoluteGated = shortTermWindows.filter(window => window.lufs >= -70);
+        if (absoluteGated.length < 2) return null;
+
+        const meanSquare = average(absoluteGated.map(window => window.meanSquare)) || 0;
+        const relativeGate = loudnessFromMeanSquare(meanSquare) - 20;
+        const gatedLoudness = absoluteGated
+            .filter(window => window.lufs >= relativeGate)
+            .map(window => window.lufs)
+            .sort((a, b) => a - b);
+
+        if (gatedLoudness.length < 2) return null;
+        return percentile(gatedLoudness, 0.95) - percentile(gatedLoudness, 0.10);
+    }
+
+    function getBs1770ChannelWeight(channelIndex) {
+        return channelIndex === 3 || channelIndex === 4 ? 1.41 : 1;
+    }
+
+    function analyzeKWeightedLoudness(channels, sampleRate, frameCount) {
+        const blockSeconds = 0.1;
+        const blockSizeFrames = Math.max(1, Math.round(sampleRate * blockSeconds));
+        const blockCount = Math.max(1, Math.ceil(frameCount / blockSizeFrames));
+        const blockEnergies = new Float64Array(blockCount);
+        const blockCounts = new Uint32Array(blockCount);
+        const blockTruePeaks = new Float32Array(blockCount);
+        const shelfCoefficients = makeBiquadCoefficients('highshelf', sampleRate, 1681.974450955533, 0.7071752369554196, 3.999843853973347);
+        const highPassCoefficients = makeBiquadCoefficients('highpass', sampleRate, 38.13547087602444, 0.5003270373238773);
+        const filterStates = channels.map(() => ({
+            shelf: createBiquadState(shelfCoefficients),
+            highPass: createBiquadState(highPassCoefficients)
+        }));
+        const previousSamples = new Array(channels.length).fill(0);
+        let truePeak = 0;
+
+        for (let frame = 0; frame < frameCount; frame++) {
+            const blockIndex = Math.min(blockCount - 1, Math.floor(frame / blockSizeFrames));
+            let weightedPower = 0;
+            let frameTruePeak = 0;
+
+            for (let channelIndex = 0; channelIndex < channels.length; channelIndex++) {
+                const sample = channels[channelIndex][frame] || 0;
+                const previousSample = previousSamples[channelIndex] || 0;
+                const delta = sample - previousSample;
+                let channelTruePeak = Math.max(Math.abs(sample), Math.abs(previousSample));
+
+                for (let factor = 1; factor < 4; factor++) {
+                    channelTruePeak = Math.max(channelTruePeak, Math.abs(previousSample + (delta * (factor / 4))));
+                }
+
+                const state = filterStates[channelIndex];
+                const weightedSample = processBiquadSample(state.highPass, processBiquadSample(state.shelf, sample));
+                weightedPower += (weightedSample * weightedSample) * getBs1770ChannelWeight(channelIndex);
+                previousSamples[channelIndex] = sample;
+                frameTruePeak = Math.max(frameTruePeak, channelTruePeak);
+            }
+
+            truePeak = Math.max(truePeak, frameTruePeak);
+            blockTruePeaks[blockIndex] = Math.max(blockTruePeaks[blockIndex], frameTruePeak);
+            blockEnergies[blockIndex] += weightedPower;
+            blockCounts[blockIndex]++;
+        }
+
+        const blockMeanSquares = Array.from(blockEnergies, (energy, index) => {
+            const count = blockCounts[index] || 1;
+            return energy / count;
+        });
+        const shortTermLoudness = calculateShortTermLoudness(blockMeanSquares, Array.from(blockTruePeaks), blockSeconds, frameCount / sampleRate);
+
+        return {
+            integratedLufs: calculateIntegratedLoudness(blockMeanSquares),
+            loudnessRangeLra: calculateLoudnessRange(shortTermLoudness),
+            shortTermLoudness,
+            truePeak,
+            truePeakDbtp: truePeak > 0 ? 20 * Math.log10(truePeak) : null,
+            blockSeconds
+        };
+    }
+
     function analyzeAudioBuffer(audioBuffer, byteLength) {
         const channelCount = audioBuffer.numberOfChannels;
         const sampleRate = audioBuffer.sampleRate;
         const frameCount = audioBuffer.length;
         const channels = Array.from({ length: channelCount }, (_, channelIndex) => audioBuffer.getChannelData(channelIndex));
+        const loudnessAnalysis = analyzeKWeightedLoudness(channels, sampleRate, frameCount);
         const analysisStep = Math.max(1, Math.floor(sampleRate / 12000));
         const waveformBinCount = 96;
         const waveformBins = new Array(waveformBinCount).fill(0);
@@ -3690,6 +4860,12 @@
             rms,
             rmsDb,
             crestFactorDb,
+            integratedLufs: loudnessAnalysis.integratedLufs,
+            loudnessRangeLra: loudnessAnalysis.loudnessRangeLra,
+            truePeak: loudnessAnalysis.truePeak,
+            truePeakDbtp: loudnessAnalysis.truePeakDbtp,
+            shortTermLoudness: loudnessAnalysis.shortTermLoudness,
+            loudnessBlockSeconds: loudnessAnalysis.blockSeconds,
             monoCorrelation,
             stereoBalanceDb,
             stereoWidthPct,
@@ -3741,7 +4917,8 @@
             // decodeAudioData can still work while suspended in most browsers
         }
 
-        for (let trackIndex = 0; trackIndex < data.tracks.length; trackIndex++) {
+        const scanTrackCount = Math.min(CORE_ALBUM_TRACK_COUNT, data.tracks.length);
+        for (let trackIndex = 0; trackIndex < scanTrackCount; trackIndex++) {
             const track = data.tracks[trackIndex];
             try {
                 await analyzeTrackAudio(track, trackIndex);
@@ -3896,7 +5073,7 @@
         const medianHeadroom = median(audioMetrics.map(metric => metric.audioAnalysis.headroomDb).filter(value => Number.isFinite(value)));
         const widestStereo = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.stereoWidthPct, true);
         const highestCrestFactor = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.crestFactorDb, true);
-        const hottestMaster = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.rmsDb, true);
+        const hottestMaster = getExtremeMetric(audioMetrics, metric => getAnalysisIntegratedLoudness(metric.audioAnalysis), true);
         const safestMonoFold = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.monoCorrelation, true);
         const tightestHeadroom = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.headroomDb, false);
         const densestTransients = getExtremeMetric(audioMetrics, metric => metric.audioAnalysis.transientDensity, true);
@@ -3931,7 +5108,7 @@
             `${measuredCount}/${metrics.length} headers`
         ];
         if (AudioContextCtor) {
-            statusParts.push(`${deepScanCount}/${metrics.length} waveform scans`);
+            statusParts.push(`${deepScanCount}/${Math.min(CORE_ALBUM_TRACK_COUNT, metrics.length)} core waveform scans`);
         } else {
             statusParts.push('waveform scan unavailable');
         }
@@ -4066,11 +5243,11 @@
             },
             {
                 label: 'Hottest master',
-                value: hottestMaster ? formatDb(hottestMaster.audioAnalysis.rmsDb, 'dBFS') : '--',
+                value: hottestMaster ? formatLufs(getAnalysisIntegratedLoudness(hottestMaster.audioAnalysis)) : '--',
                 detail: hottestMaster
-                    ? `${escapeHtml(hottestMaster.title)} average RMS floor`
+                    ? `${escapeHtml(hottestMaster.title)} integrated programme loudness`
                     : waveformDetail,
-                reference: getRangeReference(hottestMaster?.audioAnalysis?.rmsDb, -16, -11, value => formatDb(value, 'dBFS'), {
+                reference: getRangeReference(getAnalysisIntegratedLoudness(hottestMaster?.audioAnalysis), -18, -10, formatLufs, {
                     lowText: 'current loudest master is still restrained',
                     highText: 'current loudest master is above common band'
                 })
@@ -4243,8 +5420,13 @@
             </article>
         `).join('');
 
-        telemetryRecommendations.innerHTML = renderMasteringRecommendations(metrics, waveformDetail);
+        if (telemetryRecommendations) {
+            telemetryRecommendations.innerHTML = '';
+        }
+        renderMasteringIssues(metrics, waveformDetail);
         refreshCurrentSongInfoPanel();
+
+        const albumMasteringContext = getAlbumMasteringContext(metrics);
 
         telemetrySongs.innerHTML = `
             <p class="telemetry-table-note">Waveform guide: click anywhere on a waveform to play from that moment. Pink edge bands mark detected cold opens and tail fades, amber lines mark section changes plus the strongest transient, and red waveform bars flag near-ceiling bins that may deserve a mastering pass. Header notes show broad normal bands; each row now states where the current value sits against them.</p>
@@ -4259,10 +5441,10 @@
                             <th>Trimmed<span class="telemetry-head-ref">normal 2:45 to 4:45</span></th>
                             <th>Entry<span class="telemetry-head-ref">normal 0.00s to 1.50s</span></th>
                             <th>Tail<span class="telemetry-head-ref">normal 0.30s to 4.00s</span></th>
-                            <th>Peak<span class="telemetry-head-ref">normal -6.0 dBFS to -0.8 dBFS</span></th>
+                            <th>True peak<span class="telemetry-head-ref">delivery ceiling -1.0 dBTP or lower</span></th>
                             <th>Ceiling<span class="telemetry-head-ref">normal 0 to 2 hot bins</span></th>
                             <th>Headroom<span class="telemetry-head-ref">normal 0.8 dB to 3.0 dB</span></th>
-                            <th>Hotness<span class="telemetry-head-ref">normal -16.0 dBFS to -11.0 dBFS</span></th>
+                            <th>Integrated LUFS<span class="telemetry-head-ref">album center +/- 0.75 LU</span></th>
                             <th>Crest<span class="telemetry-head-ref">normal 8.0 dB to 14.0 dB</span></th>
                             <th>Mono<span class="telemetry-head-ref">normal 0.92 to 1.00</span></th>
                             <th>Balance<span class="telemetry-head-ref">normal within ±0.6 dB</span></th>
@@ -4303,9 +5485,9 @@
                                 lowText: 'current abrupt tail',
                                 highText: 'current long tail'
                             });
-                            const peakReference = getRangeReference(metric.audioAnalysis?.peakDb, -6, -0.8, value => formatDb(value, 'dBFS'), {
-                                lowText: 'current conservative peak',
-                                highText: 'current near ceiling'
+                            const peakReference = getRangeReference(metric.audioAnalysis?.truePeakDbtp ?? metric.audioAnalysis?.peakDb, -6, MASTERING_TRUE_PEAK_CEILING_DBTP, value => formatDb(value, Number.isFinite(metric.audioAnalysis?.truePeakDbtp) ? 'dBTP' : 'dBFS'), {
+                                lowText: 'current conservative peak margin',
+                                highText: 'current over delivery ceiling'
                             });
                             const ceilingReference = getRangeReference(metric.audioAnalysis?.clipBinCount, 0, 2, value => `${Math.round(value)} bins`, {
                                 highText: 'current hot-bin heavy',
@@ -4315,9 +5497,9 @@
                                 lowText: 'current tight ceiling margin',
                                 highText: 'current generous ceiling margin'
                             });
-                            const rmsReference = getRangeReference(metric.audioAnalysis?.rmsDb, -16, -11, value => formatDb(value, 'dBFS'), {
-                                lowText: 'current restrained body',
-                                highText: 'current hot body'
+                            const rmsReference = getRangeReference(getAnalysisIntegratedLoudness(metric.audioAnalysis), (albumMasteringContext.targetLufs ?? MASTERING_REFERENCE_TARGET_LUFS) - MASTERING_SONG_TOLERANCE_LU, (albumMasteringContext.targetLufs ?? MASTERING_REFERENCE_TARGET_LUFS) + MASTERING_SONG_TOLERANCE_LU, formatLufs, {
+                                lowText: 'current below album loudness center',
+                                highText: 'current above album loudness center'
                             });
                             const crestReference = getRangeReference(metric.audioAnalysis?.crestFactorDb, 8, 14, formatDb, {
                                 lowText: 'current compressed swing',
@@ -4369,10 +5551,10 @@
                                     <td class="telemetry-cell-compact">${renderTelemetryCell(formatTrimmedDuration(metric), trimmedRuntimeReference)}</td>
                                     <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatSecondsMetric(metric.audioAnalysis.leadingSilence) : getTelemetryScanPlaceholder(metric.trackIndex), entryReference)}</td>
                                     <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatSecondsMetric(metric.audioAnalysis.trailingSilence) : getTelemetryScanPlaceholder(metric.trackIndex), tailReference)}</td>
-                                    <td class="telemetry-cell-medium">${renderTelemetryCell(formatPeakDisplay(metric), peakReference)}</td>
+                                    <td class="telemetry-cell-medium">${renderTelemetryCell(formatTruePeakDisplay(metric), peakReference)}</td>
                                     <td class="telemetry-cell-medium">${renderTelemetryCell(`<span class="${ceilingFlagClass}">${formatCeilingFlags(metric)}</span>`, ceilingReference)}</td>
                                     <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatHeadroom(metric.audioAnalysis.headroomDb) : getTelemetryScanPlaceholder(metric.trackIndex), headroomReference)}</td>
-                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatDb(metric.audioAnalysis.rmsDb, 'dBFS') : getTelemetryScanPlaceholder(metric.trackIndex), rmsReference)}</td>
+                                    <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatLufs(getAnalysisIntegratedLoudness(metric.audioAnalysis)) : getTelemetryScanPlaceholder(metric.trackIndex), rmsReference)}</td>
                                     <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatDb(metric.audioAnalysis.crestFactorDb) : getTelemetryScanPlaceholder(metric.trackIndex), crestReference)}</td>
                                     <td class="telemetry-cell-compact">${renderTelemetryCell(metric.audioAnalysis ? formatRatio(metric.audioAnalysis.monoCorrelation) : getTelemetryScanPlaceholder(metric.trackIndex), monoReference)}</td>
                                     <td class="telemetry-cell-medium">${renderTelemetryCell(metric.audioAnalysis ? formatStereoBalance(metric.audioAnalysis.stereoBalanceDb) : getTelemetryScanPlaceholder(metric.trackIndex), balanceReference)}</td>
@@ -4415,19 +5597,20 @@
         if (btn) btn.classList.add('active');
         document.getElementById('tab-' + tabId).classList.add('active');
         if (appContainer) {
-            appContainer.classList.toggle('telemetry-expanded', tabId === 'telemetry');
+            appContainer.classList.toggle('telemetry-expanded', tabId === 'telemetry' || tabId === 'mastering');
         }
         if (tabId === 'lyrics') {
             requestAnimationFrame(recomputeChordLayout);
         }
-        if (tabId === 'telemetry') {
+        if (tabId === 'telemetry' || tabId === 'mastering') {
             ensureTelemetryAudioAnalysis();
             updateLiveTelemetryAnalysis(true);
         }
     }
 
     if (appContainer) {
-        appContainer.classList.toggle('telemetry-expanded', tabNav.querySelector('.tab-btn.active')?.dataset.tab === 'telemetry');
+        const activeTabId = tabNav.querySelector('.tab-btn.active')?.dataset.tab;
+        appContainer.classList.toggle('telemetry-expanded', activeTabId === 'telemetry' || activeTabId === 'mastering');
     }
 
     telemetrySongs.addEventListener('click', (e) => {
@@ -4464,6 +5647,52 @@
 
         selectSong(track, trackIndex, startTime, true);
     });
+
+    if (masteringIssues) {
+        masteringIssues.addEventListener('click', (e) => {
+            const toggleButton = e.target.closest('[data-mastering-toggle-passages]');
+            if (toggleButton) {
+                showAllMasteringPassages = !showAllMasteringPassages;
+                renderTelemetry();
+                return;
+            }
+
+            const songPassageToggle = e.target.closest('[data-mastering-toggle-song-passages]');
+            if (songPassageToggle) {
+                const trackIndex = parseInt(songPassageToggle.dataset.trackIndex, 10);
+                if (Number.isFinite(trackIndex)) {
+                    if (expandedMasteringSongPassages.has(trackIndex)) {
+                        expandedMasteringSongPassages.delete(trackIndex);
+                    } else {
+                        expandedMasteringSongPassages.add(trackIndex);
+                    }
+                    renderTelemetry();
+                }
+                return;
+            }
+
+            const jumpButton = e.target.closest('[data-mastering-jump]');
+            if (!jumpButton) return;
+
+            const trackIndex = parseInt(jumpButton.dataset.trackIndex, 10);
+            const startTime = parseFloat(jumpButton.dataset.startTime);
+            if (!Number.isFinite(trackIndex) || trackIndex < 0 || trackIndex >= data.tracks.length || !Number.isFinite(startTime)) return;
+
+            const track = data.tracks[trackIndex];
+            if (currentTrack === track && audio.src) {
+                audioEngine.seek(startTime);
+                audioEngine.play().catch(err => {
+                    console.error('Audio play error:', err);
+                    toggleBtn.disabled = false;
+                    setToggleIcon(true);
+                });
+                setToggleIcon(false);
+                return;
+            }
+
+            selectSong(track, trackIndex, startTime, true);
+        });
+    }
 
         function setAnimatedText(el, nextText) {
             if (el.textContent === nextText) return;
