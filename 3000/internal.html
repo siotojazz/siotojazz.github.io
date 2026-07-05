@@ -2574,6 +2574,19 @@
     const MASTERING_SECTION_HOT_LU = 3.0;
     const MASTERING_SECTION_LOW_LU = -5.0;
     const MASTERING_MIN_PASSAGE_GAIN_DB = 2.0;
+    const TONAL_EQ_MOVE_THRESHOLD_DB = 1.25;
+    const TONAL_EQ_BANDS = Object.freeze([
+        { id: 'sub', label: 'Sub weight', frequency: 45, q: 0.7, filterType: 'Low Shelf', targetDb: -3.8 },
+        { id: 'bass', label: 'Bass body', frequency: 85, q: 0.8, filterType: 'Bell', targetDb: 1.7 },
+        { id: 'lowMid', label: 'Low mids', frequency: 180, q: 0.9, filterType: 'Bell', targetDb: 0.6 },
+        { id: 'mud', label: 'Mud / warmth', frequency: 320, q: 1.0, filterType: 'Bell', targetDb: -0.8 },
+        { id: 'body', label: 'Body', frequency: 650, q: 1.0, filterType: 'Bell', targetDb: -0.4 },
+        { id: 'presence', label: 'Presence', frequency: 1400, q: 1.0, filterType: 'Bell', targetDb: 0.4 },
+        { id: 'edge', label: 'Edge', frequency: 2800, q: 1.1, filterType: 'Bell', targetDb: 1.0 },
+        { id: 'bite', label: 'Bite', frequency: 5200, q: 1.1, filterType: 'Bell', targetDb: 0.2 },
+        { id: 'air', label: 'Air', frequency: 9500, q: 0.8, filterType: 'High Shelf', targetDb: -1.1 },
+        { id: 'sparkle', label: 'Top air', frequency: 14000, q: 0.7, filterType: 'High Shelf', targetDb: -3.4 }
+    ]);
     let showAllMasteringPassages = false;
     const expandedMasteringSongPassages = new Set();
 
@@ -3453,6 +3466,83 @@
         };
     }
 
+    function formatEqQ(value) {
+        if (!Number.isFinite(value)) return '--';
+        return value.toFixed(2);
+    }
+
+    function getTonalEqQ(band, gainDb) {
+        if (!band || String(band.filterType || '').toLowerCase().includes('shelf')) return band?.q || 0.7;
+        const magnitude = Math.abs(gainDb);
+        if (magnitude >= 4) return Math.min(1.45, (band.q || 1) + 0.25);
+        if (magnitude >= 2.5) return Math.min(1.25, (band.q || 1) + 0.12);
+        return band.q || 1;
+    }
+
+    function formatProQFrequency(value) {
+        if (!Number.isFinite(value)) return '--';
+        if (value >= 1000) return `${(value / 1000).toFixed(value >= 10000 ? 1 : 2)} kHz`;
+        return `${Math.round(value)} Hz`;
+    }
+
+    function renderProQBandSettings(move) {
+        return [
+            `Shape ${move.filterType}`,
+            `Freq ${formatProQFrequency(move.frequency)}`,
+            `Gain ${formatGainAdjustment(move.gainDb)}`,
+            `Q ${formatEqQ(move.q)}`,
+            'Placement Stereo',
+            'Dynamic Off'
+        ].join(' | ');
+    }
+
+    function getTonalEqMoves(metric) {
+        const bands = metric.audioAnalysis?.tonalBalance?.bands;
+        if (!Array.isArray(bands) || !bands.length) return [];
+
+        return bands
+            .map(band => {
+                if (!Number.isFinite(band.levelDb) || !Number.isFinite(band.targetDb)) return null;
+                const gainDb = band.targetDb - band.levelDb;
+                if (Math.abs(gainDb) < TONAL_EQ_MOVE_THRESHOLD_DB) return null;
+                return {
+                    bandId: band.id,
+                    label: band.label,
+                    frequency: band.frequency,
+                    gainDb,
+                    q: getTonalEqQ(band, gainDb),
+                    filterType: band.filterType,
+                    processingMode: 'Natural Phase',
+                    placement: 'Stereo',
+                    dynamic: 'Off',
+                    currentDb: band.levelDb,
+                    targetDb: band.targetDb,
+                    action: gainDb > 0 ? 'raise' : 'lower'
+                };
+            })
+            .filter(Boolean)
+            .sort((a, b) => Math.abs(b.gainDb) - Math.abs(a.gainDb));
+    }
+
+    function renderTonalEqMoves(moves) {
+        if (!moves.length) {
+            return '<span class="mastering-issue--hold">Hold tonal balance - within target tolerance.</span>';
+        }
+
+        return `
+            <ul class="mastering-issue-list">
+                ${moves.map(move => `
+                    <li class="mastering-issue--${move.action}">
+                        <span>
+                            <strong>Pro-Q 4: ${escapeHtml(renderProQBandSettings(move))}</strong>
+                            <br>${move.gainDb > 0 ? 'Boost' : 'Cut'} ${escapeHtml(move.label)} from ${formatDb(move.currentDb)} toward ${formatDb(move.targetDb)}. Use ${escapeHtml(move.processingMode)} for the instance unless phase matching demands Linear Phase.
+                        </span>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+    }
+
     function isInsideMasteringBody(metric, startTime, endTime) {
         const analysis = metric.audioAnalysis;
         if (!analysis || !Number.isFinite(analysis.duration) || analysis.duration <= 0) return true;
@@ -3578,12 +3668,13 @@
         const analysis = metric.audioAnalysis;
         const overall = getOverallMasteringMove(metric, masteringContext);
         const compressor = getCompressorGainMove(metric, masteringContext);
+        const tonalEqMoves = getTonalEqMoves(metric);
         const passages = getMasteringPassageMoves(metric, masteringContext, compressor.gainDb);
         const issues = [];
 
         if (!analysis) {
             issues.push({ action: 'watch', text: 'Audio scan pending.' });
-            return { metric, overall, compressor, passages, issues, needsAttention: true };
+            return { metric, overall, compressor, tonalEqMoves, passages, issues, needsAttention: true };
         }
 
         if (compressor.action !== 'hold') {
@@ -3626,6 +3717,7 @@
             metric,
             overall,
             compressor,
+            tonalEqMoves,
             passages,
             issues,
             needsAttention: issues.some(issue => issue.action !== 'hold')
@@ -3710,6 +3802,35 @@
                                 </tr>
                             `;
                         }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function renderTonalEqTable(reports) {
+        if (!reports.length) {
+            return '<p class="mastering-empty">No core songs are available for tonal EQ matching.</p>';
+        }
+
+        return `
+            <div class="mastering-table-wrap">
+                <table class="mastering-table">
+                    <thead>
+                        <tr>
+                            <th>Song</th>
+                            <th>Pro-Q 4 bands</th>
+                            <th>Instance setup</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${reports.map(report => `
+                            <tr>
+                                <td>${String(report.metric.trackIndex + 1).padStart(2, '0')} ${escapeHtml(report.metric.title)}</td>
+                                <td>${renderTonalEqMoves(report.tonalEqMoves || [])}</td>
+                                <td>Natural Phase, Stereo placement, static bands, fixed alternative/pop-rock target curve.</td>
+                            </tr>
+                        `).join('')}
                     </tbody>
                 </table>
             </div>
@@ -3810,6 +3931,14 @@
                     <span class="mastering-section-note">Whole-song input/makeup gain needed to match the core album loudness target, ignoring local section swings.</span>
                 </div>
                 ${renderCompressorGainTable(reports, targetLufs)}
+            </section>
+
+            <section class="mastering-section" aria-labelledby="mastering-tonal-title">
+                <div class="mastering-section-head">
+                    <h3 class="mastering-section-title" id="mastering-tonal-title">Song Tonal EQ - Pro-Q 4</h3>
+                    <span class="mastering-section-note">Broad Pro-Q 4 static band settings against a fixed alternative/pop-rock reference curve: Shape, Freq, Gain, Q, Placement, and Dynamic state.</span>
+                </div>
+                ${renderTonalEqTable(reports)}
             </section>
 
             <section class="mastering-section" aria-labelledby="mastering-passages-title">
@@ -4535,6 +4664,20 @@
             a0 = 1 + alpha;
             a1 = -2 * cosOmega;
             a2 = 1 - alpha;
+        } else if (type === 'lowpass') {
+            b0 = (1 - cosOmega) / 2;
+            b1 = 1 - cosOmega;
+            b2 = (1 - cosOmega) / 2;
+            a0 = 1 + alpha;
+            a1 = -2 * cosOmega;
+            a2 = 1 - alpha;
+        } else if (type === 'bandpass') {
+            b0 = alpha;
+            b1 = 0;
+            b2 = -alpha;
+            a0 = 1 + alpha;
+            a1 = -2 * cosOmega;
+            a2 = 1 - alpha;
         } else {
             const a = Math.pow(10, gainDb / 40);
             const sqrtA = Math.sqrt(a);
@@ -4739,6 +4882,67 @@
         };
     }
 
+    function getTonalAnalysisFilterType(band) {
+        const filterType = String(band.filterType || '').toLowerCase();
+        if (filterType === 'low shelf') return 'lowpass';
+        if (filterType === 'high shelf') return 'highpass';
+        return 'bandpass';
+    }
+
+    function analyzeTonalBalance(channels, sampleRate, frameCount, leadingSilence = 0, trailingSilence = 0) {
+        const duration = frameCount / sampleRate;
+        const startFrame = Math.max(0, Math.floor((leadingSilence + 0.5) * sampleRate));
+        const endFrame = Math.min(frameCount, Math.max(startFrame + 1, Math.floor((duration - trailingSilence - 0.5) * sampleRate)));
+        const analysisStep = Math.max(1, Math.floor(sampleRate / 16000));
+        const filters = TONAL_EQ_BANDS.map(band => ({
+            band,
+            state: createBiquadState(makeBiquadCoefficients(getTonalAnalysisFilterType(band), sampleRate, band.frequency, band.q))
+        }));
+        const energies = new Float64Array(filters.length);
+        let samplesMeasured = 0;
+
+        for (let frame = 0; frame < frameCount; frame += analysisStep) {
+            let mono = 0;
+            for (let channelIndex = 0; channelIndex < channels.length; channelIndex++) {
+                mono += channels[channelIndex][frame] || 0;
+            }
+            mono /= Math.max(1, channels.length);
+
+            const shouldMeasure = frame >= startFrame && frame <= endFrame;
+            filters.forEach((entry, index) => {
+                const filtered = processBiquadSample(entry.state, mono);
+                if (shouldMeasure) {
+                    energies[index] += filtered * filtered;
+                }
+            });
+
+            if (shouldMeasure) {
+                samplesMeasured++;
+            }
+        }
+
+        const rawLevels = Array.from(energies, energy => {
+            const meanSquare = samplesMeasured > 0 ? energy / samplesMeasured : 0;
+            return meanSquare > 0 ? 10 * Math.log10(meanSquare) : null;
+        });
+        const finiteLevels = rawLevels.filter(value => Number.isFinite(value));
+        const levelCenter = finiteLevels.length ? average(finiteLevels) : 0;
+
+        return {
+            reference: 'alternative/pop-rock fixed target',
+            bands: TONAL_EQ_BANDS.map((band, index) => ({
+                id: band.id,
+                label: band.label,
+                frequency: band.frequency,
+                q: band.q,
+                filterType: band.filterType,
+                targetDb: band.targetDb,
+                rawDb: rawLevels[index],
+                levelDb: Number.isFinite(rawLevels[index]) ? rawLevels[index] - levelCenter : null
+            }))
+        };
+    }
+
     function analyzeAudioBuffer(audioBuffer, byteLength) {
         const channelCount = audioBuffer.numberOfChannels;
         const sampleRate = audioBuffer.sampleRate;
@@ -4811,6 +5015,7 @@
         const bitrateKbps = duration > 0 ? (byteLength * 8) / (duration * 1000) : null;
         const leadingSilence = Math.min(detectSilenceDuration(channels, sampleRate, false), duration);
         const trailingSilence = Math.min(detectSilenceDuration(channels, sampleRate, true), duration);
+        const tonalBalance = analyzeTonalBalance(channels, sampleRate, frameCount, leadingSilence, trailingSilence);
 
         for (let binIndex = 0; binIndex < waveformBinCount; binIndex++) {
             const startFrame = Math.floor((binIndex / waveformBinCount) * frameCount);
@@ -4866,6 +5071,7 @@
             truePeakDbtp: loudnessAnalysis.truePeakDbtp,
             shortTermLoudness: loudnessAnalysis.shortTermLoudness,
             loudnessBlockSeconds: loudnessAnalysis.blockSeconds,
+            tonalBalance,
             monoCorrelation,
             stereoBalanceDb,
             stereoWidthPct,
