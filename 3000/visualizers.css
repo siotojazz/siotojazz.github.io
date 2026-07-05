@@ -20,14 +20,24 @@
 }
 
 :root {
+    --club-blue: #1f56b4;
+    --club-blue-strong: #07398f;
+    --club-blue-deep: #11479f;
+    --club-blue-night: #08205e;
+    --club-blue-bright: #236bd0;
+    --club-blue-rgb: 31, 86, 180;
+    --club-blue-strong-rgb: 7, 57, 143;
+    --club-blue-deep-rgb: 17, 71, 159;
+    --club-blue-night-rgb: 8, 32, 94;
+    --club-blue-bright-rgb: 35, 107, 208;
     --page-bg: #05070a;
     --page-bg-soft: #0c141d;
     --panel-bg: rgba(8, 13, 18, 0.84);
     --panel-border: rgba(232, 221, 198, 0.14);
     --panel-border-strong: rgba(232, 221, 198, 0.28);
-    --panel-text: #f1e7d3;
-    --panel-muted: rgba(241, 231, 211, 0.7);
-    --panel-dim: rgba(241, 231, 211, 0.4);
+    --panel-text: #fff;
+    --panel-muted: rgba(255, 255, 255, 0.72);
+    --panel-dim: rgba(255, 255, 255, 0.42);
     --accent: #c48b6c;
     --accent-soft: rgba(196, 139, 108, 0.16);
     --accent-cool: #7f95a7;
@@ -48,9 +58,28 @@ body {
     font-family: 'Garet', sans-serif;
     color: var(--panel-text);
     background:
-        radial-gradient(circle at top left, rgba(127, 149, 167, 0.18), transparent 24%),
-        radial-gradient(circle at 80% 18%, rgba(196, 139, 108, 0.18), transparent 24%),
-        linear-gradient(180deg, rgba(5, 7, 10, 0.96), rgba(5, 7, 10, 1));
+        radial-gradient(circle at 82% 8%, rgba(var(--club-blue-bright-rgb), 0.58), rgba(var(--club-blue-bright-rgb), 0) 31%),
+        linear-gradient(135deg, rgba(var(--club-blue-night-rgb), 0.42) 0%, rgba(var(--club-blue-bright-rgb), 0.34) 38%, rgba(var(--club-blue-rgb), 0.42) 68%, rgba(var(--club-blue-deep-rgb), 0.28) 100%);
+    background-color: var(--club-blue-strong);
+    position: relative;
+}
+
+body.visualizer-app-page::before {
+    content: '';
+    position: fixed;
+    inset: -44px;
+    z-index: -2;
+    background: url('resources/background.jpg') center center no-repeat;
+    background-size: cover;
+    transform: scale(1.06);
+}
+
+body.visualizer-app-page::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
 }
 
 button,
@@ -296,7 +325,7 @@ a {
     width: min(100%, 1280px);
     aspect-ratio: 16 / 9;
     min-width: 280px;
-    background: #05070a;
+    background: var(--club-blue-strong);
     border: 1px solid rgba(241, 231, 211, 0.16);
     overflow: hidden;
 }
@@ -307,7 +336,7 @@ a {
     aspect-ratio: 9 / 16;
     min-width: 0;
     position: relative;
-    background: #fff;
+    background: var(--club-blue-strong);
     border: 0;
 }
 

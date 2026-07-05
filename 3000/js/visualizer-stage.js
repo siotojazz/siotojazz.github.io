@@ -7,8 +7,8 @@ export const FORMATS = {
         width: 1920,
         height: 1080,
         aspectRatio: '16 / 9',
-        mosaic: { widthRatio: 0.69, heightRatio: 0.47 },
-        // Title row centered above mosaic, lyrics centered below.
+        capsules: { widthRatio: 0.76, lengthRatio: 0.29, thicknessRatio: 0.31, centerYRatio: 0.49 },
+        // Title row centered above capsules, lyrics centered below.
         titleZone: { topRatio: 0, heightRatio: null },
         lyricZone: { topRatio: null, heightRatio: null },
         safeMargin: { top: 0, bottom: 0, left: 0, right: 0 }
@@ -19,12 +19,8 @@ export const FORMATS = {
         width: 1080,
         height: 1920,
         aspectRatio: '9 / 16',
-        mosaic: { widthRatio: 0.58, heightRatio: 0.58 },
-        mosaicGapRatio: 0.13,
-        mosaicMinGap: 14,
+        capsules: { widthRatio: 0.78, lengthRatio: 0.285, thicknessRatio: 0.32, centerYRatio: 0.49 },
         contentGapRatio: 0.028,
-        flipMosaic: true,
-        plainBackdrop: true,
         titleZone: { topRatio: 0, heightRatio: null },
         lyricZone: { topRatio: null, heightRatio: null },
         safeMargin: { top: 220, bottom: 260, left: 64, right: 64 }
@@ -32,59 +28,27 @@ export const FORMATS = {
 };
 
 const BACKDROP_COLORS = {
-    base: '#05070a',
-    shadow: '#020406',
+    base: '#07398f',
     sand: '#d7c6a1',
-    slate: '#7f95a7'
+    slate: '#7f95a7',
+    indexBlue: '#1f56b4',
+    indexBlueStrong: '#07398f',
+    indexBlueDeep: '#11479f',
+    indexBlueNight: '#08205e',
+    indexBlueBright: '#236bd0'
 };
 
-const MOSAIC_GRID = {
-    columns: 5,
-    rows: 4
-};
-
-const MOSAIC_BLUEPRINT = [
-    { column: 0, row: 0, columnSpan: 1, rowSpan: 4, weight: 0.96 },
-    { column: 1, row: 0, columnSpan: 2, rowSpan: 1, weight: 0.78 },
-    { column: 3, row: 0, columnSpan: 2, rowSpan: 2, weight: 0.9 },
-    { column: 1, row: 1, columnSpan: 2, rowSpan: 2, weight: 0.74 },
-    { column: 3, row: 2, columnSpan: 1, rowSpan: 2, weight: 0.84 },
-    { column: 4, row: 2, columnSpan: 1, rowSpan: 1, weight: 0.72 },
-    { column: 1, row: 3, columnSpan: 2, rowSpan: 1, weight: 0.8 },
-    { column: 4, row: 3, columnSpan: 1, rowSpan: 1, weight: 0.68 }
-];
-
-function getMosaicDefinition(format) {
-    if (!format?.flipMosaic) {
-        return {
-            grid: MOSAIC_GRID,
-            blueprint: MOSAIC_BLUEPRINT
-        };
-    }
-
-    return {
-        grid: {
-            columns: MOSAIC_GRID.rows,
-            rows: MOSAIC_GRID.columns
-        },
-        blueprint: MOSAIC_BLUEPRINT.map((tile) => ({
-            column: tile.row,
-            row: tile.column,
-            columnSpan: tile.rowSpan,
-            rowSpan: tile.columnSpan,
-            weight: tile.weight
-        }))
-    };
-}
+const INDEX_BACKGROUND_IMAGE = new URL('../resources/background.jpg', import.meta.url).href;
+const CAPSULE_COUNT = 4;
+const CAPSULE_ANGLE = -(42 * Math.PI) / 180;
+const CAPSULE_ZOOM_LEVELS = [1, 2, 4, 6];
+const CAPSULE_SHADOW_ANGLE = Math.PI / 3.7;
 
 const VIDEO_LOOP_TRANSITION = {
     minSeconds: 0.65,
     maxSeconds: 1.35,
     ratio: 0.16
 };
-
-const MOSAIC_OVERLAY_BLEED = 1.5;
-const MOSAIC_CLIP_BLEED = 0.9;
 
 function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
@@ -289,8 +253,8 @@ function drawLyricGapNote(context, centerX, centerY, size) {
     context.lineCap = 'round';
     context.lineJoin = 'round';
     context.lineWidth = Math.max(2, size * 0.065);
-    context.strokeStyle = 'rgba(28, 28, 28, 0.62)';
-    context.fillStyle = 'rgba(28, 28, 28, 0.62)';
+    context.strokeStyle = 'rgba(255, 255, 255, 0.72)';
+    context.fillStyle = 'rgba(255, 255, 255, 0.72)';
 
     context.beginPath();
     context.ellipse(noteHeadX, noteHeadY, headRadiusX, headRadiusY, -0.45, 0, Math.PI * 2);
@@ -335,7 +299,7 @@ function drawCoveringVideoFrame(context, videoElement, bounds, options = {}, opa
     if (!videoWidth || !videoHeight) {
         return;
     }
-    const { panX = 0, panY = 0, scale = 1 } = options;
+    const { panX = 0, panY = 0, scale = 1, fit = 'cover' } = options;
     const xPercent = clamp(50 + (panX * 40), 0, 100) / 100;
     const yPercent = clamp(50 + (panY * 40), 0, 100) / 100;
     const boxAspect = bounds.width / bounds.height;
@@ -344,7 +308,10 @@ function drawCoveringVideoFrame(context, videoElement, bounds, options = {}, opa
     // First fit cover into the box, then apply scale around the box centre.
     let drawWidth;
     let drawHeight;
-    if (videoAspect > boxAspect) {
+    if (fit === 'height') {
+        drawHeight = bounds.height;
+        drawWidth = drawHeight * videoAspect;
+    } else if (videoAspect > boxAspect) {
         drawHeight = bounds.height;
         drawWidth = drawHeight * videoAspect;
     } else {
@@ -364,6 +331,32 @@ function drawCoveringVideoFrame(context, videoElement, bounds, options = {}, opa
     context.restore();
 }
 
+function drawCoveringImageFrame(context, imageElement, bounds, scale = 1) {
+    const imageWidth = imageElement.naturalWidth || imageElement.width;
+    const imageHeight = imageElement.naturalHeight || imageElement.height;
+    if (!imageWidth || !imageHeight) {
+        return;
+    }
+
+    const boxAspect = bounds.width / bounds.height;
+    const imageAspect = imageWidth / imageHeight;
+    let drawWidth;
+    let drawHeight;
+    if (imageAspect > boxAspect) {
+        drawHeight = bounds.height;
+        drawWidth = drawHeight * imageAspect;
+    } else {
+        drawWidth = bounds.width;
+        drawHeight = drawWidth / imageAspect;
+    }
+
+    drawWidth *= scale;
+    drawHeight *= scale;
+    const drawX = bounds.x + ((bounds.width - drawWidth) * 0.5);
+    const drawY = bounds.y + ((bounds.height - drawHeight) * 0.5);
+    context.drawImage(imageElement, drawX, drawY, drawWidth, drawHeight);
+}
+
 function getLoopTransitionDuration(duration) {
     if (!Number.isFinite(duration) || duration <= 0) {
         return 0;
@@ -376,42 +369,77 @@ function getLoopTransitionDuration(duration) {
     );
 }
 
-function buildMosaicTiles(bounds, definition = getMosaicDefinition(), options = {}) {
-    const { grid, blueprint } = definition;
-    const gapRatio = Number.isFinite(options.gapRatio) ? options.gapRatio : 0.24;
-    const minGap = Number.isFinite(options.minGap) ? options.minGap : 27;
-    const gap = Math.max(minGap, Math.round(Math.min(bounds.width / grid.columns, bounds.height / grid.rows) * gapRatio));
-    const cellWidth = (bounds.width - (gap * (grid.columns - 1))) / grid.columns;
-    const cellHeight = (bounds.height - (gap * (grid.rows - 1))) / grid.rows;
+function getRotatedBounds(rect) {
+    const cos = Math.cos(rect.angle);
+    const sin = Math.sin(rect.angle);
+    const rotatedWidth = Math.abs(rect.width * cos) + Math.abs(rect.height * sin);
+    const rotatedHeight = Math.abs(rect.width * sin) + Math.abs(rect.height * cos);
 
-    return blueprint.map((tile, index) => {
-        const x = bounds.x + (tile.column * (cellWidth + gap));
-        const y = bounds.y + (tile.row * (cellHeight + gap));
-        const width = Math.max(18, (tile.columnSpan * cellWidth) + ((tile.columnSpan - 1) * gap));
-        const height = Math.max(18, (tile.rowSpan * cellHeight) + ((tile.rowSpan - 1) * gap));
-
-        return {
-            index,
-            x,
-            y,
-            width,
-            height,
-            weight: tile.weight
-        };
-    });
+    return {
+        x: rect.centerX - (rotatedWidth * 0.5),
+        y: rect.centerY - (rotatedHeight * 0.5),
+        width: rotatedWidth,
+        height: rotatedHeight
+    };
 }
 
-function buildMaskPath(tiles, bleed = 0) {
-    const path = new Path2D();
-    tiles.forEach((tile) => {
-        path.rect(
-            tile.x - bleed,
-            tile.y - bleed,
-            tile.width + (bleed * 2),
-            tile.height + (bleed * 2)
-        );
-    });
-    return path;
+function getUnionBounds(items) {
+    if (!items.length) {
+        return { x: 0, y: 0, width: 0, height: 0 };
+    }
+
+    const bounds = items.map(getRotatedBounds);
+    const minX = Math.min(...bounds.map((item) => item.x));
+    const minY = Math.min(...bounds.map((item) => item.y));
+    const maxX = Math.max(...bounds.map((item) => item.x + item.width));
+    const maxY = Math.max(...bounds.map((item) => item.y + item.height));
+
+    return {
+        x: minX,
+        y: minY,
+        width: maxX - minX,
+        height: maxY - minY
+    };
+}
+
+function buildCapsuleTiles(area, config = {}) {
+    const layoutWidth = Math.max(1, area.width * (Number.isFinite(config.widthRatio) ? config.widthRatio : 0.79));
+    const capsuleWidth = Math.max(1, layoutWidth * (Number.isFinite(config.lengthRatio) ? config.lengthRatio : 0.235));
+    const capsuleHeight = Math.max(1, capsuleWidth * (Number.isFinite(config.thicknessRatio) ? config.thicknessRatio : 0.31));
+    const rawGap = CAPSULE_COUNT > 1
+        ? (layoutWidth - (capsuleWidth * CAPSULE_COUNT)) / (CAPSULE_COUNT - 1)
+        : 0;
+    const gap = clamp(rawGap, -capsuleWidth * 0.2, capsuleWidth * 0.65);
+    const startX = area.x + ((area.width - layoutWidth) * 0.5) + (capsuleWidth * 0.5);
+    const centerY = area.y + (area.height * (Number.isFinite(config.centerYRatio) ? config.centerYRatio : 0.49));
+
+    return Array.from({ length: CAPSULE_COUNT }, (_, index) => ({
+        index,
+        centerX: startX + (index * (capsuleWidth + gap)),
+        centerY,
+        width: capsuleWidth,
+        height: capsuleHeight,
+        angle: CAPSULE_ANGLE,
+        zoom: CAPSULE_ZOOM_LEVELS[index] || CAPSULE_ZOOM_LEVELS[CAPSULE_ZOOM_LEVELS.length - 1],
+        inset: 3
+    }));
+}
+
+function traceCapsulePath(context, width, height, inset = 0) {
+    const safeInset = Math.min(Math.max(0, inset), Math.max(0, (Math.min(width, height) * 0.5) - 1));
+    const x = (-width * 0.5) + safeInset;
+    const y = (-height * 0.5) + safeInset;
+    const w = Math.max(2, width - (safeInset * 2));
+    const h = Math.max(2, height - (safeInset * 2));
+    const radius = h * 0.5;
+
+    context.beginPath();
+    context.moveTo(x + radius, y);
+    context.lineTo(x + w - radius, y);
+    context.arc(x + w - radius, y + radius, radius, -Math.PI / 2, Math.PI / 2);
+    context.lineTo(x + radius, y + h);
+    context.arc(x + radius, y + radius, radius, Math.PI / 2, -Math.PI / 2);
+    context.closePath();
 }
 
 function buildWrappedLines(context, text, maxWidth, maxLines = 2) {
@@ -453,7 +481,7 @@ function drawHeaderSeparator(context, centerX, centerY, size) {
     context.translate(centerX, centerY);
     context.lineCap = 'round';
     context.lineWidth = 1;
-    context.strokeStyle = 'rgba(74, 74, 74, 0.26)';
+    context.strokeStyle = 'rgba(255, 255, 255, 0.42)';
 
     context.beginPath();
     context.moveTo(-size, 0);
@@ -463,7 +491,7 @@ function drawHeaderSeparator(context, centerX, centerY, size) {
     context.stroke();
 
     context.rotate(Math.PI / 4);
-    context.fillStyle = 'rgba(126, 126, 126, 0.12)';
+    context.fillStyle = 'rgba(255, 255, 255, 0.18)';
     context.fillRect(-(size * 0.34), -(size * 0.34), size * 0.68, size * 0.68);
     context.restore();
 }
@@ -479,16 +507,14 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
     const video = createElement('video', 'visualizer-canvas-stage__video');
     const loopVideo = createElement('video', 'visualizer-canvas-stage__video visualizer-canvas-stage__video--loop');
     const canvas = createElement('canvas', 'visualizer-canvas-stage__canvas');
-    // Overlay canvas is alpha-composited above the video layer; backdrop is drawn here
-    // first, then the mosaic tiles are punched out so the GPU-composited video shows
-    // through, then text/lyrics/grain land on top.
-    const context = canvas.getContext('2d', { alpha: true, desynchronized: mode !== 'render' });
+    // The canvas owns the final picture so preview and captured render stay identical.
+    const context = canvas.getContext('2d', { alpha: true, desynchronized: false });
 
     stage.style.position = 'relative';
     stage.style.width = '100%';
     stage.style.height = '100%';
     stage.style.overflow = 'hidden';
-    stage.style.background = 'rgb(248, 246, 241)';
+    stage.style.background = BACKDROP_COLORS.indexBlueStrong;
 
     videoLayer.style.position = 'absolute';
     videoLayer.style.inset = '0';
@@ -503,16 +529,11 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         element.playsInline = true;
         element.crossOrigin = 'anonymous';
         element.disablePictureInPicture = true;
-        // Size each video to the mosaic outer bounds so cover-fitting matches the
-        // original canvas drawImage semantics (which used those bounds as the
-        // destination rect). The videoLayer's clip-path then masks per-tile.
-        // Position is updated dynamically by applyVideoBoxToFormat(); these are
-        // safe defaults that match the YouTube layout.
         element.style.position = 'absolute';
-        element.style.left = '15.5%';
-        element.style.top = '26.5%';
-        element.style.width = '69%';
-        element.style.height = '47%';
+        element.style.left = '0';
+        element.style.top = '0';
+        element.style.width = '100%';
+        element.style.height = '100%';
         element.style.objectFit = 'cover';
         element.style.objectPosition = '50% 50%';
         element.style.transformOrigin = '50% 50%';
@@ -557,6 +578,18 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
     let cachedCanvasLayoutKey = '';
     let cachedCanvasLayout = null;
     let currentVideoObjectUrl = null;
+    let backdropImageReady = false;
+    const backdropImage = new Image();
+    const backdropReadyPromise = new Promise((resolve) => {
+        backdropImage.onload = () => {
+            backdropImageReady = true;
+            resolve();
+            drawFrame(lastRenderedTime, { duration: lastRenderedDuration || currentDuration });
+        };
+        backdropImage.onerror = () => resolve();
+    });
+    backdropImage.decoding = 'async';
+    backdropImage.src = INDEX_BACKGROUND_IMAGE;
 
     function getSafeAreaForSize(width, height) {
         const margin = currentFormat.safeMargin || {};
@@ -581,52 +614,26 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         return Math.max(14, Math.round(sizeBase * ratio));
     }
 
-    function getMosaicLayoutForSize(width, height) {
-        const mosaicConfig = currentFormat.mosaic || { widthRatio: 0.69, heightRatio: 0.47 };
+    function getCapsuleLayoutForSize(width, height) {
         const safeArea = getSafeAreaForSize(width, height);
         const shouldUseSafeArea = currentFormat.id === 'instagram';
         const layoutArea = shouldUseSafeArea
             ? safeArea
             : { x: 0, y: 0, width, height };
-        const mosaicWidth = Math.min(width * mosaicConfig.widthRatio, layoutArea.width);
-        const mosaicHeight = Math.min(height * mosaicConfig.heightRatio, layoutArea.height);
-        const bounds = {
-            x: layoutArea.x + ((layoutArea.width - mosaicWidth) * 0.5),
-            y: layoutArea.y + ((layoutArea.height - mosaicHeight) * 0.5),
-            width: mosaicWidth,
-            height: mosaicHeight
+        const capsules = buildCapsuleTiles(layoutArea, currentFormat.capsules);
+        return {
+            bounds: getUnionBounds(capsules),
+            capsules
         };
-        const tiles = buildMosaicTiles(bounds, getMosaicDefinition(currentFormat), {
-            gapRatio: currentFormat.mosaicGapRatio,
-            minGap: currentFormat.mosaicMinGap
-        });
-        return { bounds, tiles };
     }
 
     function applyVideoBoxToFormat() {
-        const mosaicConfig = currentFormat.mosaic || { widthRatio: 0.69, heightRatio: 0.47 };
-        const leftPercent = ((1 - mosaicConfig.widthRatio) * 0.5) * 100;
-        const topPercent = ((1 - mosaicConfig.heightRatio) * 0.5) * 100;
-        const widthPercent = mosaicConfig.widthRatio * 100;
-        const heightPercent = mosaicConfig.heightRatio * 100;
         for (const element of [video, loopVideo]) {
-            element.style.left = `${leftPercent.toFixed(3)}%`;
-            element.style.top = `${topPercent.toFixed(3)}%`;
-            element.style.width = `${widthPercent.toFixed(3)}%`;
-            element.style.height = `${heightPercent.toFixed(3)}%`;
+            element.style.left = '0';
+            element.style.top = '0';
+            element.style.width = '100%';
+            element.style.height = '100%';
         }
-    }
-
-    function buildClipPathString(tiles, bleed = 0) {
-        return tiles
-            .map((t) => {
-                const x = t.x - bleed;
-                const y = t.y - bleed;
-                const width = t.width + (bleed * 2);
-                const height = t.height + (bleed * 2);
-                return `M${x.toFixed(2)} ${y.toFixed(2)}h${width.toFixed(2)}v${height.toFixed(2)}h${(-width).toFixed(2)}Z`;
-            })
-            .join(' ');
     }
 
     function updateClipPathForHost() {
@@ -640,16 +647,9 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         }
         cachedHostWidth = width;
         cachedHostHeight = height;
-        const { tiles } = getMosaicLayoutForSize(width, height);
-        const path = buildClipPathString(tiles, MOSAIC_CLIP_BLEED);
-        const key = `${width}x${height}|${path.length}`;
-        if (key === cachedClipKey) {
-            return;
-        }
-        cachedClipKey = key;
-        const value = `path("${path}")`;
-        videoLayer.style.clipPath = value;
-        videoLayer.style.webkitClipPath = value;
+        cachedClipKey = `${width}x${height}`;
+        videoLayer.style.clipPath = 'none';
+        videoLayer.style.webkitClipPath = 'none';
     }
 
     function updateCanvasSize() {
@@ -722,9 +722,9 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         host.style.aspectRatio = currentFormat.aspectRatio;
         host.dataset.format = currentFormat.id;
         stage.dataset.format = currentFormat.id;
-        stage.style.background = currentFormat.plainBackdrop ? '#fff' : 'rgb(248, 246, 241)';
+        stage.style.background = BACKDROP_COLORS.indexBlueStrong;
         applyVideoBoxToFormat();
-        // Invalidate cached layouts that depended on the previous mosaic ratios.
+        // Invalidate cached layouts that depended on the previous format ratios.
         cachedHostWidth = 0;
         cachedHostHeight = 0;
         cachedClipKey = '';
@@ -1148,23 +1148,40 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         const height = canvas.height;
         const safeTime = toFiniteNonNegative(time, 0);
         const safeEnergy = toFiniteNonNegative(energy, 0);
-        const fill = currentFormat.plainBackdrop ? '#fff' : 'rgb(248, 246, 241)';
+        const base = parseHexColor(BACKDROP_COLORS.indexBlueStrong);
+        const blue = parseHexColor(BACKDROP_COLORS.indexBlue);
+        const deep = parseHexColor(BACKDROP_COLORS.indexBlueDeep);
+        const night = parseHexColor(BACKDROP_COLORS.indexBlueNight);
+        const bright = parseHexColor(BACKDROP_COLORS.indexBlueBright);
 
-        context.fillStyle = fill;
+        context.fillStyle = BACKDROP_COLORS.indexBlueStrong;
         context.fillRect(0, 0, width, height);
 
-        if (currentFormat.plainBackdrop) {
-            return;
+        if (backdropImageReady) {
+            drawCoveringImageFrame(context, backdropImage, { x: 0, y: 0, width, height }, 1.06);
         }
 
-        const accent = parseHexColor(sectionColor, parseHexColor(BACKDROP_COLORS.sand));
+        const bodyGradient = context.createLinearGradient(0, 0, width, height);
+        bodyGradient.addColorStop(0, rgba(night, 0.42));
+        bodyGradient.addColorStop(0.38, rgba(bright, 0.34));
+        bodyGradient.addColorStop(0.68, rgba(blue, 0.42));
+        bodyGradient.addColorStop(1, rgba(deep, 0.28));
+        context.fillStyle = bodyGradient;
+        context.fillRect(0, 0, width, height);
+
+        const indexGlow = context.createRadialGradient(width * 0.82, height * 0.08, width * 0.02, width * 0.82, height * 0.08, width * 0.31);
+        indexGlow.addColorStop(0, rgba(bright, 0.58));
+        indexGlow.addColorStop(1, rgba(bright, 0));
+        context.fillStyle = indexGlow;
+        context.fillRect(0, 0, width, height);
+
+        const accent = parseHexColor(sectionColor, base);
         const glowX = width * (0.22 + (Math.sin((safeTime * 0.06) + 0.4) * 0.05));
         const glowY = height * (0.18 + (Math.cos((safeTime * 0.08) + 0.7) * 0.04));
-        const glow = context.createRadialGradient(glowX, glowY, width * 0.04, glowX, glowY, width * 0.42);
-        glow.addColorStop(0, rgba(accent, 0.055 + (safeEnergy * 0.02)));
-        glow.addColorStop(0.55, 'rgba(44, 67, 88, 0.02)');
-        glow.addColorStop(1, 'rgba(248, 246, 241, 0)');
-        context.fillStyle = glow;
+        const sectionGlow = context.createRadialGradient(glowX, glowY, width * 0.04, glowX, glowY, width * 0.38);
+        sectionGlow.addColorStop(0, rgba(accent, 0.035 + (safeEnergy * 0.018)));
+        sectionGlow.addColorStop(1, rgba(accent, 0));
+        context.fillStyle = sectionGlow;
         context.fillRect(0, 0, width, height);
     }
 
@@ -1175,103 +1192,120 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         const cool = parseHexColor(BACKDROP_COLORS.slate);
         const layoutKey = `${width}x${height}`;
         if (layoutKey !== cachedCanvasLayoutKey) {
-            const { bounds, tiles } = getMosaicLayoutForSize(width, height);
+            const { bounds, capsules } = getCapsuleLayoutForSize(width, height);
             cachedCanvasLayout = {
                 bounds,
-                tiles,
-                fallbackMaskPath: buildMaskPath(tiles),
-                maskPath: buildMaskPath(tiles, MOSAIC_OVERLAY_BLEED)
+                capsules
             };
             cachedCanvasLayoutKey = layoutKey;
         }
-        const { bounds, fallbackMaskPath, maskPath } = cachedCanvasLayout;
+        const { bounds, capsules } = cachedCanvasLayout;
         const videoMotion = {
             panX: Math.sin((time * 0.04) + (track.id * 0.5)) * 0.14,
             panY: Math.cos((time * 0.03) + (track.id * 0.35)) * 0.12,
-            scale: 1.025 + (featureSample.smoothed * 0.025)
+            scale: 1
         };
         const loopTransitionState = getLoopTransitionState(time);
         const hasVideo = videoReady && video.videoWidth && video.videoHeight;
         const hasLoop = loopTransitionState && loopVideoReady && loopVideo.videoWidth && loopVideo.videoHeight;
 
-        if (mode === 'render') {
-            // Render mode: composite video into the canvas itself so a single
-            // canvas.captureStream() captures the full picture (CSS clip-path
-            // layers can't be screen-grabbed by MediaRecorder).
-            videoLayer.style.visibility = 'hidden';
+        videoLayer.style.visibility = 'hidden';
+
+        capsules.forEach((capsule) => {
+            const localBounds = {
+                x: -capsule.width * 0.5,
+                y: -capsule.height * 0.5,
+                width: capsule.width,
+                height: capsule.height
+            };
+            const capsuleMotion = {
+                panX: videoMotion.panX + ((capsule.index - ((CAPSULE_COUNT - 1) * 0.5)) * 0.045),
+                panY: videoMotion.panY - ((capsule.index - ((CAPSULE_COUNT - 1) * 0.5)) * 0.025),
+                scale: capsule.zoom
+            };
+            const shadowAngle = CAPSULE_SHADOW_ANGLE - capsule.angle;
+            const shadowDistance = capsule.height * 0.18;
+            const shadowOffsetX = Math.cos(shadowAngle) * shadowDistance;
+            const shadowOffsetY = Math.sin(shadowAngle) * shadowDistance;
+            const lightingDistance = Math.max(capsule.width, capsule.height) * 0.55;
+            const lightingX = Math.cos(shadowAngle) * lightingDistance;
+            const lightingY = Math.sin(shadowAngle) * lightingDistance;
+
+            context.save();
+            context.translate(capsule.centerX, capsule.centerY);
+            context.rotate(capsule.angle);
+
+            context.save();
+            context.shadowColor = 'rgba(0, 17, 55, 0.42)';
+            context.shadowBlur = Math.max(16, capsule.height * 0.26);
+            context.shadowOffsetX = shadowOffsetX;
+            context.shadowOffsetY = shadowOffsetY;
+            context.fillStyle = 'rgba(8, 76, 150, 0.08)';
+            traceCapsulePath(context, capsule.width, capsule.height, 0);
+            context.fill();
+            context.restore();
+
+            traceCapsulePath(context, capsule.width, capsule.height, 0);
+            context.clip();
 
             if (hasVideo) {
-                context.save();
-                context.clip(fallbackMaskPath);
-                drawCoveringVideoFrame(context, video, bounds, videoMotion,
+                drawCoveringVideoFrame(context, video, localBounds, capsuleMotion,
                     hasLoop ? loopTransitionState.outgoingOpacity : 1);
                 if (hasLoop) {
-                    drawCoveringVideoFrame(context, loopVideo, bounds, videoMotion,
+                    drawCoveringVideoFrame(context, loopVideo, localBounds, capsuleMotion,
                         loopTransitionState.incomingOpacity);
                 }
-                context.restore();
             } else {
-                context.save();
-                context.clip(fallbackMaskPath);
-                if (currentFormat.plainBackdrop) {
-                    context.fillStyle = 'rgba(20, 20, 20, 0.08)';
-                } else {
-                    const fallbackFill = context.createLinearGradient(bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
-                    fallbackFill.addColorStop(0, rgba(accent, 0.34));
-                    fallbackFill.addColorStop(1, rgba(cool, 0.2));
-                    context.fillStyle = fallbackFill;
-                }
-                context.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-                context.restore();
-            }
-
-            return bounds;
-        }
-
-        // Update GPU-composited <video> elements; they live beneath the canvas and
-        // are clipped by the videoLayer's CSS clip-path.
-        if (hasVideo) {
-            applyVideoTransform(video, {
-                ...videoMotion,
-                opacity: hasLoop ? loopTransitionState.outgoingOpacity : 1
-            });
-            videoLayer.style.visibility = 'visible';
-        } else {
-            video.style.opacity = '0';
-            videoLayer.style.visibility = 'hidden';
-        }
-
-        if (hasLoop) {
-            applyVideoTransform(loopVideo, {
-                ...videoMotion,
-                opacity: loopTransitionState.incomingOpacity
-            });
-        } else if (loopVideo.style.opacity !== '0') {
-            loopVideo.style.opacity = '0';
-        }
-
-        if (hasVideo) {
-            // Punch transparent tiles in the canvas so the video shows through.
-            context.save();
-            context.globalCompositeOperation = 'destination-out';
-            context.fillStyle = '#000';
-            context.fill(maskPath);
-            context.restore();
-        } else {
-            // No video: paint a soft fallback gradient inside the tiles directly on the canvas.
-            context.save();
-            context.clip(fallbackMaskPath);
-            if (currentFormat.plainBackdrop) {
-                context.fillStyle = 'rgba(20, 20, 20, 0.08)';
-            } else {
-                const fallbackFill = context.createLinearGradient(bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
-                fallbackFill.addColorStop(0, rgba(accent, 0.34));
-                fallbackFill.addColorStop(1, rgba(cool, 0.2));
+                const fallbackFill = context.createLinearGradient(localBounds.x, localBounds.y, localBounds.x + localBounds.width, localBounds.y + localBounds.height);
+                fallbackFill.addColorStop(0, rgba(accent, 0.4));
+                fallbackFill.addColorStop(1, rgba(cool, 0.24));
                 context.fillStyle = fallbackFill;
+                context.fillRect(localBounds.x, localBounds.y, localBounds.width, localBounds.height);
             }
-            context.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+
+            const sheen = context.createLinearGradient(-lightingX, -lightingY, lightingX, lightingY);
+            sheen.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+            sheen.addColorStop(0.34, 'rgba(255, 255, 255, 0.08)');
+            sheen.addColorStop(0.62, 'rgba(255, 255, 255, 0)');
+            sheen.addColorStop(1, 'rgba(0, 18, 58, 0.28)');
+            context.fillStyle = sheen;
+            context.fillRect(localBounds.x, localBounds.y, localBounds.width, localBounds.height);
+
+            context.save();
+            traceCapsulePath(context, capsule.width, capsule.height, 0);
+            context.clip();
+            context.filter = 'blur(0.75px)';
+            context.lineWidth = capsule.inset;
+            context.strokeStyle = 'rgba(0, 15, 50, 0.5)';
+            context.translate(shadowOffsetX * 0.08, shadowOffsetY * 0.08);
+            traceCapsulePath(context, capsule.width, capsule.height, 0);
+            context.stroke();
             context.restore();
-        }
+
+            context.save();
+            traceCapsulePath(context, capsule.width, capsule.height, 0);
+            context.clip();
+            context.filter = 'blur(0.45px)';
+            context.lineWidth = capsule.inset;
+            context.strokeStyle = 'rgba(255, 255, 255, 0.42)';
+            context.translate(-shadowOffsetX * 0.07, -shadowOffsetY * 0.07);
+            traceCapsulePath(context, capsule.width, capsule.height, 0);
+            context.stroke();
+            context.restore();
+
+            context.save();
+            traceCapsulePath(context, capsule.width, capsule.height, 0);
+            context.clip();
+            context.filter = 'blur(0.6px)';
+            context.lineWidth = capsule.inset;
+            context.strokeStyle = 'rgba(0, 18, 58, 0.38)';
+            context.translate(shadowOffsetX * 0.12, shadowOffsetY * 0.12);
+            traceCapsulePath(context, capsule.width, capsule.height, 0);
+            context.stroke();
+            context.restore();
+
+            context.restore();
+        });
 
         return bounds;
     }
@@ -1280,7 +1314,8 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         const height = canvas.height;
         const sizeBase = Math.min(canvas.width, canvas.height);
         const band = String(track.bandName || 'Sioto Jazz').toUpperCase();
-        const title = String(track.title || '');
+        const title = String(track.title || '').toUpperCase();
+        const titleFontFamily = '"UniversCnRg", "Arial Narrow", Arial, sans-serif';
 
         if (currentFormat.id === 'instagram') {
             const safeArea = getSafeAreaForSize(canvas.width, canvas.height);
@@ -1297,7 +1332,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
             const measureStack = () => {
                 context.font = `${bandSize}px "Astrella", "Garet", sans-serif`;
                 const bandMetrics = context.measureText(band);
-                context.font = `600 ${titleSize}px "Garet", sans-serif`;
+                context.font = `${titleSize}px ${titleFontFamily}`;
                 const titleMetrics = context.measureText(title);
                 const bandAscent = bandMetrics.actualBoundingBoxAscent || (bandSize * 0.72);
                 const bandDescent = bandMetrics.actualBoundingBoxDescent || (bandSize * 0.28);
@@ -1340,18 +1375,21 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
             context.save();
             context.textAlign = 'center';
             context.textBaseline = 'alphabetic';
-            context.fillStyle = 'rgba(20, 20, 20, 0.96)';
+            context.shadowColor = 'rgba(3, 20, 56, 0.36)';
+            context.shadowBlur = Math.max(4, sizeBase * 0.006);
+            context.shadowOffsetY = Math.max(1, sizeBase * 0.002);
+            context.fillStyle = 'rgba(255, 255, 255, 0.96)';
             context.font = `${bandSize}px "Astrella", "Garet", sans-serif`;
             context.fillText(band, centerX, bandBaselineY, maxWidth);
-            context.font = `600 ${titleSize}px "Garet", sans-serif`;
-            context.fillStyle = 'rgba(28, 28, 28, 0.9)';
+            context.font = `${titleSize}px ${titleFontFamily}`;
+            context.fillStyle = 'rgba(255, 255, 255, 0.92)';
             context.fillText(title, centerX, titleBaselineY, maxWidth);
             context.restore();
             return;
         }
 
         const bandReferenceText = 'SIOTO';
-        const titleReferenceText = 'Ag';
+        const titleReferenceText = 'AG';
         let bandSize = Math.round(sizeBase * 0.108);
         let titleSize = Math.round(sizeBase * 0.081);
         const minBandSize = 48;
@@ -1363,7 +1401,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         while (bandSize > minBandSize || titleSize > minTitleSize) {
             context.font = `${bandSize}px "Astrella", "Garet", sans-serif`;
             const bandWidth = context.measureText(band).width;
-            context.font = `600 ${titleSize}px "Garet", sans-serif`;
+            context.font = `${titleSize}px ${titleFontFamily}`;
             const titleWidth = context.measureText(title).width;
             if ((bandWidth + gap + titleWidth) <= (bounds.width * 0.9)) {
                 break;
@@ -1380,7 +1418,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         const bandWidth = context.measureText(band).width;
         const bandReferenceMetrics = context.measureText(bandReferenceText);
 
-        context.font = `600 ${titleSize}px "Garet", sans-serif`;
+        context.font = `${titleSize}px ${titleFontFamily}`;
         const titleWidth = context.measureText(title).width;
         const titleReferenceMetrics = context.measureText(titleReferenceText);
         const totalWidth = bandWidth + gap + titleWidth;
@@ -1390,20 +1428,22 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         const bandDescent = bandReferenceMetrics.actualBoundingBoxDescent || (bandSize * 0.28);
         const titleAscent = titleReferenceMetrics.actualBoundingBoxAscent || (titleSize * 0.72);
         const titleDescent = titleReferenceMetrics.actualBoundingBoxDescent || (titleSize * 0.28);
-        const titleOpticalOffset = Math.round(titleSize * 0.04) + Math.max(2, Math.round(sizeBase * 0.0037));
         const bandBaselineY = rowCenterY + ((bandAscent - bandDescent) * 0.5);
-        const titleBaselineY = rowCenterY + ((titleAscent - titleDescent) * 0.5) + titleOpticalOffset;
+        const titleBaselineY = rowCenterY + ((titleAscent - titleDescent) * 0.5);
         const separatorCenterX = startX + bandWidth + separatorPadding + separatorSize;
 
         context.save();
         context.textAlign = 'left';
         context.textBaseline = 'alphabetic';
-        context.fillStyle = 'rgba(20, 20, 20, 0.96)';
+        context.shadowColor = 'rgba(3, 20, 56, 0.36)';
+        context.shadowBlur = Math.max(4, sizeBase * 0.006);
+        context.shadowOffsetY = Math.max(1, sizeBase * 0.002);
+        context.fillStyle = 'rgba(255, 255, 255, 0.96)';
         context.font = `${bandSize}px "Astrella", "Garet", sans-serif`;
         context.fillText(band, startX, bandBaselineY, bandWidth + 4);
         drawHeaderSeparator(context, separatorCenterX, rowCenterY, separatorSize);
-        context.font = `600 ${titleSize}px "Garet", sans-serif`;
-        context.fillStyle = 'rgba(28, 28, 28, 0.9)';
+        context.font = `${titleSize}px ${titleFontFamily}`;
+        context.fillStyle = 'rgba(255, 255, 255, 0.92)';
         context.fillText(title, startX + bandWidth + gap, titleBaselineY, titleWidth + 4);
         context.restore();
     }
@@ -1434,6 +1474,9 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
 
         context.save();
         context.textAlign = 'center';
+        context.shadowColor = 'rgba(3, 20, 56, 0.34)';
+        context.shadowBlur = Math.max(3, sizeBase * 0.004);
+        context.shadowOffsetY = Math.max(1, sizeBase * 0.0015);
 
         if (lyricState.mode !== 'synced') {
             const fallbackLabel = lyricState.mode === 'fallback'
@@ -1446,7 +1489,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
                 : lyricZoneTop + Math.max(0, (lyricZoneHeight - fallbackLineHeight) * 0.5);
             context.font = `${fallbackSize}px "Garet", sans-serif`;
             context.textBaseline = 'top';
-            context.fillStyle = 'rgba(28, 28, 28, 0.72)';
+            context.fillStyle = 'rgba(255, 255, 255, 0.78)';
             context.fillText(fallbackLabel, lyricCenterX, fallbackTop, lyricWidth);
             context.restore();
             return;
@@ -1468,7 +1511,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
                     : lyricZoneTop + Math.max(0, (lyricZoneHeight - noteLineHeight) * 0.5);
                 context.font = `${noteSize}px "Garet", sans-serif`;
                 context.textBaseline = 'top';
-                context.fillStyle = 'rgba(28, 28, 28, 0.62)';
+                context.fillStyle = 'rgba(255, 255, 255, 0.72)';
                 context.fillText('Instrumental passage', lyricCenterX, noteTop, lyricWidth);
             }
             context.restore();
@@ -1482,7 +1525,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         const maxLift = Math.max(5, Math.round(sizeBase * 0.008));
 
         context.font = `600 ${currentFontSize}px "Garet", sans-serif`;
-        context.fillStyle = 'rgba(18, 18, 18, 0.96)';
+        context.fillStyle = 'rgba(255, 255, 255, 0.96)';
         const currentLines = buildWrappedLines(context, currentText, lyricWidth, 2);
         const lyricMetrics = context.measureText(currentLines[0] || currentText);
         const lyricAscent = lyricMetrics.actualBoundingBoxAscent || (currentFontSize * 0.72);
@@ -1507,7 +1550,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
     }
 
     function drawGrain() {
-        if (!noisePattern || currentFormat.plainBackdrop) {
+        if (!noisePattern) {
             return;
         }
 
@@ -1636,7 +1679,7 @@ export function createVisualizerStage(container, { format = 'youtube', mode = 'r
         },
         setTrack,
         whenReady() {
-            return mediaReadyPromise;
+            return Promise.all([mediaReadyPromise, backdropReadyPromise]).then(() => undefined);
         }
     };
 }
