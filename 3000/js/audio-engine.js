@@ -44,14 +44,28 @@ class AudioEngine {
         this.sourceNode = sourceNode;
     }
 
+    async resumeContext() {
+        if (!this.context || this.context.state !== 'suspended') return;
+        try {
+            await this.context.resume();
+        } catch (error) {
+            console.warn('AudioContext resume failed:', error);
+        }
+    }
+
     async play() {
         this.ensureContext();
-        if (this.context.state === 'suspended') {
-            await this.context.resume();
+
+        const resumePromise = this.resumeContext();
+        const playPromise = this.mediaElement
+            ? this.mediaElement.play()
+            : Promise.resolve();
+
+        const [, playResult] = await Promise.allSettled([resumePromise, playPromise]);
+        if (playResult.status === 'rejected') {
+            throw playResult.reason;
         }
-        if (this.mediaElement) {
-            return this.mediaElement.play();
-        }
+        return playResult.value;
     }
 
     pause() {

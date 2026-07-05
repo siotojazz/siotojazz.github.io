@@ -2753,8 +2753,8 @@
     const seekSectionTooltip = document.getElementById('seek-section-tooltip');
     const glSeek = createSeekRenderer(seekCanvas);
     const audioEngine = new AudioEngine();
+    configureManagedAudioElement(audio, { standby: false });
     let standbyAudio = createGaplessAudioElement();
-    audio.preload = 'auto';
     const toggleBtn = playerBasic.querySelector('.toggle-btn');
     const prevTrackBtn = playerBasic.querySelector('.prev-track-btn');
     const nextTrackBtn = playerBasic.querySelector('.next-track-btn');
@@ -2824,10 +2824,17 @@
     const audioAnalysisFailures = new Set();
     const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
     const NEXT_TRACK_PRELOAD_AHEAD_SECONDS = 24;
+    const GAPLESS_READY_TIMEOUT_MS = 1200;
+    const GAPLESS_BUFFER_SECONDS = 1.5;
+    const GAPLESS_HANDOFF_AHEAD_SECONDS = 0.06;
+    const GAPLESS_READY_STATE = window.HTMLMediaElement?.HAVE_FUTURE_DATA || 3;
+    const AUDIO_PRELOAD_LINK_LIMIT = 2;
+    const MEDIA_SESSION_SEEK_SECONDS = 10;
     let gaplessPrepareToken = 0;
     let gaplessPreparedTrack = null;
     let gaplessTransitioning = false;
     let selectSongLoadToken = 0;
+    const audioPreloadLinks = new Map();
 
     function appendTrackTitleParts(container, trackIndex, track) {
         container.replaceChildren();
@@ -5329,6 +5336,100 @@
         selectSong(data.tracks[nextIndex], nextIndex, 0, shouldAutoPlay);
     }
 
+    function getMediaSessionTitle(track, trackIndex) {
+        if (!track) return '';
+        const titleParts = [`${trackIndex + 1} ${track.title}`];
+        if (track.feature) {
+            titleParts.push(track.feature);
+        }
+        return titleParts.join(' / ');
+    }
+
+    function updateMediaSessionMetadata(track = currentTrack, trackIndex = selectedTrackIndex) {
+        if (!('mediaSession' in navigator)) return;
+
+        try {
+            if (track && 'MediaMetadata' in window) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: getMediaSessionTitle(track, trackIndex),
+                    artist: 'Sioto Jazz',
+                    album: data.title || 'In a Race Against Time',
+                    artwork: [
+                        { src: 'album_cover.png', sizes: '512x512', type: 'image/png' }
+                    ]
+                });
+            }
+            navigator.mediaSession.playbackState = track && !audio.paused ? 'playing' : 'paused';
+        } catch {
+            // Media Session is optional and varies across browsers.
+        }
+    }
+
+    function setMediaSessionPlaybackState(state = null) {
+        if (!('mediaSession' in navigator)) return;
+        try {
+            navigator.mediaSession.playbackState = state || (currentTrack && !audio.paused ? 'playing' : 'paused');
+        } catch {
+            // Ignore browsers with partial Media Session implementations.
+        }
+    }
+
+    function playFromMediaSession() {
+        if (!currentTrack) return;
+        audioEngine.play().then(() => {
+            setToggleIcon(false);
+            setMediaSessionPlaybackState('playing');
+        }).catch(err => {
+            console.error('Audio play error:', err);
+            toggleBtn.disabled = false;
+            setToggleIcon(true);
+            setMediaSessionPlaybackState('paused');
+        });
+    }
+
+    function pauseFromMediaSession() {
+        audioEngine.pause();
+        setToggleIcon(true);
+        setMediaSessionPlaybackState('paused');
+    }
+
+    function seekFromMediaSession(time) {
+        if (!currentTrack || !Number.isFinite(time)) return;
+        const duration = audio.duration || trackDurations.get(selectedTrackIndex) || 0;
+        const nextTime = Math.max(0, Math.min(duration || time, time));
+        if ('fastSeek' in audio) {
+            try {
+                audio.fastSeek(nextTime);
+                return;
+            } catch {
+                // Fall back to normal seeking.
+            }
+        }
+        audioEngine.seek(nextTime);
+    }
+
+    function configureMediaSessionActions() {
+        if (!('mediaSession' in navigator) || typeof navigator.mediaSession.setActionHandler !== 'function') return;
+
+        const handlers = {
+            play: playFromMediaSession,
+            pause: pauseFromMediaSession,
+            previoustrack: () => goToAdjacentTrack(-1),
+            nexttrack: () => goToAdjacentTrack(1),
+            seekbackward: details => seekFromMediaSession((audio.currentTime || 0) - (details.seekOffset || MEDIA_SESSION_SEEK_SECONDS)),
+            seekforward: details => seekFromMediaSession((audio.currentTime || 0) + (details.seekOffset || MEDIA_SESSION_SEEK_SECONDS)),
+            seekto: details => seekFromMediaSession(details.seekTime)
+        };
+
+        Object.entries(handlers).forEach(([action, handler]) => {
+            try {
+                navigator.mediaSession.setActionHandler(action, handler);
+            } catch {
+                // Some browsers support only a subset of actions.
+            }
+        });
+    }
+
     function getTrackStartOffset(track) {
         const offset = Number.parseFloat(track?.startOffset);
         return Number.isFinite(offset) ? offset : 0;
@@ -5423,12 +5524,32 @@
         seekSectionTooltip.style.setProperty('--tooltip-shift', `${shift}px`);
     }
 
-    function createGaplessAudioElement() {
-        const element = document.createElement('audio');
-        element.id = 'audio-player-standby';
+    function configureManagedAudioElement(element, { standby = false } = {}) {
+        if (!element) return element;
+        element.id = standby ? 'audio-player-standby' : 'audio-player';
         element.crossOrigin = 'anonymous';
         element.preload = 'auto';
-        element.setAttribute('aria-hidden', 'true');
+        element.playsInline = true;
+        element.setAttribute('playsinline', '');
+        element.setAttribute('webkit-playsinline', '');
+        if ('disableRemotePlayback' in element) {
+            element.disableRemotePlayback = true;
+        }
+        if (standby) {
+            element.setAttribute('aria-hidden', 'true');
+        } else {
+            element.removeAttribute('aria-hidden');
+        }
+        return element;
+    }
+
+    function setManagedAudioElementRoles(activeElement, standbyElement) {
+        configureManagedAudioElement(standbyElement, { standby: true });
+        configureManagedAudioElement(activeElement, { standby: false });
+    }
+
+    function createGaplessAudioElement() {
+        const element = configureManagedAudioElement(document.createElement('audio'), { standby: true });
         playerBasic.appendChild(element);
         return element;
     }
@@ -5444,6 +5565,63 @@
 
     function isSameAudioSource(left, right) {
         return getResolvedAudioUrl(left) === getResolvedAudioUrl(right);
+    }
+
+    function trimAudioPreloadLinks(activeHref = '') {
+        for (const [href, link] of audioPreloadLinks) {
+            if (audioPreloadLinks.size <= AUDIO_PRELOAD_LINK_LIMIT) break;
+            if (href === activeHref) continue;
+            link.remove();
+            audioPreloadLinks.delete(href);
+        }
+    }
+
+    function preloadAudioResource(source) {
+        const href = getResolvedAudioUrl(source);
+        if (!href) return;
+
+        const existing = audioPreloadLinks.get(href);
+        if (existing) {
+            audioPreloadLinks.delete(href);
+            audioPreloadLinks.set(href, existing);
+            trimAudioPreloadLinks(href);
+            return;
+        }
+
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'audio';
+        link.href = href;
+        link.crossOrigin = 'anonymous';
+        document.head.appendChild(link);
+        audioPreloadLinks.set(href, link);
+        trimAudioPreloadLinks(href);
+    }
+
+    function hasBufferedAudioAhead(element, startTime = 0, secondsAhead = GAPLESS_BUFFER_SECONDS) {
+        if (!element?.buffered) return false;
+        const targetStart = Math.max(0, Number.parseFloat(startTime) || 0);
+        const targetEnd = Number.isFinite(element.duration) && element.duration > 0
+            ? Math.min(element.duration, targetStart + secondsAhead)
+            : targetStart + secondsAhead;
+
+        for (let index = 0; index < element.buffered.length; index += 1) {
+            if (
+                element.buffered.start(index) <= targetStart + 0.05 &&
+                element.buffered.end(index) >= targetEnd
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isGaplessAudioReady(element, startTime = 0) {
+        return Boolean(
+            element &&
+            (element.readyState >= GAPLESS_READY_STATE || hasBufferedAudioAhead(element, startTime))
+        );
     }
 
     function resetAudioElementSource(element) {
@@ -5758,16 +5936,35 @@
 
     function clearGaplessPreparedTrack({ unload = true } = {}) {
         gaplessPrepareToken += 1;
+        const prepared = gaplessPreparedTrack;
         gaplessPreparedTrack = null;
+        prepared?.cleanup?.();
+        prepared?.resolveReady?.(false);
         if (unload) {
             resetAudioElementSource(standbyAudio);
         }
     }
 
+    function waitForGaplessPreparedTrack(prepared, timeoutMs = GAPLESS_READY_TIMEOUT_MS) {
+        if (!prepared) return Promise.resolve(false);
+        if (prepared.ready || isGaplessAudioReady(standbyAudio, prepared.startTime)) {
+            prepared.ready = true;
+            prepared.cleanup?.();
+            prepared.resolveReady?.(true);
+            return Promise.resolve(true);
+        }
+        if (timeoutMs <= 0) return Promise.resolve(false);
+
+        return Promise.race([
+            prepared.readyPromise,
+            new Promise(resolve => window.setTimeout(() => resolve(false), timeoutMs))
+        ]).then(() => Boolean(prepared.ready));
+    }
+
     async function prepareGaplessNextTrack(trackIndex = selectedTrackIndex, options = {}) {
         if (trackIndex < 0 || trackIndex >= data.tracks.length - 1 || gaplessTransitioning) {
             clearGaplessPreparedTrack();
-            return;
+            return null;
         }
 
         const nextIndex = trackIndex + 1;
@@ -5776,12 +5973,12 @@
 
         if (!source && activeSongVersion === 'dani') {
             source = await updateTrackDaniAvailability(nextTrack, nextIndex);
-            if (selectedTrackIndex !== trackIndex || activeSongVersion !== 'dani') return;
+            if (selectedTrackIndex !== trackIndex || activeSongVersion !== 'dani') return null;
         }
 
         if (!source) {
             clearGaplessPreparedTrack();
-            return;
+            return null;
         }
 
         if (
@@ -5790,44 +5987,95 @@
             gaplessPreparedTrack?.version === activeSongVersion &&
             isSameAudioSource(gaplessPreparedTrack.source, source)
         ) {
-            return;
+            return gaplessPreparedTrack;
         }
 
+        clearGaplessPreparedTrack({ unload: false });
         const token = gaplessPrepareToken + 1;
         gaplessPrepareToken = token;
         resetAudioElementSource(standbyAudio);
+        configureManagedAudioElement(standbyAudio, { standby: true });
+        preloadAudioResource(source);
         standbyAudio.preload = 'auto';
         standbyAudio.crossOrigin = 'anonymous';
         standbyAudio.src = source;
+        let resolveReady;
+        const readyPromise = new Promise(resolve => {
+            resolveReady = resolve;
+        });
         gaplessPreparedTrack = {
             track: nextTrack,
             trackIndex: nextIndex,
             source,
             startTime: 0,
             ready: false,
+            readyPromise,
+            resolveReady,
             token,
             version: activeSongVersion
         };
 
-        const markReady = () => {
-            if (token !== gaplessPrepareToken || !gaplessPreparedTrack || selectedTrackIndex !== trackIndex) return;
+        const isCurrentPreparation = () => (
+            token === gaplessPrepareToken &&
+            gaplessPreparedTrack &&
+            selectedTrackIndex === trackIndex &&
+            gaplessPreparedTrack.trackIndex === nextIndex
+        );
+
+        const markMetadataLoaded = () => {
+            if (!isCurrentPreparation()) return;
             try {
                 standbyAudio.currentTime = 0;
             } catch {
                 // Some browsers defer seeking until enough data is buffered.
             }
-
-            gaplessPreparedTrack.startTime = 0;
-            gaplessPreparedTrack.ready = true;
         };
 
-        if (standbyAudio.readyState >= 1) {
-            markReady();
-        } else {
-            standbyAudio.addEventListener('loadedmetadata', markReady, { once: true });
-        }
+        const markReady = () => {
+            if (!isCurrentPreparation()) return;
+            markMetadataLoaded();
+            gaplessPreparedTrack.startTime = 0;
+            gaplessPreparedTrack.ready = true;
+            gaplessPreparedTrack.cleanup?.();
+            resolveReady(true);
+        };
+
+        const markReadyIfBuffered = () => {
+            if (isGaplessAudioReady(standbyAudio, 0)) {
+                markReady();
+            }
+        };
+
+        const markUnavailable = () => {
+            if (!isCurrentPreparation()) return;
+            gaplessPreparedTrack.cleanup?.();
+            resolveReady(false);
+        };
+
+        const listeners = [
+            ['loadedmetadata', markMetadataLoaded],
+            ['canplay', markReadyIfBuffered],
+            ['canplaythrough', markReady],
+            ['progress', markReadyIfBuffered],
+            ['error', markUnavailable]
+        ];
+
+        gaplessPreparedTrack.cleanup = () => {
+            listeners.forEach(([eventName, handler]) => {
+                standbyAudio.removeEventListener(eventName, handler);
+            });
+        };
+
+        listeners.forEach(([eventName, handler]) => {
+            standbyAudio.addEventListener(eventName, handler);
+        });
 
         standbyAudio.load();
+        if (standbyAudio.readyState >= 1) {
+            markMetadataLoaded();
+        }
+        markReadyIfBuffered();
+        return gaplessPreparedTrack;
     }
 
     function maybePrepareNextTrack(currentTime, duration) {
@@ -5837,6 +6085,18 @@
         const remaining = duration - currentTime;
         if (remaining <= NEXT_TRACK_PRELOAD_AHEAD_SECONDS) {
             void prepareGaplessNextTrack(selectedTrackIndex);
+        }
+    }
+
+    function maybeStartGaplessHandoff(currentTime, duration) {
+        if (document.visibilityState === 'hidden') return;
+        if (gaplessTransitioning || selectedTrackIndex < 0 || selectedTrackIndex >= data.tracks.length - 1) return;
+        if (!Number.isFinite(duration) || duration <= 0) return;
+        if (!gaplessPreparedTrack?.ready) return;
+
+        const remaining = duration - currentTime;
+        if (remaining >= 0 && remaining <= GAPLESS_HANDOFF_AHEAD_SECONDS) {
+            void startGaplessTransition({ force: true });
         }
     }
 
@@ -5881,6 +6141,7 @@
         });
         structureContent.querySelectorAll('.chord-progress').forEach(progress => progress.style.setProperty('--progress', 0));
         updateURL(trackIndex);
+        setMediaSessionPlaybackState('none');
     }
 
     async function startGaplessTransition({ force = false } = {}) {
@@ -5893,17 +6154,32 @@
             return;
         }
 
+        if (document.visibilityState === 'hidden') {
+            selectSong(data.tracks[nextIndex], nextIndex, 0, true, {
+                preservePreparedAudio: true
+            });
+            return;
+        }
+
         if (
             !gaplessPreparedTrack ||
             gaplessPreparedTrack.trackIndex !== nextIndex ||
             gaplessPreparedTrack.version !== activeSongVersion ||
             !gaplessPreparedTrack.ready
         ) {
-            void prepareGaplessNextTrack(previousTrackIndex, { force: true });
+            await prepareGaplessNextTrack(previousTrackIndex, { force: true });
             if (!force) return;
         }
 
-        const prepared = gaplessPreparedTrack;
+        let prepared = gaplessPreparedTrack;
+        if (prepared && !prepared.ready) {
+            await waitForGaplessPreparedTrack(prepared, GAPLESS_READY_TIMEOUT_MS);
+            if (selectedTrackIndex !== previousTrackIndex || currentTrack !== data.tracks[previousTrackIndex]) {
+                return;
+            }
+            prepared = gaplessPreparedTrack;
+        }
+
         if (!prepared || !prepared.ready) {
             selectSong(data.tracks[nextIndex], nextIndex, 0, true);
             return;
@@ -5915,6 +6191,7 @@
 
         try {
             audioEngine.prime(nextAudio);
+            void audioEngine.resumeContext?.();
             nextAudio.volume = previousAudio.volume;
             if (
                 Number.isFinite(prepared.startTime) &&
@@ -5931,6 +6208,7 @@
                 return;
             }
 
+            setManagedAudioElementRoles(nextAudio, previousAudio);
             audio = nextAudio;
             standbyAudio = previousAudio;
             currentVersionSource = prepared.source;
@@ -6055,6 +6333,7 @@
         console.log(`Selecting song: ${track.title} (index: ${trackIndex}, startTime: ${startTime}, autoPlay: ${autoPlay})`);
         const preserveAudio = options.preserveAudio === true;
         const preservePlayback = options.preservePlayback === true;
+        const preservePreparedAudio = options.preservePreparedAudio === true;
         const selectToken = ++selectSongLoadToken;
 
         const daniSource = trackDaniSources.get(trackIndex) || '';
@@ -6064,7 +6343,7 @@
             return;
         }
 
-        if (!preserveAudio) {
+        if (!preserveAudio && !preservePreparedAudio) {
             clearGaplessPreparedTrack();
         }
 
@@ -6082,6 +6361,7 @@
         updateTrackNavButtons();
         updateVersionToggleState();
         setVersionToggleMessage('');
+        updateMediaSessionMetadata(track, trackIndex);
 
         if (preserveAudio) {
             currentVersionSource = options.source || currentVersionSource || audio.currentSrc || audio.src;
@@ -6825,6 +7105,7 @@
     toggleBtn.disabled = true;
     updateTrackNavButtons();
     updateVersionToggleState();
+    configureMediaSessionActions();
 
     handleQueryParams();
 
@@ -6999,6 +7280,7 @@
         const currentTime = audio.currentTime;
         const duration = audio.duration || 0;
         maybePrepareNextTrack(currentTime, duration);
+        maybeStartGaplessHandoff(currentTime, duration);
         
         // Update timeline text (throttle to reduce DOM writes)
         const timeText = `${formatTime(currentTime)} / ${formatTime(duration)}`;
@@ -7135,6 +7417,8 @@
         if (!animationFrameId) {
             smoothUpdateLoop();
         }
+        updateMediaSessionMetadata();
+        setMediaSessionPlaybackState('playing');
         updateLiveTelemetryAnalysis(true);
     }
     
@@ -7144,6 +7428,7 @@
             cancelAnimationFrame(animationFrameId);
             animationFrameId = null;
         }
+        setMediaSessionPlaybackState('paused');
         updateLiveTelemetryAnalysis(true);
     }
     
@@ -7151,6 +7436,13 @@
         if (event.currentTarget !== audio) return;
         updateProgressBars();
         updateLiveTelemetryAnalysis(true);
+    }
+
+    function handleAudioTimeUpdate(event) {
+        if (event.currentTarget !== audio || audio.paused || !currentTrack) return;
+        const duration = audio.duration || trackDurations.get(selectedTrackIndex) || 0;
+        maybePrepareNextTrack(audio.currentTime || 0, duration);
+        maybeStartGaplessHandoff(audio.currentTime || 0, duration);
     }
 
     function handleAudioLoadedMetadata(event) {
@@ -7171,6 +7463,7 @@
         element.addEventListener('play', handleAudioPlay);
         element.addEventListener('pause', handleAudioPause);
         element.addEventListener('seeking', handleAudioSeeking);
+        element.addEventListener('timeupdate', handleAudioTimeUpdate);
         element.addEventListener('loadedmetadata', handleAudioLoadedMetadata);
         element.addEventListener('error', handleAudioError);
     }
