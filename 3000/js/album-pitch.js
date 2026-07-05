@@ -15,6 +15,7 @@ const heroCoverImage = document.getElementById('pitch-cover-image');
 const bandProfile = document.getElementById('band-profile');
 const trackReel = document.getElementById('track-reel');
 const trackIndex = document.getElementById('track-index');
+const trackIndexTotal = document.getElementById('track-index-total');
 const productionPulse = document.getElementById('production-pulse');
 const ctaActions = document.getElementById('pitch-cta-actions');
 const ctaNote = document.getElementById('pitch-cta-note');
@@ -28,9 +29,34 @@ let activePreview = null;
 let progressFrame = 0;
 let audioFadeFrame = 0;
 let previewQueue = [];
+const trackDurationCache = new Map();
 
 const previewFadeInDuration = 2000;
 const defaultAudioVolume = 1;
+const trackIntensityScores = new Map([
+    ['импулс', 2],
+    ['за век понапред', 3],
+    ['сноп од светлина', 2],
+    ['нов зеланд', 4],
+    ['time machine', 5],
+    ['magic', 5],
+    ['higher ground', 3],
+    ['cinema', 2],
+    ['quite unreal', 1],
+    ['roots apart', 1]
+]);
+const trackIntensityScoresById = new Map([
+    [1, 2],
+    [2, 3],
+    [3, 2],
+    [4, 4],
+    [5, 5],
+    [6, 5],
+    [7, 3],
+    [8, 2],
+    [9, 1],
+    [10, 1]
+]);
 
 function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
@@ -91,8 +117,74 @@ function formatTime(seconds) {
     return `${minutes}:${String(remainder).padStart(2, '0')}`;
 }
 
+function formatAlbumTime(seconds) {
+    const safeSeconds = Math.max(0, Math.round(Number(seconds) || 0));
+    const hours = Math.floor(safeSeconds / 3600);
+    const minutes = Math.floor((safeSeconds % 3600) / 60);
+    const remainder = safeSeconds % 60;
+
+    if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(remainder).padStart(2, '0')}`;
+    }
+
+    return `${minutes}:${String(remainder).padStart(2, '0')}`;
+}
+
 function formatIndex(index) {
     return String(index + 1).padStart(2, '0');
+}
+
+function normalizeTrackTitle(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
+function getTrackIntensityScore(track) {
+    const idScore = trackIntensityScoresById.get(Number(track?.id));
+    if (Number.isFinite(idScore)) {
+        return idScore;
+    }
+
+    const titleScore = trackIntensityScores.get(normalizeTrackTitle(track?.title));
+    return Number.isFinite(titleScore) ? titleScore : null;
+}
+
+function loadTrackDuration(track) {
+    const source = track?.mp3;
+    if (!source) {
+        return Promise.resolve(null);
+    }
+
+    if (trackDurationCache.has(source)) {
+        return trackDurationCache.get(source);
+    }
+
+    const durationPromise = new Promise((resolve) => {
+        const probe = new Audio();
+        const cleanup = () => {
+            probe.removeEventListener('loadedmetadata', handleLoaded);
+            probe.removeEventListener('error', handleError);
+        };
+        const handleLoaded = () => {
+            cleanup();
+            const duration = Number.isFinite(probe.duration) && probe.duration > 0
+                ? probe.duration
+                : null;
+            resolve(duration);
+        };
+        const handleError = () => {
+            cleanup();
+            resolve(null);
+        };
+
+        probe.preload = 'metadata';
+        probe.addEventListener('loadedmetadata', handleLoaded, { once: true });
+        probe.addEventListener('error', handleError, { once: true });
+        probe.src = source;
+        probe.load();
+    });
+
+    trackDurationCache.set(source, durationPromise);
+    return durationPromise;
 }
 
 function appendTrackTitleWithFeature(element, track) {
@@ -186,16 +278,19 @@ function getClipForTrack(track, pitch, status) {
     const start = parseClipTime(rawClip.start, 0);
     const end = Math.max(start + 8, parseClipTime(rawClip.end, start + 30));
     const numericScore = Number.parseInt(rawClip.score, 10);
-    const score = Number.isFinite(numericScore)
-        ? clamp(Math.round(numericScore), 1, 5)
-        : deriveClipScore(status || pitch.productionLabels[String(track.id)] || deriveStatus(track.status));
+    const intensityScore = getTrackIntensityScore(track);
+    const score = Number.isFinite(intensityScore)
+        ? intensityScore
+        : Number.isFinite(numericScore)
+            ? clamp(Math.round(numericScore), 1, 5)
+            : deriveClipScore(status || pitch.productionLabels[String(track.id)] || deriveStatus(track.status));
 
     return {
         start,
         end,
         range: `${formatTime(start)}-${formatTime(end)}`,
         score,
-        scoreLabel: `Completion level ${score} of 5`
+        scoreLabel: `Intensity level ${score} of 5`
     };
 }
 
@@ -620,8 +715,7 @@ function renderTrackReel(tracks, pitch) {
     previewQueue = [];
 
     tracks.forEach((track, index) => {
-        const status = 'studio demo';
-        const clip = getClipForTrack(track, pitch, status);
+        const clip = getClipForTrack(track, pitch);
         const card = createElement('article', 'track-preview');
         card.dataset.trackId = String(track.id);
         card.style.setProperty('--progress', '0');
@@ -693,10 +787,14 @@ function renderTrackReel(tracks, pitch) {
 
 function renderTrackIndex(tracks, pitch) {
     const fragment = document.createDocumentFragment();
+    const durationEntries = [];
+
+    if (trackIndexTotal) {
+        trackIndexTotal.textContent = 'Total length loading...';
+    }
 
     tracks.forEach((track, index) => {
-        const status = 'studio demo';
-        const clip = getClipForTrack(track, pitch, status);
+        const clip = getClipForTrack(track, pitch);
         const language = getTrackLanguage(track);
         const row = createElement('li', 'track-index__row');
         const number = createElement('span', 'track-index__number');
@@ -705,18 +803,43 @@ function renderTrackIndex(tracks, pitch) {
         appendTrackTitleWithFeature(title, track);
         const rowLanguage = createElement('span', 'track-index__language');
         rowLanguage.textContent = language === 'Macedonian' ? 'Macedonian' : '';
-        const rowStatus = createElement('span', 'track-index__status');
-        rowStatus.textContent = status;
         const rowScore = createClipMeter(clip.score, clip.scoreLabel, {
             className: 'track-index__score'
         });
-        const range = createElement('span', 'track-index__range');
-        range.textContent = clip.range;
-        row.append(number, title, rowLanguage, rowStatus, rowScore, range);
+        const duration = createElement('span', 'track-index__duration');
+        duration.textContent = '--:--';
+        duration.setAttribute('aria-label', 'Song length loading');
+        row.append(number, title, rowLanguage, rowScore, duration);
         fragment.append(row);
+
+        const durationEntry = loadTrackDuration(track).then((seconds) => {
+            if (Number.isFinite(seconds)) {
+                duration.textContent = formatTime(seconds);
+                duration.setAttribute('aria-label', `Song length ${formatTime(seconds)}`);
+                return seconds;
+            }
+
+            duration.textContent = 'n/a';
+            duration.setAttribute('aria-label', 'Song length unavailable');
+            return null;
+        });
+        durationEntries.push(durationEntry);
     });
 
     trackIndex.replaceChildren(fragment);
+
+    Promise.all(durationEntries).then((durations) => {
+        if (!trackIndexTotal) return;
+
+        const validDurations = durations.filter((duration) => Number.isFinite(duration));
+        if (!validDurations.length) {
+            trackIndexTotal.textContent = 'Total length unavailable';
+            return;
+        }
+
+        const totalDuration = validDurations.reduce((sum, duration) => sum + duration, 0);
+        trackIndexTotal.textContent = `Total album length ${formatAlbumTime(totalDuration)}`;
+    });
 }
 
 function renderProductionPulse(tracks, pitch) {

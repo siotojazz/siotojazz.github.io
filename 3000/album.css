@@ -748,7 +748,7 @@ img {
 
 .track-index__row {
     display: grid;
-    grid-template-columns: 64px minmax(0, 1fr) minmax(112px, auto) minmax(120px, auto) minmax(164px, auto) minmax(88px, auto);
+    grid-template-columns: 64px minmax(0, 1fr) minmax(112px, auto) minmax(164px, auto) minmax(88px, auto);
     gap: 18px;
     align-items: center;
     min-height: 68px;
@@ -758,11 +758,15 @@ img {
 
 .track-index__number,
 .track-index__language,
-.track-index__status,
-.track-index__range {
+.track-index__duration {
     color: var(--paper-dim);
     font-size: 0.75rem;
     text-transform: uppercase;
+}
+
+.track-index__duration {
+    justify-self: end;
+    font-variant-numeric: tabular-nums;
 }
 
 .track-index__score {
@@ -785,6 +789,17 @@ img {
 .track-index__title .track-title__feature {
     margin-top: 4px;
     font-size: 0.62em;
+}
+
+.track-index-total {
+    width: min(1040px, 100%);
+    margin: 18px auto 0;
+    color: var(--paper-dim);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.09em;
+    text-align: right;
+    text-transform: uppercase;
 }
 
 .pulse-grid {
@@ -1541,8 +1556,7 @@ body.pitch-loaded .pitch-fixed-cta {
 .track-preview__index,
 .track-index__number,
 .track-index__language,
-.track-index__status,
-.track-index__range,
+.track-index__duration,
 .pulse-item span {
     letter-spacing: 0.09em;
 }
@@ -1862,11 +1876,11 @@ body.pitch-loaded .pitch-fixed-cta {
         padding: 16px 0;
     }
 
-    .track-index__status,
     .track-index__score,
     .track-index__language,
-    .track-index__range {
+    .track-index__duration {
         grid-column: 2;
+        justify-self: start;
     }
 }
 
