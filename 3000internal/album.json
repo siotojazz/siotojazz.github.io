@@ -176,7 +176,7 @@
       }
     },
     {
-      "id": 6,
+      "id": 5,
       "title": "Magic",
       "mp3": "audio/magic.mp3",
       "backingmp3": "audio/magic_backing.mp3",
@@ -850,7 +850,7 @@
       }
     },
     {
-      "id": 5,
+      "id": 6,
       "title": "Time Machine",
       "mp3": "audio/time_machine.mp3",
       "backingmp3": "audio/time_machine_backing.mp3",
