@@ -2574,6 +2574,13 @@
     const MASTERING_SECTION_HOT_LU = 3.0;
     const MASTERING_SECTION_LOW_LU = -5.0;
     const MASTERING_MIN_PASSAGE_GAIN_DB = 2.0;
+    const MASTERING_STRUCTURE_LOUD_PERCENTILE = 0.80;
+    const MASTERING_STRUCTURE_PEAK_PERCENTILE = 0.90;
+    const MASTERING_STRUCTURE_MAX_DYNAMIC_WEIGHT = 0.74;
+    const MASTERING_STRUCTURE_LRA_START_LU = 5;
+    const MASTERING_STRUCTURE_LRA_FULL_LU = 16;
+    const MASTERING_STRUCTURE_SPREAD_START_LU = 1.5;
+    const MASTERING_STRUCTURE_SPREAD_FULL_LU = 8;
     const TONAL_EQ_MOVE_THRESHOLD_DB = 1.25;
     const TONAL_EQ_BANDS = Object.freeze([
         { id: 'sub', label: 'Sub weight', frequency: 45, q: 0.7, filterType: 'Low Shelf', targetDb: -3.8 },
@@ -3234,9 +3241,96 @@
         return Math.max(MASTERING_REFERENCE_MIN_LUFS, Math.min(MASTERING_REFERENCE_MAX_LUFS, albumMedian));
     }
 
+    function getBodyShortTermLoudnessValues(analysis) {
+        if (!analysis || !Array.isArray(analysis.shortTermLoudness) || !analysis.shortTermLoudness.length) {
+            return [];
+        }
+
+        const duration = Number.isFinite(analysis.duration) && analysis.duration > 0
+            ? analysis.duration
+            : null;
+        const bodyStart = duration
+            ? Math.min(duration, Math.max(0, (analysis.leadingSilence || 0) + 0.5))
+            : 0;
+        const bodyEnd = duration
+            ? Math.max(0, duration - (analysis.trailingSilence || 0) - 0.5)
+            : null;
+
+        const bodyValues = analysis.shortTermLoudness
+            .filter(window => {
+                if (!Number.isFinite(window.lufs) || window.lufs < -60) return false;
+                if (!duration || !Number.isFinite(bodyEnd) || bodyStart >= bodyEnd) return true;
+                const midpoint = (window.startTime + window.endTime) * 0.5;
+                return midpoint >= bodyStart && midpoint <= bodyEnd;
+            })
+            .map(window => window.lufs)
+            .sort((a, b) => a - b);
+
+        if (bodyValues.length) return bodyValues;
+
+        return analysis.shortTermLoudness
+            .map(window => window.lufs)
+            .filter(value => Number.isFinite(value) && value > -60)
+            .sort((a, b) => a - b);
+    }
+
+    function getStructuralLoudnessStats(analysis) {
+        const integratedLufs = getAnalysisIntegratedLoudness(analysis);
+        const shortTermValues = getBodyShortTermLoudnessValues(analysis);
+        const medianShortTermLufs = percentile(shortTermValues, 0.50);
+        const loudSectionLufs = percentile(shortTermValues, MASTERING_STRUCTURE_LOUD_PERCENTILE);
+        const peakShortTermLufs = percentile(shortTermValues, MASTERING_STRUCTURE_PEAK_PERCENTILE);
+        const lra = Number.isFinite(analysis?.loudnessRangeLra) ? analysis.loudnessRangeLra : null;
+        const loudnessSpread = Number.isFinite(integratedLufs) && Number.isFinite(loudSectionLufs)
+            ? loudSectionLufs - integratedLufs
+            : null;
+        const lraWeight = Number.isFinite(lra)
+            ? clampNumber((lra - MASTERING_STRUCTURE_LRA_START_LU) / (MASTERING_STRUCTURE_LRA_FULL_LU - MASTERING_STRUCTURE_LRA_START_LU), 0, MASTERING_STRUCTURE_MAX_DYNAMIC_WEIGHT)
+            : 0;
+        const spreadWeight = Number.isFinite(loudnessSpread)
+            ? clampNumber((loudnessSpread - MASTERING_STRUCTURE_SPREAD_START_LU) / (MASTERING_STRUCTURE_SPREAD_FULL_LU - MASTERING_STRUCTURE_SPREAD_START_LU), 0, MASTERING_STRUCTURE_MAX_DYNAMIC_WEIGHT)
+            : 0;
+        const dynamicWeight = Math.max(lraWeight, spreadWeight);
+        let anchorLufs = null;
+
+        if (Number.isFinite(integratedLufs) && Number.isFinite(loudSectionLufs)) {
+            anchorLufs = (integratedLufs * (1 - dynamicWeight)) + (loudSectionLufs * dynamicWeight);
+        } else if (Number.isFinite(integratedLufs)) {
+            anchorLufs = integratedLufs;
+        } else if (Number.isFinite(loudSectionLufs)) {
+            anchorLufs = loudSectionLufs;
+        }
+
+        return {
+            integratedLufs,
+            medianShortTermLufs,
+            loudSectionLufs,
+            peakShortTermLufs,
+            lra,
+            loudnessSpread,
+            dynamicWeight,
+            anchorLufs,
+            shortTermWindowCount: shortTermValues.length
+        };
+    }
+
+    function getStructureLabel(stats) {
+        if (!stats || !Number.isFinite(stats.dynamicWeight)) return 'scan pending';
+        if (stats.dynamicWeight >= 0.55) return 'dynamic';
+        if (stats.dynamicWeight >= 0.25) return 'hybrid';
+        return 'steady';
+    }
+
     function getAlbumMasteringContext(metrics) {
         const coreMetrics = getCoreAlbumMetrics(metrics);
         const scannedMetrics = coreMetrics.filter(metric => metric.audioAnalysis);
+        const structuralStats = new Map();
+        scannedMetrics.forEach(metric => {
+            structuralStats.set(metric.trackIndex, getStructuralLoudnessStats(metric.audioAnalysis));
+        });
+        const anchorValues = scannedMetrics
+            .map(metric => structuralStats.get(metric.trackIndex)?.anchorLufs)
+            .filter(value => Number.isFinite(value));
         const lufsValues = scannedMetrics
             .map(metric => metric.audioAnalysis.integratedLufs)
             .filter(value => Number.isFinite(value));
@@ -3246,15 +3340,17 @@
         const lraValues = scannedMetrics
             .map(metric => metric.audioAnalysis.loudnessRangeLra)
             .filter(value => Number.isFinite(value));
-        const targetLufs = lufsValues.length
-            ? getTargetLufsFromCoreValues(lufsValues)
+        const targetLufs = anchorValues.length
+            ? getTargetLufsFromCoreValues(anchorValues)
             : rmsValues.length
                 ? Math.max(MASTERING_REFERENCE_MIN_LUFS, Math.min(MASTERING_REFERENCE_MAX_LUFS, median(rmsValues)))
                 : MASTERING_REFERENCE_TARGET_LUFS;
+        const referenceValues = anchorValues.length ? anchorValues : lufsValues;
 
         return {
             coreMetrics,
             scannedMetrics,
+            structuralStats,
             targetLufs,
             targetRms: targetLufs,
             targetCrest: scannedMetrics.length
@@ -3264,8 +3360,8 @@
                 ? median(scannedMetrics.map(metric => metric.audioAnalysis.headroomDb).filter(value => Number.isFinite(value)))
                 : null,
             medianLra: lraValues.length ? median(lraValues) : null,
-            albumReferenceGainDb: Number.isFinite(targetLufs) && lufsValues.length
-                ? MASTERING_REFERENCE_TARGET_LUFS - median(lufsValues)
+            albumReferenceGainDb: Number.isFinite(targetLufs) && referenceValues.length
+                ? MASTERING_REFERENCE_TARGET_LUFS - median(referenceValues)
                 : null
         };
     }
@@ -3434,20 +3530,28 @@
 
     function getCompressorGainMove(metric, masteringContext) {
         const analysis = metric.audioAnalysis;
-        const loudness = getAnalysisIntegratedLoudness(analysis);
+        const stats = masteringContext.structuralStats?.get(metric.trackIndex) || getStructuralLoudnessStats(analysis);
+        const loudness = stats.integratedLufs;
+        const anchorLufs = stats.anchorLufs;
         const targetLufs = masteringContext.targetLufs;
-        if (!analysis || !Number.isFinite(loudness) || !Number.isFinite(targetLufs)) {
+        if (!analysis || !Number.isFinite(anchorLufs) || !Number.isFinite(targetLufs)) {
             return {
                 action: 'watch',
                 gainDb: 0,
                 label: 'Scan pending',
-                detail: 'Integrated LUFS scan has not finished for this song.',
+                detail: 'Structure-aware LUFS scan has not finished for this song.',
                 loudness,
+                anchorLufs,
+                loudSectionLufs: stats.loudSectionLufs,
+                medianShortTermLufs: stats.medianShortTermLufs,
+                lra: stats.lra,
+                dynamicWeight: stats.dynamicWeight,
+                structureLabel: getStructureLabel(stats),
                 projectedTruePeakDbtp: null
             };
         }
 
-        const gainDb = targetLufs - loudness;
+        const gainDb = targetLufs - anchorLufs;
         const action = gainDb > 0.2 ? 'raise' : gainDb < -0.2 ? 'lower' : 'hold';
         const projectedTruePeakDbtp = Number.isFinite(analysis.truePeakDbtp)
             ? analysis.truePeakDbtp + gainDb
@@ -3455,13 +3559,31 @@
         const ceilingNote = Number.isFinite(projectedTruePeakDbtp) && projectedTruePeakDbtp > MASTERING_TRUE_PEAK_CEILING_DBTP
             ? ` Limiter/clipper must catch ${formatDb(projectedTruePeakDbtp - MASTERING_TRUE_PEAK_CEILING_DBTP, 'dB')} above ceiling after this move.`
             : '';
+        const structureLabel = getStructureLabel(stats);
+        const dynamicNote = stats.dynamicWeight >= 0.25
+            ? ` ${formatPercent(stats.dynamicWeight * 100)} loud-section weighting keeps quiet song structure from over-raising the whole master.`
+            : ' Steady-song weighting keeps the move tied mainly to integrated LUFS.';
+        const loudSectionNote = Number.isFinite(stats.loudSectionLufs)
+            ? ` Sustained loud windows sit at ${formatLufs(stats.loudSectionLufs)}.`
+            : '';
+        const lraNote = Number.isFinite(stats.lra)
+            ? ` ${formatDb(stats.lra, 'LU LRA')} ${structureLabel} structure.`
+            : ` ${structureLabel} structure.`;
 
         return {
             action,
             gainDb,
             label: action === 'hold' ? 'Hold compressor gain' : `Compressor ${formatGainAdjustment(gainDb)}`,
-            detail: `Match ${formatLufs(loudness)} to the core target ${formatLufs(targetLufs)} using the song-level compressor/input gain.${ceilingNote}`,
+            detail: `Match structure anchor ${formatLufs(anchorLufs)} to the core target ${formatLufs(targetLufs)} using song-level compressor/input gain.${loudSectionNote}${lraNote}${dynamicNote}${ceilingNote}`,
             loudness,
+            anchorLufs,
+            loudSectionLufs: stats.loudSectionLufs,
+            medianShortTermLufs: stats.medianShortTermLufs,
+            peakShortTermLufs: stats.peakShortTermLufs,
+            lra: stats.lra,
+            loudnessSpread: stats.loudnessSpread,
+            dynamicWeight: stats.dynamicWeight,
+            structureLabel,
             projectedTruePeakDbtp
         };
     }
@@ -3781,6 +3903,9 @@
                         <tr>
                             <th>Song</th>
                             <th>Integrated</th>
+                            <th>Anchor</th>
+                            <th>Loud ST</th>
+                            <th>Structure</th>
                             <th>Target</th>
                             <th>Compressor gain</th>
                             <th>Projected TP</th>
@@ -3795,6 +3920,9 @@
                                 <tr>
                                     <td>${String(metric.trackIndex + 1).padStart(2, '0')} ${escapeHtml(metric.title)}</td>
                                     <td>${formatLufs(move.loudness)}</td>
+                                    <td>${formatLufs(move.anchorLufs)}</td>
+                                    <td>${formatLufs(move.loudSectionLufs)}</td>
+                                    <td>${escapeHtml(move.structureLabel)} - ${Number.isFinite(move.lra) ? formatDb(move.lra, 'LU') : 'LRA --'} - ${formatPercent(move.dynamicWeight * 100)}</td>
                                     <td>${formatLufs(targetLufs)}</td>
                                     <td><span class="mastering-pill mastering-pill--${move.action}">${escapeHtml(move.label)}</span></td>
                                     <td>${Number.isFinite(move.projectedTruePeakDbtp) ? formatDb(move.projectedTruePeakDbtp, 'dBTP') : 'TP n/a'}</td>
@@ -3898,7 +4026,7 @@
             : waveformDetail;
 
         if (masteringStatus) {
-            masteringStatus.textContent = `${scannedCount}/${totalCount} core songs scanned - target ${formatLufs(targetLufs)} - ${attentionCount} song${attentionCount === 1 ? '' : 's'} with loudness moves`;
+            masteringStatus.textContent = `${scannedCount}/${totalCount} core songs scanned - structure target ${formatLufs(targetLufs)} - ${attentionCount} song${attentionCount === 1 ? '' : 's'} with loudness moves`;
         }
 
         masteringIssues.innerHTML = `
@@ -3906,7 +4034,7 @@
                 <div class="mastering-reference">
                     <span class="mastering-reference-label">Album target</span>
                     <strong class="mastering-reference-value">${formatLufs(targetLufs)}</strong>
-                    <span class="mastering-reference-detail">Core 10-song target, clamped to the ${getMasteringReferenceLabel()} mastering band; deluxe tracks are excluded.</span>
+                    <span class="mastering-reference-detail">Core 10-song structure-aware target: integrated LUFS plus sustained loud short-term windows, clamped to the ${getMasteringReferenceLabel()} mastering band. Deluxe tracks are excluded.</span>
                 </div>
                 <div class="mastering-reference">
                     <span class="mastering-reference-label">Mastering reference</span>
@@ -3928,7 +4056,7 @@
             <section class="mastering-section" aria-labelledby="mastering-compressor-title">
                 <div class="mastering-section-head">
                     <h3 class="mastering-section-title" id="mastering-compressor-title">Song Compressor Gain</h3>
-                    <span class="mastering-section-note">Whole-song input/makeup gain needed to match the core album loudness target, ignoring local section swings.</span>
+                    <span class="mastering-section-note">Whole-song input/makeup gain matched from a structure-aware anchor, so dynamic songs are not over-raised by quiet intros, breaks, or outros.</span>
                 </div>
                 ${renderCompressorGainTable(reports, targetLufs)}
             </section>
@@ -3966,6 +4094,7 @@
                         const metric = report.metric;
                         const analysis = metric.audioAnalysis;
                         const loudness = getAnalysisIntegratedLoudness(analysis);
+                        const anchorLufs = report.compressor.anchorLufs;
                         const rowClass = report.needsAttention ? 'mastering-song-row mastering-song-row--attention' : 'mastering-song-row';
                         return `
                             <article class="${rowClass}">
@@ -3973,7 +4102,7 @@
                                     <span class="mastering-song-label">${String(metric.trackIndex + 1).padStart(2, '0')}</span>
                                     <strong class="mastering-song-title">${escapeHtml(metric.title)}</strong>
                                     <span class="mastering-song-meta">
-                                        ${formatLufs(loudness)} integrated - ${analysis ? formatDb(analysis.truePeakDbtp, 'dBTP') : 'TP --'} - ${analysis ? formatDb(analysis.loudnessRangeLra, 'LU LRA') : 'LRA --'}
+                                        ${formatLufs(loudness)} integrated - ${formatLufs(anchorLufs)} anchor - ${analysis ? formatDb(analysis.truePeakDbtp, 'dBTP') : 'TP --'} - ${analysis ? formatDb(analysis.loudnessRangeLra, 'LU LRA') : 'LRA --'}
                                     </span>
                                 </div>
                                 <div>

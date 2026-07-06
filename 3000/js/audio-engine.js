@@ -44,6 +44,25 @@ class AudioEngine {
         this.sourceNode = sourceNode;
     }
 
+    getCurrentTime() {
+        this.ensureContext();
+        return this.context.currentTime;
+    }
+
+    createBufferSource(audioBuffer) {
+        if (!audioBuffer) return null;
+        this.ensureContext();
+        const sourceNode = this.context.createBufferSource();
+        sourceNode.buffer = audioBuffer;
+        sourceNode.connect(this.gainNode);
+        return sourceNode;
+    }
+
+    decodeAudioData(arrayBuffer) {
+        this.ensureContext();
+        return this.context.decodeAudioData(arrayBuffer);
+    }
+
     async resumeContext() {
         if (!this.context || this.context.state !== 'suspended') return;
         try {
