@@ -7232,6 +7232,14 @@
         };
     }
 
+    function hasValidInitialSongParam() {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.has('song')) return false;
+
+        const songIndex = Number.parseInt(params.get('song'), 10);
+        return !isNaN(songIndex) && songIndex >= 0 && songIndex < data.tracks.length;
+    }
+
     function handleQueryParams() {
         const { track, trackIndex, startTime } = getInitialTrackSelection();
 
@@ -8065,6 +8073,10 @@
     updateVersionToggleState();
     configureMediaSessionActions();
     setupResponsiveAlbumCover();
+
+    if (hasValidInitialSongParam()) {
+        finishAudioPreloaderImmediately();
+    }
 
     preloadAlbumAudio(getInitialTrackSelection())
         .then(() => revealAlbumSite())
