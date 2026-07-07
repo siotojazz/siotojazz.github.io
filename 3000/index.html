@@ -3357,6 +3357,8 @@
     const REDUCED_LOADING_UI_EXIT_DURATION_MS = 250;
     const REDUCED_TITLE_CARD_REVEAL_DURATION_MS = 6000;
     const REDUCED_CINEMATIC_REVEAL_DURATION_MS = REDUCED_LOADING_UI_EXIT_DURATION_MS + REDUCED_TITLE_CARD_REVEAL_DURATION_MS;
+    const ALBUM_PRELOAD_MAX_CONCURRENCY = 4;
+    const ALBUM_PRELOAD_SAVE_DATA_CONCURRENCY = 2;
     const trackDurations = new Map();
     const trackAudioAnalysis = new Map();
     const versionAvailability = new Map();
@@ -7896,6 +7898,38 @@
         return order;
     }
 
+    function getAlbumPreloadConcurrency() {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection?.saveData) {
+            return ALBUM_PRELOAD_SAVE_DATA_CONCURRENCY;
+        }
+
+        const coreCount = Number.parseInt(navigator.hardwareConcurrency, 10);
+        if (Number.isFinite(coreCount) && coreCount > 0) {
+            return Math.max(2, Math.min(ALBUM_PRELOAD_MAX_CONCURRENCY, Math.floor(coreCount / 2)));
+        }
+
+        return Math.min(3, ALBUM_PRELOAD_MAX_CONCURRENCY);
+    }
+
+    async function preloadAlbumTracksConcurrently(trackIndexes, preloadSources, maxConcurrency = getAlbumPreloadConcurrency()) {
+        const queue = Array.isArray(trackIndexes) ? trackIndexes.filter(trackIndex => Number.isInteger(trackIndex)) : [];
+        if (!queue.length) return;
+
+        const workerCount = Math.max(1, Math.min(queue.length, maxConcurrency));
+        let cursor = 0;
+
+        async function preloadWorker() {
+            while (cursor < queue.length) {
+                const trackIndex = queue[cursor];
+                cursor += 1;
+                await preloadSingleAlbumTrack(trackIndex, preloadSources[trackIndex]);
+            }
+        }
+
+        await Promise.all(Array.from({ length: workerCount }, preloadWorker));
+    }
+
     async function preloadAlbumAudio(initialSelection = getInitialTrackSelection()) {
         if (!data.tracks.length) return;
         refreshAudioPreloadSections();
@@ -7912,12 +7946,10 @@
             selectSong(priorityTrack, priorityTrackIndex, startTime, true);
         }
 
-        await byteTotalsPromise;
-
-        for (const trackIndex of preloadOrder.slice(1)) {
-            const source = preloadSources[trackIndex];
-            await preloadSingleAlbumTrack(trackIndex, source);
-        }
+        await Promise.all([
+            byteTotalsPromise,
+            preloadAlbumTracksConcurrently(preloadOrder.slice(1), preloadSources)
+        ]);
 
         rebuildStitchedAlbumTimeline({ preservePlayback: true });
         scheduleLoadedFutureTracks();
