@@ -64,12 +64,16 @@ class AudioEngine {
     }
 
     async resumeContext() {
-        if (!this.context || this.context.state !== 'suspended') return;
+        if (!this.context) return false;
+        if (this.context.state !== 'suspended') {
+            return this.context.state === 'running';
+        }
         try {
             await this.context.resume();
         } catch (error) {
             console.warn('AudioContext resume failed:', error);
         }
+        return this.context.state === 'running';
     }
 
     async play() {
