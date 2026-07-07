@@ -869,6 +869,12 @@
             min-width: 42px;
             align-self: stretch;
         }
+        .song-item.is-audio-loading .song-length,
+        .song-length.is-loading {
+            color: var(--club-blue-bright);
+            font-weight: 800;
+            opacity: 0.9;
+        }
         .song-item:hover {
             background:
                 linear-gradient(90deg, var(--club-blue-night) 0%, var(--club-blue-deep) 48%, var(--club-blue) 100%);
@@ -955,75 +961,98 @@
         }
         .live-lyrics {
             flex: 1 1 auto;
-            min-height: 80px;
-            padding: 2px 14px 8px;
+            min-height: 98px;
+            padding: 9px 16px 11px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 1px;
+            gap: 4px;
             color: var(--club-blue-strong);
-            mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-            -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+            position: relative;
+            isolation: isolate;
+            background:
+                linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.54) 24%, rgba(var(--club-blue-soft-rgb), 0.12) 50%, rgba(255, 255, 255, 0.5) 76%, transparent),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(var(--club-blue-rgb), 0.06));
+            border-top: 1px solid rgba(var(--club-blue-rgb), 0.08);
+            mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+            -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+        }
+        .live-lyrics:empty {
+            background: transparent;
+            border-top-color: transparent;
         }
         .live-lyrics-line {
-            min-height: 13px;
-            width: 100%;
+            min-height: 14px;
+            width: min(100%, 560px);
             font-size: 11px;
-            line-height: 1.18;
+            line-height: 1.2;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             text-align: center;
             cursor: pointer;
-            opacity: 0.42;
-            transform: translate3d(0, 0, 0) scale(0.98);
-            transition: opacity 0.34s ease, transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), color 0.34s ease;
+            opacity: 0.34;
+            transform: translate3d(0, 0, 0) scale(0.96);
+            filter: blur(0.35px);
+            letter-spacing: 0;
+            transition: opacity 0.34s ease, transform 0.44s cubic-bezier(0.16, 1, 0.3, 1), color 0.34s ease, filter 0.34s ease;
             will-change: opacity, transform;
         }
         .live-lyrics-line.is-near {
-            opacity: 0.62;
+            opacity: 0.48;
+        }
+        .live-lyrics-line.is-previous {
+            transform: translate3d(0, 3px, 0) scale(0.94);
+        }
+        .live-lyrics-line.is-next {
+            transform: translate3d(0, -3px, 0) scale(0.94);
         }
         .live-lyrics-line.is-active {
-            min-height: 18px;
-            font-size: 14px;
+            min-height: 24px;
+            font-size: 17px;
             font-weight: 700;
-            line-height: 1.25;
+            line-height: 1.18;
             opacity: 1;
             transform: translate3d(0, 0, 0) scale(1);
             color: var(--club-blue-night);
+            filter: blur(0);
+            text-shadow:
+                0 1px 0 rgba(255, 255, 255, 0.72),
+                0 12px 26px rgba(var(--club-blue-rgb), 0.2);
         }
         .live-lyrics-line:hover {
             opacity: 0.9;
             color: var(--club-blue);
+            filter: blur(0);
         }
         .live-lyrics.is-changing .live-lyrics-line {
-            animation: live-lyric-shift 0.44s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation: live-lyric-shift 0.58s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
         .player-basic.is-track-changing .live-lyrics-line {
-            animation: track-change-live-lyrics 0.58s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation: track-change-live-lyrics 0.72s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
         @keyframes live-lyric-shift {
             0% {
                 opacity: 0;
-                transform: translate3d(0, 9px, 0) scale(0.985);
-                filter: blur(3px);
+                transform: translate3d(0, 14px, 0) scale(0.94);
+                filter: blur(7px);
             }
-            55% {
-                filter: blur(0);
+            62% {
+                filter: blur(0.2px);
             }
             100% {
                 opacity: var(--live-lyric-opacity, 0.48);
                 transform: translate3d(0, 0, 0) scale(var(--live-lyric-scale, 0.98));
-                filter: blur(0);
+                filter: var(--live-lyric-filter, blur(0.35px));
             }
         }
         @keyframes track-change-live-lyrics {
             0% {
                 opacity: 0;
-                transform: translate3d(0, 8px, 0) scale(0.985);
-                filter: blur(5px);
+                transform: translate3d(0, 12px, 0) scale(0.94);
+                filter: blur(8px);
             }
             55% {
                 opacity: 1;
@@ -2482,8 +2511,9 @@
         /* ── Responsive ── */
         @media (max-width: 768px) {
             :root {
-                --mobile-player-height: 78px;
-                --mobile-cover-height: min(100vw, 46dvh);
+                --mobile-player-height: 122px;
+                --mobile-cover-height: 100vw;
+                --mobile-cover-opacity: 1;
             }
             body {
                 overflow: hidden;
@@ -2519,8 +2549,8 @@
                 order: 0;
                 width: 100%;
                 height: var(--mobile-cover-height);
-                min-height: 132px;
-                max-height: 46dvh;
+                min-height: 0;
+                max-height: none;
                 aspect-ratio: auto;
                 flex-basis: auto;
                 display: flex;
@@ -2529,7 +2559,9 @@
                 background:
                     linear-gradient(180deg, rgba(var(--club-blue-night-rgb), 0.1), rgba(var(--club-blue-night-rgb), 0.28));
                 box-shadow: 0 18px 38px rgba(var(--club-blue-night-rgb), 0.18);
-                transition: height 0.16s ease-out;
+                opacity: var(--mobile-cover-opacity);
+                overflow: hidden;
+                transition: height 0.16s ease-out, opacity 0.16s ease-out;
             }
             .player-cover img {
                 width: 100%;
@@ -2564,7 +2596,18 @@
                 padding: 2px 12px 4px;
             }
             .live-lyrics {
-                display: none;
+                display: flex;
+                min-height: 48px;
+                padding: 4px 12px 7px;
+                gap: 1px;
+            }
+            .live-lyrics-line {
+                min-height: 12px;
+                font-size: 10px;
+            }
+            .live-lyrics-line.is-active {
+                min-height: 18px;
+                font-size: 13px;
             }
             .tab-nav {
                 order: 1;
@@ -3338,6 +3381,8 @@
     const preloadedTrackByteLengths = new Map();
     const preloadTrackByteTotals = new Map();
     const preloadTrackLoadedBytes = new Map();
+    let audioPreloaderSkipped = false;
+    let audioRevealPromise = null;
     const trackPlaybackTrims = new Map();
     const stitchedTrackStarts = [];
     let stitchedAlbumDuration = 0;
@@ -3414,6 +3459,67 @@
             }
         });
         albumTotalTime.textContent = formatTime(totalSeconds);
+    }
+
+    function getSongLengthElement(trackIndex) {
+        return songList?.querySelector(`.song-item[data-track-index="${trackIndex}"] .song-length`) || null;
+    }
+
+    function setSongDurationDisplay(trackIndex) {
+        const songLength = getSongLengthElement(trackIndex);
+        if (!songLength) return;
+
+        const songItem = songLength.closest('.song-item');
+        songItem?.classList.remove('is-audio-loading');
+        songLength.classList.remove('is-loading');
+        songLength.removeAttribute('data-loading-percent');
+        songLength.removeAttribute('aria-label');
+
+        const duration = getTrackAudioDuration(trackIndex);
+        if (Number.isFinite(duration) && duration > 0) {
+            songLength.textContent = formatTime(duration);
+        } else if (durationFailures.has(trackIndex)) {
+            songLength.textContent = '0:00';
+        } else {
+            songLength.textContent = '--:--';
+        }
+    }
+
+    function getTrackPreloadPercent(trackIndex) {
+        if (preloadedTrackAudio.has(trackIndex)) return 100;
+
+        const loadedBytes = getPreloadTrackLoadedBytes(trackIndex);
+        const totalBytes = getEstimatedPreloadTrackBytes(trackIndex);
+        if (!Number.isFinite(totalBytes) || totalBytes <= 0) return 0;
+
+        return Math.max(0, Math.min(99, Math.round((loadedBytes / totalBytes) * 100)));
+    }
+
+    function updateSongPreloadIndicator(trackIndex) {
+        const songLength = getSongLengthElement(trackIndex);
+        if (!songLength) return;
+
+        if (preloadedTrackAudio.has(trackIndex) || durationFailures.has(trackIndex)) {
+            setSongDurationDisplay(trackIndex);
+            return;
+        }
+
+        if (!audioPreloaderSkipped) return;
+
+        const percent = getTrackPreloadPercent(trackIndex);
+        const songItem = songLength.closest('.song-item');
+        const title = data.tracks[trackIndex]?.title || `song ${trackIndex + 1}`;
+        songItem?.classList.add('is-audio-loading');
+        songLength.classList.add('is-loading');
+        songLength.dataset.loadingPercent = String(percent);
+        songLength.textContent = `${percent}%`;
+        songLength.setAttribute('aria-label', `${title} audio ${percent}% loaded`);
+    }
+
+    function refreshSongPreloadIndicators() {
+        data.tracks.forEach((track, trackIndex) => {
+            updateSongPreloadIndicator(trackIndex);
+        });
     }
     const NOTE_TO_SEMITONE = Object.freeze({
         'C': 0,
@@ -5756,20 +5862,26 @@
 
     const mobileCoverShrink = {
         ticking: false,
-        activeTargets: []
+        activeTargets: [],
+        gestureOffset: 0,
+        lastTouchY: null
     };
 
     function getMobileCoverRange() {
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
         const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
-        const expanded = Math.min(viewportWidth, viewportHeight * 0.46);
-        const collapsed = Math.max(112, Math.min(148, viewportWidth * 0.36));
-        return { expanded, collapsed };
+        const containerWidth = appContainer?.clientWidth || viewportWidth;
+        const expanded = Math.max(0, containerWidth);
+        const collapseDistance = Math.max(220, Math.min(viewportHeight || expanded, expanded * 0.92));
+        return { expanded, collapsed: 0, collapseDistance };
     }
 
     function updateMobileCoverHeight() {
         if (!appContainer || window.matchMedia('(min-width: 769px)').matches) {
             appContainer?.style.removeProperty('--mobile-cover-height');
+            appContainer?.style.removeProperty('--mobile-cover-opacity');
+            mobileCoverShrink.gestureOffset = 0;
+            mobileCoverShrink.lastTouchY = null;
             return;
         }
 
@@ -5778,10 +5890,42 @@
             ? [activePanel, ...activePanel.querySelectorAll('.song-list, .player-wrap, .credits')]
             : [];
         const scrollTop = scrollTargets.reduce((max, target) => Math.max(max, target.scrollTop || 0), 0);
-        const { expanded, collapsed } = getMobileCoverRange();
-        const progress = Math.min(1, Math.max(0, scrollTop / 180));
+        const { expanded, collapsed, collapseDistance } = getMobileCoverRange();
+        mobileCoverShrink.gestureOffset = Math.max(mobileCoverShrink.gestureOffset, scrollTop);
+        const coverOffset = Math.max(scrollTop, mobileCoverShrink.gestureOffset);
+        const progress = Math.min(1, Math.max(0, coverOffset / collapseDistance));
         const height = expanded - ((expanded - collapsed) * progress);
-        appContainer.style.setProperty('--mobile-cover-height', `${Math.round(height)}px`);
+        const opacity = expanded > 0 ? Math.max(0, Math.min(1, height / expanded)) : 0;
+        appContainer.style.setProperty('--mobile-cover-height', `${Math.round(Math.max(0, height))}px`);
+        appContainer.style.setProperty('--mobile-cover-opacity', opacity.toFixed(3));
+    }
+
+    function adjustMobileCoverGestureOffset(deltaY) {
+        if (!appContainer || window.matchMedia('(min-width: 769px)').matches) return;
+        const delta = Number.parseFloat(deltaY);
+        if (!Number.isFinite(delta) || delta === 0) return;
+
+        const { collapseDistance } = getMobileCoverRange();
+        mobileCoverShrink.gestureOffset = Math.max(0, Math.min(collapseDistance, mobileCoverShrink.gestureOffset + delta));
+        requestMobileCoverHeightUpdate();
+    }
+
+    function handleMobileCoverWheel(event) {
+        adjustMobileCoverGestureOffset(event.deltaY);
+    }
+
+    function handleMobileCoverTouchStart(event) {
+        mobileCoverShrink.lastTouchY = event.touches?.[0]?.clientY ?? null;
+    }
+
+    function handleMobileCoverTouchMove(event) {
+        const currentY = event.touches?.[0]?.clientY;
+        if (!Number.isFinite(currentY)) return;
+
+        if (Number.isFinite(mobileCoverShrink.lastTouchY)) {
+            adjustMobileCoverGestureOffset(mobileCoverShrink.lastTouchY - currentY);
+        }
+        mobileCoverShrink.lastTouchY = currentY;
     }
 
     function requestMobileCoverHeightUpdate() {
@@ -5796,6 +5940,9 @@
     function bindMobileCoverScrollPanel() {
         mobileCoverShrink.activeTargets.forEach(target => {
             target.removeEventListener('scroll', requestMobileCoverHeightUpdate);
+            target.removeEventListener('wheel', handleMobileCoverWheel);
+            target.removeEventListener('touchstart', handleMobileCoverTouchStart);
+            target.removeEventListener('touchmove', handleMobileCoverTouchMove);
         });
         const activePanel = document.querySelector('.tab-panel.active');
         mobileCoverShrink.activeTargets = activePanel
@@ -5803,6 +5950,9 @@
             : [];
         mobileCoverShrink.activeTargets.forEach(target => {
             target.addEventListener('scroll', requestMobileCoverHeightUpdate, { passive: true });
+            target.addEventListener('wheel', handleMobileCoverWheel, { passive: true });
+            target.addEventListener('touchstart', handleMobileCoverTouchStart, { passive: true });
+            target.addEventListener('touchmove', handleMobileCoverTouchMove, { passive: true });
         });
         updateMobileCoverHeight();
     }
@@ -7042,7 +7192,7 @@
         const initialLyricIndex = cachedLyricTimings.findIndex(timing =>
             playbackTime >= timing.startTime && playbackTime < timing.endTime
         );
-        updateLiveLyricsStack(cachedLyricTimings, initialLyricIndex >= 0 ? initialLyricIndex : 0, true);
+        updateLiveLyricsStack(cachedLyricTimings, initialLyricIndex, true);
         timeline.textContent = `${formatTime(playbackTime)} / ${formatTime(playbackDuration)}`;
         glSeek.render(playbackDuration ? playbackTime / playbackDuration : 0);
         updateLiveTelemetryAnalysis(true);
@@ -7121,6 +7271,7 @@
 
     document.addEventListener('pointerdown', unlockAudioContext, { passive: true });
     document.addEventListener('keydown', unlockAudioContext);
+    audioPreloader?.addEventListener('pointerdown', finishAudioPreloaderImmediately, { passive: true });
     audioPreloaderAudioButton?.addEventListener('click', event => {
         event.preventDefault();
         event.stopPropagation();
@@ -7617,12 +7768,14 @@
                 const byteTotal = Number.parseInt(response.headers.get('content-length') || '', 10);
                 if (Number.isFinite(byteTotal) && byteTotal > 0) {
                     preloadTrackByteTotals.set(trackIndex, byteTotal);
+                    updateSongPreloadIndicator(trackIndex);
                 }
             } catch {
                 // Some static hosts do not support HEAD; the GET response will fill this in.
             }
         }));
         refreshAudioPreloadSections();
+        refreshSongPreloadIndicators();
     }
 
     async function fetchAudioArrayBuffer(source, track, trackIndex) {
@@ -7635,12 +7788,15 @@
         if (Number.isFinite(totalBytes) && totalBytes > 0) {
             preloadTrackByteTotals.set(trackIndex, totalBytes);
             refreshAudioPreloadSections();
+            updateSongPreloadIndicator(trackIndex);
         }
 
         if (!response.body || typeof response.body.getReader !== 'function') {
             const audioBytes = await response.arrayBuffer();
             const byteTotal = audioBytes.byteLength || getEstimatedPreloadTrackBytes(trackIndex);
             preloadedTrackByteLengths.set(trackIndex, audioBytes.byteLength || 0);
+            preloadTrackLoadedBytes.set(trackIndex, byteTotal * 0.98);
+            updateSongPreloadIndicator(trackIndex);
             setAudioPreloadProgress(
                 getAudioPreloadProgress(trackIndex, byteTotal * 0.98, 0.98),
                 `Decoding ${trackIndex + 1}/${data.tracks.length}: ${track.title}`
@@ -7658,6 +7814,7 @@
             chunks.push(value);
             receivedBytes += value.byteLength;
             preloadTrackLoadedBytes.set(trackIndex, receivedBytes);
+            updateSongPreloadIndicator(trackIndex);
             setAudioPreloadProgress(
                 getAudioPreloadProgress(trackIndex, receivedBytes, 0.42),
                 `Loading ${trackIndex + 1}/${data.tracks.length}: ${track.title}`
@@ -7675,6 +7832,7 @@
             preloadTrackByteTotals.set(trackIndex, bytes.byteLength);
             refreshAudioPreloadSections();
         }
+        updateSongPreloadIndicator(trackIndex);
         setAudioPreloadProgress(
             getAudioPreloadProgress(trackIndex, bytes.byteLength * 0.98, 0.98),
             `Decoding ${trackIndex + 1}/${data.tracks.length}: ${track.title}`
@@ -7693,6 +7851,7 @@
             getAudioPreloadProgress(trackIndex, 0, 0),
             `Loading ${trackIndex + 1}/${data.tracks.length}: ${track.title}`
         );
+        updateSongPreloadIndicator(trackIndex);
         const audioBytes = await fetchAudioArrayBuffer(source, track, trackIndex);
         const audioBuffer = await audioEngine.decodeAudioData(audioBytes.slice(0));
         const byteLength = audioBytes.byteLength || getEstimatedPreloadTrackBytes(trackIndex);
@@ -7709,10 +7868,7 @@
         trackDurations.set(trackIndex, audioBuffer.duration);
         durationFailures.delete(trackIndex);
 
-        const songLength = songList.querySelector(`.song-item[data-track-index="${trackIndex}"] .song-length`);
-        if (songLength) {
-            songLength.textContent = formatTime(getTrackAudioDuration(trackIndex));
-        }
+        setSongDurationDisplay(trackIndex);
 
         rebuildStitchedAlbumTimeline({ preservePlayback: true });
         renderTelemetry();
@@ -7779,16 +7935,43 @@
         });
     }
 
-    async function revealAlbumSite() {
-        document.body.classList.add('is-audio-revealing');
-        audioPreloader?.setAttribute('aria-label', 'Sioto Jazz presents');
-        await waitForRevealTimeout(getCinematicRevealDuration());
+    function finishAudioPreloaderImmediately(event = null) {
+        if (!audioPreloader || !document.body.classList.contains('is-audio-preloading')) return;
+        if (event?.target?.closest?.('#audio-preloader-audio-button')) return;
+
+        audioPreloaderSkipped = true;
+        document.body.classList.remove('is-audio-revealing');
         document.body.classList.add('has-audio-revealed');
         document.body.classList.remove('is-audio-preloading');
-        audioPreloader?.setAttribute('aria-hidden', 'true');
-        window.setTimeout(() => {
-            document.body.classList.remove('is-audio-revealing');
-        }, 1200);
+        audioPreloader.setAttribute('aria-hidden', 'true');
+        audioPreloader.setAttribute('aria-label', 'Album loading in background');
+        refreshSongPreloadIndicators();
+        requestMobileCoverHeightUpdate();
+    }
+
+    async function revealAlbumSite() {
+        if (audioPreloaderSkipped || !document.body.classList.contains('is-audio-preloading')) {
+            refreshSongPreloadIndicators();
+            return;
+        }
+        if (audioRevealPromise) return audioRevealPromise;
+
+        audioRevealPromise = (async () => {
+            document.body.classList.add('is-audio-revealing');
+            audioPreloader?.setAttribute('aria-label', 'Sioto Jazz presents');
+            await waitForRevealTimeout(getCinematicRevealDuration());
+            if (audioPreloaderSkipped || !document.body.classList.contains('is-audio-preloading')) {
+                return;
+            }
+            document.body.classList.add('has-audio-revealed');
+            document.body.classList.remove('is-audio-preloading');
+            audioPreloader?.setAttribute('aria-hidden', 'true');
+            window.setTimeout(() => {
+                document.body.classList.remove('is-audio-revealing');
+            }, 1200);
+        })();
+
+        return audioRevealPromise;
     }
 
     function showAudioPreloadError(error) {
@@ -7984,16 +8167,23 @@
             }
             return;
         }
-        const hasActiveLine = activeIndex >= 0;
-        const anchorIndex = hasActiveLine
-            ? activeIndex
-            : Math.max(0, Math.min(lastLiveLyricAnchorIndex, lyricTimings.length - 1));
-        const renderKey = activeIndex >= 0 ? activeIndex : `hold-${anchorIndex}`;
+        const hasActiveLine = activeIndex >= 0 && activeIndex < lyricTimings.length;
+        if (!hasActiveLine) {
+            if (force || liveLyricsDisplay.childElementCount || lastLiveLyricIndex !== -1) {
+                liveLyricsDisplay.replaceChildren();
+                liveLyricsDisplay.classList.remove('is-changing');
+                lastLiveLyricIndex = -1;
+            }
+            return;
+        }
+
+        const anchorIndex = activeIndex;
+        const renderKey = activeIndex;
         if (!force && renderKey === lastLiveLyricIndex) return;
 
         const fragment = document.createDocumentFragment();
-        const start = Math.max(0, anchorIndex - 2);
-        const end = Math.min(lyricTimings.length - 1, anchorIndex + 2);
+        const start = Math.max(0, anchorIndex - 1);
+        const end = Math.min(lyricTimings.length - 1, anchorIndex + 1);
 
         for (let index = start; index <= end; index += 1) {
             const line = document.createElement('div');
@@ -8007,13 +8197,12 @@
                 line.classList.add('is-active');
                 line.style.setProperty('--live-lyric-opacity', '1');
                 line.style.setProperty('--live-lyric-scale', '1');
+                line.style.setProperty('--live-lyric-filter', 'blur(0)');
             } else if (distance === 1) {
-                line.classList.add('is-near');
-                line.style.setProperty('--live-lyric-opacity', '0.62');
-                line.style.setProperty('--live-lyric-scale', '0.98');
-            } else {
-                line.style.setProperty('--live-lyric-opacity', '0.42');
-                line.style.setProperty('--live-lyric-scale', '0.96');
+                line.classList.add('is-near', index < anchorIndex ? 'is-previous' : 'is-next');
+                line.style.setProperty('--live-lyric-opacity', '0.48');
+                line.style.setProperty('--live-lyric-scale', '0.94');
+                line.style.setProperty('--live-lyric-filter', 'blur(0.35px)');
             }
             fragment.appendChild(line);
         }
@@ -8023,9 +8212,7 @@
         void liveLyricsDisplay.offsetWidth;
         liveLyricsDisplay.classList.add('is-changing');
         lastLiveLyricIndex = renderKey;
-        if (hasActiveLine) {
-            lastLiveLyricAnchorIndex = activeIndex;
-        }
+        lastLiveLyricAnchorIndex = activeIndex;
     }
 
     function updateProgressBars() {
