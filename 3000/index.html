@@ -1100,6 +1100,12 @@
             gap: 12px;
             justify-content: space-between;
         }
+        .transport-cluster {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            flex-shrink: 0;
+        }
         .transport-buttons {
             display: inline-flex;
             align-items: center;
@@ -1120,6 +1126,168 @@
         }
         .player-controls .transport-buttons button + button {
             border-left: 1px solid rgba(255, 255, 255, 0.16);
+        }
+        .tempo-dino {
+            --tempo-dino-beat: 0.5s;
+            --tempo-dino-step: 1s;
+            --tempo-dino-rise: -5px;
+            --tempo-dino-wag: 13deg;
+            --tempo-dino-tail-back: -10deg;
+            width: 42px;
+            height: 32px;
+            flex: 0 0 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--club-blue-strong);
+            background: none;
+            border: 0;
+            box-shadow: none;
+            opacity: 0.52;
+            pointer-events: none;
+            transform: translateY(0);
+            transition: opacity 0.2s ease, filter 0.2s ease;
+        }
+        .tempo-dino.is-ready {
+            opacity: 0.92;
+        }
+        .tempo-dino svg {
+            width: 42px;
+            height: 31px;
+            display: block;
+            overflow: visible;
+            filter: none;
+        }
+        .tempo-dino__pixel {
+            fill: url(#tempo-dino-body-gradient);
+        }
+        .tempo-dino__cutout,
+        .tempo-dino__tooth {
+            fill: #fff;
+        }
+        .tempo-dino__dancer,
+        .tempo-dino__body,
+        .tempo-dino__head,
+        .tempo-dino__jaw,
+        .tempo-dino__tail,
+        .tempo-dino__arm,
+        .tempo-dino__leg {
+            transform-box: fill-box;
+        }
+        .tempo-dino__dancer {
+            transform-origin: center bottom;
+        }
+        .tempo-dino__body {
+            transform-origin: center bottom;
+        }
+        .tempo-dino__head {
+            transform-origin: left center;
+        }
+        .tempo-dino__jaw {
+            transform-origin: left top;
+        }
+        .tempo-dino__tail {
+            transform-origin: right center;
+        }
+        .tempo-dino__arm {
+            transform-origin: top left;
+        }
+        .tempo-dino__leg-left {
+            transform-origin: top center;
+        }
+        .tempo-dino__leg-right {
+            transform-origin: top center;
+        }
+        .player-basic.playing .tempo-dino__dancer {
+            animation: tempo-dino-hop var(--tempo-dino-beat) cubic-bezier(0.22, 1.6, 0.45, 1) infinite;
+        }
+        .player-basic.playing .tempo-dino__body {
+            animation: tempo-dino-body var(--tempo-dino-step) ease-in-out infinite;
+        }
+        .player-basic.playing .tempo-dino__head {
+            animation: tempo-dino-nod var(--tempo-dino-step) ease-in-out infinite;
+        }
+        .player-basic.playing .tempo-dino__jaw {
+            animation: tempo-dino-chomp var(--tempo-dino-step) steps(2, end) infinite;
+        }
+        .player-basic.playing .tempo-dino__tail {
+            animation: tempo-dino-tail var(--tempo-dino-step) ease-in-out infinite;
+        }
+        .player-basic.playing .tempo-dino__arm {
+            animation: tempo-dino-arm var(--tempo-dino-step) ease-in-out infinite;
+        }
+        .player-basic.playing .tempo-dino__leg-left {
+            animation: tempo-dino-leg-left var(--tempo-dino-step) steps(2, end) infinite;
+        }
+        .player-basic.playing .tempo-dino__leg-right {
+            animation: tempo-dino-leg-right var(--tempo-dino-step) steps(2, end) infinite;
+        }
+        @keyframes tempo-dino-hop {
+            0%, 100% {
+                transform: translate3d(0, 0, 0) rotate(-2deg) scaleY(1.02);
+            }
+            38% {
+                transform: translate3d(0, var(--tempo-dino-rise), 0) rotate(4deg) scaleY(0.98);
+            }
+            68% {
+                transform: translate3d(0, 2px, 0) rotate(-4deg) scaleY(1.04);
+            }
+        }
+        @keyframes tempo-dino-body {
+            0%, 100% {
+                transform: skewX(-2deg);
+            }
+            50% {
+                transform: skewX(4deg);
+            }
+        }
+        @keyframes tempo-dino-nod {
+            0%, 100% {
+                transform: translate3d(0, 0, 0) rotate(-5deg);
+            }
+            50% {
+                transform: translate3d(1px, -2px, 0) rotate(8deg);
+            }
+        }
+        @keyframes tempo-dino-chomp {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(1.4px);
+            }
+        }
+        @keyframes tempo-dino-tail {
+            0%, 100% {
+                transform: rotate(var(--tempo-dino-tail-back));
+            }
+            50% {
+                transform: rotate(var(--tempo-dino-wag));
+            }
+        }
+        @keyframes tempo-dino-arm {
+            0%, 100% {
+                transform: rotate(28deg) translateY(0);
+            }
+            50% {
+                transform: rotate(-34deg) translateY(-1px);
+            }
+        }
+        @keyframes tempo-dino-leg-left {
+            0%, 100% {
+                transform: translate3d(-1px, 0, 0) rotate(-12deg);
+            }
+            50% {
+                transform: translate3d(2px, -3px, 0) rotate(18deg);
+            }
+        }
+        @keyframes tempo-dino-leg-right {
+            0%, 100% {
+                transform: translate3d(2px, -3px, 0) rotate(18deg);
+            }
+            50% {
+                transform: translate3d(-1px, 0, 0) rotate(-12deg);
+            }
         }
         .player-controls button {
             padding: 0;
@@ -1790,7 +1958,15 @@
             .song-item.is-track-entering .song-title__main,
             .song-item.is-track-entering .song-feature,
             .song-item.is-track-entering .song-status,
-            .song-item.is-track-entering .song-length {
+            .song-item.is-track-entering .song-length,
+            .player-basic.playing .tempo-dino__dancer,
+            .player-basic.playing .tempo-dino__body,
+            .player-basic.playing .tempo-dino__head,
+            .player-basic.playing .tempo-dino__jaw,
+            .player-basic.playing .tempo-dino__tail,
+            .player-basic.playing .tempo-dino__arm,
+            .player-basic.playing .tempo-dino__leg-left,
+            .player-basic.playing .tempo-dino__leg-right {
                 animation: none !important;
             }
         }
@@ -2617,6 +2793,15 @@
                 height: 38px;
                 flex-basis: 38px;
             }
+            .player-controls .tempo-dino {
+                width: 48px;
+                height: 38px;
+                flex-basis: 48px;
+            }
+            .player-controls .tempo-dino svg {
+                width: 42px;
+                height: 34px;
+            }
             .content-container {
                 flex-direction: column;
             }
@@ -2867,10 +3052,51 @@
         <div class="player-main">
             <div class="current-song-name" id="current-song-name"></div>
             <div class="player-controls">
-                <div class="transport-buttons" aria-label="Playback controls">
-                    <button class="track-nav-btn prev-track-btn" disabled aria-label="Previous song"><i class="fa-solid fa-backward-step" aria-hidden="true"></i></button>
-                    <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
-                    <button class="track-nav-btn next-track-btn" disabled aria-label="Next song"><i class="fa-solid fa-forward-step" aria-hidden="true"></i></button>
+                <div class="transport-cluster">
+                    <div class="transport-buttons" aria-label="Playback controls">
+                        <button class="track-nav-btn prev-track-btn" disabled aria-label="Previous song"><i class="fa-solid fa-backward-step" aria-hidden="true"></i></button>
+                        <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                        <button class="track-nav-btn next-track-btn" disabled aria-label="Next song"><i class="fa-solid fa-forward-step" aria-hidden="true"></i></button>
+                    </div>
+                    <span class="tempo-dino" id="tempo-dino" aria-hidden="true">
+                        <svg viewBox="0 0 64 48" focusable="false" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="tempo-dino-body-gradient" x1="8" y1="9" x2="56" y2="44" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3"/>
+                                    <stop offset="18%" stop-color="var(--club-blue-bright)"/>
+                                    <stop offset="52%" stop-color="var(--club-blue)"/>
+                                    <stop offset="78%" stop-color="var(--club-blue-deep)"/>
+                                    <stop offset="100%" stop-color="var(--club-blue-night)"/>
+                                </linearGradient>
+                            </defs>
+                            <g class="tempo-dino__dancer">
+                                <g class="tempo-dino__tail">
+                                    <path class="tempo-dino__pixel" d="M25 27h-5v-2h-5v-2h-5v-2H5v-3H1v-3h7v2h6v2h6v2h5Z"/>
+                                </g>
+                                <g class="tempo-dino__body">
+                                    <path class="tempo-dino__pixel" d="M24 21h19v3h4v10h-3v4H32v-3h-6v3h-5v-6h-3v-7h6Z"/>
+                                </g>
+                                <g class="tempo-dino__head">
+                                    <path class="tempo-dino__pixel" d="M39 11h17v3h5v9H49v3h-9v-4h-3v-8h2Z"/>
+                                    <rect class="tempo-dino__cutout" x="53" y="15" width="2" height="2"/>
+                                    <g class="tempo-dino__jaw">
+                                        <path class="tempo-dino__pixel" d="M48 23h13v3h-7v3h-6Z"/>
+                                        <rect class="tempo-dino__tooth" x="51" y="23" width="2" height="3"/>
+                                        <rect class="tempo-dino__tooth" x="56" y="23" width="2" height="3"/>
+                                    </g>
+                                </g>
+                                <g class="tempo-dino__arm">
+                                    <path class="tempo-dino__pixel" d="M42 28h3v2h2v3h-3v-2h-2Z"/>
+                                </g>
+                                <g class="tempo-dino__leg tempo-dino__leg-left">
+                                    <path class="tempo-dino__pixel" d="M27 36h5v8h-8v-3h3Z"/>
+                                </g>
+                                <g class="tempo-dino__leg tempo-dino__leg-right">
+                                    <path class="tempo-dino__pixel" d="M38 36h5v5h6v3H38Z"/>
+                                </g>
+                            </g>
+                        </svg>
+                    </span>
                 </div>
                 <span class="player-timeline">0:00 / 0:00</span>
             </div>
@@ -3265,6 +3491,7 @@
     const toggleBtn = playerBasic.querySelector('.toggle-btn');
     const prevTrackBtn = playerBasic.querySelector('.prev-track-btn');
     const nextTrackBtn = playerBasic.querySelector('.next-track-btn');
+    const tempoDino = document.getElementById('tempo-dino');
     const versionToggle = document.getElementById('version-toggle');
     const versionToggleLabel = versionToggle?.querySelector('.version-toggle__label');
     const versionToggleMessage = document.getElementById('version-toggle-message');
@@ -6229,6 +6456,25 @@
         };
     }
 
+    function updateTempoDinosaur(track) {
+        if (!tempoDino) return;
+
+        const bpm = Number.parseInt(track?.tempo, 10);
+        const safeBpm = Number.isFinite(bpm) && bpm > 0 ? bpm : 120;
+        const beatSeconds = 60 / safeBpm;
+        const energy = Math.max(0.82, Math.min(1.42, safeBpm / 120));
+        const lift = 4.2 + energy * 1.6;
+        const wag = 10 + energy * 5.4;
+
+        tempoDino.classList.toggle('is-ready', Boolean(track));
+        tempoDino.dataset.bpm = String(safeBpm);
+        tempoDino.style.setProperty('--tempo-dino-beat', `${beatSeconds.toFixed(3)}s`);
+        tempoDino.style.setProperty('--tempo-dino-step', `${(beatSeconds * 2).toFixed(3)}s`);
+        tempoDino.style.setProperty('--tempo-dino-rise', `${(lift * -1).toFixed(2)}px`);
+        tempoDino.style.setProperty('--tempo-dino-wag', `${wag.toFixed(2)}deg`);
+        tempoDino.style.setProperty('--tempo-dino-tail-back', `${(wag * -0.7).toFixed(2)}deg`);
+    }
+
     function getSongGridTime(track, audioTime) {
         const trackIndex = data.tracks.indexOf(track);
         const sourceTime = trackIndex >= 0
@@ -7161,6 +7407,7 @@
         currentDaniSource = '';
         currentVersionSource = audioEntry.source || getVersionedAudioSrc(track, 'martin');
         updateTrackNavButtons();
+        updateTempoDinosaur(track);
         updateVersionToggleState();
         setVersionToggleMessage('');
         updateMediaSessionMetadata(track, trackIndex);
