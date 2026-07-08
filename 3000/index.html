@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sioto Jazz - In a Race Against Time Во Трка со Времето</title>
+    <meta name="theme-color" content="#1f56b4">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Sioto Jazz">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="apple-touch-icon" href="album_cover_500x500.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" />
     <style>
@@ -3361,6 +3368,7 @@
     const GAPLESS_BUFFER_SECONDS = 1.5;
     const GAPLESS_READY_STATE = window.HTMLMediaElement?.HAVE_FUTURE_DATA || 3;
     const MEDIA_SESSION_SEEK_SECONDS = 10;
+    const MEDIA_SESSION_POSITION_UPDATE_MS = 1000;
     const WEB_AUDIO_START_DELAY_SECONDS = 0.04;
     let gaplessPrepareToken = 0;
     let gaplessPreparedTrack = null;
@@ -6030,6 +6038,9 @@
     let immediateAutoplayRetryTimer = 0;
     let immediateAutoplayRetryCount = 0;
     let immediateAutoplayPending = false;
+    let mediaSessionPositionTimer = 0;
+    let playbackWakeLock = null;
+    let audioContextLifecycleBound = false;
     const IMMEDIATE_AUTOPLAY_RETRY_MS = 700;
     const IMMEDIATE_AUTOPLAY_MAX_RETRIES = 240;
 
@@ -6056,6 +6067,77 @@
         return titleParts.join(' / ');
     }
 
+    function getMediaSessionPositionState() {
+        const duration = getPlaybackDuration();
+        const position = getPlaybackCurrentTime();
+        if (!currentTrack || !Number.isFinite(duration) || duration <= 0) return null;
+
+        return {
+            duration,
+            playbackRate: 1,
+            position: Math.max(0, Math.min(duration, Number.isFinite(position) ? position : 0))
+        };
+    }
+
+    function updateMediaSessionPositionState() {
+        if (!('mediaSession' in navigator) || typeof navigator.mediaSession.setPositionState !== 'function') return;
+
+        try {
+            const positionState = getMediaSessionPositionState();
+            if (positionState) {
+                navigator.mediaSession.setPositionState(positionState);
+            }
+        } catch {
+            // Position state support is browser-specific and stricter on invalid values.
+        }
+    }
+
+    function startMediaSessionPositionUpdates() {
+        if (mediaSessionPositionTimer) return;
+        mediaSessionPositionTimer = window.setInterval(updateMediaSessionPositionState, MEDIA_SESSION_POSITION_UPDATE_MS);
+    }
+
+    function stopMediaSessionPositionUpdates() {
+        window.clearInterval(mediaSessionPositionTimer);
+        mediaSessionPositionTimer = 0;
+    }
+
+    async function requestPlaybackWakeLock() {
+        if (playbackWakeLock || isPlaybackPaused() || document.visibilityState !== 'visible') return;
+        if (!('wakeLock' in navigator) || typeof navigator.wakeLock?.request !== 'function') return;
+
+        try {
+            playbackWakeLock = await navigator.wakeLock.request('screen');
+            playbackWakeLock.addEventListener('release', () => {
+                playbackWakeLock = null;
+            }, { once: true });
+        } catch {
+            playbackWakeLock = null;
+        }
+    }
+
+    function releasePlaybackWakeLock() {
+        const lock = playbackWakeLock;
+        playbackWakeLock = null;
+        if (lock && typeof lock.release === 'function') {
+            lock.release().catch(() => {});
+        }
+    }
+
+    function syncMediaPlayerLifecycle() {
+        updateMediaSessionPositionState();
+        if (!currentTrack || isPlaybackPaused()) {
+            stopMediaSessionPositionUpdates();
+            releasePlaybackWakeLock();
+            setMediaSessionPlaybackState('paused');
+            return;
+        }
+
+        startMediaSessionPositionUpdates();
+        void requestPlaybackWakeLock();
+        setMediaSessionPlaybackState('playing');
+    }
+
     function updateMediaSessionMetadata(track = currentTrack, trackIndex = selectedTrackIndex) {
         if (!('mediaSession' in navigator)) return;
 
@@ -6072,6 +6154,7 @@
                 });
             }
             navigator.mediaSession.playbackState = track && !isPlaybackPaused() ? 'playing' : 'paused';
+            updateMediaSessionPositionState();
         } catch {
             // Media Session is optional and varies across browsers.
         }
@@ -6081,6 +6164,7 @@
         if (!('mediaSession' in navigator)) return;
         try {
             navigator.mediaSession.playbackState = state || (currentTrack && !isPlaybackPaused() ? 'playing' : 'paused');
+            updateMediaSessionPositionState();
         } catch {
             // Ignore browsers with partial Media Session implementations.
         }
@@ -6106,11 +6190,21 @@
         });
     }
 
+    function stopFromMediaSession() {
+        pausePlayback().finally(() => {
+            if (currentTrack && selectedTrackIndex >= 0) {
+                void seekPlayback(0, { autoPlay: false });
+            }
+            setToggleIcon(true);
+            setMediaSessionPlaybackState('paused');
+        });
+    }
+
     function seekFromMediaSession(time) {
         if (!currentTrack || !Number.isFinite(time)) return;
         const duration = getPlaybackDuration();
         const nextTime = Math.max(0, Math.min(duration || time, time));
-        void seekPlayback(nextTime, { autoPlay: !isPlaybackPaused() });
+        void seekPlayback(nextTime, { autoPlay: !isPlaybackPaused() }).finally(updateMediaSessionPositionState);
     }
 
     function configureMediaSessionActions() {
@@ -6123,7 +6217,8 @@
             nexttrack: () => goToAdjacentTrack(1),
             seekbackward: details => seekFromMediaSession(getPlaybackCurrentTime() - (details.seekOffset || MEDIA_SESSION_SEEK_SECONDS)),
             seekforward: details => seekFromMediaSession(getPlaybackCurrentTime() + (details.seekOffset || MEDIA_SESSION_SEEK_SECONDS)),
-            seekto: details => seekFromMediaSession(details.seekTime)
+            seekto: details => seekFromMediaSession(details.seekTime),
+            stop: stopFromMediaSession
         };
 
         Object.entries(handlers).forEach(([action, handler]) => {
@@ -6506,6 +6601,17 @@
         return audioEngine.context?.state === 'running';
     }
 
+    function bindAudioContextLifecycle() {
+        if (audioContextLifecycleBound || !audioEngine.context) return;
+        audioContextLifecycleBound = true;
+        audioEngine.context.addEventListener('statechange', () => {
+            if (webAudioPlayback.playing && audioEngine.context?.state === 'suspended' && document.visibilityState === 'visible') {
+                audioEngine.resumeContext().catch(() => {});
+            }
+            syncMediaPlayerLifecycle();
+        });
+    }
+
     function clearImmediateAutoplayRetry() {
         window.clearTimeout(immediateAutoplayRetryTimer);
         immediateAutoplayRetryTimer = 0;
@@ -6574,6 +6680,7 @@
         if (!currentTrack) return;
 
         audioEngine.ensureContext();
+        bindAudioContextLifecycle();
         const resumePromise = audioEngine.resumeContext();
         await Promise.race([
             resumePromise,
@@ -6584,7 +6691,7 @@
             if (!animationFrameId) {
                 smoothUpdateLoop();
             }
-            setMediaSessionPlaybackState('playing');
+            syncMediaPlayerLifecycle();
             return Promise.resolve();
         }
 
@@ -6592,7 +6699,7 @@
         if (!animationFrameId) {
             smoothUpdateLoop();
         }
-        setMediaSessionPlaybackState('playing');
+        syncMediaPlayerLifecycle();
     }
 
     function pausePlayback() {
@@ -6602,7 +6709,7 @@
         webAudioPlayback.playing = false;
         clearImmediateAutoplayRetry();
         stopScheduledWebAudioSources();
-        setMediaSessionPlaybackState('paused');
+        syncMediaPlayerLifecycle();
         updateLiveTelemetryAnalysis(true);
         return Promise.resolve();
     }
@@ -6623,6 +6730,7 @@
 
         glSeek.render(getPlaybackDuration() ? getPlaybackCurrentTime() / getPlaybackDuration() : 0);
         updateLiveTelemetryAnalysis(true);
+        updateMediaSessionPositionState();
 
         if (autoPlay || wasPlaying) {
             return playPlayback();
@@ -6972,6 +7080,9 @@
     }
 
     function finishPlaybackAtAlbumEnd(trackIndex) {
+        webAudioPlayback.playing = false;
+        stopMediaSessionPositionUpdates();
+        releasePlaybackWakeLock();
         toggleBtn.disabled = false;
         setToggleIcon(true);
         glSeek.render(0);
@@ -7299,14 +7410,33 @@
         void allowPreloaderAudio();
     });
     document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && immediateAutoplayPending) {
+        updateMediaSessionPositionState();
+        if (document.hidden) {
+            releasePlaybackWakeLock();
+            return;
+        }
+
+        if (webAudioPlayback.playing) {
+            void audioEngine.resumeContext();
+            void requestPlaybackWakeLock();
+            syncMediaPlayerLifecycle();
+        }
+        if (immediateAutoplayPending) {
             void attemptImmediateAutoplay();
         }
     });
     window.addEventListener('pageshow', () => {
+        if (webAudioPlayback.playing) {
+            void audioEngine.resumeContext();
+            syncMediaPlayerLifecycle();
+        }
         if (immediateAutoplayPending) {
             void attemptImmediateAutoplay();
         }
+    });
+    window.addEventListener('pagehide', () => {
+        updateMediaSessionPositionState();
+        releasePlaybackWakeLock();
     });
 
     function showContextMenu(e, targetType, targetElement, targetTrack = currentTrack, targetTrackIndex = data.tracks.findIndex(t => t === currentTrack)) {

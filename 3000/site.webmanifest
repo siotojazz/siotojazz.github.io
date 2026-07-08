@@ -1,0 +1,25 @@
+{
+  "name": "Sioto Jazz - In a Race Against Time",
+  "short_name": "Sioto Jazz",
+  "description": "Album player for Sioto Jazz.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08205e",
+  "theme_color": "#1f56b4",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    {
+      "src": "album_cover_500x500.png",
+      "sizes": "500x500",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "album_cover.png",
+      "sizes": "5000x5000",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
