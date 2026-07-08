@@ -2511,7 +2511,7 @@
         /* ── Responsive ── */
         @media (max-width: 768px) {
             :root {
-                --mobile-player-height: 122px;
+                --mobile-player-height: 78px;
                 --mobile-cover-height: 100vw;
                 --mobile-cover-opacity: 1;
             }
@@ -2596,18 +2596,7 @@
                 padding: 2px 12px 4px;
             }
             .live-lyrics {
-                display: flex;
-                min-height: 48px;
-                padding: 4px 12px 7px;
-                gap: 1px;
-            }
-            .live-lyrics-line {
-                min-height: 12px;
-                font-size: 10px;
-            }
-            .live-lyrics-line.is-active {
-                min-height: 18px;
-                font-size: 13px;
+                display: none;
             }
             .tab-nav {
                 order: 1;
@@ -5865,40 +5854,47 @@
     const mobileCoverShrink = {
         ticking: false,
         activeTargets: [],
-        gestureOffset: 0,
+        hidden: false,
+        hideOffset: 0,
         lastTouchY: null
     };
+    const MOBILE_COVER_HIDE_SCROLL_THRESHOLD = 72;
 
     function getMobileCoverRange() {
-        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
         const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
         const containerWidth = appContainer?.clientWidth || viewportWidth;
         const expanded = Math.max(0, containerWidth);
-        const collapseDistance = Math.max(220, Math.min(viewportHeight || expanded, expanded * 0.92));
-        return { expanded, collapsed: 0, collapseDistance };
+        return { expanded, collapsed: 0 };
+    }
+
+    function getMobileCoverScrollTop() {
+        const activePanel = document.querySelector('.tab-panel.active');
+        const scrollTargets = activePanel
+            ? [activePanel, ...activePanel.querySelectorAll('.song-list, .player-wrap, .credits')]
+            : [];
+        return scrollTargets.reduce((max, target) => Math.max(max, target.scrollTop || 0), 0);
     }
 
     function updateMobileCoverHeight() {
         if (!appContainer || window.matchMedia('(min-width: 769px)').matches) {
             appContainer?.style.removeProperty('--mobile-cover-height');
             appContainer?.style.removeProperty('--mobile-cover-opacity');
-            mobileCoverShrink.gestureOffset = 0;
+            mobileCoverShrink.hidden = false;
+            mobileCoverShrink.hideOffset = 0;
             mobileCoverShrink.lastTouchY = null;
             return;
         }
 
-        const activePanel = document.querySelector('.tab-panel.active');
-        const scrollTargets = activePanel
-            ? [activePanel, ...activePanel.querySelectorAll('.song-list, .player-wrap, .credits')]
-            : [];
-        const scrollTop = scrollTargets.reduce((max, target) => Math.max(max, target.scrollTop || 0), 0);
-        const { expanded, collapsed, collapseDistance } = getMobileCoverRange();
-        mobileCoverShrink.gestureOffset = Math.max(mobileCoverShrink.gestureOffset, scrollTop);
-        const coverOffset = Math.max(scrollTop, mobileCoverShrink.gestureOffset);
-        const progress = Math.min(1, Math.max(0, coverOffset / collapseDistance));
-        const height = expanded - ((expanded - collapsed) * progress);
-        const opacity = expanded > 0 ? Math.max(0, Math.min(1, height / expanded)) : 0;
-        appContainer.style.setProperty('--mobile-cover-height', `${Math.round(Math.max(0, height))}px`);
+        const scrollTop = getMobileCoverScrollTop();
+        mobileCoverShrink.hideOffset = Math.max(mobileCoverShrink.hideOffset, scrollTop);
+        if (mobileCoverShrink.hideOffset >= MOBILE_COVER_HIDE_SCROLL_THRESHOLD) {
+            mobileCoverShrink.hidden = true;
+        }
+
+        const { expanded, collapsed } = getMobileCoverRange();
+        const height = mobileCoverShrink.hidden ? collapsed : expanded;
+        const opacity = mobileCoverShrink.hidden ? 0 : 1;
+        appContainer.style.setProperty('--mobile-cover-height', `${Math.round(height)}px`);
         appContainer.style.setProperty('--mobile-cover-opacity', opacity.toFixed(3));
     }
 
@@ -5907,8 +5903,20 @@
         const delta = Number.parseFloat(deltaY);
         if (!Number.isFinite(delta) || delta === 0) return;
 
-        const { collapseDistance } = getMobileCoverRange();
-        mobileCoverShrink.gestureOffset = Math.max(0, Math.min(collapseDistance, mobileCoverShrink.gestureOffset + delta));
+        if (delta > 0) {
+            mobileCoverShrink.hideOffset = Math.min(
+                MOBILE_COVER_HIDE_SCROLL_THRESHOLD,
+                mobileCoverShrink.hideOffset + delta
+            );
+        } else if (delta < 0 && getMobileCoverScrollTop() <= 1) {
+            mobileCoverShrink.hideOffset = Math.max(0, mobileCoverShrink.hideOffset + delta);
+        }
+
+        if (mobileCoverShrink.hideOffset >= MOBILE_COVER_HIDE_SCROLL_THRESHOLD) {
+            mobileCoverShrink.hidden = true;
+        } else if (mobileCoverShrink.hideOffset <= 0 && getMobileCoverScrollTop() <= 1) {
+            mobileCoverShrink.hidden = false;
+        }
         requestMobileCoverHeightUpdate();
     }
 
@@ -5950,6 +5958,9 @@
         mobileCoverShrink.activeTargets = activePanel
             ? [activePanel, ...activePanel.querySelectorAll('.song-list, .player-wrap, .credits')]
             : [];
+        mobileCoverShrink.hideOffset = getMobileCoverScrollTop();
+        mobileCoverShrink.hidden = mobileCoverShrink.hideOffset >= MOBILE_COVER_HIDE_SCROLL_THRESHOLD;
+        mobileCoverShrink.lastTouchY = null;
         mobileCoverShrink.activeTargets.forEach(target => {
             target.addEventListener('scroll', requestMobileCoverHeightUpdate, { passive: true });
             target.addEventListener('wheel', handleMobileCoverWheel, { passive: true });
