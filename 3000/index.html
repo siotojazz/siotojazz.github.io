@@ -911,7 +911,8 @@
         .song-item.is-track-entering .song-feature,
         .song-item.is-track-entering .song-status,
         .song-item.is-track-entering .song-length {
-            animation: track-text-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation: track-text-pulse 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+            transform-origin: center;
         }
         .player-basic.playing ~ .tab-nav ~ .tab-content .song-item.active::before {
             left: 0;
@@ -1749,7 +1750,8 @@
         }
         .player-basic.is-track-changing .current-song-name__main,
         .player-basic.is-track-changing .current-song-name__feature {
-            animation: track-title-enter 0.58s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation: track-text-pulse 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+            transform-origin: center;
         }
         .current-song-name__main {
             min-width: 0;
@@ -1770,36 +1772,15 @@
         .current-song-name:empty {
             display: none;
         }
-        @keyframes track-title-enter {
+        @keyframes track-text-pulse {
             0% {
-                opacity: 0;
-                transform: translate3d(var(--track-change-title-shift, 18px), 0, 0);
-                filter: blur(8px);
+                transform: scale(1);
             }
-            58% {
-                opacity: 1;
-                filter: blur(0);
+            42% {
+                transform: scale(0.92);
             }
             100% {
-                opacity: 1;
-                transform: translate3d(0, 0, 0);
-                filter: blur(0);
-            }
-        }
-        @keyframes track-text-enter {
-            0% {
-                transform: translate3d(var(--track-change-row-shift, 18px), 0, 0);
-                opacity: 0;
-                filter: blur(5px);
-            }
-            58% {
-                opacity: 1;
-                filter: blur(0);
-            }
-            100% {
-                transform: translate3d(0, 0, 0);
-                opacity: 1;
-                filter: blur(0);
+                transform: scale(1);
             }
         }
         @media (prefers-reduced-motion: reduce) {
@@ -2521,6 +2502,7 @@
                 --mobile-player-height: 78px;
                 --mobile-cover-height: 100vw;
                 --mobile-cover-opacity: 1;
+                --mobile-cover-transition-duration: 0.64s;
             }
             body {
                 overflow: hidden;
@@ -2568,7 +2550,9 @@
                 box-shadow: 0 18px 38px rgba(var(--club-blue-night-rgb), 0.18);
                 opacity: var(--mobile-cover-opacity);
                 overflow: hidden;
-                transition: height 0.16s ease-out, opacity 0.16s ease-out;
+                transition:
+                    height var(--mobile-cover-transition-duration) ease-out,
+                    opacity var(--mobile-cover-transition-duration) ease-out;
             }
             .player-cover img {
                 width: 100%;
@@ -7125,31 +7109,25 @@
     function triggerTrackChangeAnimation(nextTrackIndex, previousTrackIndex) {
         if (!playerBasic || nextTrackIndex === previousTrackIndex) return;
 
-        const direction = previousTrackIndex >= 0 && nextTrackIndex < previousTrackIndex ? 'prev' : 'next';
         window.clearTimeout(trackChangeAnimationTimer);
 
-        playerBasic.classList.remove('is-track-changing', 'track-change-prev', 'track-change-next');
+        playerBasic.classList.remove('is-track-changing');
         songList.querySelectorAll('.song-item.is-track-entering').forEach(item => {
-            item.classList.remove('is-track-entering', 'track-enter-prev', 'track-enter-next');
-            item.style.removeProperty('--track-change-row-shift');
+            item.classList.remove('is-track-entering');
         });
 
         void playerBasic.offsetWidth;
-        playerBasic.classList.add('is-track-changing', `track-change-${direction}`);
-        playerBasic.style.setProperty('--track-change-title-shift', direction === 'prev' ? '-18px' : '18px');
-        playerBasic.style.setProperty('--track-change-row-shift', direction === 'prev' ? '-18px' : '18px');
+        playerBasic.classList.add('is-track-changing');
 
         const enteringSongItem = songList.querySelector(`.song-item[data-track-index="${nextTrackIndex}"]`);
         if (enteringSongItem) {
-            enteringSongItem.style.setProperty('--track-change-row-shift', direction === 'prev' ? '-18px' : '18px');
-            enteringSongItem.classList.add('is-track-entering', `track-enter-${direction}`);
+            enteringSongItem.classList.add('is-track-entering');
         }
 
         trackChangeAnimationTimer = window.setTimeout(() => {
-            playerBasic.classList.remove('is-track-changing', 'track-change-prev', 'track-change-next');
-            enteringSongItem?.classList.remove('is-track-entering', 'track-enter-prev', 'track-enter-next');
-            enteringSongItem?.style.removeProperty('--track-change-row-shift');
-        }, 720);
+            playerBasic.classList.remove('is-track-changing');
+            enteringSongItem?.classList.remove('is-track-entering');
+        }, 420);
     }
 
     function selectSong(track, trackIndex, startTime = 0, autoPlay = true, options = {}) {
