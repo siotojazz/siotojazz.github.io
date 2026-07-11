@@ -1953,7 +1953,7 @@
       "status": "missing recorded vocals and bass from mix",
       "mp3": "audio/nov_zeland.mp3",
       "backingmp3": "audio/nov_zeland_backing.mp3",
-      "startOffset": 2.4,
+      "startOffset": 0,
       "lyrics": [
         {
           "line": "знам, има план за бегство негде далеку",
@@ -2460,7 +2460,7 @@
       "status": "missing recorded vocals from mix",
       "mp3": "audio/quite_unreal.mp3",
       "backingmp3": "audio/quite_unreal_backing.mp3",
-      "startOffset": 0,
+      "startOffset": -0.42,
       "lyrics": [
         {
           "line": "we never went, there by the lake",
@@ -3028,7 +3028,7 @@
       "status": "home demo, horror vocals by Martin™",
       "mp3": "audio/za_vek_ponapred.mp3",
       "backingmp3": "",
-      "startOffset": 2.14,
+      "startOffset": 0,
       "lyrics": [
         {
           "line": "прво се возиме",
@@ -4163,7 +4163,7 @@
       "status": "home demo, vocals not recorded yet",
       "mp3": "audio/snop_od_svetlina.mp3",
       "backingmp3": "",
-      "startOffset": 2.67,
+      "startOffset": 0,
       "lyrics": [
         {
           "line": "кажи ми каде си?",
@@ -4828,7 +4828,7 @@
       "status": "recorded vocals missing, sax home recorded",
       "mp3": "audio/time_machine.mp3",
       "backingmp3": "audio/time_machine_backing.mp3",
-      "startOffset": 14.11,
+      "startOffset": 0.46,
       "lyrics": [
         {
           "line": "your eyes at a screen",
@@ -5680,7 +5680,7 @@
       "status": "studio version, unmixed",
       "mp3": "audio/roots_apart.mp3",
       "backingmp3": "audio/roots_apart_backing.mp3",
-      "startOffset": 8,
+      "startOffset": 3.64,
       "lyrics": [
         {
           "line": "I took a train that does the waltz,",
@@ -7347,7 +7347,7 @@
       "status": "missing recorded vocals from mix",
       "mp3": "audio/higher_ground.mp3",
       "backingmp3": "audio/higher_ground_backing.mp3",
-      "startOffset": 2.85,
+      "startOffset": -1.5,
       "lyrics": [
         {
           "line": "I wanna take you down",
