@@ -3482,6 +3482,11 @@
     const albumCoverImage = document.getElementById('album-cover-image');
     const songInfoHost = document.getElementById('song-info-host');
     let audio = document.getElementById('audio-player');
+    // Mobile browsers only grant reliable lock-screen/background playback to an
+    // HTMLMediaElement. Keep the sample-accurate Web Audio transport on desktop,
+    // but make the real <audio> element the transport on phones and tablets.
+    const useNativeMobilePlayback = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+        || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const seekCanvas = document.getElementById('seek-gl');
     const seekSectionTooltip = document.getElementById('seek-section-tooltip');
     const glSeek = createSeekRenderer(seekCanvas);
@@ -3581,6 +3586,9 @@
     const MEDIA_SESSION_SEEK_SECONDS = 10;
     const MEDIA_SESSION_POSITION_UPDATE_MS = 1000;
     const WEB_AUDIO_START_DELAY_SECONDS = 0.04;
+    let nativePlaybackPendingSourceTime = 0;
+    let nativePlaybackStartedAt = 0;
+    let knownAudioOutputDevices = new Map();
     let gaplessPrepareToken = 0;
     let gaplessPreparedTrack = null;
     let gaplessTransitioning = false;
@@ -6564,10 +6572,103 @@
     function configureManagedAudioElement(element, { standby = false } = {}) {
         if (!element) return element;
         element.id = standby ? 'audio-player-standby' : 'audio-player';
-        element.preload = 'none';
+        element.preload = useNativeMobilePlayback && !standby ? 'auto' : 'none';
+        element.playsInline = true;
+        element.setAttribute('playsinline', '');
+        element.setAttribute('webkit-playsinline', '');
+        if (!standby) element.dataset.transport = useNativeMobilePlayback ? 'native-media' : 'web-audio';
         element.hidden = true;
         element.setAttribute('aria-hidden', 'true');
         return element;
+    }
+
+    function setNativePlaybackTime(trackIndex, playbackTime) {
+        nativePlaybackPendingSourceTime = getSourceTimeForPlaybackTime(trackIndex, playbackTime);
+        if (audio.readyState < (window.HTMLMediaElement?.HAVE_METADATA || 1)) return;
+        try {
+            audio.currentTime = Math.max(0, Math.min(audio.duration || Infinity, nativePlaybackPendingSourceTime));
+        } catch {
+            // The loadedmetadata handler applies the pending time on stricter browsers.
+        }
+    }
+
+    function prepareNativePlaybackSource(trackIndex, playbackTime = 0) {
+        if (!useNativeMobilePlayback) return;
+        const entry = getTrackAudioEntry(trackIndex);
+        const source = entry?.source || getVersionedAudioSrc(data.tracks[trackIndex], 'martin');
+        if (!source) return;
+
+        nativePlaybackPendingSourceTime = getSourceTimeForPlaybackTime(trackIndex, playbackTime);
+        if (getResolvedAudioUrl(audio.currentSrc || audio.src) !== getResolvedAudioUrl(source)) {
+            audio.src = source;
+            audio.load();
+        }
+        setNativePlaybackTime(trackIndex, playbackTime);
+    }
+
+    async function readAudioOutputDevices() {
+        if (!navigator.mediaDevices?.enumerateDevices) return new Map();
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            return new Map(devices
+                .filter(device => device.kind === 'audiooutput')
+                .map(device => [device.deviceId, device.label || '']));
+        } catch {
+            return new Map();
+        }
+    }
+
+    async function handleAudioDeviceChange() {
+        const nextOutputs = await readAudioOutputDevices();
+        if (
+            !useNativeMobilePlayback
+            || isPlaybackPaused()
+            || Date.now() - nativePlaybackStartedAt < 3000
+            || !knownAudioOutputDevices.size
+        ) {
+            knownAudioOutputDevices = nextOutputs;
+            return;
+        }
+
+        const removedOutputs = [...knownAudioOutputDevices]
+            .filter(([deviceId]) => deviceId && deviceId !== 'default' && !nextOutputs.has(deviceId));
+        const removedPersonalAudio = removedOutputs.some(([, label]) =>
+            /bluetooth|head(phone|set)|ear(phone|bud)|airpods?|wireless/i.test(label)
+        );
+
+        knownAudioOutputDevices = nextOutputs;
+        if (removedPersonalAudio) {
+            audio.dataset.lastInterruption = 'output-device-removed';
+            await pausePlayback();
+            setToggleIcon(true);
+        }
+    }
+
+    function configureMobileAudioInterruptionHandling() {
+        if (!useNativeMobilePlayback) return;
+
+        // Safari's Audio Session API reports phone-call and route interruptions.
+        if ('audioSession' in navigator) {
+            try {
+                navigator.audioSession.type = 'playback';
+                navigator.audioSession.addEventListener?.('statechange', () => {
+                    if (navigator.audioSession.state === 'interrupted' && !isPlaybackPaused()) {
+                        audio.dataset.lastInterruption = 'audio-session-interrupted';
+                        void pausePlayback();
+                        setToggleIcon(true);
+                    }
+                });
+            } catch {
+                // Audio Session is still implemented differently across browser versions.
+            }
+        }
+
+        void readAudioOutputDevices().then(devices => {
+            knownAudioOutputDevices = devices;
+        });
+        navigator.mediaDevices?.addEventListener?.('devicechange', () => {
+            void handleAudioDeviceChange();
+        });
     }
 
     function createGaplessAudioElement() {
@@ -6691,6 +6792,12 @@
     }
 
     function getCurrentAlbumTime() {
+        if (useNativeMobilePlayback && selectedTrackIndex >= 0) {
+            return getAlbumTimeForTrackTime(
+                selectedTrackIndex,
+                getPlaybackTimeForSourceTime(selectedTrackIndex, audio.currentTime || nativePlaybackPendingSourceTime)
+            );
+        }
         if (!webAudioPlayback.playing) {
             return Math.max(0, Math.min(stitchedAlbumDuration || 0, webAudioPlayback.pausedAlbumTime || 0));
         }
@@ -6815,6 +6922,12 @@
     }
 
     function getPlaybackCurrentTime() {
+        if (useNativeMobilePlayback && selectedTrackIndex >= 0) {
+            return getPlaybackTimeForSourceTime(
+                selectedTrackIndex,
+                audio.currentTime || nativePlaybackPendingSourceTime
+            );
+        }
         const position = getTrackPositionFromAlbumTime(getCurrentAlbumTime());
         return position.trackTime || 0;
     }
@@ -6824,6 +6937,7 @@
     }
 
     function isPlaybackPaused() {
+        if (useNativeMobilePlayback) return audio.paused;
         return !webAudioPlayback.playing;
     }
 
@@ -6877,7 +6991,7 @@
         immediateAutoplayPending = true;
         try {
             await playPlayback();
-            if (isAudioContextRunning()) {
+            if (useNativeMobilePlayback ? !audio.paused : isAudioContextRunning()) {
                 clearImmediateAutoplayRetry();
                 setToggleIcon(false);
                 return;
@@ -6885,10 +6999,16 @@
         } catch (err) {
             console.error('Audio play error:', err);
             toggleBtn.disabled = false;
+            if (useNativeMobilePlayback && err?.name === 'NotAllowedError') {
+                clearImmediateAutoplayRetry();
+                setToggleIcon(true);
+                setMediaSessionPlaybackState('paused');
+                return;
+            }
         }
 
         if (immediateAutoplayRetryCount >= IMMEDIATE_AUTOPLAY_MAX_RETRIES) {
-            immediateAutoplayPending = !isAudioContextRunning();
+            immediateAutoplayPending = useNativeMobilePlayback ? audio.paused : !isAudioContextRunning();
             return;
         }
 
@@ -6908,6 +7028,19 @@
             selectSong(data.tracks[0], 0, 0, false);
         }
         if (!currentTrack) return;
+
+        if (useNativeMobilePlayback) {
+            prepareNativePlaybackSource(selectedTrackIndex, getPlaybackCurrentTime());
+            if (audio.readyState >= (window.HTMLMediaElement?.HAVE_METADATA || 1)) {
+                setNativePlaybackTime(selectedTrackIndex, getPlaybackCurrentTime());
+            }
+            // Call play() in the original tap/click task. Waiting for metadata first
+            // loses transient user activation on iOS Safari.
+            await audio.play();
+            if (!animationFrameId) smoothUpdateLoop();
+            syncMediaPlayerLifecycle();
+            return;
+        }
 
         audioEngine.ensureContext();
         bindAudioContextLifecycle();
@@ -6933,6 +7066,12 @@
     }
 
     function pausePlayback() {
+        if (useNativeMobilePlayback) {
+            audio.pause();
+            syncMediaPlayerLifecycle();
+            updateLiveTelemetryAnalysis(true);
+            return Promise.resolve();
+        }
         if (webAudioPlayback.playing) {
             webAudioPlayback.pausedAlbumTime = getCurrentAlbumTime();
         }
@@ -6945,6 +7084,15 @@
     }
 
     function seekPlayback(time, { autoPlay = true } = {}) {
+        if (useNativeMobilePlayback) {
+            const wasPlaying = !audio.paused;
+            setNativePlaybackTime(selectedTrackIndex, time);
+            glSeek.render(getPlaybackDuration() ? time / getPlaybackDuration() : 0);
+            updateLiveTelemetryAnalysis(true);
+            updateMediaSessionPositionState();
+            if (autoPlay || wasPlaying) return playPlayback();
+            return Promise.resolve();
+        }
         const targetAlbumTime = getAlbumTimeForTrackTime(selectedTrackIndex, time);
         const wasPlaying = webAudioPlayback.playing;
         webAudioPlayback.pausedAlbumTime = targetAlbumTime;
@@ -7310,6 +7458,7 @@
     }
 
     function finishPlaybackAtAlbumEnd(trackIndex) {
+        if (useNativeMobilePlayback) audio.pause();
         webAudioPlayback.playing = false;
         stopMediaSessionPositionUpdates();
         releasePlaybackWakeLock();
@@ -7396,6 +7545,7 @@
             webAudioPlayback.pausedAlbumTime = getAlbumTimeForTrackTime(trackIndex, targetTime);
             webAudioPlayback.playing = false;
             stopScheduledWebAudioSources();
+            prepareNativePlaybackSource(trackIndex, targetTime);
         }
 
         document.querySelectorAll('.song-item').forEach(item => item.classList.remove('active'));
@@ -7610,6 +7760,10 @@
     }
 
     async function unlockAudioContext() {
+        if (useNativeMobilePlayback) {
+            if (currentTrack && immediateAutoplayPending) void attemptImmediateAutoplay();
+            return;
+        }
         audioEngine.ensureContext();
         await audioEngine.resumeContext();
         if (currentTrack && (immediateAutoplayPending || webAudioPlayback.playing)) {
@@ -7641,7 +7795,7 @@
             return;
         }
 
-        if (webAudioPlayback.playing) {
+        if (!isPlaybackPaused()) {
             void audioEngine.resumeContext();
             void requestPlaybackWakeLock();
             syncMediaPlayerLifecycle();
@@ -7651,7 +7805,7 @@
         }
     });
     window.addEventListener('pageshow', () => {
-        if (webAudioPlayback.playing) {
+        if (!isPlaybackPaused()) {
             void audioEngine.resumeContext();
             syncMediaPlayerLifecycle();
         }
@@ -8544,6 +8698,7 @@
     updateTrackNavButtons();
     updateVersionToggleState();
     configureMediaSessionActions();
+    configureMobileAudioInterruptionHandling();
     setupResponsiveAlbumCover();
 
     if (hasValidInitialSongParam()) {
@@ -8880,6 +9035,7 @@
     
     function handleAudioPlay(event) {
         if (event.currentTarget !== audio) return;
+        if (useNativeMobilePlayback) nativePlaybackStartedAt = Date.now();
         if (!animationFrameId) {
             smoothUpdateLoop();
         }
@@ -8907,12 +9063,34 @@
 
     function handleAudioTimeUpdate(event) {
         if (event.currentTarget !== audio || audio.paused || !currentTrack) return;
+        if (useNativeMobilePlayback) {
+            const trim = getTrackPlaybackTrim(selectedTrackIndex);
+            if (audio.currentTime >= trim.sourceEnd - 0.08) {
+                if (gaplessTransitioning) return;
+                gaplessTransitioning = true;
+                Promise.resolve(startGaplessTransition({ force: true }))
+                    .finally(() => {
+                        window.setTimeout(() => {
+                            gaplessTransitioning = false;
+                        }, 250);
+                    });
+                return;
+            }
+            updateMediaSessionPositionState();
+        }
         const duration = audio.duration || trackDurations.get(selectedTrackIndex) || 0;
         maybePrepareNextTrack(audio.currentTime || 0, duration);
     }
 
     function handleAudioLoadedMetadata(event) {
         if (event.currentTarget !== audio || !currentTrack) return;
+        if (useNativeMobilePlayback) {
+            try {
+                audio.currentTime = Math.max(0, Math.min(audio.duration || Infinity, nativePlaybackPendingSourceTime));
+            } catch {
+                // A later seeking event will update the UI if this browser defers the seek.
+            }
+        }
         const duration = getPlaybackDuration() || trackDurations.get(selectedTrackIndex) || 0;
         refreshSeekSections(currentTrack, duration);
         glSeek.render(duration ? getPlaybackCurrentTime() / duration : 0);
