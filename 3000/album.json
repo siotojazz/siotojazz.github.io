@@ -478,7 +478,8 @@
       "id": 1,
       "title": "Импулс",
       "status": "missing recorded sax and vocals from mix",
-      "mp3": "audio/impuls.mp3",
+       "mp3": "audio/impuls.mp3",
+       "wav": "audio/wav/01-SiotoJazz-Impuls.wav",
       "backingmp3": "audio/impuls_backing.mp3",
       "startOffset": 0,
       "lyrics": [
@@ -885,7 +886,8 @@
       "id": 5,
       "title": "Magic",
       "status": "missing recorded vocals from mix",
-      "mp3": "audio/magic.mp3",
+       "mp3": "audio/magic.mp3",
+       "wav": "audio/wav/05-SiotoJazz-Magic.wav",
       "backingmp3": "audio/magic_backing.mp3",
       "startOffset": 0,
       "lyrics": [
@@ -1952,6 +1954,7 @@
       "title": "Нов Зеланд",
       "status": "missing recorded vocals and bass from mix",
       "mp3": "audio/nov_zeland.mp3",
+      "wav": "audio/wav/04-SiotoJazz-NovZeland.wav",
       "backingmp3": "audio/nov_zeland_backing.mp3",
       "startOffset": 0,
       "lyrics": [
@@ -2458,7 +2461,8 @@
       "id": 9,
       "title": "Quite Unreal",
       "status": "missing recorded vocals from mix",
-      "mp3": "audio/quite_unreal.mp3",
+       "mp3": "audio/quite_unreal.mp3",
+       "wav": "audio/wav/09-SiotoJazz-QuiteUnreal.wav",
       "backingmp3": "audio/quite_unreal_backing.mp3",
       "startOffset": -0.42,
       "lyrics": [
@@ -3027,6 +3031,7 @@
       "title": "За век понапред",
       "status": "home demo, horror vocals by Martin™",
       "mp3": "audio/za_vek_ponapred.mp3",
+      "wav": "audio/wav/02-SiotoJazz-ZaVekPonapred.wav",
       "backingmp3": "",
       "startOffset": 0,
       "lyrics": [
@@ -3261,7 +3266,8 @@
       "id": 8,
       "title": "Cinema",
       "status": "missing recorded vocals and violins from mix",
-      "mp3": "audio/cinema.mp3",
+       "mp3": "audio/cinema.mp3",
+       "wav": "audio/wav/08-SiotoJazz-Cinema.wav",
       "backingmp3": "audio/cinema_backing.mp3",
       "startOffset": 0,
       "lyrics": [
@@ -4162,6 +4168,7 @@
       "feature": "\u0441\u043e \u041a\u0440\u0441\u0442\u0435 \u0420\u043e\u045f\u0435\u0432\u0441\u043a\u0438",
       "status": "home demo, vocals not recorded yet",
       "mp3": "audio/snop_od_svetlina.mp3",
+      "wav": "audio/wav/03-SiotoJazz-SnopOdSvetlina.wav",
       "backingmp3": "",
       "startOffset": 0,
       "lyrics": [
@@ -4826,7 +4833,8 @@
       "id": 6,
       "title": "Time Machine",
       "status": "recorded vocals missing, sax home recorded",
-      "mp3": "audio/time_machine.mp3",
+       "mp3": "audio/time_machine.mp3",
+       "wav": "audio/wav/06-SiotoJazz-TimeMachine.wav",
       "backingmp3": "audio/time_machine_backing.mp3",
       "startOffset": 0.46,
       "lyrics": [
@@ -5678,7 +5686,8 @@
       "id": 10,
       "title": "Roots Apart",
       "status": "studio version, unmixed",
-      "mp3": "audio/roots_apart.mp3",
+       "mp3": "audio/roots_apart.mp3",
+       "wav": "audio/wav/10-SiotoJazz-RootsApart.wav",
       "backingmp3": "audio/roots_apart_backing.mp3",
       "startOffset": 3.64,
       "lyrics": [
@@ -7345,7 +7354,8 @@
       "id": 7,
       "title": "Higher Ground",
       "status": "missing recorded vocals from mix",
-      "mp3": "audio/higher_ground.mp3",
+       "mp3": "audio/higher_ground.mp3",
+       "wav": "audio/wav/07-SiotoJazz-HigherGround.wav",
       "backingmp3": "audio/higher_ground_backing.mp3",
       "startOffset": -1.5,
       "lyrics": [
