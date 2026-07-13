@@ -279,6 +279,40 @@
             opacity: 0.55;
         }
 
+        .browser-dialog {
+            width: min(calc(100vw - 32px), 360px);
+            padding: 0;
+            color: var(--deep-blue);
+            background: var(--ice);
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            box-shadow: 0 24px 70px rgba(8, 32, 94, 0.48);
+        }
+
+        .browser-dialog::backdrop {
+            background: rgba(8, 32, 94, 0.68);
+            backdrop-filter: blur(6px);
+        }
+
+        .browser-dialog__content {
+            padding: 24px;
+        }
+
+        .browser-dialog h2 {
+            margin: 0 0 10px;
+            font: 400 2.2rem/0.95 "Univers Condensed", Impact, sans-serif;
+            text-transform: uppercase;
+        }
+
+        .browser-dialog p {
+            margin: 0 0 20px;
+            font-size: 0.78rem;
+            line-height: 1.5;
+        }
+
+        .browser-dialog .button {
+            width: 100%;
+        }
+
         .link-row {
             display: flex;
             flex-wrap: wrap;
@@ -428,6 +462,14 @@
         </section>
     </main>
 
+    <dialog class="browser-dialog" id="browser-dialog" aria-labelledby="browser-dialog-title">
+        <div class="browser-dialog__content">
+            <h2 id="browser-dialog-title" data-i18n="openBrowser">Open in browser</h2>
+            <p data-i18n="browserPrompt">Tap ••• in Instagram, then Open in browser.</p>
+            <button class="button" id="browser-dialog-close" type="button" data-i18n="gotIt">Got it</button>
+        </div>
+    </dialog>
+
     <script>
         (() => {
             const releaseTime = new Date("2026-07-24T00:00:00+02:00").getTime();
@@ -440,6 +482,8 @@
             const notificationButton = document.getElementById("notification-button");
             const notificationIcon = document.getElementById("notification-icon");
             const notificationLabel = document.getElementById("notification-label");
+            const browserDialog = document.getElementById("browser-dialog");
+            const browserDialogClose = document.getElementById("browser-dialog-close");
             const languageButtons = Array.from(document.querySelectorAll("[data-language]"));
             const translations = {
                 en: {
@@ -463,6 +507,9 @@
                     subscribing: "Subscribing…",
                     allowNotifications: "Allow notifications…",
                     tryAgain: "Try again",
+                    openBrowser: "Open in browser",
+                    browserPrompt: "Tap ••• in Instagram, then Open in browser.",
+                    gotIt: "Got it",
                     linksLabel: "Album and social links",
                     spotify: "Spotify · Coming soon on this link ↗",
                     instagram: "Instagram ↗",
@@ -490,6 +537,9 @@
                     subscribing: "Претплатување…",
                     allowNotifications: "Дозволете известувања…",
                     tryAgain: "Обиди се повторно",
+                    openBrowser: "Отвори во прелистувач",
+                    browserPrompt: "Допрете ••• во Instagram, па Отвори во прелистувач.",
+                    gotIt: "Во ред",
                     linksLabel: "Линкови за албумот и социјалните мрежи",
                     spotify: "Spotify · Наскоро на овој линк ↗",
                     instagram: "Instagram ↗",
@@ -528,9 +578,21 @@
                 updateCountdown();
             }
 
-            function setNotificationLabel(label, icon = "fa-bell") {
+            function setNotificationLabel(label, icon = "fa-bell", iconStyle = "fa-regular") {
                 notificationLabel.textContent = label;
-                notificationIcon.className = `fa-regular ${icon}`;
+                notificationIcon.className = `${iconStyle} ${icon}`;
+            }
+
+            function isInstagramBrowser() {
+                return /Instagram/i.test(navigator.userAgent);
+            }
+
+            function promptForExternalBrowser() {
+                if (typeof browserDialog.showModal === "function") {
+                    browserDialog.showModal();
+                } else {
+                    window.alert(translate("browserPrompt"));
+                }
             }
 
             function setCalendarDestination() {
@@ -608,6 +670,12 @@
             }
 
             function setNotificationState() {
+                if (isInstagramBrowser()) {
+                    notificationButton.disabled = false;
+                    setNotificationLabel(translate("openBrowser"), "fa-arrow-up-right-from-square", "fa-solid");
+                    return;
+                }
+
                 if (pushClient) {
                     const supported = pushClient.Notifications.isPushSupported();
                     const subscribed = pushClient.User.PushSubscription.optedIn;
@@ -634,6 +702,11 @@
             }
 
             async function toggleNotifications() {
+                if (isInstagramBrowser()) {
+                    promptForExternalBrowser();
+                    return;
+                }
+
                 if (!pushClient) return;
 
                 notificationButton.disabled = true;
@@ -726,6 +799,7 @@
             }
 
             notificationButton.addEventListener("click", toggleNotifications);
+            browserDialogClose.addEventListener("click", () => browserDialog.close());
             languageButtons.forEach((button) => {
                 button.addEventListener("click", () => applyLanguage(button.dataset.language));
             });
