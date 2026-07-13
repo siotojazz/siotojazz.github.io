@@ -416,8 +416,8 @@
             <p class="sr-only" id="countdown-spoken" aria-live="polite"></p>
 
             <div class="actions" aria-label="Reminder options" data-i18n-aria="actionsLabel">
-                <a class="button" href="release-reminder.ics" download><i class="fa-regular fa-calendar-plus" aria-hidden="true"></i><span data-i18n="addCalendar">Add to calendar</span></a>
-                <button class="button button--secondary" id="notification-button" type="button"><i class="fa-regular fa-bell" id="notification-icon" aria-hidden="true"></i><span id="notification-label">Enable notifications</span></button>
+                <a class="button" id="calendar-button" href="release-reminder.ics"><i class="fa-regular fa-calendar-plus" aria-hidden="true"></i><span data-i18n="addCalendar">Add to calendar</span></a>
+                <button class="button button--secondary" id="notification-button" type="button"><i class="fa-regular fa-bell" id="notification-icon" aria-hidden="true"></i><span id="notification-label">Subscribe</span></button>
             </div>
 
             <nav class="link-row" aria-label="Album and social links" data-i18n-aria="linksLabel">
@@ -436,6 +436,7 @@
             const previousValues = new Map();
             const elements = Object.fromEntries(unitIds.map((id) => [id, document.getElementById(id)]));
             const spoken = document.getElementById("countdown-spoken");
+            const calendarButton = document.getElementById("calendar-button");
             const notificationButton = document.getElementById("notification-button");
             const notificationIcon = document.getElementById("notification-icon");
             const notificationLabel = document.getElementById("notification-label");
@@ -452,15 +453,15 @@
                     seconds: "Seconds",
                     actionsLabel: "Reminder options",
                     addCalendar: "Add to calendar",
-                    enableNotifications: "Enable notifications",
-                    disableNotifications: "Disable notifications",
+                    subscribe: "Subscribe",
+                    unsubscribe: "Unsubscribe",
                     addHomeScreen: "Add to Home Screen first",
                     unavailable: "Notifications unavailable",
                     blocked: "Notifications blocked",
                     loading: "Loading…",
-                    disabling: "Disabling…",
-                    registering: "Registering…",
-                    waitingPermission: "Waiting for permission…",
+                    unsubscribing: "Unsubscribing…",
+                    subscribing: "Subscribing…",
+                    allowNotifications: "Allow notifications…",
                     tryAgain: "Try again",
                     linksLabel: "Album and social links",
                     spotify: "Spotify · Coming soon on this link ↗",
@@ -479,15 +480,15 @@
                     seconds: "Секунди",
                     actionsLabel: "Опции за потсетување",
                     addCalendar: "Додај во календар",
-                    enableNotifications: "Вклучи известувања",
-                    disableNotifications: "Исклучи известувања",
+                    subscribe: "Претплати се",
+                    unsubscribe: "Отпиши се",
                     addHomeScreen: "Прво додај на почетниот екран",
                     unavailable: "Известувањата не се достапни",
                     blocked: "Известувањата се блокирани",
                     loading: "Се вчитува…",
-                    disabling: "Се исклучуваат…",
-                    registering: "Се регистрира…",
-                    waitingPermission: "Се чека дозвола…",
+                    unsubscribing: "Отпишување…",
+                    subscribing: "Претплатување…",
+                    allowNotifications: "Дозволете известувања…",
                     tryAgain: "Обиди се повторно",
                     linksLabel: "Линкови за албумот и социјалните мрежи",
                     spotify: "Spotify · Наскоро на овој линк ↗",
@@ -530,6 +531,40 @@
             function setNotificationLabel(label, icon = "fa-bell") {
                 notificationLabel.textContent = label;
                 notificationIcon.className = `fa-regular ${icon}`;
+            }
+
+            function setCalendarDestination() {
+                const platform = `${navigator.userAgentData?.platform || ""} ${navigator.platform || ""} ${navigator.userAgent}`;
+                const title = "In a Race Against Time — Sioto Jazz";
+                const details = "The new Sioto Jazz album is out. Listen on Spotify: https://open.spotify.com/album/3gAhqIPka8RBn1WEy2LVNx";
+
+                if (/iPhone|iPad|iPod|Mac/i.test(platform)) {
+                    calendarButton.href = new URL("release-reminder.ics", window.location.href).href;
+                    return;
+                }
+
+                if (/Windows/i.test(platform)) {
+                    const outlook = new URL("https://outlook.live.com/calendar/0/deeplink/compose");
+                    outlook.search = new URLSearchParams({
+                        path: "/calendar/action/compose",
+                        rru: "addevent",
+                        subject: title,
+                        startdt: "2026-07-23T22:00:00Z",
+                        enddt: "2026-07-23T22:30:00Z",
+                        body: details
+                    });
+                    calendarButton.href = outlook.href;
+                    return;
+                }
+
+                const google = new URL("https://calendar.google.com/calendar/render");
+                google.search = new URLSearchParams({
+                    action: "TEMPLATE",
+                    text: title,
+                    dates: "20260723T220000Z/20260723T223000Z",
+                    details
+                });
+                calendarButton.href = google.href;
             }
 
             function browserPermission() {
@@ -578,7 +613,7 @@
                     const subscribed = pushClient.User.PushSubscription.optedIn;
                     const permission = browserPermission();
 
-                    setNotificationLabel(subscribed ? translate("disableNotifications") : translate("enableNotifications"), subscribed ? "fa-bell-slash" : "fa-bell");
+                    setNotificationLabel(subscribed ? translate("unsubscribe") : translate("subscribe"), subscribed ? "fa-bell-slash" : "fa-bell");
 
                     if (!supported) {
                         notificationButton.disabled = true;
@@ -605,7 +640,7 @@
 
                 try {
                     if (pushClient.User.PushSubscription.optedIn) {
-                        setNotificationLabel(translate("disabling"), "fa-bell-slash");
+                        setNotificationLabel(translate("unsubscribing"), "fa-bell-slash");
                         await pushClient.User.PushSubscription.optOut();
                         await waitForPushState(false);
                         setNotificationState();
@@ -617,7 +652,7 @@
                         return;
                     }
 
-                    setNotificationLabel(browserPermission() === "granted" ? translate("registering") : translate("waitingPermission"));
+                    setNotificationLabel(browserPermission() === "granted" ? translate("subscribing") : translate("allowNotifications"));
 
                     if (browserPermission() !== "granted") {
                         await waitForPermissionRequest(pushClient.Notifications.requestPermission());
@@ -695,6 +730,7 @@
                 button.addEventListener("click", () => applyLanguage(button.dataset.language));
             });
             window.addEventListener("focus", setNotificationState);
+            setCalendarDestination();
             applyLanguage(language);
             initializePushService();
             updateCountdown();
