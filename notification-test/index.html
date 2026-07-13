@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f56b4">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sioto Jazz — Notification Test</title>
+    <link rel="icon" href="../favicon.ico">
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.init({
+                appId: "b46b6180-a3bf-4f11-b681-88b4a9a9a25d",
+            });
+        });
+    </script>
+    <style>
+        @font-face {
+            font-family: "Garet";
+            src: url("../fonts/Garet.ttf") format("truetype");
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Univers Condensed";
+            src: url("../3000/resources/UniversCnRg.ttf") format("truetype");
+            font-display: swap;
+        }
+
+        :root {
+            --blue: #1f56b4;
+            --deep-blue: #07398f;
+            --night-blue: #08205e;
+            --bright-blue: #236bd0;
+            --ice: #eef4ff;
+            --white: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            background: var(--deep-blue);
+        }
+
+        body {
+            min-height: 100svh;
+            margin: 0;
+            padding: 20px;
+            display: grid;
+            place-items: center;
+            color: var(--deep-blue);
+            background:
+                radial-gradient(circle at 82% 9%, rgba(35, 107, 208, 0.62), transparent 30%),
+                linear-gradient(135deg, rgba(8, 32, 94, 0.5), rgba(31, 86, 180, 0.4) 58%, rgba(7, 57, 143, 0.5));
+            font-family: "Garet", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: -42px;
+            z-index: -1;
+            background: url("../3000/resources/background.jpg") center / cover no-repeat;
+            transform: scale(1.08);
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .panel {
+            width: min(100%, 760px);
+            display: grid;
+            grid-template-columns: 250px minmax(0, 1fr);
+            overflow: hidden;
+            background: rgba(238, 244, 255, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.62);
+            box-shadow: 0 26px 70px rgba(8, 32, 94, 0.38);
+            backdrop-filter: blur(18px);
+        }
+
+        .cover {
+            min-height: 0;
+            background: var(--blue);
+        }
+
+        .cover img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content {
+            min-width: 0;
+            padding: 30px;
+            background:
+                linear-gradient(rgba(7, 57, 143, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(7, 57, 143, 0.07) 1px, transparent 1px),
+                rgba(238, 244, 255, 0.94);
+            background-size: 32px 32px;
+        }
+
+        .eyebrow {
+            margin: 0 0 8px;
+            color: rgba(7, 57, 143, 0.64);
+            font-size: 0.62rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0 0 24px;
+            font: 400 clamp(2.7rem, 7vw, 4.8rem) / 0.86 "Univers Condensed", Impact, sans-serif;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+        }
+
+        .actions {
+            display: block;
+            margin-top: 12px;
+        }
+
+        .button {
+            min-height: 44px;
+            padding: 11px 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: 1px solid var(--deep-blue);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.28), 0 3px 0 var(--night-blue);
+            cursor: pointer;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.62rem;
+        }
+
+        .button:hover,
+        .button:focus-visible {
+            background: var(--bright-blue);
+        }
+
+        .button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .status {
+            min-height: 1.4em;
+            margin: 16px 0 0;
+            color: rgba(7, 57, 143, 0.7);
+            font-size: 0.7rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 620px) {
+            body {
+                display: block;
+                padding: 0;
+            }
+
+            .panel {
+                width: 100%;
+                min-height: 100svh;
+                display: block;
+                border: 0;
+            }
+
+            .cover {
+                width: 100%;
+                aspect-ratio: 1;
+            }
+
+            .content {
+                padding: 26px 18px 32px;
+            }
+
+            h1 {
+                font-size: clamp(3.2rem, 17vw, 5.4rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="panel">
+        <div class="cover">
+            <img
+                src="../3000/album_cover_500x500.png"
+                srcset="../3000/album_cover_500x500.png 500w, ../3000/album_cover_3k.png 3000w"
+                sizes="(max-width: 620px) 100vw, 250px"
+                alt="In a Race Against Time album cover">
+        </div>
+
+        <section class="content" aria-labelledby="page-title">
+            <p class="eyebrow">Sioto Jazz</p>
+            <h1 id="page-title">Notification Test</h1>
+
+            <div class="actions">
+                <button class="button" id="test-push" type="button" disabled>Test push notification</button>
+            </div>
+
+            <p class="status" id="status" aria-live="polite">Connecting…</p>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const testButton = document.getElementById("test-push");
+            const status = document.getElementById("status");
+            const testUserKey = "sioto-jazz-notification-test-user";
+            let oneSignal = null;
+
+            function setBusy(busy) {
+                testButton.disabled = busy;
+            }
+
+            function getTestUserId() {
+                let id = localStorage.getItem(testUserKey);
+                if (!id) {
+                    const randomId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+                    id = `notification-test-${randomId}`;
+                    localStorage.setItem(testUserKey, id);
+                }
+                return id;
+            }
+
+            function waitForPushSubscription(timeout = 15000) {
+                if (oneSignal.User.PushSubscription.optedIn && oneSignal.User.PushSubscription.token) {
+                    return Promise.resolve(true);
+                }
+
+                return new Promise((resolve) => {
+                    const timer = window.setTimeout(() => {
+                        oneSignal.User.PushSubscription.removeEventListener("change", onChange);
+                        resolve(false);
+                    }, timeout);
+
+                    function onChange(event) {
+                        if (event.current.optedIn && event.current.token) {
+                            window.clearTimeout(timer);
+                            oneSignal.User.PushSubscription.removeEventListener("change", onChange);
+                            resolve(true);
+                        }
+                    }
+
+                    oneSignal.User.PushSubscription.addEventListener("change", onChange);
+                });
+            }
+
+            async function sendTest() {
+                if (!oneSignal) return;
+
+                setBusy(true);
+                status.textContent = "Preparing test…";
+
+                try {
+                    await oneSignal.login(getTestUserId());
+
+                    if (!oneSignal.Notifications.isPushSupported()) {
+                        throw new Error("Push notifications are not supported here.");
+                    }
+
+                    await oneSignal.User.PushSubscription.optIn();
+                    const pushReady = await waitForPushSubscription();
+                    if (!pushReady) {
+                        throw new Error("Push notification permission was not granted.");
+                    }
+
+                    oneSignal.User.trackEvent("notification_test_requested", {
+                        channel: "push",
+                        requested_at: new Date().toISOString(),
+                        source: "notification-test-page"
+                    });
+
+                    status.textContent = "Push test requested.";
+                } catch (error) {
+                    status.textContent = error.message || "The test could not be requested.";
+                } finally {
+                    setBusy(false);
+                }
+            }
+
+            function initialize() {
+                window.OneSignalDeferred = window.OneSignalDeferred || [];
+                window.OneSignalDeferred.push(async (client) => {
+                    oneSignal = client;
+                    setBusy(false);
+                    status.textContent = "Ready.";
+                });
+            }
+
+            testButton.addEventListener("click", sendTest);
+
+            initialize();
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "Sioto Jazz Release Countdown",
+  "short_name": "Sioto Jazz",
+  "description": "Release countdown and push alerts for the new Sioto Jazz album.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08205e",
+  "theme_color": "#1f56b4",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    {
+      "src": "../3000/album_cover_500x500.png",
+      "sizes": "500x500",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../3000/album_cover_3k.png",
+      "sizes": "3000x3000",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

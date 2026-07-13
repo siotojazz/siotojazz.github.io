@@ -324,6 +324,11 @@
             min-width: 0;
             width: 100%;
         }
+        .release-main--link {
+            color: inherit;
+            text-decoration: none;
+        }
+        .release-main--link::after { display: none; }
         .release-copy {
             display: flex;
             align-items: baseline;
@@ -348,6 +353,9 @@
             line-height: 1;
         }
         .release-copy a {
+            min-width: 0;
+        }
+        .release-copy > span:first-child {
             min-width: 0;
         }
         .release-meta {
@@ -757,14 +765,14 @@
         <h2 id="releases-heading" class="section-title"><svg class="section-icon" aria-hidden="true"><use href="#icon-releases"></use></svg><span>Releases</span></h2>
         <div class="section-content release-list">
             <div class="release-item">
-                <div class="release-main">
+                <a class="release-main release-main--link" href="in-a-race-against-time/" aria-label="Countdown to In a Race Against Time, out 24 July 2026">
                     <!-- <span class="release-cover release-cover--empty" aria-hidden="true">?</span> -->
                     <img class="release-cover" src="3000/album_cover_500x500.png" alt="In a Race Against Time album cover" loading="lazy">
                     <div class="release-copy">
-                        <a href="https://www.instagram.com/siotojazz" rel="noopener" target="_blank">In a Race Against Time <small style="font-size: 10px; position: relative; top:-5px; opacity: 0.4;"><br>Во Трка со Времето</small></a>
-                        <span class="release-meta">Upcoming Sophomore Album — 2026</span>
+                        <span>In a Race Against Time <small style="font-size: 10px; position: relative; top:-5px; opacity: 0.4;"><br>Во Трка со Времето</small></span>
+                        <span class="release-meta">Upcoming Sophomore Album — 24 July 2026</span>
                     </div>
-                </div>
+                </a>
             </div>
             <div class="release-item">
                 <div class="release-main">

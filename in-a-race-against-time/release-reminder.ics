@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sioto Jazz//In a Race Against Time//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:in-a-race-against-time-20260724@siotojazz.com
+DTSTAMP:20260713T120000Z
+DTSTART:20260723T220000Z
+DTEND:20260723T223000Z
+SUMMARY:In a Race Against Time — Sioto Jazz
+DESCRIPTION:The new Sioto Jazz album is out now. Listen on Spotify: https://o
+ pen.spotify.com/album/3gAhqIPka8RBn1WEy2LVNx
+URL:https://siotojazz.com/in-a-race-against-time/
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:In a Race Against Time by Sioto Jazz is out tomorrow.
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR

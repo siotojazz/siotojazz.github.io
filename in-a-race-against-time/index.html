@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f56b4">
+    <meta name="description" content="Countdown to In a Race Against Time by Sioto Jazz, out 24 July 2026.">
+    <meta property="og:title" content="In a Race Against Time — Sioto Jazz">
+    <meta property="og:description" content="The new album arrives 24 July 2026. Set a reminder and count down with us.">
+    <meta property="og:image" content="https://siotojazz.com/3000/album_cover.png">
+    <meta property="og:type" content="music.album">
+    <title>In a Race Against Time — 24 July 2026</title>
+    <link rel="icon" href="../favicon.ico">
+    <link rel="apple-touch-icon" href="../3000/album_cover_500x500.png">
+    <link rel="manifest" href="site.webmanifest">
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.init({
+                appId: "b46b6180-a3bf-4f11-b681-88b4a9a9a25d",
+            });
+        });
+    </script>
+    <style>
+        @font-face {
+            font-family: "Garet";
+            src: url("../fonts/Garet.ttf") format("truetype");
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Univers Condensed";
+            src: url("../3000/resources/UniversCnRg.ttf") format("truetype");
+            font-display: swap;
+        }
+
+        :root {
+            --blue: #1f56b4;
+            --deep-blue: #07398f;
+            --night-blue: #08205e;
+            --bright-blue: #236bd0;
+            --ice: #eef4ff;
+            --white: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            background: var(--deep-blue);
+        }
+
+        body {
+            min-height: 100svh;
+            margin: 0;
+            padding: 16px;
+            display: grid;
+            place-items: center;
+            color: var(--deep-blue);
+            background:
+                radial-gradient(circle at 82% 9%, rgba(35, 107, 208, 0.62), transparent 30%),
+                linear-gradient(135deg, rgba(8, 32, 94, 0.5), rgba(31, 86, 180, 0.4) 58%, rgba(7, 57, 143, 0.5));
+            font-family: "Garet", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: -42px;
+            z-index: -1;
+            background: url("../3000/resources/background.jpg") center / cover no-repeat;
+            transform: scale(1.08);
+        }
+
+        button,
+        a {
+            font: inherit;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .release-card {
+            width: min(calc(100vw - 32px), 760px);
+            aspect-ratio: 16 / 9;
+            display: grid;
+            grid-template-columns: 9fr 7fr;
+            overflow: hidden;
+            background: rgba(238, 244, 255, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.62);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.72),
+                0 26px 70px rgba(8, 32, 94, 0.38);
+            backdrop-filter: blur(18px);
+        }
+
+        .cover {
+            min-width: 0;
+            min-height: 0;
+            margin: 0;
+            background: var(--blue);
+        }
+
+        .cover img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .controls {
+            min-width: 0;
+            padding: clamp(18px, 2.4vw, 28px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background:
+                linear-gradient(rgba(7, 57, 143, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(7, 57, 143, 0.07) 1px, transparent 1px),
+                rgba(238, 244, 255, 0.94);
+            background-size: 32px 32px;
+            border-left: 1px solid rgba(255, 255, 255, 0.58);
+        }
+
+        .release-date {
+            margin: 0 0 7px;
+            color: rgba(7, 57, 143, 0.68);
+            font-size: clamp(0.68rem, 0.9vw, 0.82rem);
+            letter-spacing: 0.17em;
+            text-transform: uppercase;
+        }
+
+        .race-line {
+            margin: 0 0 clamp(14px, 1.8vw, 20px);
+            color: var(--deep-blue);
+            font-size: clamp(0.72rem, 0.92vw, 0.86rem);
+            font-style: italic;
+            line-height: 1.35;
+        }
+
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1px;
+            color: var(--white);
+            background: rgba(7, 57, 143, 0.22);
+            border: 1px solid rgba(7, 57, 143, 0.22);
+        }
+
+        .time-unit {
+            min-width: 0;
+            padding: clamp(11px, 1.4vw, 16px) 5px 10px;
+            background: var(--blue);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.24);
+        }
+
+        .time-value {
+            display: block;
+            font: 400 clamp(2rem, 3.2vw, 2.8rem) / 0.86 "Univers Condensed", Impact, sans-serif;
+            letter-spacing: -0.04em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .time-value.tick {
+            animation: digit-tick 280ms steps(4, end);
+        }
+
+        .time-label {
+            display: block;
+            margin-top: 8px;
+            color: rgba(255, 255, 255, 0.68);
+            font-size: clamp(0.46rem, 0.65vw, 0.6rem);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-top: clamp(16px, 2vw, 22px);
+        }
+
+        .button {
+            min-height: 42px;
+            padding: 11px 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: 1px solid var(--deep-blue);
+            box-shadow:
+                inset 0 1px rgba(255, 255, 255, 0.28),
+                0 3px 0 var(--night-blue),
+                0 9px 18px rgba(8, 32, 94, 0.15);
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            font-size: clamp(0.6rem, 0.75vw, 0.68rem);
+            transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+        }
+
+        .button:hover,
+        .button:focus-visible {
+            background: var(--bright-blue);
+        }
+
+        .button:active {
+            transform: translateY(2px);
+            box-shadow: inset 0 2px 4px rgba(8, 32, 94, 0.52), 0 1px 0 var(--night-blue);
+        }
+
+        .button--secondary {
+            color: var(--deep-blue);
+            background: rgba(255, 255, 255, 0.48);
+            border-color: rgba(7, 57, 143, 0.36);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.75), 0 3px 0 rgba(7, 57, 143, 0.24);
+        }
+
+        .button--secondary:hover,
+        .button--secondary:focus-visible {
+            color: var(--white);
+            border-color: var(--bright-blue);
+        }
+
+        .button[disabled] {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
+        .notification-status {
+            min-height: 1.35em;
+            margin: 9px 0 0;
+            color: rgba(7, 57, 143, 0.72);
+            font-size: clamp(0.58rem, 0.72vw, 0.66rem);
+            line-height: 1.35;
+        }
+
+        .link-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            margin-top: 12px;
+        }
+
+        .text-link {
+            position: relative;
+            color: rgba(7, 57, 143, 0.76);
+            text-decoration: none;
+            font-size: 0.6rem;
+            line-height: 1.4;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .text-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -4px;
+            height: 1px;
+            background: currentColor;
+            transform: scaleX(0.22);
+            transform-origin: left;
+            transition: transform 180ms ease;
+        }
+
+        .text-link:hover::after,
+        .text-link:focus-visible::after {
+            transform: scaleX(1);
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 2px solid var(--deep-blue);
+            outline-offset: 4px;
+        }
+
+        @keyframes digit-tick {
+            from { opacity: 0.55; transform: translateY(-4px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        @media (max-width: 720px) {
+            body {
+                display: block;
+                padding: 0;
+            }
+
+            .release-card {
+                width: 100%;
+                min-height: 100svh;
+                aspect-ratio: auto;
+                display: block;
+                border: 0;
+            }
+
+            .cover {
+                width: 100%;
+                aspect-ratio: 1;
+            }
+
+            .controls {
+                min-height: calc(100svh - 100vw);
+                padding: 26px 18px 30px;
+                border-left: 0;
+                border-top: 1px solid rgba(255, 255, 255, 0.58);
+            }
+
+            .time-value {
+                font-size: clamp(2.5rem, 14vw, 4.2rem);
+            }
+        }
+
+        @media (max-width: 420px) {
+            .actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="release-card" aria-labelledby="page-title">
+        <h1 class="sr-only" id="page-title">Countdown to In a Race Against Time by Sioto Jazz</h1>
+
+        <figure class="cover">
+            <img
+                src="../3000/album_cover_500x500.png"
+                srcset="../3000/album_cover_500x500.png 500w, ../3000/album_cover_3k.png 3000w, ../3000/album_cover.png 5000w"
+                sizes="(max-width: 720px) 100vw, min(56.25vw, calc(100svh - 32px))"
+                alt="In a Race Against Time by Sioto Jazz album cover"
+                fetchpriority="high"
+                decoding="async">
+        </figure>
+
+        <section class="controls" aria-label="Release countdown and reminders">
+            <p class="release-date">24.07.2026 · 00:00 CEST</p>
+            <p class="race-line">In a race against time to get to all streaming platforms!</p>
+
+            <div class="countdown" role="timer" aria-label="Time remaining until the album release">
+                <div class="time-unit">
+                    <span class="time-value" id="days">00</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="hours">00</span>
+                    <span class="time-label">Hours</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="minutes">00</span>
+                    <span class="time-label">Minutes</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value" id="seconds">00</span>
+                    <span class="time-label">Seconds</span>
+                </div>
+            </div>
+            <p class="sr-only" id="countdown-spoken" aria-live="polite"></p>
+
+            <div class="actions" aria-label="Reminder options">
+                <a class="button" href="release-reminder.ics" download>Add to calendar</a>
+                <button class="button button--secondary" id="notification-button" type="button">Enable notifications</button>
+            </div>
+            <p class="notification-status" id="notification-status" aria-live="polite">Connecting to notifications…</p>
+
+            <nav class="link-row" aria-label="Album and social links">
+                <a class="text-link" href="https://open.spotify.com/album/3gAhqIPka8RBn1WEy2LVNx" target="_blank" rel="noopener" data-spotify-uri="spotify:album:3gAhqIPka8RBn1WEy2LVNx">Spotify · Coming soon on this link ↗</a>
+                <a class="text-link" href="https://www.instagram.com/siotojazz/" target="_blank" rel="noopener">Instagram ↗</a>
+                <a class="text-link" href="https://discord.gg/T6RNdMYG4" target="_blank" rel="noopener">Discord · More news ↗</a>
+            </nav>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const releaseTime = new Date("2026-07-24T00:00:00+02:00").getTime();
+            const destination = "/3000/";
+            const unitIds = ["days", "hours", "minutes", "seconds"];
+            const previousValues = new Map();
+            const elements = Object.fromEntries(unitIds.map((id) => [id, document.getElementById(id)]));
+            const spoken = document.getElementById("countdown-spoken");
+            const notificationButton = document.getElementById("notification-button");
+            const notificationStatus = document.getElementById("notification-status");
+            let pushClient = null;
+
+            function browserPermission() {
+                return typeof Notification === "undefined" ? "unsupported" : Notification.permission;
+            }
+
+            function isIosOutsideHomeScreen() {
+                const ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+                return ios && !standalone;
+            }
+
+            function waitForPushState(expectedState, timeout = 10000) {
+                if (pushClient.User.PushSubscription.optedIn === expectedState) {
+                    return Promise.resolve(true);
+                }
+
+                return new Promise((resolve) => {
+                    const timer = window.setTimeout(() => {
+                        pushClient.User.PushSubscription.removeEventListener("change", onChange);
+                        resolve(pushClient.User.PushSubscription.optedIn === expectedState);
+                    }, timeout);
+
+                    function onChange(event) {
+                        if (event.current.optedIn === expectedState) {
+                            window.clearTimeout(timer);
+                            pushClient.User.PushSubscription.removeEventListener("change", onChange);
+                            resolve(true);
+                        }
+                    }
+
+                    pushClient.User.PushSubscription.addEventListener("change", onChange);
+                });
+            }
+
+            function waitForPermissionRequest(request, timeout = 10000) {
+                return Promise.race([
+                    Promise.resolve(request).catch(() => undefined),
+                    new Promise((resolve) => window.setTimeout(resolve, timeout))
+                ]);
+            }
+
+            function setNotificationState() {
+                if (pushClient) {
+                    const supported = pushClient.Notifications.isPushSupported();
+                    const subscribed = pushClient.User.PushSubscription.optedIn;
+                    const permission = browserPermission();
+
+                    notificationButton.textContent = subscribed ? "Disable notifications" : "Enable notifications";
+
+                    if (!supported) {
+                        notificationButton.disabled = true;
+                        notificationStatus.textContent = isIosOutsideHomeScreen()
+                            ? "On iPhone, add this page to your Home Screen first."
+                            : "Push notifications are not supported in this browser.";
+                    } else if (subscribed) {
+                        notificationButton.disabled = false;
+                        notificationStatus.textContent = "Notifications enabled on this device.";
+                    } else if (permission === "denied") {
+                        notificationButton.disabled = true;
+                        notificationStatus.textContent = "Notifications are blocked in your browser settings.";
+                    } else {
+                        notificationButton.disabled = false;
+                        notificationStatus.textContent = "Notifications are disabled.";
+                    }
+                    return;
+                }
+
+                notificationButton.disabled = true;
+                notificationButton.textContent = "Loading…";
+                notificationStatus.textContent = "Connecting to notifications…";
+            }
+
+            async function toggleNotifications() {
+                if (!pushClient) return;
+
+                notificationButton.disabled = true;
+
+                try {
+                    if (pushClient.User.PushSubscription.optedIn) {
+                        notificationButton.textContent = "Disabling…";
+                        notificationStatus.textContent = "Disabling notifications…";
+                        await pushClient.User.PushSubscription.optOut();
+                        await waitForPushState(false);
+                        setNotificationState();
+                        return;
+                    }
+
+                    if (browserPermission() === "denied") {
+                        setNotificationState();
+                        return;
+                    }
+
+                    notificationButton.textContent = "Enabling…";
+                    notificationStatus.textContent = browserPermission() === "granted"
+                        ? "Registering this device…"
+                        : "Waiting for notification permission…";
+
+                    if (browserPermission() !== "granted") {
+                        await waitForPermissionRequest(pushClient.Notifications.requestPermission());
+                    }
+
+                    if (browserPermission() !== "granted") {
+                        notificationButton.disabled = false;
+                        notificationButton.textContent = "Enable notifications";
+                        notificationStatus.textContent = browserPermission() === "denied"
+                            ? "Notifications are blocked in your browser settings."
+                            : "Notification permission was not granted.";
+                        return;
+                    }
+
+                    await pushClient.User.PushSubscription.optIn();
+                    const subscribed = await waitForPushState(true);
+                    setNotificationState();
+
+                    if (!subscribed) {
+                        notificationStatus.textContent = "Permission is allowed, but this device could not be registered. Please reload and try again.";
+                    }
+                } catch (error) {
+                    setNotificationState();
+                    notificationStatus.textContent = "Could not update notifications. Please try again.";
+                }
+            }
+
+            function initializePushService() {
+                setNotificationState();
+                window.OneSignalDeferred = window.OneSignalDeferred || [];
+                window.OneSignalDeferred.push(async (OneSignal) => {
+                    pushClient = OneSignal;
+                    pushClient.User.PushSubscription.addEventListener("change", setNotificationState);
+                    pushClient.Notifications.addEventListener("permissionChange", setNotificationState);
+                    pushClient.Notifications.addEventListener("permissionPromptDisplay", () => {
+                        notificationStatus.textContent = "Choose Allow in the browser prompt.";
+                    });
+                    setNotificationState();
+                });
+            }
+
+            function setValue(id, value) {
+                const formatted = String(value).padStart(2, "0");
+                const element = elements[id];
+
+                if (previousValues.get(id) !== formatted) {
+                    element.textContent = formatted;
+                    element.classList.remove("tick");
+                    void element.offsetWidth;
+                    element.classList.add("tick");
+                    previousValues.set(id, formatted);
+                }
+            }
+
+            function updateCountdown() {
+                const remaining = releaseTime - Date.now();
+
+                if (remaining <= 0) {
+                    window.location.replace(destination);
+                    return;
+                }
+
+                const days = Math.floor(remaining / 86400000);
+                const hours = Math.floor((remaining % 86400000) / 3600000);
+                const minutes = Math.floor((remaining % 3600000) / 60000);
+                const seconds = Math.floor((remaining % 60000) / 1000);
+
+                setValue("days", days);
+                setValue("hours", hours);
+                setValue("minutes", minutes);
+                setValue("seconds", seconds);
+
+                if (seconds === 0 || !spoken.textContent) {
+                    spoken.textContent = `${days} days, ${hours} hours, ${minutes} minutes until the album release.`;
+                }
+
+            }
+
+            notificationButton.addEventListener("click", toggleNotifications);
+            window.addEventListener("focus", setNotificationState);
+            initializePushService();
+            updateCountdown();
+            window.setInterval(updateCountdown, 1000);
+        })();
+    </script>
+</body>
+</html>
