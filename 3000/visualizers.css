@@ -57,21 +57,9 @@ body {
     margin: 0;
     font-family: 'Garet', sans-serif;
     color: var(--panel-text);
-    background:
-        radial-gradient(circle at 82% 8%, rgba(var(--club-blue-bright-rgb), 0.58), rgba(var(--club-blue-bright-rgb), 0) 31%),
-        linear-gradient(135deg, rgba(var(--club-blue-night-rgb), 0.42) 0%, rgba(var(--club-blue-bright-rgb), 0.34) 38%, rgba(var(--club-blue-rgb), 0.42) 68%, rgba(var(--club-blue-deep-rgb), 0.28) 100%);
     background-color: var(--club-blue-strong);
     position: relative;
-}
-
-body.visualizer-app-page::before {
-    content: '';
-    position: fixed;
-    inset: -44px;
-    z-index: -2;
-    background: url('resources/background.jpg') center center no-repeat;
-    background-size: cover;
-    transform: scale(1.06);
+    isolation: isolate;
 }
 
 body.visualizer-app-page::after {

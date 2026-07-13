@@ -6,6 +6,8 @@
     <title>Sioto Jazz - In a Race Against Time Во Трка со Времето</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" />
+    <link rel="stylesheet" href="background-video.css">
+    <script src="background-video.js" defer></script>
     <style>
         @font-face {
             font-family: 'Astrella';
@@ -47,7 +49,6 @@
         body {
             font-family: 'Garet', Arial, sans-serif;
             letter-spacing: -0.5px;
-            background: url('resources/background.png') center center / cover no-repeat fixed;
             background-color: var(--club-blue-strong);
             color: var(--club-blue-strong);
             margin: 0;
@@ -57,6 +58,8 @@
             -webkit-text-size-adjust: 100%;
             overflow: hidden;
             height: 100vh;
+            position: relative;
+            isolation: isolate;
         }
         * {
             margin: 0;

@@ -13,6 +13,9 @@
     <link rel="icon" href="../favicon.ico">
     <link rel="apple-touch-icon" href="../3000/album_cover_500x500.png">
     <link rel="manifest" href="site.webmanifest">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../3000/background-video.css">
+    <script src="../3000/background-video.js" defer></script>
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
         window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -59,10 +62,10 @@
             padding: 16px;
             display: grid;
             place-items: center;
+            position: relative;
+            isolation: isolate;
             color: var(--deep-blue);
-            background:
-                radial-gradient(circle at 82% 9%, rgba(35, 107, 208, 0.62), transparent 30%),
-                linear-gradient(135deg, rgba(8, 32, 94, 0.5), rgba(31, 86, 180, 0.4) 58%, rgba(7, 57, 143, 0.5));
+            background: transparent;
             font-family: "Garet", Arial, sans-serif;
             -webkit-font-smoothing: antialiased;
             -webkit-text-size-adjust: 100%;
@@ -71,10 +74,12 @@
         body::before {
             content: "";
             position: fixed;
-            inset: -42px;
-            z-index: -1;
-            background: url("../3000/resources/background.jpg") center / cover no-repeat;
-            transform: scale(1.08);
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 82% 9%, rgba(35, 107, 208, 0.38), transparent 30%),
+                linear-gradient(135deg, rgba(8, 32, 94, 0.38), rgba(31, 86, 180, 0.2) 58%, rgba(7, 57, 143, 0.34));
         }
 
         button,
@@ -99,6 +104,8 @@
             aspect-ratio: 16 / 9;
             display: grid;
             grid-template-columns: 9fr 7fr;
+            position: relative;
+            z-index: 2;
             overflow: hidden;
             background: rgba(238, 244, 255, 0.92);
             border: 1px solid rgba(255, 255, 255, 0.62);
@@ -128,12 +135,38 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            position: relative;
             background:
                 linear-gradient(rgba(7, 57, 143, 0.07) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(7, 57, 143, 0.07) 1px, transparent 1px),
                 rgba(238, 244, 255, 0.94);
             background-size: 32px 32px;
             border-left: 1px solid rgba(255, 255, 255, 0.58);
+        }
+
+        .language-switch {
+            position: absolute;
+            top: clamp(14px, 1.8vw, 20px);
+            right: clamp(14px, 1.8vw, 20px);
+            display: flex;
+            gap: 2px;
+        }
+
+        .language-switch button {
+            padding: 3px 5px;
+            color: rgba(7, 57, 143, 0.52);
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        .language-switch button[aria-pressed="true"] {
+            color: var(--deep-blue);
+            text-decoration: underline;
+            text-underline-offset: 3px;
         }
 
         .release-date {
@@ -246,14 +279,6 @@
             opacity: 0.55;
         }
 
-        .notification-status {
-            min-height: 1.35em;
-            margin: 9px 0 0;
-            color: rgba(7, 57, 143, 0.72);
-            font-size: clamp(0.58rem, 0.72vw, 0.66rem);
-            line-height: 1.35;
-        }
-
         .link-row {
             display: flex;
             flex-wrap: wrap;
@@ -350,7 +375,7 @@
 </head>
 <body>
     <main class="release-card" aria-labelledby="page-title">
-        <h1 class="sr-only" id="page-title">Countdown to In a Race Against Time by Sioto Jazz</h1>
+        <h1 class="sr-only" id="page-title" data-i18n="pageTitle">Countdown to In a Race Against Time by Sioto Jazz</h1>
 
         <figure class="cover">
             <img
@@ -362,40 +387,43 @@
                 decoding="async">
         </figure>
 
-        <section class="controls" aria-label="Release countdown and reminders">
+        <section class="controls" aria-label="Release countdown and reminders" data-i18n-aria="controlsLabel">
+            <div class="language-switch" aria-label="Language">
+                <button type="button" data-language="en" aria-pressed="true">EN</button>
+                <button type="button" data-language="mk" aria-pressed="false">МК</button>
+            </div>
             <p class="release-date">24.07.2026 · 00:00 CEST</p>
-            <p class="race-line">In a race against time to get to all streaming platforms!</p>
+            <p class="race-line" data-i18n="raceLine">In a race against time to get to all streaming platforms!</p>
 
-            <div class="countdown" role="timer" aria-label="Time remaining until the album release">
+            <div class="countdown" role="timer" aria-label="Time remaining until the album release" data-i18n-aria="countdownLabel">
                 <div class="time-unit">
                     <span class="time-value" id="days">00</span>
-                    <span class="time-label">Days</span>
+                    <span class="time-label" data-i18n="days">Days</span>
                 </div>
                 <div class="time-unit">
                     <span class="time-value" id="hours">00</span>
-                    <span class="time-label">Hours</span>
+                    <span class="time-label" data-i18n="hours">Hours</span>
                 </div>
                 <div class="time-unit">
                     <span class="time-value" id="minutes">00</span>
-                    <span class="time-label">Minutes</span>
+                    <span class="time-label" data-i18n="minutes">Minutes</span>
                 </div>
                 <div class="time-unit">
                     <span class="time-value" id="seconds">00</span>
-                    <span class="time-label">Seconds</span>
+                    <span class="time-label" data-i18n="seconds">Seconds</span>
                 </div>
             </div>
             <p class="sr-only" id="countdown-spoken" aria-live="polite"></p>
 
-            <div class="actions" aria-label="Reminder options">
-                <a class="button" href="release-reminder.ics" download>Add to calendar</a>
-                <button class="button button--secondary" id="notification-button" type="button">Enable notifications</button>
+            <div class="actions" aria-label="Reminder options" data-i18n-aria="actionsLabel">
+                <a class="button" href="release-reminder.ics" download><i class="fa-regular fa-calendar-plus" aria-hidden="true"></i><span data-i18n="addCalendar">Add to calendar</span></a>
+                <button class="button button--secondary" id="notification-button" type="button"><i class="fa-regular fa-bell" id="notification-icon" aria-hidden="true"></i><span id="notification-label">Enable notifications</span></button>
             </div>
-            <p class="notification-status" id="notification-status" aria-live="polite">Connecting to notifications…</p>
 
-            <nav class="link-row" aria-label="Album and social links">
-                <a class="text-link" href="https://open.spotify.com/album/3gAhqIPka8RBn1WEy2LVNx" target="_blank" rel="noopener" data-spotify-uri="spotify:album:3gAhqIPka8RBn1WEy2LVNx">Spotify · Coming soon on this link ↗</a>
-                <a class="text-link" href="https://www.instagram.com/siotojazz/" target="_blank" rel="noopener">Instagram ↗</a>
-                <a class="text-link" href="https://discord.gg/T6RNdMYG4" target="_blank" rel="noopener">Discord · More news ↗</a>
+            <nav class="link-row" aria-label="Album and social links" data-i18n-aria="linksLabel">
+                <a class="text-link" href="https://open.spotify.com/album/3gAhqIPka8RBn1WEy2LVNx" target="_blank" rel="noopener" data-spotify-uri="spotify:album:3gAhqIPka8RBn1WEy2LVNx"><i class="fa-brands fa-spotify" aria-hidden="true"></i> <span data-i18n="spotify">Spotify · Coming soon on this link ↗</span></a>
+                <a class="text-link" href="https://www.instagram.com/siotojazz/" target="_blank" rel="noopener"><i class="fa-brands fa-instagram" aria-hidden="true"></i> <span data-i18n="instagram">Instagram ↗</span></a>
+                <a class="text-link" href="https://discord.gg/T6RNdMYG4" target="_blank" rel="noopener"><i class="fa-brands fa-discord" aria-hidden="true"></i> <span data-i18n="discord">Discord · More news ↗</span></a>
             </nav>
         </section>
     </main>
@@ -409,8 +437,100 @@
             const elements = Object.fromEntries(unitIds.map((id) => [id, document.getElementById(id)]));
             const spoken = document.getElementById("countdown-spoken");
             const notificationButton = document.getElementById("notification-button");
-            const notificationStatus = document.getElementById("notification-status");
+            const notificationIcon = document.getElementById("notification-icon");
+            const notificationLabel = document.getElementById("notification-label");
+            const languageButtons = Array.from(document.querySelectorAll("[data-language]"));
+            const translations = {
+                en: {
+                    pageTitle: "Countdown to In a Race Against Time by Sioto Jazz",
+                    controlsLabel: "Release countdown and reminders",
+                    raceLine: "In a race against time to get to all streaming platforms!",
+                    countdownLabel: "Time remaining until the album release",
+                    days: "Days",
+                    hours: "Hours",
+                    minutes: "Minutes",
+                    seconds: "Seconds",
+                    actionsLabel: "Reminder options",
+                    addCalendar: "Add to calendar",
+                    enableNotifications: "Enable notifications",
+                    disableNotifications: "Disable notifications",
+                    addHomeScreen: "Add to Home Screen first",
+                    unavailable: "Notifications unavailable",
+                    blocked: "Notifications blocked",
+                    loading: "Loading…",
+                    disabling: "Disabling…",
+                    registering: "Registering…",
+                    waitingPermission: "Waiting for permission…",
+                    tryAgain: "Try again",
+                    linksLabel: "Album and social links",
+                    spotify: "Spotify · Coming soon on this link ↗",
+                    instagram: "Instagram ↗",
+                    discord: "Discord · More news ↗",
+                    spoken: (days, hours, minutes) => `${days} days, ${hours} hours, ${minutes} minutes until the album release.`
+                },
+                mk: {
+                    pageTitle: "Одбројување до In a Race Against Time од Sioto Jazz",
+                    controlsLabel: "Одбројување и потсетници за албумот",
+                    raceLine: "Во трка со времето до сите стриминг платформи!",
+                    countdownLabel: "Преостанато време до објавувањето на албумот",
+                    days: "Дена",
+                    hours: "Часа",
+                    minutes: "Минути",
+                    seconds: "Секунди",
+                    actionsLabel: "Опции за потсетување",
+                    addCalendar: "Додај во календар",
+                    enableNotifications: "Вклучи известувања",
+                    disableNotifications: "Исклучи известувања",
+                    addHomeScreen: "Прво додај на почетниот екран",
+                    unavailable: "Известувањата не се достапни",
+                    blocked: "Известувањата се блокирани",
+                    loading: "Се вчитува…",
+                    disabling: "Се исклучуваат…",
+                    registering: "Се регистрира…",
+                    waitingPermission: "Се чека дозвола…",
+                    tryAgain: "Обиди се повторно",
+                    linksLabel: "Линкови за албумот и социјалните мрежи",
+                    spotify: "Spotify · Наскоро на овој линк ↗",
+                    instagram: "Instagram ↗",
+                    discord: "Discord · Повеќе новости ↗",
+                    spoken: (days, hours, minutes) => `${days} дена, ${hours} часа и ${minutes} минути до објавувањето на албумот.`
+                }
+            };
+            const storedLanguage = localStorage.getItem("sioto-jazz-language");
+            let language = storedLanguage === "mk" || storedLanguage === "en"
+                ? storedLanguage
+                : (navigator.language.toLowerCase().startsWith("mk") ? "mk" : "en");
             let pushClient = null;
+
+            function translate(key) {
+                return translations[language][key];
+            }
+
+            function applyLanguage(nextLanguage) {
+                language = nextLanguage;
+                document.documentElement.lang = language;
+                localStorage.setItem("sioto-jazz-language", language);
+
+                document.querySelectorAll("[data-i18n]").forEach((element) => {
+                    element.textContent = translate(element.dataset.i18n);
+                });
+
+                document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+                    element.setAttribute("aria-label", translate(element.dataset.i18nAria));
+                });
+
+                languageButtons.forEach((button) => {
+                    button.setAttribute("aria-pressed", String(button.dataset.language === language));
+                });
+
+                setNotificationState();
+                updateCountdown();
+            }
+
+            function setNotificationLabel(label, icon = "fa-bell") {
+                notificationLabel.textContent = label;
+                notificationIcon.className = `fa-regular ${icon}`;
+            }
 
             function browserPermission() {
                 return typeof Notification === "undefined" ? "unsupported" : Notification.permission;
@@ -458,29 +578,24 @@
                     const subscribed = pushClient.User.PushSubscription.optedIn;
                     const permission = browserPermission();
 
-                    notificationButton.textContent = subscribed ? "Disable notifications" : "Enable notifications";
+                    setNotificationLabel(subscribed ? translate("disableNotifications") : translate("enableNotifications"), subscribed ? "fa-bell-slash" : "fa-bell");
 
                     if (!supported) {
                         notificationButton.disabled = true;
-                        notificationStatus.textContent = isIosOutsideHomeScreen()
-                            ? "On iPhone, add this page to your Home Screen first."
-                            : "Push notifications are not supported in this browser.";
+                        setNotificationLabel(isIosOutsideHomeScreen() ? translate("addHomeScreen") : translate("unavailable"), "fa-bell-slash");
                     } else if (subscribed) {
                         notificationButton.disabled = false;
-                        notificationStatus.textContent = "Notifications enabled on this device.";
                     } else if (permission === "denied") {
                         notificationButton.disabled = true;
-                        notificationStatus.textContent = "Notifications are blocked in your browser settings.";
+                        setNotificationLabel(translate("blocked"), "fa-bell-slash");
                     } else {
                         notificationButton.disabled = false;
-                        notificationStatus.textContent = "Notifications are disabled.";
                     }
                     return;
                 }
 
                 notificationButton.disabled = true;
-                notificationButton.textContent = "Loading…";
-                notificationStatus.textContent = "Connecting to notifications…";
+                setNotificationLabel(translate("loading"));
             }
 
             async function toggleNotifications() {
@@ -490,8 +605,7 @@
 
                 try {
                     if (pushClient.User.PushSubscription.optedIn) {
-                        notificationButton.textContent = "Disabling…";
-                        notificationStatus.textContent = "Disabling notifications…";
+                        setNotificationLabel(translate("disabling"), "fa-bell-slash");
                         await pushClient.User.PushSubscription.optOut();
                         await waitForPushState(false);
                         setNotificationState();
@@ -503,10 +617,7 @@
                         return;
                     }
 
-                    notificationButton.textContent = "Enabling…";
-                    notificationStatus.textContent = browserPermission() === "granted"
-                        ? "Registering this device…"
-                        : "Waiting for notification permission…";
+                    setNotificationLabel(browserPermission() === "granted" ? translate("registering") : translate("waitingPermission"));
 
                     if (browserPermission() !== "granted") {
                         await waitForPermissionRequest(pushClient.Notifications.requestPermission());
@@ -514,10 +625,7 @@
 
                     if (browserPermission() !== "granted") {
                         notificationButton.disabled = false;
-                        notificationButton.textContent = "Enable notifications";
-                        notificationStatus.textContent = browserPermission() === "denied"
-                            ? "Notifications are blocked in your browser settings."
-                            : "Notification permission was not granted.";
+                        setNotificationState();
                         return;
                     }
 
@@ -526,11 +634,11 @@
                     setNotificationState();
 
                     if (!subscribed) {
-                        notificationStatus.textContent = "Permission is allowed, but this device could not be registered. Please reload and try again.";
+                        notificationButton.disabled = false;
+                        setNotificationLabel(translate("tryAgain"));
                     }
                 } catch (error) {
                     setNotificationState();
-                    notificationStatus.textContent = "Could not update notifications. Please try again.";
                 }
             }
 
@@ -541,9 +649,6 @@
                     pushClient = OneSignal;
                     pushClient.User.PushSubscription.addEventListener("change", setNotificationState);
                     pushClient.Notifications.addEventListener("permissionChange", setNotificationState);
-                    pushClient.Notifications.addEventListener("permissionPromptDisplay", () => {
-                        notificationStatus.textContent = "Choose Allow in the browser prompt.";
-                    });
                     setNotificationState();
                 });
             }
@@ -580,13 +685,17 @@
                 setValue("seconds", seconds);
 
                 if (seconds === 0 || !spoken.textContent) {
-                    spoken.textContent = `${days} days, ${hours} hours, ${minutes} minutes until the album release.`;
+                    spoken.textContent = translate("spoken")(days, hours, minutes);
                 }
 
             }
 
             notificationButton.addEventListener("click", toggleNotifications);
+            languageButtons.forEach((button) => {
+                button.addEventListener("click", () => applyLanguage(button.dataset.language));
+            });
             window.addEventListener("focus", setNotificationState);
+            applyLanguage(language);
             initializePushService();
             updateCountdown();
             window.setInterval(updateCountdown, 1000);
