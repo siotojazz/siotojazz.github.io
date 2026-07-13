@@ -436,6 +436,9 @@
         }
     ];
 
+    // Magic and Time Machine intentionally use each other's motif.
+    [motifs[4], motifs[5]] = [motifs[5], motifs[4]];
+
     function installStyles() {
         if (typeof document === 'undefined' || document.getElementById('song-motif-styles')) return;
         const style = document.createElement('style');
