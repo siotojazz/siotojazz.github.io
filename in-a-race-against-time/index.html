@@ -508,6 +508,7 @@
                     allowNotifications: "Allow notifications…",
                     tryAgain: "Try again",
                     openBrowser: "Open in browser",
+                    openBrowserAction: "TO SUBSCRIBE OPEN IN BROWSER",
                     browserPrompt: "Tap ••• in Instagram, then Open in browser.",
                     gotIt: "Got it",
                     linksLabel: "Album and social links",
@@ -538,6 +539,7 @@
                     allowNotifications: "Дозволете известувања…",
                     tryAgain: "Обиди се повторно",
                     openBrowser: "Отвори во прелистувач",
+                    openBrowserAction: "ЗА ПРЕТПЛАТА ОТВОРИ ВО ПРЕЛИСТУВАЧ",
                     browserPrompt: "Допрете ••• во Instagram, па Отвори во прелистувач.",
                     gotIt: "Во ред",
                     linksLabel: "Линкови за албумот и социјалните мрежи",
@@ -672,7 +674,7 @@
             function setNotificationState() {
                 if (isInstagramBrowser()) {
                     notificationButton.disabled = false;
-                    setNotificationLabel(translate("openBrowser"), "fa-arrow-up-right-from-square", "fa-solid");
+                    setNotificationLabel(translate("openBrowserAction"), "fa-arrow-up-right-from-square", "fa-solid");
                     return;
                 }
 
