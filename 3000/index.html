@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" />
     <link rel="stylesheet" href="background-video.css">
-    <script src="background-video.js" defer></script>
+    <script src="background-video.js" defer data-defer-until="sioto-audio-ready"></script>
     <style>
         @font-face {
             font-family: 'Astrella';
@@ -3065,7 +3065,7 @@
     <div class="app-container">
     <div class="player-basic" id="player-basic">
         <div class="player-cover" aria-label="Album cover">
-            <img id="album-cover-image" src="album_cover_500x500.png" data-small-src="album_cover_500x500.png" data-full-src="album_cover.png" alt="Sioto Jazz album cover">
+            <img id="album-cover-image" data-small-src="album_cover_500x500.png" data-full-src="album_cover.png" alt="Sioto Jazz album cover" decoding="async" fetchpriority="low">
         </div>
         <div class="player-main">
             <div class="current-song-name" id="current-song-name"></div>
@@ -3517,10 +3517,13 @@
         };
 
         const queueUpdate = () => {
+            if (!deferredPageMediaReleased) return;
             if (queued) return;
             queued = true;
             window.requestAnimationFrame(updateCoverSource);
         };
+
+        queueAlbumCoverSourceUpdate = queueUpdate;
 
         if (window.ResizeObserver) {
             new ResizeObserver(queueUpdate).observe(albumCoverImage.parentElement || albumCoverImage);
@@ -3536,6 +3539,8 @@
     const player = document.getElementById('player');
     const playerBasic = document.getElementById('player-basic');
     const albumCoverImage = document.getElementById('album-cover-image');
+    let deferredPageMediaReleased = false;
+    let queueAlbumCoverSourceUpdate = () => {};
     const songInfoHost = document.getElementById('song-info-host');
     let audio = document.getElementById('audio-player');
     // Web Audio remains the sample-accurate transport everywhere. On mobile, a
@@ -7787,14 +7792,6 @@
         };
     }
 
-    function hasValidInitialSongParam() {
-        const params = new URLSearchParams(window.location.search);
-        if (!params.has('song')) return false;
-
-        const songIndex = Number.parseInt(params.get('song'), 10);
-        return !isNaN(songIndex) && songIndex >= 0 && songIndex < data.tracks.length;
-    }
-
     function handleQueryParams() {
         const { track, trackIndex, startTime } = getInitialTrackSelection();
 
@@ -8449,33 +8446,6 @@
         }
     }
 
-    async function loadPreloadTrackByteTotals(sources) {
-        await Promise.all(sources.map(async (source, trackIndex) => {
-            if (!source) return;
-            try {
-                const cache = await audioCacheReady;
-                const cachedResponse = cache ? await cache.match(getResolvedAudioUrl(source)) : null;
-                const cachedByteTotal = Number.parseInt(cachedResponse?.headers.get('content-length') || '', 10);
-                if (Number.isFinite(cachedByteTotal) && cachedByteTotal > 0) {
-                    preloadTrackByteTotals.set(trackIndex, cachedByteTotal);
-                    updateSongPreloadIndicator(trackIndex);
-                    return;
-                }
-                const response = await fetch(source, { method: 'HEAD', cache: 'no-store' });
-                if (!response.ok) return;
-                const byteTotal = Number.parseInt(response.headers.get('content-length') || '', 10);
-                if (Number.isFinite(byteTotal) && byteTotal > 0) {
-                    preloadTrackByteTotals.set(trackIndex, byteTotal);
-                    updateSongPreloadIndicator(trackIndex);
-                }
-            } catch {
-                // Some static hosts do not support HEAD; the GET response will fill this in.
-            }
-        }));
-        refreshAudioPreloadSections();
-        refreshSongPreloadIndicators();
-    }
-
     function getAudioContentType(source) {
         return String(source).split(/[?#]/, 1)[0].toLowerCase().endsWith('.wav')
             ? 'audio/wav'
@@ -8510,19 +8480,6 @@
         } catch (error) {
             // Quota varies by browser; playback should continue even if persistence is refused.
             console.warn(`Could not persist audio ${source}:`, error);
-        }
-    }
-
-    async function areAllAudioSourcesCached(sources) {
-        const cache = await audioCacheReady;
-        if (!cache || !sources.length) return false;
-        try {
-            const cachedResponses = await Promise.all(sources.map(source =>
-                source ? cache.match(getResolvedAudioUrl(source)) : Promise.resolve(null)
-            ));
-            return cachedResponses.every(Boolean);
-        } catch {
-            return false;
         }
     }
 
@@ -8697,8 +8654,6 @@
         refreshAudioPreloadSections();
         setAudioPreloadProgress(0, 'Preparing selected song');
         const preloadSources = data.tracks.map(track => getVersionedAudioSrc(track, 'martin'));
-        const allSourcesCachedPromise = areAllAudioSourcesCached(preloadSources);
-        const byteTotalsPromise = loadPreloadTrackByteTotals(preloadSources);
         const preloadOrder = getAlbumPreloadOrder(initialSelection.trackIndex);
         const priorityTrackIndex = preloadOrder[0] ?? 0;
         if (audioQualityToggle) {
@@ -8706,11 +8661,6 @@
         }
 
         await preloadSingleAlbumTrack(priorityTrackIndex, preloadSources[priorityTrackIndex]);
-        const allSourcesCached = await allSourcesCachedPromise;
-        const nextTrackIndex = priorityTrackIndex + 1;
-        if (allSourcesCached && nextTrackIndex < data.tracks.length && !preloadedTrackAudio.has(nextTrackIndex)) {
-            await preloadSingleAlbumTrack(nextTrackIndex, preloadSources[nextTrackIndex]);
-        }
         const priorityTrack = data.tracks[priorityTrackIndex];
         if (priorityTrack) {
             const startTime = priorityTrackIndex === initialSelection.trackIndex ? initialSelection.startTime : 0;
@@ -8718,27 +8668,11 @@
         }
 
         const remainingTrackIndexes = preloadOrder.slice(1);
-        const finishAlbumPreload = async (trackIndexes = remainingTrackIndexes) => {
-            await Promise.all([
-                byteTotalsPromise,
-                preloadAlbumTracksConcurrently(trackIndexes, preloadSources)
-            ]);
+        await preloadAlbumTracksConcurrently(remainingTrackIndexes, preloadSources);
 
-            rebuildStitchedAlbumTimeline({ preservePlayback: true });
-            scheduleLoadedFutureTracks();
-            setAudioPreloadProgress(1, 'All songs loaded');
-        };
-
-        if (allSourcesCached) {
-            const backgroundTrackIndexes = remainingTrackIndexes.filter(trackIndex => trackIndex !== nextTrackIndex);
-            setAudioPreloadProgress(1, 'Selected song and next transition ready — loading cached album in background');
-            void finishAlbumPreload(backgroundTrackIndexes).catch(error => {
-                console.error('Background audio preload failed:', error);
-            });
-            return;
-        }
-
-        await finishAlbumPreload();
+        rebuildStitchedAlbumTimeline({ preservePlayback: true });
+        scheduleLoadedFutureTracks();
+        setAudioPreloadProgress(1, 'All songs loaded');
     }
 
     function getCinematicRevealDuration() {
@@ -8752,11 +8686,20 @@
         });
     }
 
+    function releaseDeferredPageMedia() {
+        if (deferredPageMediaReleased) return;
+        deferredPageMediaReleased = true;
+        document.documentElement.dataset.mediaLoadingReleased = 'true';
+        queueAlbumCoverSourceUpdate();
+        window.dispatchEvent(new Event('sioto-audio-ready'));
+    }
+
     function finishAudioPreloaderImmediately(event = null) {
         if (!audioPreloader || !document.body.classList.contains('is-audio-preloading')) return;
         if (event?.target?.closest?.('#audio-preloader-audio-button')) return;
 
         audioPreloaderSkipped = true;
+        releaseDeferredPageMedia();
         document.body.classList.remove('is-audio-revealing');
         document.body.classList.add('has-audio-revealed');
         document.body.classList.remove('is-audio-preloading');
@@ -8767,6 +8710,7 @@
     }
 
     async function revealAlbumSite() {
+        releaseDeferredPageMedia();
         if (audioPreloaderSkipped || !document.body.classList.contains('is-audio-preloading')) {
             refreshSongPreloadIndicators();
             return;
@@ -8851,10 +8795,6 @@
     configureMediaSessionActions();
     configureMobileAudioInterruptionHandling();
     setupResponsiveAlbumCover();
-
-    if (hasValidInitialSongParam()) {
-        finishAudioPreloaderImmediately();
-    }
 
     preloadAlbumAudio(getInitialTrackSelection())
         .then(() => revealAlbumSite())

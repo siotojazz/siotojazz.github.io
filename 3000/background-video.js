@@ -1,6 +1,7 @@
 (() => {
     const script = document.currentScript;
     const source = new URL("background.mp4", script.src).href;
+    const deferUntil = script.dataset.deferUntil || '';
     const fadeDuration = 3.5;
 
     function initializeVideoBackground() {
@@ -75,7 +76,9 @@
         play(videos[0]);
     }
 
-    if (document.readyState === "loading") {
+    if (deferUntil && document.documentElement.dataset.mediaLoadingReleased !== 'true') {
+        window.addEventListener(deferUntil, initializeVideoBackground, { once: true });
+    } else if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", initializeVideoBackground, { once: true });
     } else {
         initializeVideoBackground();
