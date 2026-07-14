@@ -3,6 +3,12 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "album:frame": "node render-album.mjs --frame",
+        "album:video": "node render-album.mjs",
+        "album:video:low": "node render-album.mjs --quality=low",
+        "album:video:med": "node render-album.mjs --quality=med",
+        "album:video:max": "node render-album.mjs --quality=max",
+        "album:timeline": "node render-album.mjs --dry-run",
         "render": "node sync-stock-videos-manifest.mjs && node render-visualizer.mjs",
         "sync-stock-videos": "node sync-stock-videos-manifest.mjs"
     },
