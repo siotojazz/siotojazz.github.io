@@ -8,6 +8,7 @@ class AudioEngine {
         this.analyserNode = null;
         this.timeDomainData = null;
         this.frequencyData = null;
+        this.volume = 1;
     }
 
     ensureContext() {
@@ -16,6 +17,7 @@ class AudioEngine {
         }
         if (!this.gainNode) {
             this.gainNode = this.context.createGain();
+            this.gainNode.gain.value = this.volume;
             this.analyserNode = this.context.createAnalyser();
             this.analyserNode.fftSize = 2048;
             this.analyserNode.smoothingTimeConstant = 0.72;
@@ -111,8 +113,9 @@ class AudioEngine {
     }
 
     setVolume(v) {
+        this.volume = Math.max(0, Math.min(1, Number.parseFloat(v) || 0));
         if (this.gainNode) {
-            this.gainNode.gain.value = v;
+            this.gainNode.gain.value = this.volume;
         }
     }
 

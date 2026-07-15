@@ -118,6 +118,11 @@
             padding: 0;
             box-sizing: border-box;
         }
+        html {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
         .album-listening-shell {
             width: min(100vw, 760px);
             height: 100vh;
@@ -698,11 +703,14 @@
             flex: 1;
             overflow: hidden;
             position: relative;
+            z-index: 30;
         }
         .tab-panel {
             position: absolute;
             inset: 0;
             overflow-y: auto;
+            overflow-x: hidden;
+            overscroll-behavior-x: none;
             opacity: 0;
             transform: translate3d(0, 8px, 0);
             pointer-events: none;
@@ -732,7 +740,7 @@
             width: 100%;
             display: flex;
             flex-wrap: wrap;
-            overflow-y: auto;
+            overflow: visible;
             --row-h: 34px;
             position: relative;
             margin: 0;
@@ -946,11 +954,24 @@
             flex-shrink: 0;
             box-shadow: 0 -10px 24px rgba(var(--club-blue-rgb), 0.08);
         }
+        .player-basic:has(.volume-control:hover),
+        .player-basic:has(.volume-control:focus-within),
+        .player-basic:has(.volume-control.is-open),
+        .player-basic:has(.seek-section-tooltip.is-visible) {
+            z-index: 400;
+        }
+        .player-main:has(.volume-control:hover),
+        .player-main:has(.volume-control:focus-within),
+        .player-main:has(.volume-control.is-open),
+        .player-main:has(.seek-section-tooltip.is-visible) {
+            z-index: 400;
+        }
         .player-main {
             min-width: 0;
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
         .player-basic .player-controls {
             padding: 8px 8px 4px;
@@ -1066,7 +1087,7 @@
         .player-wrap {
             width: 100%;
             flex: 1;
-            overflow-y: auto;
+            overflow: visible;
         }
         .player {
             background:
@@ -1090,6 +1111,67 @@
             flex-wrap: nowrap;
             gap: 12px;
             justify-content: space-between;
+            min-width: 0;
+        }
+        .volume-control {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .volume-popover {
+            position: absolute;
+            left: 50%;
+            top: calc(100% + 8px);
+            width: 42px;
+            height: 132px;
+            padding: 10px 9px;
+            transform: translate(calc(-50% + var(--volume-popover-shift-x, 0px)), -5px);
+            background: linear-gradient(135deg, var(--club-blue-night), var(--club-blue-deep));
+            box-shadow: 0 10px 26px rgba(var(--club-blue-night-rgb), 0.36);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
+            z-index: 180;
+        }
+        .volume-control.popover-above .volume-popover {
+            top: auto;
+            bottom: calc(100% + 8px);
+        }
+        .volume-control:hover .volume-popover,
+        .volume-control:focus-within .volume-popover,
+        .volume-control.is-open .volume-popover {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translate(calc(-50% + var(--volume-popover-shift-x, 0px)), 0);
+        }
+        .volume-slider {
+            display: block;
+            width: 22px;
+            height: 110px;
+            margin: 0;
+            accent-color: #fff;
+            cursor: pointer;
+            writing-mode: vertical-lr;
+            direction: rtl;
+            appearance: slider-vertical;
+        }
+        .loop-mode-btn[data-loop-mode="track"]::after {
+            content: '1';
+            position: absolute;
+            right: 5px;
+            bottom: 3px;
+            color: #fff;
+            font-size: 8px;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .loop-mode-btn[data-loop-mode="track"],
+        .loop-mode-btn[data-loop-mode="album"],
+        .volume-btn[aria-pressed="true"] {
+            background: linear-gradient(180deg, rgba(var(--club-blue-night-rgb), 0.48), rgba(255, 255, 255, 0.08) 100%);
+            box-shadow: inset 0 4px 9px rgba(var(--club-blue-night-rgb), 0.66);
         }
         .transport-cluster {
             display: inline-flex;
@@ -1104,7 +1186,8 @@
             flex-shrink: 0;
             padding-bottom: 0;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            z-index: 50;
             background:
                 linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.02) 44%, rgba(var(--club-blue-night-rgb), 0.12)),
                 linear-gradient(135deg, var(--club-blue-bright) 0%, var(--club-blue) 42%, var(--club-blue-deep) 70%, var(--club-blue-night) 100%);
@@ -1116,6 +1199,10 @@
             transform: none;
         }
         .player-controls .transport-buttons button + button {
+            border-left: 1px solid rgba(255, 255, 255, 0.16);
+        }
+        .player-controls .transport-buttons > .volume-control,
+        .player-controls .transport-buttons > .volume-control + button {
             border-left: 1px solid rgba(255, 255, 255, 0.16);
         }
         .tempo-dino {
@@ -1536,7 +1623,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.18),
                 0 5px 12px rgba(var(--club-blue-night-rgb), 0.24);
             transition: opacity 0.12s ease, transform 0.12s ease;
-            z-index: 4;
+            z-index: 220;
         }
         .seek-section-tooltip.is-visible {
             opacity: 1;
@@ -1610,6 +1697,38 @@
         }
         .song-info-host:empty {
             display: none;
+        }
+        .structure-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 3px;
+            color: var(--club-blue-strong);
+        }
+        .structure-heading h4 {
+            margin: 0;
+        }
+        .instrument-picker-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 0;
+        }
+        .instrument-picker-label {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .instrument-picker {
+            min-width: 104px;
+            max-width: 100%;
+            padding: 5px 26px 5px 8px;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.24);
+            background: #fff;
+            color: var(--club-blue-strong);
+            font: 700 11px/1.2 'Garet', Arial, sans-serif;
         }
         .song-info-host .song-info-panel {
             margin: 0;
@@ -1783,7 +1902,7 @@
             color: var(--club-blue-strong);
             cursor: pointer;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             background: rgba(var(--club-blue-rgb), 0.05);
         }
         .structure-chord::before {
@@ -1837,10 +1956,20 @@
             color: var(--club-blue-strong);
             opacity: 0.58;
         }
-        .structure-chord:hover .chord-value,
-        .structure-chord:hover .chord-diagram {
-            display: block;
-            border-right: 1px solid transparent;
+        .structure-chord.passed:hover,
+        .structure-chord.passed:focus-within,
+        .structure-chord.passed.is-diagram-open {
+            opacity: 1;
+        }
+        .structure-chord:not(.is-diagram-dismissed):hover .chord-preview,
+        .structure-chord:not(.is-diagram-dismissed):focus-within .chord-preview,
+        .structure-chord.is-diagram-open .chord-preview {
+            display: flex;
+        }
+        .structure-chord:not(.is-diagram-dismissed):hover,
+        .structure-chord:not(.is-diagram-dismissed):focus-within,
+        .structure-chord.is-diagram-open {
+            z-index: 31;
         }
         .stanza-end {
             margin-bottom: 12px;
@@ -1857,35 +1986,56 @@
             margin: 0;
             min-width: 0;
         }
-        .chord-value {
+        .chord-preview {
             display: none;
             position: absolute;
-            bottom: calc(100% + 20px);
+            bottom: calc(100% + 8px);
             left: 50%;
             transform: translateX(-50%);
             background:
                 linear-gradient(135deg, var(--club-blue-night), var(--club-blue-bright));
             color: #fff;
-            padding: 2px 4px;
+            padding: 8px;
             font-size: 10px;
-            z-index: 10;
-            white-space: nowrap;
+            z-index: 260;
+            min-width: 148px;
+            max-width: min(260px, calc(100vw - 24px));
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 12px 28px rgba(var(--club-blue-night-rgb), 0.34);
+        }
+        .chord-value {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: pre;
+            text-align: center;
         }
         .chord-diagram {
-            display: none;
-            position: absolute;
-            bottom: calc(100% + 40px);
-            left: 50%;
-            transform: translateX(-50%);
-            background:
-                linear-gradient(135deg, var(--club-blue-night), var(--club-blue-bright));
+            display: block;
+            max-width: 100%;
             color: #fff;
-            padding: 4px;
-            font-size: 10px;
-            z-index: 11;
+            font: 10px/1.2 monospace;
             white-space: pre;
-            line-height: 1.2;
-            text-align: center;
+            text-align: left;
+        }
+        .chord-diagram svg {
+            display: block;
+            width: 218px;
+            max-width: 100%;
+            height: auto;
+            max-height: 210px;
+        }
+        .chord-seek-action {
+            border: 1px solid rgba(255, 255, 255, 0.52);
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+            padding: 5px 8px;
+            font: 800 9px/1 'Garet', Arial, sans-serif;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
         }
         .chord-progress {
             position: absolute;
@@ -2794,22 +2944,29 @@
             }
             .tab-panel {
                 overflow-y: auto;
-                overscroll-behavior: contain;
+                overflow-x: hidden;
+                overscroll-behavior-y: contain;
                 -webkit-overflow-scrolling: touch;
             }
             .title-container {
                 font-size: 24px;
             }
             .player-controls button {
-                width: 38px;
-                height: 38px;
-                flex-basis: 38px;
+                width: 32px;
+                height: 36px;
+                flex-basis: 32px;
                 aspect-ratio: 1 / 1;
             }
             .player-controls .track-nav-btn {
-                width: 38px;
-                height: 38px;
-                flex-basis: 38px;
+                width: 32px;
+                height: 36px;
+                flex-basis: 32px;
+            }
+            .player-controls .track-nav-btn.audio-quality-toggle {
+                width: 32px;
+                min-width: 32px;
+                height: 36px;
+                flex-basis: 32px;
             }
             .player-controls .tempo-dino {
                 width: 48px;
@@ -2917,10 +3074,9 @@
             .lyrics, .structure, .lyrics h4, .structure h4, .tempo-info, .section-label { font-size: 16px; }
             .credits {
                 min-height: auto;
-                height: 100%;
+                height: auto;
                 padding: 14px;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
+                overflow: visible;
             }
             .credits-title {
                 font-size: 13px;
@@ -2934,7 +3090,41 @@
                 display: inline-flex;
                 align-items: center;
                 min-height: 36px;
-                font-size: 14px;
+                min-width: 66px;
+                font-size: 12px;
+            }
+            .player-controls {
+                gap: 5px;
+            }
+            .transport-cluster,
+            .transport-buttons {
+                min-width: 0;
+            }
+            .playback-settings {
+                gap: 2px;
+            }
+            .chord-preview {
+                position: fixed;
+                left: 50%;
+                bottom: calc(var(--mobile-player-height) + env(safe-area-inset-bottom) + 10px);
+                transform: translate(-50%, 5px);
+            }
+            .structure-chord:not(.is-diagram-dismissed):hover .chord-preview,
+            .structure-chord.is-diagram-open .chord-preview {
+                transform: translate(-50%, 0);
+            }
+            .volume-control .volume-popover,
+            .volume-control.popover-above .volume-popover {
+                top: auto;
+                bottom: calc(100% + 8px);
+            }
+            .structure-heading {
+                align-items: flex-start;
+            }
+            .instrument-picker-control {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 2px;
             }
             .moodboard-grid { grid-template-columns: 1fr; }
             .tab-btn {
@@ -2965,6 +3155,14 @@
             }
             .telemetry-live-time {
                 font-size: 16px;
+            }
+        }
+        @media (max-width: 350px) {
+            .player-timeline {
+                display: none;
+            }
+            .player-basic .player-controls {
+                justify-content: center;
             }
         }
 
@@ -3073,8 +3271,17 @@
                 <div class="transport-cluster">
                     <div class="transport-buttons" aria-label="Playback controls">
                         <button class="track-nav-btn prev-track-btn" disabled aria-label="Previous song"><i class="fa-solid fa-backward-step" aria-hidden="true"></i></button>
+                        <button class="track-nav-btn prev-section-btn" disabled aria-label="Previous song section" title="Previous song section"><i class="fa-solid fa-backward" aria-hidden="true"></i></button>
                         <button class="toggle-btn" disabled aria-label="Play"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                        <button class="track-nav-btn next-section-btn" disabled aria-label="Next song section" title="Next song section"><i class="fa-solid fa-forward" aria-hidden="true"></i></button>
                         <button class="track-nav-btn next-track-btn" disabled aria-label="Next song"><i class="fa-solid fa-forward-step" aria-hidden="true"></i></button>
+                        <div class="volume-control" id="volume-control">
+                            <button class="volume-btn" id="volume-btn" type="button" aria-label="Volume: 100%" aria-expanded="false" aria-controls="volume-popover"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></button>
+                            <div class="volume-popover" id="volume-popover">
+                                <input class="volume-slider" id="volume-slider" type="range" min="0" max="100" step="1" value="100" aria-label="Volume" aria-orientation="vertical" orient="vertical">
+                            </div>
+                        </div>
+                        <button class="loop-mode-btn" id="loop-mode-btn" type="button" data-loop-mode="none" aria-label="Looping: off" title="Looping: off"><i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i></button>
                         <button class="track-nav-btn audio-quality-toggle" id="audio-quality-toggle" type="button" aria-pressed="false" aria-label="Exceptional Quality" title="Switch to Exceptional Quality (WAV)"><i class="fa-solid fa-gem" aria-hidden="true"></i></button>
                     </div>
                     <span class="tempo-dino" id="tempo-dino" aria-hidden="true">
@@ -3162,7 +3369,20 @@
                         <div class="lyrics-content"></div>
                     </div>
                     <div class="structure">
-                        <h4>Structure</h4>
+                        <div class="structure-heading">
+                            <h4>Structure</h4>
+                            <label class="instrument-picker-control" for="chord-instrument">
+                                <span class="instrument-picker-label">Instrument</span>
+                                <select class="instrument-picker" id="chord-instrument">
+                                    <option value="guitar">Guitar</option>
+                                    <option value="ukulele">Ukulele</option>
+                                    <option value="bass">Bass guitar</option>
+                                    <option value="violin">Violin</option>
+                                    <option value="cello">Cello</option>
+                                    <option value="piano">Piano</option>
+                                </select>
+                            </label>
+                        </div>
                         <div class="structure-content" style="position: relative;">
                             <canvas id="chords-gl" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
                         </div>
@@ -3423,9 +3643,9 @@
     const chordMap = new Map(data.chords.map(chordObj => {
         const chordName = Object.keys(chordObj)[0];
         const tab = chordObj[chordName];
-        const diagram = generateChordDiagram(chordName, tab);
-        return [chordName, { instructions: tab, diagram }];
+        return [chordName, { instructions: tab }];
     }));
+    let selectedChordInstrument = 'guitar';
 
     function generateChordDiagram(chordName, tab) {
         if (!tab || tab.length !== 6 || tab.split('').some(f => f !== 'x' && isNaN(parseInt(f)))) {
@@ -3486,6 +3706,169 @@
         }
 
         return diagram;
+    }
+
+    function getPianoChordIntervals(chordName) {
+        const normalized = normalizeChordName(chordName);
+        const diagramSymbol = normalized.includes('>')
+            ? normalized.split('>').pop().trim()
+            : normalized.split('/')[0].trim();
+        const parsed = parseChordSymbol(diagramSymbol);
+        if (!parsed) return [];
+        const suffix = parsed.suffix;
+        let intervals = [0, 4, 7];
+        if (parsed.quality === 'minor') intervals = [0, 3, 7];
+        if (parsed.quality === 'diminished') intervals = [0, 3, 6];
+        if (parsed.quality === 'augmented') intervals = [0, 4, 8];
+        if (parsed.quality === 'power') intervals = [0, 7];
+        if (parsed.quality === 'suspended') intervals = /sus2/.test(suffix) ? [0, 2, 7] : [0, 5, 7];
+        if (/maj7/.test(suffix)) intervals.push(11);
+        else if (/7/.test(suffix)) intervals.push(10);
+        if (/add9|add2/.test(suffix)) intervals.push(2);
+        if (/6/.test(suffix)) intervals.push(9);
+        return [...new Set(intervals)].map(interval => (parsed.rootSemitone + interval) % 12);
+    }
+
+    function generatePianoChordDiagram(chordName) {
+        const chordTones = getPianoChordIntervals(chordName);
+        if (!chordTones.length) {
+            return { instructions: 'Piano voicing unavailable', diagram: '' };
+        }
+
+        const whiteNotes = [0, 2, 4, 5, 7, 9, 11];
+        const blackNotes = [
+            { note: 1, x: 18 }, { note: 3, x: 45 }, { note: 6, x: 98 },
+            { note: 8, x: 125 }, { note: 10, x: 152 }
+        ];
+        const whiteKeys = whiteNotes.map((note, index) => `
+            <rect x="${index * 27 + 1}" y="1" width="26" height="72" rx="1" fill="${chordTones.includes(note) ? '#8fb7ff' : '#ffffff'}" stroke="#08205e"/>
+        `).join('');
+        const blackKeys = blackNotes.map(({ note, x }) => `
+            <rect x="${x}" y="1" width="17" height="44" rx="1" fill="${chordTones.includes(note) ? '#4c82df' : '#08205e'}" stroke="#08205e"/>
+        `).join('');
+        const noteNames = chordTones.map(note => SEMITONE_TO_NOTE[note]).join(' · ');
+        return {
+            instructions: `Piano · ${noteNames}`,
+            diagram: `<svg viewBox="0 0 191 74" role="img" aria-label="${normalizeChordName(chordName)} piano keys">${whiteKeys}${blackKeys}</svg>`
+        };
+    }
+
+    const STRING_INSTRUMENTS = Object.freeze({
+        guitar: { label: 'Guitar', strings: ['E', 'A', 'D', 'G', 'B', 'e'], tuning: [4, 9, 2, 7, 11, 4] },
+        ukulele: { label: 'Ukulele', strings: ['G', 'C', 'E', 'A'], tuning: [7, 0, 4, 9] },
+        bass: { label: 'Bass guitar', strings: ['E', 'A', 'D', 'G'], tuning: [4, 9, 2, 7] },
+        violin: { label: 'Violin', strings: ['G', 'D', 'A', 'E'], tuning: [7, 2, 9, 4], fretless: true },
+        cello: { label: 'Cello', strings: ['C', 'G', 'D', 'A'], tuning: [0, 7, 2, 9], fretless: true }
+    });
+
+    function generateInstrumentVoicing(chordName, instrument) {
+        const chordTones = getPianoChordIntervals(chordName);
+        if (!chordTones.length) return instrument.tuning.map(() => 'x');
+        const unusedTones = new Set(chordTones);
+        const usedCounts = new Map();
+        return instrument.tuning.map(openNote => {
+            const candidates = [];
+            for (let fret = 0; fret <= 7; fret += 1) {
+                const tone = (openNote + fret) % 12;
+                if (!chordTones.includes(tone)) continue;
+                candidates.push({
+                    fret,
+                    tone,
+                    score: fret + (unusedTones.has(tone) ? -4 : 0) + (usedCounts.get(tone) || 0) * 2
+                });
+            }
+            candidates.sort((a, b) => a.score - b.score || a.fret - b.fret);
+            const chosen = candidates[0];
+            if (!chosen) return 'x';
+            unusedTones.delete(chosen.tone);
+            usedCounts.set(chosen.tone, (usedCounts.get(chosen.tone) || 0) + 1);
+            return chosen.fret;
+        });
+    }
+
+    function generateStringInstrumentDiagram(chordName, instrumentKey) {
+        const instrument = STRING_INSTRUMENTS[instrumentKey] || STRING_INSTRUMENTS.guitar;
+        const guitarTab = instrumentKey === 'guitar' ? chordMap.get(chordName)?.instructions : '';
+        const validGuitarTab = typeof guitarTab === 'string'
+            && guitarTab.length === 6
+            && [...guitarTab].every(fret => fret.toLowerCase() === 'x' || Number.isFinite(Number.parseInt(fret, 10)));
+        let frets = validGuitarTab
+            ? [...guitarTab].map(fret => fret.toLowerCase() === 'x' ? 'x' : Number.parseInt(fret, 10))
+            : generateInstrumentVoicing(chordName, instrument);
+        const chordTones = getPianoChordIntervals(chordName);
+        const rootTone = chordTones[0];
+        if (instrumentKey === 'bass' && Number.isFinite(rootTone)) {
+            const rootCandidates = instrument.tuning.flatMap((openNote, stringIndex) => {
+                const candidates = [];
+                for (let fret = 0; fret <= 7; fret += 1) {
+                    if ((openNote + fret) % 12 === rootTone) candidates.push({ stringIndex, fret });
+                }
+                return candidates;
+            }).sort((a, b) => a.fret - b.fret || a.stringIndex - b.stringIndex);
+            frets = instrument.tuning.map(() => 'x');
+            if (rootCandidates[0]) frets[rootCandidates[0].stringIndex] = rootCandidates[0].fret;
+        }
+        const numericFrets = frets.filter(Number.isFinite);
+        const fretCount = Math.max(5, Math.min(9, numericFrets.length ? Math.max(...numericFrets) : 5));
+        const width = 190;
+        const top = 20;
+        const fretHeight = 17;
+        const nutY = top + fretCount * fretHeight;
+        const headstockBottom = nutY + 31;
+        const xStart = 38;
+        const xEnd = 168;
+        const stringGap = instrument.strings.length > 1 ? (xEnd - xStart) / (instrument.strings.length - 1) : 0;
+        const strings = instrument.strings.map((label, index) => {
+            // Reverse the native vertical stack so the rotated neck follows
+            // standard tablature: highest string on top, lowest on the bottom.
+            const x = xEnd - index * stringGap;
+            const strokeWidth = instrumentKey === 'bass' ? Math.max(1.2, 3.2 - index * 0.45) : Math.max(0.8, 1.8 - index * 0.13);
+            return `<line x1="${x}" y1="${top}" x2="${x}" y2="${nutY}" stroke="#ffffff" stroke-width="${strokeWidth}" opacity="0.9"/><text x="${x}" y="12" fill="#ffffff" text-anchor="middle" font-size="9">${label}</text>`;
+        }).join('');
+        const guides = Array.from({ length: fretCount + 1 }, (_, index) => {
+            const fretNumber = fretCount - index;
+            const y = top + index * fretHeight;
+            const opacity = instrument.fretless && fretNumber > 0 ? 0.28 : 0.75;
+            return `<line x1="${xStart}" y1="${y}" x2="${xEnd}" y2="${y}" stroke="#ffffff" stroke-width="${fretNumber === 0 ? 3 : 1}" opacity="${opacity}"/>${fretNumber > 0 ? `<text x="27" y="${y + 12}" fill="#ffffff" text-anchor="middle" font-size="8" opacity="0.72">${fretNumber}</text>` : ''}`;
+        }).join('');
+        const markers = frets.map((fret, index) => {
+            const x = xEnd - index * stringGap;
+            if (fret === 'x') return `<text x="${x}" y="${nutY + 20}" fill="#ffffff" text-anchor="middle" font-size="12">×</text>`;
+            if (fret === 0) return `<circle cx="${x}" cy="${nutY + 17}" r="5" fill="none" stroke="#ffffff" stroke-width="1.5"/>`;
+            const y = nutY - (fret - 0.5) * fretHeight;
+            const note = (instrument.tuning[index] + fret) % 12;
+            const isRoot = note === rootTone;
+            return `<circle cx="${x}" cy="${y}" r="6.5" fill="${isRoot ? '#ffd166' : '#8fb7ff'}" stroke="#08205e" stroke-width="1.5"/><text x="${x}" y="${y + 3}" fill="#08205e" text-anchor="middle" font-size="7" font-weight="700">${SEMITONE_TO_NOTE[note]}</text>`;
+        }).join('');
+        const headstock = `<path d="M${xStart} ${nutY} L${xEnd} ${nutY} L${xEnd + 8} ${nutY + 16} Q${width / 2} ${headstockBottom + 8} ${xStart - 8} ${nutY + 16} Z" fill="rgba(255,255,255,0.1)" stroke="#ffffff" stroke-width="1"/>`;
+        const instruction = instrumentKey === 'bass' && Number.isFinite(rootTone)
+            ? `${instrument.label} · ${SEMITONE_TO_NOTE[rootTone]} single note`
+            : `${instrument.label} · ${frets.join(' ')}`;
+        const originalHeight = headstockBottom + 12;
+        const diagramContent = `${guides}${strings}${headstock}${markers}`;
+        return {
+            instructions: instruction,
+            diagram: `<svg viewBox="0 0 ${originalHeight} ${width}" role="img" aria-label="${normalizeChordName(chordName)} ${instrument.label} fingering, rotated 90 degrees clockwise"><g transform="translate(${originalHeight} 0) rotate(90)">${diagramContent}</g></svg>`
+        };
+    }
+
+    function getChordPresentation(chordName) {
+        if (selectedChordInstrument === 'piano') {
+            return { ...generatePianoChordDiagram(chordName), isHtml: true };
+        }
+        return { ...generateStringInstrumentDiagram(chordName, selectedChordInstrument), isHtml: true };
+    }
+
+    function renderChordPresentation(chordElement, chordName) {
+        if (!chordElement) return;
+        const presentation = getChordPresentation(chordName);
+        const value = chordElement.querySelector('.chord-value');
+        const diagram = chordElement.querySelector('.chord-diagram');
+        if (value) value.textContent = presentation.instructions;
+        if (diagram) {
+            if (presentation.isHtml) diagram.innerHTML = presentation.diagram;
+            else diagram.textContent = presentation.diagram;
+        }
     }
 
     function getTrackStatusLabel(status) {
@@ -3559,6 +3942,13 @@
     const toggleBtn = playerBasic.querySelector('.toggle-btn');
     const prevTrackBtn = playerBasic.querySelector('.prev-track-btn');
     const nextTrackBtn = playerBasic.querySelector('.next-track-btn');
+    const prevSectionBtn = playerBasic.querySelector('.prev-section-btn');
+    const nextSectionBtn = playerBasic.querySelector('.next-section-btn');
+    const volumeControl = document.getElementById('volume-control');
+    const volumeBtn = document.getElementById('volume-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+    const loopModeBtn = document.getElementById('loop-mode-btn');
+    const chordInstrument = document.getElementById('chord-instrument');
     const tempoDino = document.getElementById('tempo-dino');
     const versionToggle = document.getElementById('version-toggle');
     const versionToggleLabel = versionToggle?.querySelector('.version-toggle__label');
@@ -6145,13 +6535,18 @@
     }
 
     const mobileCoverShrink = {
-        ticking: false,
-        activeTargets: [],
+        activePanel: null,
         hidden: false,
-        hideOffset: 0,
-        lastTouchY: null
+        progress: 0,
+        touching: false,
+        rendering: false,
+        lastTouchY: null,
+        lastScrollTop: 0,
+        scrollEndTimer: 0,
+        lastDirection: 0
     };
-    const MOBILE_COVER_HIDE_SCROLL_THRESHOLD = 72;
+    let sharedTabScrollTop = 0;
+    const MOBILE_SCROLL_END_DELAY_MS = 150;
 
     function getMobileCoverRange() {
         const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
@@ -6160,111 +6555,111 @@
         return { expanded, collapsed: 0 };
     }
 
-    function getMobileCoverScrollTop() {
-        const activePanel = document.querySelector('.tab-panel.active');
-        const scrollTargets = activePanel
-            ? [activePanel, ...activePanel.querySelectorAll('.song-list, .player-wrap, .credits')]
-            : [];
-        return scrollTargets.reduce((max, target) => Math.max(max, target.scrollTop || 0), 0);
-    }
-
-    function updateMobileCoverHeight() {
+    function renderMobileCoverProgress(progress = mobileCoverShrink.progress, { animate = false } = {}) {
         if (!appContainer || window.matchMedia('(min-width: 769px)').matches) {
             appContainer?.style.removeProperty('--mobile-cover-height');
             appContainer?.style.removeProperty('--mobile-cover-opacity');
+            appContainer?.style.removeProperty('--mobile-cover-transition-duration');
             mobileCoverShrink.hidden = false;
-            mobileCoverShrink.hideOffset = 0;
-            mobileCoverShrink.lastTouchY = null;
+            mobileCoverShrink.progress = 0;
             return;
         }
 
-        const scrollTop = getMobileCoverScrollTop();
-        mobileCoverShrink.hideOffset = Math.max(mobileCoverShrink.hideOffset, scrollTop);
-        if (mobileCoverShrink.hideOffset >= MOBILE_COVER_HIDE_SCROLL_THRESHOLD) {
-            mobileCoverShrink.hidden = true;
-        }
-
         const { expanded, collapsed } = getMobileCoverRange();
-        const height = mobileCoverShrink.hidden ? collapsed : expanded;
-        const opacity = mobileCoverShrink.hidden ? 0 : 1;
+        mobileCoverShrink.progress = Math.max(collapsed, Math.min(expanded, Number.parseFloat(progress) || 0));
+        mobileCoverShrink.hidden = mobileCoverShrink.progress >= expanded - 0.5;
+        const height = Math.max(collapsed, expanded - mobileCoverShrink.progress);
+        const opacity = expanded > 0 ? height / expanded : 0;
+        mobileCoverShrink.rendering = true;
+        appContainer.style.setProperty('--mobile-cover-transition-duration', animate ? '0.38s' : '0s');
         appContainer.style.setProperty('--mobile-cover-height', `${Math.round(height)}px`);
         appContainer.style.setProperty('--mobile-cover-opacity', opacity.toFixed(3));
+        requestAnimationFrame(() => {
+            mobileCoverShrink.rendering = false;
+        });
     }
 
-    function adjustMobileCoverGestureOffset(deltaY) {
-        if (!appContainer || window.matchMedia('(min-width: 769px)').matches) return;
-        const delta = Number.parseFloat(deltaY);
-        if (!Number.isFinite(delta) || delta === 0) return;
+    function snapMobileCoverAfterGesture() {
+        if (window.matchMedia('(min-width: 769px)').matches) return;
+        const { expanded } = getMobileCoverRange();
+        const shouldHide = mobileCoverShrink.progress >= expanded * 0.42
+            && mobileCoverShrink.lastDirection >= 0;
+        renderMobileCoverProgress(shouldHide ? expanded : 0, { animate: true });
+    }
 
-        if (delta > 0) {
-            mobileCoverShrink.hideOffset = Math.min(
-                MOBILE_COVER_HIDE_SCROLL_THRESHOLD,
-                mobileCoverShrink.hideOffset + delta
-            );
-        } else if (delta < 0 && getMobileCoverScrollTop() <= 1) {
-            mobileCoverShrink.hideOffset = Math.max(0, mobileCoverShrink.hideOffset + delta);
+    function handleSharedTabScroll() {
+        if (!mobileCoverShrink.activePanel) return;
+        const nextScrollTop = mobileCoverShrink.activePanel.scrollTop || 0;
+        const delta = nextScrollTop - mobileCoverShrink.lastScrollTop;
+        sharedTabScrollTop = nextScrollTop;
+        mobileCoverShrink.lastScrollTop = nextScrollTop;
+        if (!mobileCoverShrink.touching && !mobileCoverShrink.rendering && delta !== 0) {
+            mobileCoverShrink.lastDirection = Math.sign(delta);
+            renderMobileCoverProgress(mobileCoverShrink.progress + delta);
         }
-
-        if (mobileCoverShrink.hideOffset >= MOBILE_COVER_HIDE_SCROLL_THRESHOLD) {
-            mobileCoverShrink.hidden = true;
-        } else if (mobileCoverShrink.hideOffset <= 0 && getMobileCoverScrollTop() <= 1) {
-            mobileCoverShrink.hidden = false;
-        }
-        requestMobileCoverHeightUpdate();
+        if (mobileCoverShrink.touching) return;
+        window.clearTimeout(mobileCoverShrink.scrollEndTimer);
+        mobileCoverShrink.scrollEndTimer = window.setTimeout(
+            snapMobileCoverAfterGesture,
+            MOBILE_SCROLL_END_DELAY_MS
+        );
     }
 
-    function handleMobileCoverWheel(event) {
-        adjustMobileCoverGestureOffset(event.deltaY);
-    }
-
-    function handleMobileCoverTouchStart(event) {
+    function handleSharedTabTouchStart(event) {
+        mobileCoverShrink.touching = true;
         mobileCoverShrink.lastTouchY = event.touches?.[0]?.clientY ?? null;
+        window.clearTimeout(mobileCoverShrink.scrollEndTimer);
+        renderMobileCoverProgress(mobileCoverShrink.progress);
     }
 
-    function handleMobileCoverTouchMove(event) {
+    function handleSharedTabTouchMove(event) {
         const currentY = event.touches?.[0]?.clientY;
         if (!Number.isFinite(currentY)) return;
-
         if (Number.isFinite(mobileCoverShrink.lastTouchY)) {
-            adjustMobileCoverGestureOffset(mobileCoverShrink.lastTouchY - currentY);
+            const delta = mobileCoverShrink.lastTouchY - currentY;
+            if (delta !== 0) {
+                mobileCoverShrink.lastDirection = Math.sign(delta);
+                renderMobileCoverProgress(mobileCoverShrink.progress + delta);
+            }
         }
         mobileCoverShrink.lastTouchY = currentY;
     }
 
-    function requestMobileCoverHeightUpdate() {
-        if (mobileCoverShrink.ticking) return;
-        mobileCoverShrink.ticking = true;
-        requestAnimationFrame(() => {
-            mobileCoverShrink.ticking = false;
-            updateMobileCoverHeight();
-        });
+    function handleSharedTabTouchEnd() {
+        if (!mobileCoverShrink.activePanel) return;
+        mobileCoverShrink.touching = false;
+        mobileCoverShrink.lastTouchY = null;
+        window.clearTimeout(mobileCoverShrink.scrollEndTimer);
+        if (mobileCoverShrink.activePanel.scrollTop <= 1) sharedTabScrollTop = 0;
+        snapMobileCoverAfterGesture();
     }
 
     function bindMobileCoverScrollPanel() {
-        mobileCoverShrink.activeTargets.forEach(target => {
-            target.removeEventListener('scroll', requestMobileCoverHeightUpdate);
-            target.removeEventListener('wheel', handleMobileCoverWheel);
-            target.removeEventListener('touchstart', handleMobileCoverTouchStart);
-            target.removeEventListener('touchmove', handleMobileCoverTouchMove);
-        });
+        mobileCoverShrink.activePanel?.removeEventListener('scroll', handleSharedTabScroll);
+        mobileCoverShrink.activePanel?.removeEventListener('touchstart', handleSharedTabTouchStart);
+        mobileCoverShrink.activePanel?.removeEventListener('touchmove', handleSharedTabTouchMove);
+        mobileCoverShrink.activePanel?.removeEventListener('touchend', handleSharedTabTouchEnd);
+        mobileCoverShrink.activePanel?.removeEventListener('touchcancel', handleSharedTabTouchEnd);
         const activePanel = document.querySelector('.tab-panel.active');
-        mobileCoverShrink.activeTargets = activePanel
-            ? [activePanel, ...activePanel.querySelectorAll('.song-list, .player-wrap, .credits')]
-            : [];
-        mobileCoverShrink.hideOffset = getMobileCoverScrollTop();
-        mobileCoverShrink.hidden = mobileCoverShrink.hideOffset >= MOBILE_COVER_HIDE_SCROLL_THRESHOLD;
-        mobileCoverShrink.lastTouchY = null;
-        mobileCoverShrink.activeTargets.forEach(target => {
-            target.addEventListener('scroll', requestMobileCoverHeightUpdate, { passive: true });
-            target.addEventListener('wheel', handleMobileCoverWheel, { passive: true });
-            target.addEventListener('touchstart', handleMobileCoverTouchStart, { passive: true });
-            target.addEventListener('touchmove', handleMobileCoverTouchMove, { passive: true });
-        });
-        updateMobileCoverHeight();
+        mobileCoverShrink.activePanel = activePanel;
+        if (!activePanel) return;
+        const maxScrollTop = Math.max(0, activePanel.scrollHeight - activePanel.clientHeight);
+        activePanel.scrollTop = Math.min(sharedTabScrollTop, maxScrollTop);
+        mobileCoverShrink.lastScrollTop = activePanel.scrollTop || 0;
+        activePanel.addEventListener('scroll', handleSharedTabScroll, { passive: true });
+        activePanel.addEventListener('touchstart', handleSharedTabTouchStart, { passive: true });
+        activePanel.addEventListener('touchmove', handleSharedTabTouchMove, { passive: true });
+        activePanel.addEventListener('touchend', handleSharedTabTouchEnd, { passive: true });
+        activePanel.addEventListener('touchcancel', handleSharedTabTouchEnd, { passive: true });
+        renderMobileCoverProgress(mobileCoverShrink.progress);
     }
 
     bindMobileCoverScrollPanel();
-    window.addEventListener('resize', requestMobileCoverHeightUpdate);
+    window.addEventListener('resize', () => {
+        const wasHidden = mobileCoverShrink.hidden;
+        bindMobileCoverScrollPanel();
+        if (wasHidden) renderMobileCoverProgress(getMobileCoverRange().expanded);
+    });
 
     telemetrySongs.addEventListener('click', (e) => {
         const waveform = e.target.closest('.telemetry-wave');
@@ -6326,8 +6721,141 @@
     let mediaSessionPositionTimer = 0;
     let playbackWakeLock = null;
     let audioContextLifecycleBound = false;
+    let loopMode = 'none';
+    let playerVolume = 1;
+    let lastAudibleVolume = 1;
     const IMMEDIATE_AUTOPLAY_RETRY_MS = 700;
     const IMMEDIATE_AUTOPLAY_MAX_RETRIES = 240;
+
+    try {
+        const storedLoopMode = localStorage.getItem('sioto-loop-mode');
+        if (['none', 'track', 'album'].includes(storedLoopMode)) loopMode = storedLoopMode;
+        const storedVolume = Number.parseFloat(localStorage.getItem('sioto-volume'));
+        if (Number.isFinite(storedVolume)) playerVolume = Math.max(0, Math.min(1, storedVolume));
+        const storedInstrument = localStorage.getItem('sioto-chord-instrument');
+        if (['guitar', 'ukulele', 'bass', 'violin', 'cello', 'piano'].includes(storedInstrument)) {
+            selectedChordInstrument = storedInstrument;
+        }
+    } catch {
+        // Player preferences are optional when storage is unavailable.
+    }
+    if (playerVolume > 0) lastAudibleVolume = playerVolume;
+
+    function updateVolumeControl() {
+        const percent = Math.round(playerVolume * 100);
+        if (volumeSlider) volumeSlider.value = String(percent);
+        if (!volumeBtn) return;
+        volumeBtn.setAttribute('aria-label', `Volume: ${percent}%`);
+        volumeBtn.setAttribute('aria-pressed', String(percent === 0));
+        volumeBtn.title = percent === 0 ? 'Unmute' : 'Mute';
+        const icon = volumeBtn.querySelector('i');
+        if (!icon) return;
+        icon.className = `fa-solid ${percent === 0 ? 'fa-volume-xmark' : percent < 50 ? 'fa-volume-low' : 'fa-volume-high'}`;
+    }
+
+    function setPlayerVolume(value) {
+        playerVolume = Math.max(0, Math.min(1, Number.parseFloat(value) || 0));
+        if (playerVolume > 0) lastAudibleVolume = playerVolume;
+        audioEngine.setVolume(playerVolume);
+        updateVolumeControl();
+        try { localStorage.setItem('sioto-volume', String(playerVolume)); } catch {}
+    }
+
+    function positionVolumePopover() {
+        if (!volumeControl || !volumeBtn) return;
+        const popover = document.getElementById('volume-popover');
+        if (!popover) return;
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const inset = 8;
+        volumeControl.classList.remove('popover-above');
+        volumeControl.style.setProperty('--volume-popover-shift-x', '0px');
+
+        let buttonRect = volumeBtn.getBoundingClientRect();
+        let popoverRect = popover.getBoundingClientRect();
+        if (popoverRect.bottom > viewportHeight - inset && buttonRect.top - popoverRect.height - 8 >= inset) {
+            volumeControl.classList.add('popover-above');
+            popoverRect = popover.getBoundingClientRect();
+        }
+
+        let shiftX = 0;
+        if (popoverRect.left < inset) shiftX += inset - popoverRect.left;
+        if (popoverRect.right + shiftX > viewportWidth - inset) {
+            shiftX -= popoverRect.right + shiftX - (viewportWidth - inset);
+        }
+        volumeControl.style.setProperty('--volume-popover-shift-x', `${Math.round(shiftX)}px`);
+    }
+
+    function queueVolumePopoverPosition() {
+        requestAnimationFrame(() => requestAnimationFrame(positionVolumePopover));
+    }
+
+    function updateLoopModeControl() {
+        if (!loopModeBtn) return;
+        const labels = {
+            none: 'Looping: off',
+            track: 'Looping: current song',
+            album: 'Looping: whole album'
+        };
+        loopModeBtn.dataset.loopMode = loopMode;
+        loopModeBtn.setAttribute('aria-label', labels[loopMode]);
+        loopModeBtn.title = `${labels[loopMode]}. Click to change.`;
+        const icon = loopModeBtn.querySelector('i');
+        if (icon) icon.className = `fa-solid ${loopMode === 'none' ? 'fa-arrow-right-long' : 'fa-repeat'}`;
+    }
+
+    function setLoopMode(nextMode) {
+        if (!['none', 'track', 'album'].includes(nextMode) || nextMode === loopMode) return;
+        const wasPlaying = webAudioPlayback.playing;
+        const resumeAlbumTime = getCurrentAlbumTime();
+        loopMode = nextMode;
+        try { localStorage.setItem('sioto-loop-mode', loopMode); } catch {}
+        updateLoopModeControl();
+        if (wasPlaying) scheduleStitchedAlbumFrom(resumeAlbumTime);
+    }
+
+    function getCurrentSeekSectionIndex() {
+        if (!currentTrack || !currentSeekSections.length) return -1;
+        const duration = getPlaybackDuration();
+        if (!duration) return -1;
+        const ratio = Math.max(0, Math.min(1, getPlaybackCurrentTime() / duration));
+        const containingIndex = currentSeekSections.findIndex(section => ratio >= section.start && ratio < section.end);
+        if (containingIndex >= 0) return containingIndex;
+        for (let index = currentSeekSections.length - 1; index >= 0; index -= 1) {
+            if (ratio >= currentSeekSections[index].start) return index;
+        }
+        return -1;
+    }
+
+    function updateSectionNavButtons() {
+        const sectionIndex = getCurrentSeekSectionIndex();
+        const hasSections = currentSeekSections.length > 0;
+        const currentSection = currentSeekSections[sectionIndex];
+        const duration = getPlaybackDuration();
+        const currentTime = getPlaybackCurrentTime();
+        const currentSectionStart = currentSection && duration > 0 ? currentSection.start * duration : 0;
+        const canRestartCurrentSection = Boolean(currentSection) && currentTime > currentSectionStart + 0.75;
+        if (prevSectionBtn) prevSectionBtn.disabled = !hasSections || (sectionIndex <= 0 && !canRestartCurrentSection);
+        if (nextSectionBtn) nextSectionBtn.disabled = !hasSections || sectionIndex >= currentSeekSections.length - 1;
+    }
+
+    function goToAdjacentSection(direction) {
+        const currentIndex = getCurrentSeekSectionIndex();
+        const duration = getPlaybackDuration();
+        const currentSection = currentSeekSections[currentIndex];
+        const currentSectionStart = currentSection && duration > 0 ? currentSection.start * duration : 0;
+        const shouldRestartCurrentSection = direction < 0
+            && Boolean(currentSection)
+            && getPlaybackCurrentTime() > currentSectionStart + 0.75;
+        const nextIndex = shouldRestartCurrentSection ? currentIndex : currentIndex + direction;
+        const section = currentSeekSections[nextIndex];
+        if (!section) return;
+        const shouldAutoPlay = !isPlaybackPaused();
+        void seekPlayback(section.start * duration, { autoPlay: shouldAutoPlay }).then(() => {
+            setToggleIcon(!shouldAutoPlay);
+            updateSectionNavButtons();
+        });
+    }
 
     function updateTrackNavButtons() {
         const hasSelection = selectedTrackIndex >= 0 && selectedTrackIndex < data.tracks.length;
@@ -6593,6 +7121,7 @@
         if (typeof glSeek.setSections === 'function') {
             glSeek.setSections(currentSeekSections);
         }
+        updateSectionNavButtons();
     }
 
     function getSeekSectionAtRatio(ratio) {
@@ -6901,6 +7430,12 @@
 
         const contextTime = audioEngine.getCurrentTime();
         const elapsed = Math.max(0, contextTime - webAudioPlayback.startContextTime);
+        if (loopMode === 'track' && selectedTrackIndex >= 0) {
+            const trackStart = stitchedTrackStarts[selectedTrackIndex] || 0;
+            const trackDuration = getTrackAudioDuration(selectedTrackIndex);
+            const initialTrackTime = Math.max(0, webAudioPlayback.startAlbumTime - trackStart);
+            if (trackDuration > 0) return trackStart + ((initialTrackTime + elapsed) % trackDuration);
+        }
         return Math.max(0, Math.min(stitchedAlbumDuration || 0, webAudioPlayback.startAlbumTime + elapsed));
     }
 
@@ -6918,7 +7453,17 @@
     }
 
     function scheduleStitchedAlbumFrom(albumTime) {
-        const safeAlbumTime = Math.max(0, Math.min(stitchedAlbumDuration || 0, Number.parseFloat(albumTime) || 0));
+        let safeAlbumTime = Math.max(0, Math.min(stitchedAlbumDuration || 0, Number.parseFloat(albumTime) || 0));
+        if (loopMode === 'track' && selectedTrackIndex >= 0) {
+            const selectedTrackStart = stitchedTrackStarts[selectedTrackIndex] || 0;
+            const selectedTrackDuration = getTrackAudioDuration(selectedTrackIndex);
+            const requestedTrackTime = safeAlbumTime - selectedTrackStart;
+            safeAlbumTime = selectedTrackStart + (
+                requestedTrackTime >= 0 && requestedTrackTime < selectedTrackDuration
+                    ? requestedTrackTime
+                    : 0
+            );
+        }
         const position = getTrackPositionFromAlbumTime(safeAlbumTime);
         if (position.trackIndex < 0 || safeAlbumTime >= stitchedAlbumDuration) {
             finishPlaybackAtAlbumEnd(data.tracks.length - 1);
@@ -6930,7 +7475,8 @@
         const startAt = audioEngine.getCurrentTime() + WEB_AUDIO_START_DELAY_SECONDS;
         let nextStartAt = startAt;
 
-        for (let trackIndex = position.trackIndex; trackIndex < data.tracks.length; trackIndex += 1) {
+        const lastScheduledTrackIndex = loopMode === 'track' ? position.trackIndex : data.tracks.length - 1;
+        for (let trackIndex = position.trackIndex; trackIndex <= lastScheduledTrackIndex; trackIndex += 1) {
             const entry = getTrackAudioEntry(trackIndex);
             const audioBuffer = entry?.audioBuffer;
             if (!audioBuffer) break;
@@ -6945,9 +7491,17 @@
             if (!sourceNode) continue;
             sourceNode._siotoTrackIndex = trackIndex;
 
-            if (trackIndex === data.tracks.length - 1) {
+            if (loopMode === 'track') {
+                sourceNode.loop = true;
+                sourceNode.loopStart = trim.sourceStart;
+                sourceNode.loopEnd = trim.sourceEnd;
+            } else if (trackIndex === data.tracks.length - 1) {
                 sourceNode.onended = () => {
                     if (webAudioPlayback.scheduleToken === token && webAudioPlayback.playing) {
+                        if (loopMode === 'album') {
+                            scheduleStitchedAlbumFrom(0);
+                            return;
+                        }
                         webAudioPlayback.playing = false;
                         webAudioPlayback.pausedAlbumTime = stitchedAlbumDuration;
                         webAudioPlayback.scheduledSources = [];
@@ -6956,7 +7510,8 @@
                 };
             }
 
-            sourceNode.start(nextStartAt, sourceOffset, sourceDuration);
+            if (loopMode === 'track') sourceNode.start(nextStartAt, sourceOffset);
+            else sourceNode.start(nextStartAt, sourceOffset, sourceDuration);
             webAudioPlayback.scheduledSources.push(sourceNode);
             nextStartAt += sourceDuration;
         }
@@ -6973,7 +7528,7 @@
     }
 
     function scheduleLoadedFutureTracks() {
-        if (!webAudioPlayback.playing) return;
+        if (!webAudioPlayback.playing || loopMode === 'track') return;
 
         const token = webAudioPlayback.scheduleToken;
         const now = audioEngine.getCurrentTime();
@@ -7005,6 +7560,10 @@
             if (trackIndex === data.tracks.length - 1) {
                 sourceNode.onended = () => {
                     if (webAudioPlayback.scheduleToken === token && webAudioPlayback.playing) {
+                        if (loopMode === 'album') {
+                            scheduleStitchedAlbumFrom(0);
+                            return;
+                        }
                         webAudioPlayback.playing = false;
                         webAudioPlayback.pausedAlbumTime = stitchedAlbumDuration;
                         webAudioPlayback.scheduledSources = [];
@@ -7703,18 +8262,32 @@
                         chordSpan.className = 'structure-chord';
                         chordSpan.dataset.beat = beatIndex + 1;
                         chordSpan.dataset.span = chordSpanLength;
-                        const chordData = chordMap.get(chord) || { instructions: 'N/A', diagram: '' };
-                        chordSpan.innerHTML = `
-                            <span class="chord">${chord || 'N/A'}</span>
-                            <span class="chord-value">${chordData.instructions}</span>
-                            <span class="chord-diagram">${chordData.diagram}</span>
-                        `;
+                        chordSpan.dataset.chord = chord || '';
+                        chordSpan.tabIndex = 0;
+                        chordSpan.setAttribute('role', 'button');
+                        chordSpan.setAttribute('aria-label', `${chord || 'N/A'} chord. Hover or tap for ${selectedChordInstrument} diagram.`);
+                        const chordLabel = document.createElement('span');
+                        chordLabel.className = 'chord';
+                        chordLabel.textContent = chord || 'N/A';
+                        const chordPreview = document.createElement('span');
+                        chordPreview.className = 'chord-preview';
+                        const chordValue = document.createElement('span');
+                        chordValue.className = 'chord-value';
+                        const chordDiagram = document.createElement('span');
+                        chordDiagram.className = 'chord-diagram';
+                        const chordSeekAction = document.createElement('button');
+                        chordSeekAction.className = 'chord-seek-action';
+                        chordSeekAction.type = 'button';
+                        chordSeekAction.textContent = 'Play from here';
+                        chordPreview.append(chordValue, chordDiagram, chordSeekAction);
+                        chordSpan.append(chordLabel, chordPreview);
+                        renderChordPresentation(chordSpan, chord || '');
                         const progressDiv = document.createElement('div');
                         progressDiv.className = 'chord-progress';
                         progressDiv.dataset.beat = beatIndex + 1;
                         progressDiv.dataset.span = chordSpanLength;
 
-                        chordSpan.addEventListener('click', () => {
+                        const seekToChord = () => {
                             if (currentTrack !== track) return;
                             const chordStartTime = getBeatStartTime(track, chordSpan.dataset.beat);
                             seekPlayback(chordStartTime).catch(err => {
@@ -7723,6 +8296,35 @@
                                 setToggleIcon(true);
                             });
                             setToggleIcon(false);
+                        };
+
+                        chordSpan.addEventListener('click', event => {
+                            if (event.target instanceof Element && event.target.closest('.chord-seek-action')) {
+                                event.stopPropagation();
+                                seekToChord();
+                                return;
+                            }
+                            const touchLikePointer = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+                            if (touchLikePointer) {
+                                const willOpen = !chordSpan.classList.contains('is-diagram-open');
+                                structureContent.querySelectorAll('.structure-chord.is-diagram-open').forEach(element => {
+                                    element.classList.remove('is-diagram-open');
+                                });
+                                chordSpan.classList.toggle('is-diagram-dismissed', !willOpen);
+                                chordSpan.classList.toggle('is-diagram-open', willOpen);
+                                return;
+                            }
+                            chordSpan.classList.remove('is-diagram-open');
+                            chordSpan.classList.add('is-diagram-dismissed');
+                            chordSpan.querySelector(':focus')?.blur();
+                            chordSpan.blur();
+                            seekToChord();
+                        });
+                        chordSpan.addEventListener('pointerenter', () => {
+                            chordSpan.classList.remove('is-diagram-dismissed');
+                        });
+                        chordSpan.addEventListener('keydown', event => {
+                            if (event.key === 'Enter') seekToChord();
                         });
 
                         chordContainer.appendChild(chordSpan);
@@ -8790,7 +9392,12 @@
     // Set startup defaults until a song is selected
     setToggleIcon(true);
     toggleBtn.disabled = true;
+    audioEngine.setVolume(playerVolume);
+    updateVolumeControl();
+    updateLoopModeControl();
+    if (chordInstrument) chordInstrument.value = selectedChordInstrument;
     updateTrackNavButtons();
+    updateSectionNavButtons();
     updateVersionToggleState();
     configureMediaSessionActions();
     configureMobileAudioInterruptionHandling();
@@ -8841,12 +9448,70 @@
         goToAdjacentTrack(1);
     });
 
+    prevSectionBtn?.addEventListener('click', () => {
+        goToAdjacentSection(-1);
+    });
+
+    nextSectionBtn?.addEventListener('click', () => {
+        goToAdjacentSection(1);
+    });
+
+    volumeBtn?.addEventListener('click', event => {
+        event.stopPropagation();
+        setPlayerVolume(playerVolume > 0 ? 0 : lastAudibleVolume || 1);
+        volumeControl.classList.add('is-open');
+        volumeBtn.setAttribute('aria-expanded', 'true');
+        volumeSlider?.focus({ preventScroll: true });
+        queueVolumePopoverPosition();
+    });
+
+    volumeControl?.addEventListener('pointerenter', queueVolumePopoverPosition, { passive: true });
+    volumeControl?.addEventListener('focusin', queueVolumePopoverPosition);
+    window.addEventListener('resize', queueVolumePopoverPosition);
+
+    volumeSlider?.addEventListener('input', () => {
+        setPlayerVolume(Number.parseFloat(volumeSlider.value) / 100);
+    });
+
+    loopModeBtn?.addEventListener('click', () => {
+        const modes = ['none', 'track', 'album'];
+        setLoopMode(modes[(modes.indexOf(loopMode) + 1) % modes.length]);
+    });
+
+    chordInstrument?.addEventListener('change', () => {
+        selectedChordInstrument = Object.hasOwn(STRING_INSTRUMENTS, chordInstrument.value) || chordInstrument.value === 'piano'
+            ? chordInstrument.value
+            : 'guitar';
+        try { localStorage.setItem('sioto-chord-instrument', selectedChordInstrument); } catch {}
+        structureContent.querySelectorAll('.structure-chord').forEach(chordElement => {
+            renderChordPresentation(chordElement, chordElement.dataset.chord || '');
+            chordElement.classList.remove('is-diagram-open');
+            const chordName = chordElement.dataset.chord || 'N/A';
+            chordElement.setAttribute('aria-label', `${chordName} chord. Hover or tap for ${selectedChordInstrument} diagram.`);
+        });
+    });
+
+    document.addEventListener('pointerdown', event => {
+        const targetElement = event.target instanceof Element ? event.target : null;
+        if (!targetElement?.closest('.volume-control')) {
+            volumeControl?.classList.remove('is-open');
+            volumeBtn?.setAttribute('aria-expanded', 'false');
+        }
+        if (!targetElement?.closest('.structure-chord')) {
+            structureContent.querySelectorAll('.structure-chord.is-diagram-open').forEach(chordElement => {
+                chordElement.classList.remove('is-diagram-open');
+            });
+        }
+    }, { passive: true });
+
     versionToggle?.addEventListener('click', () => {
         switchSongVersion(activeSongVersion === 'dani' ? 'martin' : 'dani');
     });
 
     liveLyricsDisplay?.addEventListener('click', (event) => {
-        const line = event.target.closest('.live-lyrics-line[data-seek-time]');
+        const line = event.target instanceof Element
+            ? event.target.closest('.live-lyrics-line[data-seek-time]')
+            : null;
         if (!line || !currentTrack) return;
         const seekTime = Number.parseFloat(line.dataset.seekTime);
         if (!Number.isFinite(seekTime)) return;
@@ -8992,6 +9657,7 @@
         if (timeline.textContent !== timeText) {
             timeline.textContent = timeText;
         }
+        updateSectionNavButtons();
         
         const progressPercent = duration ? (currentTime / duration) : 0;
         glSeek.render(progressPercent);
