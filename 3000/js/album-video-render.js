@@ -3,14 +3,14 @@ const CANVAS_HEIGHT = 1080;
 const BACKGROUND_TRANSITION_SECONDS = 3.5;
 const SILENCE_THRESHOLD = 0.003;
 const SILENCE_SCAN_STEP = 128;
-const TITLE_DISPLAY_SECONDS = 10;
-const COVER_SIZE = 580;
+const TITLE_DISPLAY_SECONDS = 6;
+const COVER_SIZE = 696;
 const COVER_X = (CANVAS_WIDTH - COVER_SIZE) / 2;
 const COVER_Y = (CANVAS_HEIGHT - COVER_SIZE) / 2;
 const PROGRESS_HEIGHT = 10;
 const PROGRESS_Y = COVER_Y + COVER_SIZE;
-const TITLE_Y = COVER_Y - 50;
-const LYRIC_CENTER_Y = PROGRESS_Y + PROGRESS_HEIGHT + 48;
+const TITLE_Y = COVER_Y - 42;
+const LYRIC_CENTER_Y = PROGRESS_Y + PROGRESS_HEIGHT + 46;
 
 const PLAYER_COLORS = {
     surface: [245, 248, 255],
@@ -583,7 +583,8 @@ function drawTrackTitle(track, trackTime) {
 
     const feature = String(track?.feature || '').trim();
     const mainText = String(track.title || '');
-    const fullText = feature ? `${mainText}  ${feature}` : mainText;
+    const featureText = feature ? `(${feature})` : '';
+    const fullText = featureText ? `${mainText} ${featureText}` : mainText;
     const fontSize = fitFontSize(fullText, 37, 26, COVER_SIZE, '400');
     const transition = getLyricTransitionState({
         startTime: 0,
@@ -593,7 +594,7 @@ function drawTrackTitle(track, trackTime) {
     const maxLift = 9;
 
     context.save();
-    context.textAlign = 'center';
+    context.textAlign = 'left';
     context.textBaseline = 'middle';
     context.font = `400 ${fontSize}px "Garet", Arial, sans-serif`;
     context.fontKerning = 'normal';
@@ -608,7 +609,16 @@ function drawTrackTitle(track, trackTime) {
     }
     context.translate(CANVAS_WIDTH / 2, TITLE_Y + (transition.translateY * maxLift));
     context.scale(transition.scale, transition.scale);
-    context.fillText(fullText, 0, 0, COVER_SIZE);
+    const featureGap = featureText ? Math.max(8, fontSize * 0.28) : 0;
+    const mainWidth = context.measureText(mainText).width;
+    const featureWidth = featureText ? context.measureText(featureText).width : 0;
+    const totalWidth = mainWidth + featureGap + featureWidth;
+    const startX = -totalWidth / 2;
+    context.fillText(mainText, startX, 0);
+    if (featureText) {
+        context.globalAlpha = transition.alpha * 0.8;
+        context.fillText(featureText, startX + mainWidth + featureGap, 0);
+    }
     context.restore();
 }
 
