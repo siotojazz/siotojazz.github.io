@@ -1709,6 +1709,13 @@
         .structure-heading h4 {
             margin: 0;
         }
+        .structure-tools {
+            display: flex;
+            min-width: 0;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 7px;
+        }
         .instrument-picker-control {
             display: inline-flex;
             align-items: center;
@@ -1730,18 +1737,27 @@
             color: var(--club-blue-strong);
             font: 700 11px/1.2 'Garet', Arial, sans-serif;
         }
+        .capo-picker {
+            min-width: 72px;
+        }
         .song-info-host .song-info-panel {
             margin: 0;
             padding: 6px 6px 8px;
             border-bottom: 1px solid rgba(var(--club-blue-rgb), 0.12);
         }
         .song-info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            display: flex;
+            flex-wrap: nowrap;
             gap: 6px 8px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            overscroll-behavior-x: contain;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
         }
         .song-info-stat {
-            min-width: 0;
+            flex: 1 0 96px;
+            min-width: 96px;
         }
         .song-info-label {
             display: block;
@@ -1905,6 +1921,44 @@
             overflow: visible;
             background: rgba(var(--club-blue-rgb), 0.05);
         }
+        .structure-chord .chord {
+            position: relative;
+            z-index: 3;
+        }
+        .structure-chord.has-chord-sequence {
+            padding-inline: 2px;
+        }
+        .chord-sequence-label {
+            display: grid;
+            grid-template-columns: repeat(var(--slot-label-count), minmax(0, 1fr));
+            width: 100%;
+            min-width: 0;
+            align-items: stretch;
+            gap: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            border: 1px solid rgba(var(--club-blue-rgb), 0.24);
+            background: rgba(255, 255, 255, 0.28);
+        }
+        .chord-sequence-label__chord {
+            position: relative;
+            display: flex;
+            min-width: 0;
+            overflow: hidden;
+            align-items: center;
+            justify-content: center;
+            padding: 3px 1px;
+            background: rgba(255, 255, 255, 0.36);
+            font-size: clamp(7px, 1.55vw, 10px);
+            line-height: 1;
+        }
+        .chord-sequence-label__chord + .chord-sequence-label__chord {
+            border-left: 1px solid rgba(var(--club-blue-rgb), 0.25);
+        }
+        .structure-chord.active .chord-sequence-label__chord,
+        .structure-chord:not(.passed):hover .chord-sequence-label__chord {
+            background: rgba(255, 255, 255, 0.13);
+        }
         .structure-chord::before {
             content: '';
             position: absolute;
@@ -2026,6 +2080,28 @@
             max-width: 100%;
             height: auto;
             max-height: 210px;
+        }
+        .chord-diagram.is-chord-sequence {
+            display: grid;
+            grid-template-columns: repeat(var(--slot-chord-count), minmax(0, 1fr));
+            gap: 6px;
+            width: min(276px, calc(100vw - 40px));
+            white-space: normal;
+        }
+        .slot-chord-diagram {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+        .slot-chord-diagram__label {
+            font: 800 9px/1.1 'Garet', Arial, sans-serif;
+            text-align: center;
+        }
+        .slot-chord-diagram svg {
+            width: 100%;
+            max-height: 118px;
         }
         .chord-seek-action {
             border: 1px solid rgba(255, 255, 255, 0.52);
@@ -3121,6 +3197,18 @@
             }
             .structure-heading {
                 align-items: flex-start;
+                flex-wrap: wrap;
+            }
+            .structure-tools {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .structure-tools .instrument-picker-control {
+                flex: 1 1 auto;
+            }
+            .structure-tools .instrument-picker {
+                min-width: 0;
+                width: 100%;
             }
             .instrument-picker-control {
                 flex-direction: column;
@@ -3372,17 +3460,36 @@
                     <div class="structure">
                         <div class="structure-heading">
                             <h4>Structure</h4>
-                            <label class="instrument-picker-control" for="chord-instrument">
-                                <span class="instrument-picker-label">Instrument</span>
-                                <select class="instrument-picker" id="chord-instrument">
-                                    <option value="guitar">Guitar</option>
-                                    <option value="ukulele">Ukulele</option>
-                                    <option value="bass">Bass guitar</option>
-                                    <option value="violin">Violin</option>
-                                    <option value="cello">Cello</option>
-                                    <option value="piano">Piano</option>
-                                </select>
-                            </label>
+                            <div class="structure-tools">
+                                <label class="instrument-picker-control" for="chord-instrument">
+                                    <span class="instrument-picker-label">Instrument</span>
+                                    <select class="instrument-picker" id="chord-instrument">
+                                        <option value="guitar">Guitar</option>
+                                        <option value="ukulele">Ukulele</option>
+                                        <option value="bass">Bass guitar</option>
+                                        <option value="violin">Violin</option>
+                                        <option value="cello">Cello</option>
+                                        <option value="piano">Piano</option>
+                                    </select>
+                                </label>
+                                <label class="instrument-picker-control" for="chord-capo">
+                                    <span class="instrument-picker-label">Capo</span>
+                                    <select class="instrument-picker capo-picker" id="chord-capo">
+                                        <option value="0">None</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                    </select>
+                                </label>
+                            </div>
                         </div>
                         <div class="structure-content" style="position: relative;">
                             <canvas id="chords-gl" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
@@ -3647,6 +3754,7 @@
         return [chordName, { instructions: tab }];
     }));
     let selectedChordInstrument = 'guitar';
+    let selectedCapoFret = 0;
 
     function generateChordDiagram(chordName, tab) {
         if (!tab || tab.length !== 6 || tab.split('').some(f => f !== 'x' && isNaN(parseInt(f)))) {
@@ -3860,15 +3968,102 @@
         return { ...generateStringInstrumentDiagram(chordName, selectedChordInstrument), isHtml: true };
     }
 
+    function getSlotChordNames(chordName) {
+        return String(chordName || '')
+            .split('>')
+            .map(name => name.trim())
+            .filter(Boolean)
+            .map(transposeChordForCapo);
+    }
+
+    function transposeNoteForCapo(noteName, semitones) {
+        const semitone = NOTE_TO_SEMITONE[noteName];
+        if (!Number.isFinite(semitone)) return noteName;
+        const transposed = (semitone + semitones + 120) % 12;
+        const preferFlats = noteName.includes('b');
+        const sharpNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const flatNames = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+        return (preferFlats ? flatNames : sharpNames)[transposed];
+    }
+
+    function transposeChordForCapo(chordName) {
+        const normalized = normalizeChordName(chordName);
+        if (!selectedCapoFret) return normalized;
+        const match = normalized.match(/^([A-Ga-g])([#b]?)(.*)$/);
+        if (!match) return normalized;
+        const root = `${match[1].toUpperCase()}${match[2] || ''}`;
+        let suffix = match[3] || '';
+        const bassMatch = suffix.match(/\/([A-Ga-g])([#b]?)$/);
+        if (bassMatch) {
+            const bass = `${bassMatch[1].toUpperCase()}${bassMatch[2] || ''}`;
+            suffix = `${suffix.slice(0, bassMatch.index)}/${transposeNoteForCapo(bass, -selectedCapoFret)}`;
+        }
+        return `${transposeNoteForCapo(root, -selectedCapoFret)}${suffix}`;
+    }
+
+    function renderChordSlotLabel(chordElement, chordName) {
+        const chordLabel = chordElement?.querySelector('.chord');
+        if (!chordLabel) return;
+        const slotChordNames = getSlotChordNames(chordName);
+        const isSequence = slotChordNames.length > 1;
+        chordElement.classList.toggle('has-chord-sequence', isSequence);
+        chordLabel.classList.toggle('chord-sequence-label', isSequence);
+        chordLabel.style.setProperty('--slot-label-count', Math.max(1, slotChordNames.length));
+        if (!isSequence) {
+            chordLabel.textContent = slotChordNames[0] || 'N/A';
+            return;
+        }
+        chordLabel.replaceChildren(...slotChordNames.map(slotChordName => {
+            const chordPart = document.createElement('span');
+            chordPart.className = 'chord-sequence-label__chord';
+            chordPart.textContent = slotChordName;
+            return chordPart;
+        }));
+    }
+
+    function getChordSlotAriaLabel(chordName) {
+        const chordNames = getSlotChordNames(chordName);
+        const chordDescription = chordNames.length > 1
+            ? `${chordNames.join(', then ')}. Play all ${chordNames.length} chords in this slot.`
+            : `${chordNames[0] || 'N/A'} chord.`;
+        return `${chordDescription} Hover or tap for ${selectedChordInstrument} diagram.`;
+    }
+
     function renderChordPresentation(chordElement, chordName) {
         if (!chordElement) return;
-        const presentation = getChordPresentation(chordName);
+        const chordNames = getSlotChordNames(chordName);
+        const presentation = getChordPresentation(chordNames[0] || chordName);
         const value = chordElement.querySelector('.chord-value');
         const diagram = chordElement.querySelector('.chord-diagram');
-        if (value) value.textContent = presentation.instructions;
+        if (value) {
+            const instrumentLabel = selectedChordInstrument === 'piano'
+                ? 'Piano'
+                : (STRING_INSTRUMENTS[selectedChordInstrument]?.label || 'Guitar');
+            value.textContent = chordNames.length > 1
+                ? `Play all ${chordNames.length} chords in this slot · ${instrumentLabel}`
+                : presentation.instructions;
+        }
         if (diagram) {
-            if (presentation.isHtml) diagram.innerHTML = presentation.diagram;
-            else diagram.textContent = presentation.diagram;
+            diagram.classList.toggle('is-chord-sequence', chordNames.length > 1);
+            diagram.style.setProperty('--slot-chord-count', Math.max(1, chordNames.length));
+            if (chordNames.length > 1) {
+                diagram.replaceChildren(...chordNames.map((name, index) => {
+                    const chordPresentation = getChordPresentation(name);
+                    const item = document.createElement('span');
+                    item.className = 'slot-chord-diagram';
+                    const label = document.createElement('span');
+                    label.className = 'slot-chord-diagram__label';
+                    label.textContent = `${index + 1}. ${name}`;
+                    const artwork = document.createElement('span');
+                    artwork.innerHTML = chordPresentation.diagram;
+                    item.append(label, artwork);
+                    return item;
+                }));
+            } else if (presentation.isHtml) {
+                diagram.innerHTML = presentation.diagram;
+            } else {
+                diagram.textContent = presentation.diagram;
+            }
         }
     }
 
@@ -3999,6 +4194,7 @@
     const volumeSlider = document.getElementById('volume-slider');
     const loopModeBtn = document.getElementById('loop-mode-btn');
     const chordInstrument = document.getElementById('chord-instrument');
+    const chordCapo = document.getElementById('chord-capo');
     const tempoDino = document.getElementById('tempo-dino');
     const versionToggle = document.getElementById('version-toggle');
     const versionToggleLabel = versionToggle?.querySelector('.version-toggle__label');
@@ -5083,6 +5279,7 @@
             { label: 'Tempo', value: metric.bpm ? `${metric.bpm} BPM` : 'tempo n/a' },
             { label: 'Signature', value: metric.timeSignature || 'n/a' },
             { label: 'Key', value: metric.harmonicAnalysis.keyLabel || 'n/a' },
+            { label: 'Capo', value: metric.capo > 0 ? `${metric.capo}` : 'None' },
             { label: 'Bars', value: `${formatBars(metric.totalBars)} bars` },
             { label: 'Sections', value: `${metric.sectionCount}` }
         ];
@@ -5978,6 +6175,7 @@
             title: track.title || `Track ${trackIndex + 1}`,
             bpm: Number.isFinite(bpm) ? bpm : null,
             timeSignature: track.timeSignature || 'n/a',
+            capo: Math.max(0, Math.min(11, Number.parseInt(track.capo, 10) || 0)),
             moment: track.moment || '',
             worldCoordinates: normalizeWorldCoordinates(track.worldCoordinates),
             lyricLines,
@@ -6786,6 +6984,10 @@
         if (['guitar', 'ukulele', 'bass', 'violin', 'cello', 'piano'].includes(storedInstrument)) {
             selectedChordInstrument = storedInstrument;
         }
+        const storedCapoFret = Number.parseInt(localStorage.getItem('sioto-chord-capo'), 10);
+        if (Number.isFinite(storedCapoFret) && storedCapoFret >= 0 && storedCapoFret <= 11) {
+            selectedCapoFret = storedCapoFret;
+        }
     } catch {
         // Player preferences are optional when storage is unavailable.
     }
@@ -7154,7 +7356,9 @@
 
             const trackIndex = data.tracks.indexOf(track);
             const playbackStartTime = trackIndex >= 0 ? getPlaybackTimeForSourceTime(trackIndex, startTime) : startTime;
-            const playbackEndTime = trackIndex >= 0 ? getPlaybackTimeForSourceTime(trackIndex, endTime) : endTime;
+            const playbackEndTime = sectionIndex === sections.length - 1
+                ? safeDuration
+                : (trackIndex >= 0 ? getPlaybackTimeForSourceTime(trackIndex, endTime) : endTime);
             const start = Math.max(0, Math.min(1, playbackStartTime / safeDuration));
             const end = Math.max(0, Math.min(1, playbackEndTime / safeDuration));
             return {
@@ -7759,6 +7963,7 @@
         pauseMobileMediaSessionAnchor();
         syncMediaPlayerLifecycle();
         updateLiveTelemetryAnalysis(true);
+        updateSectionNavButtons();
         return Promise.resolve();
     }
 
@@ -7777,6 +7982,7 @@
         }
 
         glSeek.render(getPlaybackDuration() ? getPlaybackCurrentTime() / getPlaybackDuration() : 0);
+        updateSectionNavButtons();
         updateLiveTelemetryAnalysis(true);
         updateMediaSessionPositionState();
 
@@ -8315,10 +8521,11 @@
                         chordSpan.dataset.chord = chord || '';
                         chordSpan.tabIndex = 0;
                         chordSpan.setAttribute('role', 'button');
-                        chordSpan.setAttribute('aria-label', `${chord || 'N/A'} chord. Hover or tap for ${selectedChordInstrument} diagram.`);
+                        chordSpan.setAttribute('aria-label', getChordSlotAriaLabel(chord || ''));
                         const chordLabel = document.createElement('span');
                         chordLabel.className = 'chord';
-                        chordLabel.textContent = chord || 'N/A';
+                        chordSpan.appendChild(chordLabel);
+                        renderChordSlotLabel(chordSpan, chord || '');
                         const chordPreview = document.createElement('span');
                         chordPreview.className = 'chord-preview';
                         const chordValue = document.createElement('span');
@@ -8330,7 +8537,7 @@
                         chordSeekAction.type = 'button';
                         chordSeekAction.textContent = 'Play from here';
                         chordPreview.append(chordValue, chordDiagram, chordSeekAction);
-                        chordSpan.append(chordLabel, chordPreview);
+                        chordSpan.appendChild(chordPreview);
                         renderChordPresentation(chordSpan, chord || '');
                         const progressDiv = document.createElement('div');
                         progressDiv.className = 'chord-progress';
@@ -8391,6 +8598,31 @@
                 structureContent.appendChild(blockDiv);
             }
         });
+
+        if (beatIndex > 0) {
+            const { beatDuration, startOffset } = getTrackTiming(track);
+            const sourceEndTime = getSourceTimeForPlaybackTime(trackIndex, playbackDuration);
+            const totalBeatCount = beatDuration > 0
+                ? Math.max(beatIndex, Math.ceil(Math.max(0, sourceEndTime - startOffset) / beatDuration))
+                : beatIndex;
+            const remainingBeatCount = Math.max(0, totalBeatCount - beatIndex);
+            if (remainingBeatCount > 0) {
+                const renderedChords = structureContent.querySelectorAll('.structure-chord');
+                const lastChord = renderedChords[renderedChords.length - 1];
+                if (lastChord) {
+                    const extendedSpan = (Number.parseInt(lastChord.dataset.span, 10) || 1) + remainingBeatCount;
+                    lastChord.dataset.span = extendedSpan;
+                    lastChord.dataset.extendsToEnd = 'true';
+                    const lastProgress = lastChord.nextElementSibling;
+                    if (lastProgress?.classList.contains('chord-progress')) {
+                        lastProgress.dataset.span = extendedSpan;
+                    }
+                }
+                const renderedSectionLabels = structureContent.querySelectorAll('.section-label');
+                const lastSectionLabel = renderedSectionLabels[renderedSectionLabels.length - 1];
+                if (lastSectionLabel) lastSectionLabel.dataset.beatEnd = totalBeatCount;
+            }
+        }
 
         cachedLyricLines = Array.from(lyricsContent.querySelectorAll('.lyrics-line'));
         cachedLyricTimings = buildLyricTimingEntries(track, cachedLyricLines);
@@ -8908,7 +9140,9 @@
             } else if (action === 'copy-lyrics' && targetTrack) {
                 await copyTextToClipboard(formatTrackLyrics(targetTrack));
             } else if (action === 'copy-chord' && contextTarget.type === 'structure-chord') {
-                const chord = contextTarget.element.querySelector('.chord')?.textContent?.trim() || 'N/A';
+                const chord = contextTarget.element.dataset.chord
+                    || contextTarget.element.querySelector('.chord')?.textContent?.trim()
+                    || 'N/A';
                 const chordData = chordMap.get(chord) || { diagram: '' };
                 await copyTextToClipboard(`${chord}\n${chordData.diagram}`.trim());
             } else if (action === 'copy-chords' && targetTrack) {
@@ -9449,6 +9683,7 @@
     updateVolumeControl();
     updateLoopModeControl();
     if (chordInstrument) chordInstrument.value = selectedChordInstrument;
+    if (chordCapo) chordCapo.value = String(selectedCapoFret);
     updateTrackNavButtons();
     updateSectionNavButtons();
     updateVersionToggleState();
@@ -9544,7 +9779,22 @@
             renderChordPresentation(chordElement, chordElement.dataset.chord || '');
             chordElement.classList.remove('is-diagram-open');
             const chordName = chordElement.dataset.chord || 'N/A';
-            chordElement.setAttribute('aria-label', `${chordName} chord. Hover or tap for ${selectedChordInstrument} diagram.`);
+            chordElement.setAttribute('aria-label', getChordSlotAriaLabel(chordName));
+        });
+    });
+
+    chordCapo?.addEventListener('change', () => {
+        const nextCapoFret = Number.parseInt(chordCapo.value, 10);
+        selectedCapoFret = Number.isFinite(nextCapoFret)
+            ? Math.max(0, Math.min(11, nextCapoFret))
+            : 0;
+        try { localStorage.setItem('sioto-chord-capo', String(selectedCapoFret)); } catch {}
+        structureContent.querySelectorAll('.structure-chord').forEach(chordElement => {
+            const chordName = chordElement.dataset.chord || '';
+            renderChordSlotLabel(chordElement, chordName);
+            renderChordPresentation(chordElement, chordName);
+            chordElement.classList.remove('is-diagram-open');
+            chordElement.setAttribute('aria-label', getChordSlotAriaLabel(chordName));
         });
     });
 
@@ -9800,9 +10050,11 @@
                 const beatStartTime = currentTrackIndex >= 0
                     ? getPlaybackTimeForSourceTime(currentTrackIndex, beatSourceStartTime)
                     : beatSourceStartTime;
-                const beatEndTime = currentTrackIndex >= 0
-                    ? getPlaybackTimeForSourceTime(currentTrackIndex, beatSourceEndTime)
-                    : beatSourceEndTime;
+                const beatEndTime = chord.dataset.extendsToEnd === 'true'
+                    ? duration
+                    : (currentTrackIndex >= 0
+                        ? getPlaybackTimeForSourceTime(currentTrackIndex, beatSourceEndTime)
+                        : beatSourceEndTime);
                 const beatPlaybackDuration = Math.max(0.001, beatEndTime - beatStartTime);
                 let p = 0;
                 if (currentTime >= beatEndTime) p = 100;
