@@ -3105,9 +3105,10 @@
             }
             .chord-preview {
                 position: fixed;
-                left: 50%;
-                bottom: calc(var(--mobile-player-height) + env(safe-area-inset-bottom) + 10px);
-                transform: translate(-50%, 5px);
+                left: var(--chord-preview-left, 50%);
+                top: var(--chord-preview-top, 8px);
+                bottom: auto;
+                transform: translate(-50%, 0);
             }
             .structure-chord:not(.is-diagram-dismissed):hover .chord-preview,
             .structure-chord.is-diagram-open .chord-preview {
@@ -3869,6 +3870,55 @@
             if (presentation.isHtml) diagram.innerHTML = presentation.diagram;
             else diagram.textContent = presentation.diagram;
         }
+    }
+
+    function positionMobileChordPreview(chordElement) {
+        if (!chordElement || !window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+        const preview = chordElement.querySelector('.chord-preview');
+        if (!preview || !chordElement.classList.contains('is-diagram-open')) return;
+
+        const margin = 8;
+        const gap = 8;
+        const anchorRect = chordElement.getBoundingClientRect();
+        const previewRect = preview.getBoundingClientRect();
+        const previewWidth = previewRect.width || 244;
+        const previewHeight = previewRect.height || 210;
+        const halfWidth = previewWidth / 2;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const panelRect = chordElement.closest('.tab-panel')?.getBoundingClientRect();
+        const usableTop = panelRect ? Math.max(margin, panelRect.top + margin) : margin;
+        const playerTop = playerBasic?.getBoundingClientRect().top;
+        const panelBottom = panelRect ? Math.min(viewportHeight - margin, panelRect.bottom - margin) : viewportHeight - margin;
+        const usableBottom = Number.isFinite(playerTop) && playerTop > anchorRect.bottom
+            ? Math.min(panelBottom, playerTop - margin)
+            : panelBottom;
+
+        const anchorCenter = anchorRect.left + anchorRect.width / 2;
+        const left = Math.max(margin + halfWidth, Math.min(viewportWidth - margin - halfWidth, anchorCenter));
+        const topPosition = anchorRect.top - gap - previewHeight;
+        const bottomPosition = anchorRect.bottom + gap;
+        let top;
+
+        if (topPosition >= usableTop) {
+            top = topPosition;
+        } else if (bottomPosition + previewHeight <= usableBottom) {
+            top = bottomPosition;
+        } else {
+            top = Math.max(usableTop, Math.min(topPosition, usableBottom - previewHeight));
+        }
+
+        preview.style.setProperty('--chord-preview-left', `${left}px`);
+        preview.style.setProperty('--chord-preview-top', `${top}px`);
+
+        // A transformed tab panel becomes the containing block for fixed descendants.
+        // Correct from that local coordinate space back to the requested viewport point.
+        const positionedRect = preview.getBoundingClientRect();
+        const positionedCenter = positionedRect.left + positionedRect.width / 2;
+        const correctedLeft = left + (left - positionedCenter);
+        const correctedTop = top + (top - positionedRect.top);
+        preview.style.setProperty('--chord-preview-left', `${correctedLeft}px`);
+        preview.style.setProperty('--chord-preview-top', `${correctedTop}px`);
     }
 
     function getTrackStatusLabel(status) {
@@ -8312,6 +8362,9 @@
                                 });
                                 chordSpan.classList.toggle('is-diagram-dismissed', !willOpen);
                                 chordSpan.classList.toggle('is-diagram-open', willOpen);
+                                if (willOpen) {
+                                    requestAnimationFrame(() => positionMobileChordPreview(chordSpan));
+                                }
                                 return;
                             }
                             chordSpan.classList.remove('is-diagram-open');
@@ -9467,7 +9520,11 @@
 
     volumeControl?.addEventListener('pointerenter', queueVolumePopoverPosition, { passive: true });
     volumeControl?.addEventListener('focusin', queueVolumePopoverPosition);
-    window.addEventListener('resize', queueVolumePopoverPosition);
+    window.addEventListener('resize', () => {
+        queueVolumePopoverPosition();
+        const openChord = structureContent.querySelector('.structure-chord.is-diagram-open');
+        if (openChord) requestAnimationFrame(() => positionMobileChordPreview(openChord));
+    });
 
     volumeSlider?.addEventListener('input', () => {
         setPlayerVolume(Number.parseFloat(volumeSlider.value) / 100);
