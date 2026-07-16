@@ -1167,6 +1167,19 @@
             font-weight: 900;
             line-height: 1;
         }
+        .loop-mode-btn[data-loop-mode="none"]::after {
+            content: '';
+            position: absolute;
+            width: 17px;
+            height: 2px;
+            left: 50%;
+            top: 50%;
+            background: #fff;
+            border-radius: 2px;
+            box-shadow: 0 0 0 1px rgba(var(--club-blue-night-rgb), 0.5);
+            transform: translate(-50%, -50%) rotate(-45deg);
+            pointer-events: none;
+        }
         .loop-mode-btn[data-loop-mode="track"],
         .loop-mode-btn[data-loop-mode="album"],
         .volume-btn[aria-pressed="true"] {
@@ -1753,7 +1766,15 @@
             overflow-y: hidden;
             overscroll-behavior-x: contain;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
+            scrollbar-width: none;
+            background:
+                linear-gradient(90deg, var(--club-blue-ice) 38%, rgba(255, 255, 255, 0)) left center / 28px 100% no-repeat local,
+                linear-gradient(270deg, var(--club-blue-ice) 38%, rgba(255, 255, 255, 0)) right center / 28px 100% no-repeat local,
+                radial-gradient(farthest-side at 0 50%, rgba(var(--club-blue-night-rgb), 0.16), transparent) left center / 9px 100% no-repeat scroll,
+                radial-gradient(farthest-side at 100% 50%, rgba(var(--club-blue-night-rgb), 0.16), transparent) right center / 9px 100% no-repeat scroll;
+        }
+        .song-info-grid::-webkit-scrollbar {
+            display: none;
         }
         .song-info-stat {
             flex: 1 0 96px;
@@ -1845,6 +1866,7 @@
             opacity: 0.56;
         }
         .credits {
+            flex: 0 0 auto;
             min-height: 100%;
             padding: 10px 13px;
             background:
@@ -2920,9 +2942,6 @@
         @media (max-width: 768px) {
             :root {
                 --mobile-player-height: 78px;
-                --mobile-cover-height: 100vw;
-                --mobile-cover-opacity: 1;
-                --mobile-cover-transition-duration: 0.64s;
             }
             body {
                 overflow: hidden;
@@ -2955,24 +2974,19 @@
                 z-index: 5;
             }
             .player-cover {
-                order: 0;
                 width: 100%;
-                height: var(--mobile-cover-height);
+                height: 100vw;
                 min-height: 0;
                 max-height: none;
                 aspect-ratio: auto;
-                flex-basis: auto;
+                flex: 0 0 100vw;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 background:
                     linear-gradient(180deg, rgba(var(--club-blue-night-rgb), 0.1), rgba(var(--club-blue-night-rgb), 0.28));
                 box-shadow: 0 18px 38px rgba(var(--club-blue-night-rgb), 0.18);
-                opacity: var(--mobile-cover-opacity);
                 overflow: hidden;
-                transition:
-                    height var(--mobile-cover-transition-duration) ease-out,
-                    opacity var(--mobile-cover-transition-duration) ease-out;
             }
             .player-cover img {
                 width: 100%;
@@ -3010,19 +3024,32 @@
                 display: none;
             }
             .tab-nav {
-                order: 1;
-                position: relative;
+                position: sticky;
+                top: 0;
                 z-index: 6;
             }
             .tab-content {
                 order: 2;
                 min-height: 0;
-            }
-            .tab-panel {
                 overflow-y: auto;
                 overflow-x: hidden;
                 overscroll-behavior-y: contain;
                 -webkit-overflow-scrolling: touch;
+            }
+            .tab-panel {
+                display: none;
+                position: relative;
+                inset: auto;
+                overflow: visible;
+                opacity: 1;
+                transform: none;
+                pointer-events: auto;
+                transition: none;
+                will-change: auto;
+            }
+            .tab-panel.active {
+                display: flex;
+                transform: none;
             }
             .title-container {
                 font-size: 24px;
@@ -3370,7 +3397,7 @@
                                 <input class="volume-slider" id="volume-slider" type="range" min="0" max="100" step="1" value="100" aria-label="Volume" aria-orientation="vertical" orient="vertical">
                             </div>
                         </div>
-                        <button class="loop-mode-btn" id="loop-mode-btn" type="button" data-loop-mode="none" aria-label="Looping: off" title="Looping: off"><i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i></button>
+                        <button class="loop-mode-btn" id="loop-mode-btn" type="button" data-loop-mode="none" aria-label="Looping: off" title="Looping: off"><i class="fa-solid fa-repeat" aria-hidden="true"></i></button>
                         <button class="track-nav-btn audio-quality-toggle" id="audio-quality-toggle" type="button" aria-pressed="false" aria-label="Exceptional Quality" title="Switch to Exceptional Quality (WAV)"><i class="fa-solid fa-gem" aria-hidden="true"></i></button>
                     </div>
                     <span class="tempo-dino" id="tempo-dino" aria-hidden="true">
@@ -6768,7 +6795,6 @@
         if (appContainer) {
             appContainer.classList.toggle('telemetry-expanded', tabId === 'telemetry');
         }
-        bindMobileCoverScrollPanel();
         if (tabId === 'lyrics') {
             requestAnimationFrame(recomputeChordLayout);
         }
@@ -6782,132 +6808,26 @@
         appContainer.classList.toggle('telemetry-expanded', tabNav.querySelector('.tab-btn.active')?.dataset.tab === 'telemetry');
     }
 
-    const mobileCoverShrink = {
-        activePanel: null,
-        hidden: false,
-        progress: 0,
-        touching: false,
-        rendering: false,
-        lastTouchY: null,
-        lastScrollTop: 0,
-        scrollEndTimer: 0,
-        lastDirection: 0
-    };
-    let sharedTabScrollTop = 0;
-    const MOBILE_SCROLL_END_DELAY_MS = 150;
+    const tabContent = document.querySelector('.tab-content');
+    const playerCover = document.querySelector('.player-cover');
 
-    function getMobileCoverRange() {
-        const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
-        const containerWidth = appContainer?.clientWidth || viewportWidth;
-        const expanded = Math.max(0, containerWidth);
-        return { expanded, collapsed: 0 };
-    }
-
-    function renderMobileCoverProgress(progress = mobileCoverShrink.progress, { animate = false } = {}) {
-        if (!appContainer || window.matchMedia('(min-width: 769px)').matches) {
-            appContainer?.style.removeProperty('--mobile-cover-height');
-            appContainer?.style.removeProperty('--mobile-cover-opacity');
-            appContainer?.style.removeProperty('--mobile-cover-transition-duration');
-            mobileCoverShrink.hidden = false;
-            mobileCoverShrink.progress = 0;
+    function syncMobileScrollLayout() {
+        if (!appContainer || !playerBasic || !playerCover || !tabContent) return;
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            if (playerCover.parentElement !== tabContent || tabNav.parentElement !== tabContent) {
+                tabContent.prepend(playerCover, tabNav);
+            }
             return;
         }
 
-        const { expanded, collapsed } = getMobileCoverRange();
-        mobileCoverShrink.progress = Math.max(collapsed, Math.min(expanded, Number.parseFloat(progress) || 0));
-        mobileCoverShrink.hidden = mobileCoverShrink.progress >= expanded - 0.5;
-        const height = Math.max(collapsed, expanded - mobileCoverShrink.progress);
-        const opacity = expanded > 0 ? height / expanded : 0;
-        mobileCoverShrink.rendering = true;
-        appContainer.style.setProperty('--mobile-cover-transition-duration', animate ? '0.38s' : '0s');
-        appContainer.style.setProperty('--mobile-cover-height', `${Math.round(height)}px`);
-        appContainer.style.setProperty('--mobile-cover-opacity', opacity.toFixed(3));
-        requestAnimationFrame(() => {
-            mobileCoverShrink.rendering = false;
-        });
-    }
-
-    function snapMobileCoverAfterGesture() {
-        if (window.matchMedia('(min-width: 769px)').matches) return;
-        const { expanded } = getMobileCoverRange();
-        const shouldHide = mobileCoverShrink.progress >= expanded * 0.42
-            && mobileCoverShrink.lastDirection >= 0;
-        renderMobileCoverProgress(shouldHide ? expanded : 0, { animate: true });
-    }
-
-    function handleSharedTabScroll() {
-        if (!mobileCoverShrink.activePanel) return;
-        const nextScrollTop = mobileCoverShrink.activePanel.scrollTop || 0;
-        const delta = nextScrollTop - mobileCoverShrink.lastScrollTop;
-        sharedTabScrollTop = nextScrollTop;
-        mobileCoverShrink.lastScrollTop = nextScrollTop;
-        if (!mobileCoverShrink.touching && !mobileCoverShrink.rendering && delta !== 0) {
-            mobileCoverShrink.lastDirection = Math.sign(delta);
-            renderMobileCoverProgress(mobileCoverShrink.progress + delta);
+        if (playerCover.parentElement !== playerBasic) playerBasic.prepend(playerCover);
+        if (tabNav.parentElement !== appContainer || tabNav.nextElementSibling !== tabContent) {
+            appContainer.insertBefore(tabNav, tabContent);
         }
-        if (mobileCoverShrink.touching) return;
-        window.clearTimeout(mobileCoverShrink.scrollEndTimer);
-        mobileCoverShrink.scrollEndTimer = window.setTimeout(
-            snapMobileCoverAfterGesture,
-            MOBILE_SCROLL_END_DELAY_MS
-        );
     }
 
-    function handleSharedTabTouchStart(event) {
-        mobileCoverShrink.touching = true;
-        mobileCoverShrink.lastTouchY = event.touches?.[0]?.clientY ?? null;
-        window.clearTimeout(mobileCoverShrink.scrollEndTimer);
-        renderMobileCoverProgress(mobileCoverShrink.progress);
-    }
-
-    function handleSharedTabTouchMove(event) {
-        const currentY = event.touches?.[0]?.clientY;
-        if (!Number.isFinite(currentY)) return;
-        if (Number.isFinite(mobileCoverShrink.lastTouchY)) {
-            const delta = mobileCoverShrink.lastTouchY - currentY;
-            if (delta !== 0) {
-                mobileCoverShrink.lastDirection = Math.sign(delta);
-                renderMobileCoverProgress(mobileCoverShrink.progress + delta);
-            }
-        }
-        mobileCoverShrink.lastTouchY = currentY;
-    }
-
-    function handleSharedTabTouchEnd() {
-        if (!mobileCoverShrink.activePanel) return;
-        mobileCoverShrink.touching = false;
-        mobileCoverShrink.lastTouchY = null;
-        window.clearTimeout(mobileCoverShrink.scrollEndTimer);
-        if (mobileCoverShrink.activePanel.scrollTop <= 1) sharedTabScrollTop = 0;
-        snapMobileCoverAfterGesture();
-    }
-
-    function bindMobileCoverScrollPanel() {
-        mobileCoverShrink.activePanel?.removeEventListener('scroll', handleSharedTabScroll);
-        mobileCoverShrink.activePanel?.removeEventListener('touchstart', handleSharedTabTouchStart);
-        mobileCoverShrink.activePanel?.removeEventListener('touchmove', handleSharedTabTouchMove);
-        mobileCoverShrink.activePanel?.removeEventListener('touchend', handleSharedTabTouchEnd);
-        mobileCoverShrink.activePanel?.removeEventListener('touchcancel', handleSharedTabTouchEnd);
-        const activePanel = document.querySelector('.tab-panel.active');
-        mobileCoverShrink.activePanel = activePanel;
-        if (!activePanel) return;
-        const maxScrollTop = Math.max(0, activePanel.scrollHeight - activePanel.clientHeight);
-        activePanel.scrollTop = Math.min(sharedTabScrollTop, maxScrollTop);
-        mobileCoverShrink.lastScrollTop = activePanel.scrollTop || 0;
-        activePanel.addEventListener('scroll', handleSharedTabScroll, { passive: true });
-        activePanel.addEventListener('touchstart', handleSharedTabTouchStart, { passive: true });
-        activePanel.addEventListener('touchmove', handleSharedTabTouchMove, { passive: true });
-        activePanel.addEventListener('touchend', handleSharedTabTouchEnd, { passive: true });
-        activePanel.addEventListener('touchcancel', handleSharedTabTouchEnd, { passive: true });
-        renderMobileCoverProgress(mobileCoverShrink.progress);
-    }
-
-    bindMobileCoverScrollPanel();
-    window.addEventListener('resize', () => {
-        const wasHidden = mobileCoverShrink.hidden;
-        bindMobileCoverScrollPanel();
-        if (wasHidden) renderMobileCoverProgress(getMobileCoverRange().expanded);
-    });
+    syncMobileScrollLayout();
+    window.addEventListener('resize', syncMobileScrollLayout);
 
     telemetrySongs.addEventListener('click', (e) => {
         const waveform = e.target.closest('.telemetry-wave');
@@ -7053,7 +6973,7 @@
         loopModeBtn.setAttribute('aria-label', labels[loopMode]);
         loopModeBtn.title = `${labels[loopMode]}. Click to change.`;
         const icon = loopModeBtn.querySelector('i');
-        if (icon) icon.className = `fa-solid ${loopMode === 'none' ? 'fa-arrow-right-long' : 'fa-repeat'}`;
+        if (icon) icon.className = 'fa-solid fa-repeat';
     }
 
     function setLoopMode(nextMode) {
