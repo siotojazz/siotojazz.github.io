@@ -979,8 +979,69 @@
         .player-basic .seek-bar-container {
             padding: 2px 8px 5px;
         }
-        .live-lyrics {
+        .live-lyrics-stage {
             flex: 1 1 auto;
+            min-height: 98px;
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+        }
+        .live-lyrics-waveform {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.34;
+            transition: opacity 0.55s ease;
+        }
+        .live-lyrics-waveform.has-active-lyric {
+            opacity: 0.075;
+        }
+        .live-waveform-cursor {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 2px;
+            height: var(--live-waveform-cursor-height, 10px);
+            min-height: 10px;
+            background: #104297;
+            box-shadow: 0 0 8px rgba(16, 66, 151, 0.72);
+            opacity: 0.88;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.55s ease;
+            pointer-events: none;
+        }
+        .live-waveform-cursor.has-active-lyric {
+            opacity: 0.16;
+        }
+        .live-waveform-cursor-dot {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 7px;
+            height: 7px;
+            border: 2px solid #104297;
+            border-radius: 50%;
+            background: #eef4ff;
+            box-shadow: 0 0 7px rgba(16, 66, 151, 0.72);
+            opacity: 0.88;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.55s ease;
+            pointer-events: none;
+        }
+        .live-waveform-cursor-dot.has-active-lyric {
+            opacity: 0.16;
+        }
+        .live-lyrics {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
             min-height: 98px;
             padding: 9px 16px 11px;
             overflow: hidden;
@@ -990,8 +1051,6 @@
             align-items: center;
             gap: 4px;
             color: var(--club-blue-strong);
-            position: relative;
-            isolation: isolate;
             background:
                 linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.54) 24%, rgba(var(--club-blue-soft-rgb), 0.12) 50%, rgba(255, 255, 255, 0.5) 76%, transparent),
                 linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(var(--club-blue-rgb), 0.06));
@@ -3020,7 +3079,7 @@
             .player-basic .seek-bar-container {
                 padding: 2px 12px 4px;
             }
-            .live-lyrics {
+            .live-lyrics-stage {
                 display: none;
             }
             .tab-nav {
@@ -3446,7 +3505,12 @@
                 <canvas id="seek-gl" width="600" height="16"></canvas>
                 <div class="seek-section-tooltip" id="seek-section-tooltip" role="tooltip"></div>
             </div>
-            <div class="live-lyrics" id="live-lyrics" aria-live="polite"></div>
+            <div class="live-lyrics-stage">
+                <canvas class="live-lyrics-waveform" id="lyrics-waveform" aria-hidden="true"></canvas>
+                <span class="live-waveform-cursor" id="live-waveform-cursor" aria-hidden="true"></span>
+                <span class="live-waveform-cursor-dot" id="live-waveform-cursor-dot" aria-hidden="true"></span>
+                <div class="live-lyrics" id="live-lyrics" aria-live="polite"></div>
+            </div>
         </div>
         <audio id="audio-player" crossorigin="anonymous"></audio>
     </div>
@@ -4197,6 +4261,9 @@
     let deferredPageMediaReleased = false;
     let queueAlbumCoverSourceUpdate = () => {};
     const songInfoHost = document.getElementById('song-info-host');
+    const lyricsWaveformCanvas = document.getElementById('lyrics-waveform');
+    const liveWaveformCursor = document.getElementById('live-waveform-cursor');
+    const liveWaveformCursorDot = document.getElementById('live-waveform-cursor-dot');
     let audio = document.getElementById('audio-player');
     // Web Audio remains the sample-accurate transport everywhere. On mobile, a
     // silent HTMLMediaElement keeps the OS media session and lock-screen controls alive.
@@ -7884,6 +7951,7 @@
         syncMediaPlayerLifecycle();
         updateLiveTelemetryAnalysis(true);
         updateSectionNavButtons();
+        renderLyricsWaveform(getPlaybackCurrentTime(), { force: true });
         return Promise.resolve();
     }
 
@@ -7903,6 +7971,7 @@
 
         glSeek.render(getPlaybackDuration() ? getPlaybackCurrentTime() / getPlaybackDuration() : 0);
         updateSectionNavButtons();
+        renderLyricsWaveform(getPlaybackCurrentTime(), { force: true });
         updateLiveTelemetryAnalysis(true);
         updateMediaSessionPositionState();
 
@@ -8546,6 +8615,7 @@
 
         cachedLyricLines = Array.from(lyricsContent.querySelectorAll('.lyrics-line'));
         cachedLyricTimings = buildLyricTimingEntries(track, cachedLyricLines);
+        requestAnimationFrame(() => renderLyricsWaveform(targetTime, { force: true }));
         cachedChordElements = Array.from(structureContent.querySelectorAll('.structure-chord'));
         cachedChordContainers = [];
         cachedChordOverlay = window.getChordOverlayRenderer
@@ -9781,6 +9851,157 @@
     let cachedChordContainers = [];
     let cachedChordOverlay = null;
     let lastActiveChord = null;
+    let lyricsWaveformLastDrawAt = 0;
+    const lyricsWaveformEnvelopeCache = new Map();
+
+    function getStableLyricsWaveformEnvelope(trackIndex, audioBuffer) {
+        const cachedEnvelope = lyricsWaveformEnvelopeCache.get(trackIndex);
+        if (cachedEnvelope?.audioBuffer === audioBuffer) return cachedEnvelope;
+
+        const pointsPerSecond = 80;
+        const pointCount = Math.max(1, Math.ceil(audioBuffer.duration * pointsPerSecond));
+        const rawValues = new Float32Array(pointCount);
+        const channels = Array.from(
+            { length: Math.min(2, audioBuffer.numberOfChannels) },
+            (_, channelIndex) => audioBuffer.getChannelData(channelIndex)
+        );
+        const samplesPerPoint = audioBuffer.sampleRate / pointsPerSecond;
+
+        for (let pointIndex = 0; pointIndex < pointCount; pointIndex += 1) {
+            const sampleStart = Math.floor(pointIndex * samplesPerPoint);
+            const sampleEnd = Math.min(audioBuffer.length, Math.ceil((pointIndex + 1) * samplesPerPoint));
+            const sampleStep = Math.max(1, Math.floor((sampleEnd - sampleStart) / 48));
+            let energy = 0;
+            let peak = 0;
+            let sampleCount = 0;
+            for (let sampleIndex = sampleStart; sampleIndex < sampleEnd; sampleIndex += sampleStep) {
+                let combinedSample = 0;
+                for (const channel of channels) combinedSample += Math.abs(channel[sampleIndex] || 0);
+                combinedSample /= Math.max(1, channels.length);
+                energy += combinedSample * combinedSample;
+                peak = Math.max(peak, combinedSample);
+                sampleCount += 1;
+            }
+            const rms = sampleCount > 0 ? Math.sqrt(energy / sampleCount) : 0;
+            rawValues[pointIndex] = Math.min(1, rms * 2.35 + peak * 0.16);
+        }
+
+        const values = new Float32Array(pointCount);
+        for (let pointIndex = 0; pointIndex < pointCount; pointIndex += 1) {
+            let weightedValue = 0;
+            let totalWeight = 0;
+            for (let offset = -2; offset <= 2; offset += 1) {
+                const sourceIndex = pointIndex + offset;
+                if (sourceIndex < 0 || sourceIndex >= pointCount) continue;
+                const weight = 3 - Math.abs(offset);
+                weightedValue += rawValues[sourceIndex] * weight;
+                totalWeight += weight;
+            }
+            values[pointIndex] = totalWeight > 0 ? weightedValue / totalWeight : rawValues[pointIndex];
+        }
+
+        const envelope = { audioBuffer, pointsPerSecond, values };
+        lyricsWaveformEnvelopeCache.set(trackIndex, envelope);
+        return envelope;
+    }
+
+    function renderLyricsWaveform(currentTime = getPlaybackCurrentTime(), { force = false } = {}) {
+        if (!lyricsWaveformCanvas || !currentTrack || selectedTrackIndex < 0) return;
+        const now = performance.now();
+        if (!force && now - lyricsWaveformLastDrawAt < 33) return;
+
+        const audioBuffer = preloadedTrackAudio.get(selectedTrackIndex)?.audioBuffer;
+        const width = Math.round(lyricsWaveformCanvas.clientWidth);
+        const height = Math.round(lyricsWaveformCanvas.clientHeight);
+        const duration = getPlaybackDuration();
+        if (!audioBuffer || width <= 0 || height <= 0 || duration <= 0) return;
+        lyricsWaveformLastDrawAt = now;
+
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        const pixelWidth = Math.max(1, Math.round(width * dpr));
+        const pixelHeight = Math.max(1, Math.round(height * dpr));
+        if (lyricsWaveformCanvas.width !== pixelWidth || lyricsWaveformCanvas.height !== pixelHeight) {
+            lyricsWaveformCanvas.width = pixelWidth;
+            lyricsWaveformCanvas.height = pixelHeight;
+        }
+
+        const context = lyricsWaveformCanvas.getContext('2d');
+        if (!context) return;
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        context.clearRect(0, 0, width, height);
+
+        const windowDuration = 10;
+        const windowStart = currentTime - 5;
+        const windowEnd = currentTime + 5;
+        const centerY = height / 2;
+        const envelope = getStableLyricsWaveformEnvelope(selectedTrackIndex, audioBuffer);
+        const amplitudes = new Float32Array(width);
+
+        for (let x = 0; x < width; x += 1) {
+            const playbackTime = windowStart + (x / Math.max(1, width - 1)) * windowDuration;
+            if (playbackTime < 0 || playbackTime > duration) continue;
+            const sourceTime = getSourceTimeForPlaybackTime(selectedTrackIndex, playbackTime);
+            const envelopePosition = Math.max(0, Math.min(envelope.values.length - 1, sourceTime * envelope.pointsPerSecond));
+            const lowerIndex = Math.floor(envelopePosition);
+            const upperIndex = Math.min(envelope.values.length - 1, lowerIndex + 1);
+            const interpolation = envelopePosition - lowerIndex;
+            amplitudes[x] = envelope.values[lowerIndex]
+                + (envelope.values[upperIndex] - envelope.values[lowerIndex]) * interpolation;
+        }
+
+        const timing = getTrackTiming(currentTrack);
+        if (timing.beatDuration > 0) {
+            const sourceWindowStart = getSourceTimeForPlaybackTime(selectedTrackIndex, Math.max(0, windowStart));
+            const sourceWindowEnd = getSourceTimeForPlaybackTime(selectedTrackIndex, Math.min(duration, windowEnd));
+            const firstBeat = Math.floor((sourceWindowStart - timing.startOffset) / timing.beatDuration) - 1;
+            const lastBeat = Math.ceil((sourceWindowEnd - timing.startOffset) / timing.beatDuration) + 1;
+            context.lineWidth = 1;
+            for (let beatIndex = Math.max(0, firstBeat); beatIndex <= lastBeat; beatIndex += 1) {
+                const sourceBeatTime = timing.startOffset + beatIndex * timing.beatDuration;
+                const playbackBeatTime = getPlaybackTimeForSourceTime(selectedTrackIndex, sourceBeatTime);
+                if (playbackBeatTime < windowStart || playbackBeatTime > windowEnd) continue;
+                const x = ((playbackBeatTime - windowStart) / windowDuration) * width;
+                context.beginPath();
+                context.moveTo(Math.round(x) + 0.5, 0);
+                context.lineTo(Math.round(x) + 0.5, height);
+                context.strokeStyle = 'rgba(31, 86, 180, 0.24)';
+                context.stroke();
+            }
+        }
+
+        const waveformGradient = context.createLinearGradient(0, 0, width, 0);
+        waveformGradient.addColorStop(0, 'rgba(35, 107, 208, 0.42)');
+        waveformGradient.addColorStop(0.5, 'rgba(31, 86, 180, 0.9)');
+        waveformGradient.addColorStop(1, 'rgba(35, 107, 208, 0.42)');
+        context.beginPath();
+        context.moveTo(0, centerY);
+        for (let x = 0; x < width; x += 1) {
+            context.lineTo(x, centerY - amplitudes[x] * height * 0.34);
+        }
+        for (let x = width - 1; x >= 0; x -= 1) {
+            context.lineTo(x, centerY + amplitudes[x] * height * 0.34);
+        }
+        context.closePath();
+        context.fillStyle = waveformGradient;
+        context.fill();
+
+        const cursorAmplitude = amplitudes[Math.max(0, Math.min(width - 1, Math.round(width / 2)))] || 0;
+        const targetCursorHeight = Math.max(10, cursorAmplitude * height * 0.68);
+        liveWaveformCursor?.style.setProperty('--live-waveform-cursor-height', `${targetCursorHeight}px`);
+
+        const hasActiveLyric = cachedLyricTimings.some(timingEntry =>
+            currentTime >= timingEntry.startTime && currentTime < timingEntry.endTime
+        );
+        lyricsWaveformCanvas.classList.toggle('has-active-lyric', hasActiveLyric);
+        liveWaveformCursor?.classList.toggle('has-active-lyric', hasActiveLyric);
+        liveWaveformCursorDot?.classList.toggle('has-active-lyric', hasActiveLyric);
+    }
+
+    if (lyricsWaveformCanvas && window.ResizeObserver) {
+        new ResizeObserver(() => {
+            if (currentTrack) requestAnimationFrame(() => renderLyricsWaveform(getPlaybackCurrentTime(), { force: true }));
+        }).observe(lyricsWaveformCanvas);
+    }
 
     // Recompute chord overlay layout when player becomes visible or viewport changes
     function recomputeChordLayout() {
@@ -9873,10 +10094,10 @@
     function updateProgressBars() {
         if (!currentTrack) return;
         syncActiveTrackToPlaybackTime();
-        if (isPlaybackPaused()) return;
-
         const currentTime = getPlaybackCurrentTime();
         const duration = getPlaybackDuration();
+        renderLyricsWaveform(currentTime);
+        if (isPlaybackPaused()) return;
         maybePrepareNextTrack(currentTime, duration);
         
         // Update timeline text (throttle to reduce DOM writes)
