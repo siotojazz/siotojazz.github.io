@@ -9962,6 +9962,20 @@
     let lastActiveChord = null;
     let lyricsWaveformLastDrawAt = 0;
     const lyricsWaveformEnvelopeCache = new Map();
+    let lyricsWaveformSectionPalette = null;
+
+    function getLyricsWaveformSectionPalette() {
+        if (lyricsWaveformSectionPalette) return lyricsWaveformSectionPalette;
+        const rootStyle = getComputedStyle(document.documentElement);
+        const readRgb = (variable, fallback) => rootStyle.getPropertyValue(variable).trim() || fallback;
+        const fillBright = readRgb('--club-blue-bright-rgb', '35, 107, 208');
+        const fill = readRgb('--club-blue-rgb', '27, 53, 156');
+        const deep = readRgb('--club-blue-deep-rgb', '17, 71, 159');
+        const border = readRgb('--club-blue-strong-rgb', '19, 37, 109');
+        const night = readRgb('--club-blue-night-rgb', '8, 32, 94');
+        lyricsWaveformSectionPalette = [fillBright, fill, deep, border, night, fill, deep, fillBright];
+        return lyricsWaveformSectionPalette;
+    }
 
     function getStableLyricsWaveformEnvelope(trackIndex, audioBuffer) {
         const cachedEnvelope = lyricsWaveformEnvelopeCache.get(trackIndex);
@@ -10046,6 +10060,20 @@
         const centerY = height / 2;
         const envelope = getStableLyricsWaveformEnvelope(selectedTrackIndex, audioBuffer);
         const amplitudes = new Float32Array(width);
+
+        const sectionPalette = getLyricsWaveformSectionPalette();
+        for (const section of currentSeekSections) {
+            const sectionStartTime = section.start * duration;
+            const sectionEndTime = section.end * duration;
+            const visibleStartTime = Math.max(windowStart, sectionStartTime);
+            const visibleEndTime = Math.min(windowEnd, sectionEndTime);
+            if (visibleEndTime <= visibleStartTime) continue;
+            const sectionX = ((visibleStartTime - windowStart) / windowDuration) * width;
+            const sectionWidth = ((visibleEndTime - visibleStartTime) / windowDuration) * width;
+            const sectionRgb = sectionPalette[(section.index || 0) % sectionPalette.length];
+            context.fillStyle = `rgba(${sectionRgb}, 0.34)`;
+            context.fillRect(sectionX, 0, Math.max(1, sectionWidth), height);
+        }
 
         for (let x = 0; x < width; x += 1) {
             const playbackTime = windowStart + (x / Math.max(1, width - 1)) * windowDuration;
