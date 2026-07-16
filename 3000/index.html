@@ -445,6 +445,30 @@
             width: 100%;
         }
 
+        .audio-preloader__race {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -16px;
+            z-index: 3;
+            height: 82px;
+            pointer-events: none;
+        }
+
+        .audio-preloader__racing-dino {
+            position: absolute;
+            left: 0;
+            bottom: -3px;
+            width: 82px;
+            height: 82px;
+            background-position: 0 0;
+            background-size: 600% 600%;
+            background-repeat: no-repeat;
+            filter: drop-shadow(0 5px 8px rgba(2, 17, 55, 0.36));
+            transform: translateX(0);
+            will-change: left, transform, background-position;
+        }
+
         .audio-preloader__percent {
             margin-top: 7px;
             font-size: 11px;
@@ -995,47 +1019,21 @@
             height: 100%;
             pointer-events: none;
             opacity: 0.34;
-            transition: opacity 0.55s ease;
         }
-        .live-lyrics-waveform.has-active-lyric {
-            opacity: 0.075;
-        }
-        .live-waveform-cursor {
+        .live-waveform-dino {
             position: absolute;
-            left: 50%;
+            left: 10%;
             top: 50%;
             z-index: 1;
-            width: 2px;
-            height: var(--live-waveform-cursor-height, 10px);
-            min-height: 10px;
-            background: #104297;
-            box-shadow: 0 0 8px rgba(16, 66, 151, 0.72);
-            opacity: 0.88;
+            width: 78px;
+            height: 78px;
+            opacity: 0.93;
+            filter: drop-shadow(0 2px 4px rgba(16, 66, 151, 0.34));
+            background-position: 0 0;
+            background-size: 600% 600%;
+            background-repeat: no-repeat;
             transform: translate(-50%, -50%);
-            transition: opacity 0.55s ease;
             pointer-events: none;
-        }
-        .live-waveform-cursor.has-active-lyric {
-            opacity: 0.16;
-        }
-        .live-waveform-cursor-dot {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            z-index: 1;
-            width: 7px;
-            height: 7px;
-            border: 2px solid #104297;
-            border-radius: 50%;
-            background: #eef4ff;
-            box-shadow: 0 0 7px rgba(16, 66, 151, 0.72);
-            opacity: 0.88;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.55s ease;
-            pointer-events: none;
-        }
-        .live-waveform-cursor-dot.has-active-lyric {
-            opacity: 0.16;
         }
         .live-lyrics {
             position: relative;
@@ -1045,15 +1043,12 @@
             min-height: 98px;
             padding: 9px 16px 11px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            display: grid;
+            grid-template-rows: 1fr auto 1fr;
             align-items: center;
             gap: 4px;
             color: var(--club-blue-strong);
-            background:
-                linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.54) 24%, rgba(var(--club-blue-soft-rgb), 0.12) 50%, rgba(255, 255, 255, 0.5) 76%, transparent),
-                linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(var(--club-blue-rgb), 0.06));
+            background: transparent;
             border-top: 1px solid rgba(var(--club-blue-rgb), 0.08);
             mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
             -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
@@ -1064,12 +1059,15 @@
         }
         .live-lyrics-line {
             min-height: 14px;
-            width: min(100%, 560px);
+            width: min(68%, 560px);
+            justify-self: end;
+            margin-right: max(10px, 3vw);
             font-size: 11px;
             line-height: 1.2;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            overflow: visible;
+            text-overflow: clip;
+            white-space: normal;
+            overflow-wrap: anywhere;
             text-align: center;
             cursor: pointer;
             opacity: 0.34;
@@ -1079,27 +1077,32 @@
             transition: opacity 0.34s ease, transform 0.44s cubic-bezier(0.16, 1, 0.3, 1), color 0.34s ease, filter 0.34s ease;
             will-change: opacity, transform;
         }
+        .live-lyrics-line.is-placeholder {
+            visibility: hidden;
+            pointer-events: none;
+            animation: none !important;
+        }
         .live-lyrics-line.is-near {
             opacity: 0.48;
         }
         .live-lyrics-line.is-previous {
+            align-self: end;
             transform: translate3d(0, 3px, 0) scale(0.94);
         }
         .live-lyrics-line.is-next {
+            align-self: start;
             transform: translate3d(0, -3px, 0) scale(0.94);
         }
         .live-lyrics-line.is-active {
             min-height: 24px;
-            font-size: 17px;
+            font-size: clamp(13px, 2.5vw, 17px);
             font-weight: 700;
             line-height: 1.18;
             opacity: 1;
             transform: translate3d(0, 0, 0) scale(1);
             color: var(--club-blue-night);
             filter: blur(0);
-            text-shadow:
-                0 1px 0 rgba(255, 255, 255, 0.72),
-                0 12px 26px rgba(var(--club-blue-rgb), 0.2);
+            text-shadow: 0 8px 22px rgba(var(--club-blue-rgb), 0.22);
         }
         .live-lyrics-line:hover {
             opacity: 0.9;
@@ -3000,7 +3003,7 @@
         /* ── Responsive ── */
         @media (max-width: 768px) {
             :root {
-                --mobile-player-height: 78px;
+                --mobile-player-height: 130px;
             }
             body {
                 overflow: hidden;
@@ -3074,13 +3077,49 @@
                 display: none;
             }
             .player-basic .player-controls {
-                padding: 5px 10px 3px;
+                order: 1;
+                justify-content: center;
+                padding: 5px 8px 3px;
             }
             .player-basic .seek-bar-container {
+                order: 3;
                 padding: 2px 12px 4px;
             }
             .live-lyrics-stage {
+                display: block;
+                order: 2;
+                flex: 0 0 50px;
+                min-height: 50px;
+                height: 50px;
+                overflow: visible;
+            }
+            .live-waveform-dino {
+                left: 34px;
+                top: 0;
+                width: 76px;
+                height: 76px;
+            }
+            .live-lyrics {
+                min-height: 50px;
+                padding: 0 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0;
+            }
+            .live-lyrics-line {
                 display: none;
+            }
+            .live-lyrics-line.is-active {
+                display: block;
+                width: 100%;
+                min-height: 18px;
+                margin: 0;
+                font-size: 16px;
+                line-height: 1.12;
+                white-space: nowrap;
+                overflow: visible;
+                text-align: center;
             }
             .tab-nav {
                 position: sticky;
@@ -3114,26 +3153,24 @@
                 font-size: 24px;
             }
             .player-controls button {
-                width: 32px;
+                width: 29px;
                 height: 36px;
-                flex-basis: 32px;
+                flex-basis: 29px;
                 aspect-ratio: 1 / 1;
             }
             .player-controls .track-nav-btn {
-                width: 32px;
+                width: 29px;
                 height: 36px;
-                flex-basis: 32px;
+                flex-basis: 29px;
             }
             .player-controls .track-nav-btn.audio-quality-toggle {
-                width: 32px;
-                min-width: 32px;
+                width: 29px;
+                min-width: 29px;
                 height: 36px;
-                flex-basis: 32px;
+                flex-basis: 29px;
             }
             .player-controls .tempo-dino {
-                width: 48px;
-                height: 38px;
-                flex-basis: 48px;
+                display: none;
             }
             .player-controls .tempo-dino svg {
                 width: 42px;
@@ -3249,11 +3286,7 @@
                 line-height: 1.42;
             }
             .player-timeline {
-                display: inline-flex;
-                align-items: center;
-                min-height: 36px;
-                min-width: 66px;
-                font-size: 12px;
+                display: none;
             }
             .player-controls {
                 gap: 5px;
@@ -3420,6 +3453,9 @@
         <div class="audio-preloader__inner">
             <h1 class="audio-preloader__title">Loading songs</h1>
             <p class="audio-preloader__meta" id="audio-preloader-meta">Preparing album audio</p>
+            <div class="audio-preloader__race" aria-hidden="true">
+                <span class="audio-preloader__racing-dino" id="audio-preloader-racing-dino"></span>
+            </div>
             <div class="audio-preloader__bar" id="audio-preloader-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <canvas id="audio-preloader-gl" width="600" height="16" aria-hidden="true"></canvas>
             </div>
@@ -3507,8 +3543,7 @@
             </div>
             <div class="live-lyrics-stage">
                 <canvas class="live-lyrics-waveform" id="lyrics-waveform" aria-hidden="true"></canvas>
-                <span class="live-waveform-cursor" id="live-waveform-cursor" aria-hidden="true"></span>
-                <span class="live-waveform-cursor-dot" id="live-waveform-cursor-dot" aria-hidden="true"></span>
+                <span class="live-waveform-dino" id="live-waveform-dino" aria-hidden="true"></span>
                 <div class="live-lyrics" id="live-lyrics" aria-live="polite"></div>
             </div>
         </div>
@@ -4262,8 +4297,21 @@
     let queueAlbumCoverSourceUpdate = () => {};
     const songInfoHost = document.getElementById('song-info-host');
     const lyricsWaveformCanvas = document.getElementById('lyrics-waveform');
-    const liveWaveformCursor = document.getElementById('live-waveform-cursor');
-    const liveWaveformCursorDot = document.getElementById('live-waveform-cursor-dot');
+    const liveWaveformDino = document.getElementById('live-waveform-dino');
+    const dinosaurAnimationFiles = new Set([
+        'dancin_dino.png',
+        'dancin_dino_slow.png',
+        'dancin_dino_headbang.png'
+    ]);
+    function updateLiveWaveformDinosaur(track) {
+        if (!liveWaveformDino) return;
+        const requestedFile = track?.dinosaurAnimation;
+        const spriteFile = dinosaurAnimationFiles.has(requestedFile) ? requestedFile : 'dancin_dino.png';
+        const dinoSpriteUrl = new URL(spriteFile, document.baseURI);
+        dinoSpriteUrl.searchParams.set('reload', Date.now().toString());
+        liveWaveformDino.style.backgroundImage = `url("${dinoSpriteUrl.href}")`;
+    }
+    updateLiveWaveformDinosaur(null);
     let audio = document.getElementById('audio-player');
     // Web Audio remains the sample-accurate transport everywhere. On mobile, a
     // silent HTMLMediaElement keeps the OS media session and lock-screen controls alive.
@@ -4274,6 +4322,7 @@
     let mediaSessionAnchorStartedAt = 0;
     const seekCanvas = document.getElementById('seek-gl');
     const seekSectionTooltip = document.getElementById('seek-section-tooltip');
+    let seekSectionTooltipHideTimer = 0;
     const glSeek = createSeekRenderer(seekCanvas);
     const audioEngine = new AudioEngine();
     configureManagedAudioElement(audio, { standby: false });
@@ -4352,7 +4401,45 @@
     const audioPreloaderBar = document.getElementById('audio-preloader-bar');
     const audioPreloaderCanvas = document.getElementById('audio-preloader-gl');
     const audioPreloaderPercent = document.getElementById('audio-preloader-percent');
+    const audioPreloaderRacingDino = document.getElementById('audio-preloader-racing-dino');
     const audioPreloaderAudioButton = document.getElementById('audio-preloader-audio-button');
+    let racingDinoTargetProgress = 0;
+    let racingDinoDisplayedProgress = 0;
+    if (audioPreloaderRacingDino) {
+        const racingDinoUrl = new URL('racing_dino.png', document.baseURI);
+        racingDinoUrl.searchParams.set('reload', Date.now().toString());
+        audioPreloaderRacingDino.style.backgroundImage = `url("${racingDinoUrl.href}")`;
+
+        const racingFrameDuration = 1000 / 6;
+        let racingFrame = 0;
+        let lastRacingFrameAt = 0;
+        let lastRacingMotionAt = 0;
+        const animateRacingDino = timestamp => {
+            if (!lastRacingFrameAt) lastRacingFrameAt = timestamp;
+            if (!lastRacingMotionAt) lastRacingMotionAt = timestamp;
+            const motionElapsed = Math.min(100, timestamp - lastRacingMotionAt);
+            lastRacingMotionAt = timestamp;
+            const interpolation = 1 - Math.exp(-motionElapsed / 240);
+            racingDinoDisplayedProgress += (racingDinoTargetProgress - racingDinoDisplayedProgress) * interpolation;
+            if (Math.abs(racingDinoTargetProgress - racingDinoDisplayedProgress) < 0.0001) {
+                racingDinoDisplayedProgress = racingDinoTargetProgress;
+            }
+            const displayedPercent = racingDinoDisplayedProgress * 100;
+            audioPreloaderRacingDino.style.left = `${displayedPercent}%`;
+            audioPreloaderRacingDino.style.transform = `translateX(-${displayedPercent}%)`;
+            const elapsed = timestamp - lastRacingFrameAt;
+            if (elapsed >= racingFrameDuration) {
+                const elapsedFrames = Math.floor(elapsed / racingFrameDuration);
+                racingFrame = (racingFrame + elapsedFrames) % 36;
+                lastRacingFrameAt += elapsedFrames * racingFrameDuration;
+                const racingColumn = racingFrame % 6;
+                const racingRow = Math.floor(racingFrame / 6);
+                audioPreloaderRacingDino.style.backgroundPosition = `${racingColumn * 20}% ${racingRow * 20}%`;
+            }
+            requestAnimationFrame(animateRacingDino);
+        };
+        requestAnimationFrame(animateRacingDino);
+    }
     const glPreload = audioPreloaderCanvas
         ? createSeekRenderer(audioPreloaderCanvas)
         : { render: () => {}, setSections: () => {} };
@@ -4640,9 +4727,10 @@
                     <p>Recorded by Martin Petkovski at Kamai Sobata Dolu and Daniel Mitrevski at Studio Atelier, March 2025 - July 2026. All instruments played by Martin Petkovski except where noted.</p>
                     <p>Vocals: Anastasija Trajkovska (tracks 1, 2, 3, 4, 5, 7, 9, 10), Eva Todorovska (tracks 6, 8), Krste Rodjevski (track 3). Backing vocals on tracks 4 and 7 by Irena Dimovska-Mitrevska.</p>
                     <p>Saxophone on tracks 1, 4, 5, 9 by Ilija Volcheski. Strings on tracks 8 and 10 by Tanja Kotevska.</p>
-                    <p>Special thanks to Blagojche Aceski and Gorazd Hristovski for their creative contributions, Tomi Akimovski for executively producing track 3, Zoki Parket and Dimitar Zhirov for lending us secret equipment, Martin's mom and dad for obvious reasons, Marija Stojkovska (hypegirl #1), Andre Butorac (hypeman #1), Andrej Bogatinoski for being the glue in times of need, Marija Nedelkovska for being cool, Petar Kotevski for being aggressively honest, and Gordon Downie - you were ahead by a century.</p>
+                    <p>Special thanks to Dino the dino for winning against time, Blagojche Aceski and Gorazd Hristovski for their creative contributions, Tomi Akimovski for executively producing track 3, Zoki Parket and Dimitar Zhirov for lending us secret equipment, Martin's mom and dad for obvious reasons, Marija Stojkovska (hypegirl #1), Andre Butorac (hypeman #1), Andrej Bogatinoski for being the glue in times of need, Marija Nedelkovska for being cool, Petar Kotevski for being aggressively honest, and Gordon Downie - you were ahead by a century.</p>
                     <p>Executive producer: Martin Petkovski</p>
                     <p>&copy; 2026 Sioto Jazz. All rights reserved.</p>
+                    <p>Created in Bitola, Macedonia</p>
                 </div>
             </section>
             <hr class="credits-divider" aria-hidden="true">
@@ -4655,9 +4743,10 @@
                     <p>Снимано од Мартин Петковски во Камај Собата Долу и од Даниел Митревски во Studio Atelier, Март 2025 - Јули 2026. Сите инструменти ги отсвири Мартин Петковски, освен каде што е наведено поинаку.</p>
                     <p>Вокали: Анастасија Трајковска (песни 1, 2, 3, 4, 5, 7, 9, 10), Ева Тодоровска (песни 6, 8), Крсте Роџевски (песна 3). Придружни вокали на песни 4 и 7: Ирена Димовска-Митревска.</p>
                     <p>Саксофон на песни 1, 4, 5, 9: Илија Волчески. Жичани инструменти на песни 8 и 10: Тања Котевска.</p>
-                    <p>Посебна благодарност до Благојче Ацески и Горазд Христовски за нивниот креативен придонес, Томи Акимовски за извршното продуцентство на песна 3, Зоки Паркет и Димитар Жиров за тоа што ни позајмија тајна опрема, мајка му и татко му на Мартин од очигледни причини, Марија Стојковска (хајпчупе #1), Андре Буторац (хајпчоек #1), Андреј Богатиноски затоа што е лепакот во најпотребните моменти, Марија Неделковска затоа што е кул, Петар Котевски затоа што е агресивно искрен, и Гордон Дауни - ти беше за век понапред.</p>
+                    <p>Посебна благодарност до Дино диносаурусот затоа што победува во трката со времето, Благојче Ацески и Горазд Христовски за нивниот креативен придонес, Томи Акимовски за извршното продуцентство на песна 3, Зоки Паркет и Димитар Жиров за тоа што ни позајмија тајна опрема, мајка му и татко му на Мартин од очигледни причини, Марија Стојковска (хајпчупе #1), Андре Буторац (хајпчоек #1), Андреј Богатиноски затоа што е лепакот во најпотребните моменти, Марија Неделковска затоа што е кул, Петар Котевски затоа што е агресивно искрен, и Гордон Дауни - ти беше за век понапред.</p>
                     <p>Извршен продуцент: Мартин Петковски.</p>
                     <p>&copy; 2026 Сиото Џез. Сите права се задржани.</p>
+                    <p>Создадено во Битола, Македонија</p>
                 </div>
             </section>
         `;
@@ -7373,7 +7462,20 @@
 
     function hideSeekSectionTooltip() {
         if (!seekSectionTooltip) return;
+        if (seekSectionTooltipHideTimer) {
+            window.clearTimeout(seekSectionTooltipHideTimer);
+            seekSectionTooltipHideTimer = 0;
+        }
         seekSectionTooltip.classList.remove('is-visible');
+    }
+
+    function scheduleSeekSectionTooltipHide(delay = 1600) {
+        if (!seekSectionTooltip) return;
+        if (seekSectionTooltipHideTimer) window.clearTimeout(seekSectionTooltipHideTimer);
+        seekSectionTooltipHideTimer = window.setTimeout(() => {
+            seekSectionTooltipHideTimer = 0;
+            seekSectionTooltip.classList.remove('is-visible');
+        }, delay);
     }
 
     function updateSeekSectionTooltip(event) {
@@ -8425,6 +8527,7 @@
         currentVersionSource = audioEntry.source || getVersionedAudioSrc(track, 'martin');
         updateTrackNavButtons();
         updateTempoDinosaur(track);
+        updateLiveWaveformDinosaur(track);
         updateVersionToggleState();
         setVersionToggleMessage('');
         updateMediaSessionMetadata(track, trackIndex);
@@ -9212,6 +9315,8 @@
     // Clicking on seek canvas performs seeking via Web Audio
     seekCanvas.addEventListener('click', (e) => {
         if (!currentTrack) return;
+        updateSeekSectionTooltip(e);
+        scheduleSeekSectionTooltipHide();
         const rect = seekCanvas.getBoundingClientRect();
         const pos = (e.clientX - rect.left) / rect.width;
         const duration = getPlaybackDuration();
@@ -9319,6 +9424,9 @@
         }
         if (audioPreloaderPercent) {
             audioPreloaderPercent.textContent = `${percent}%`;
+        }
+        if (audioPreloaderRacingDino) {
+            racingDinoTargetProgress = safeProgress;
         }
         if (message && audioPreloaderMeta) {
             audioPreloaderMeta.textContent = message;
@@ -9747,6 +9855,7 @@
     volumeControl?.addEventListener('focusin', queueVolumePopoverPosition);
     window.addEventListener('resize', () => {
         queueVolumePopoverPosition();
+        fitMobileActiveLyric();
         const openChord = structureContent.querySelector('.structure-chord.is-diagram-open');
         if (openChord) requestAnimationFrame(() => positionMobileChordPreview(openChord));
     });
@@ -9931,8 +10040,9 @@
         context.clearRect(0, 0, width, height);
 
         const windowDuration = 10;
-        const windowStart = currentTime - 5;
-        const windowEnd = currentTime + 5;
+        const currentTimeAnchor = 0.1;
+        const windowStart = currentTime - windowDuration * currentTimeAnchor;
+        const windowEnd = windowStart + windowDuration;
         const centerY = height / 2;
         const envelope = getStableLyricsWaveformEnvelope(selectedTrackIndex, audioBuffer);
         const amplitudes = new Float32Array(width);
@@ -9971,7 +10081,7 @@
 
         const waveformGradient = context.createLinearGradient(0, 0, width, 0);
         waveformGradient.addColorStop(0, 'rgba(35, 107, 208, 0.42)');
-        waveformGradient.addColorStop(0.5, 'rgba(31, 86, 180, 0.9)');
+        waveformGradient.addColorStop(currentTimeAnchor, 'rgba(31, 86, 180, 0.9)');
         waveformGradient.addColorStop(1, 'rgba(35, 107, 208, 0.42)');
         context.beginPath();
         context.moveTo(0, centerY);
@@ -9985,16 +10095,22 @@
         context.fillStyle = waveformGradient;
         context.fill();
 
-        const cursorAmplitude = amplitudes[Math.max(0, Math.min(width - 1, Math.round(width / 2)))] || 0;
-        const targetCursorHeight = Math.max(10, cursorAmplitude * height * 0.68);
-        liveWaveformCursor?.style.setProperty('--live-waveform-cursor-height', `${targetCursorHeight}px`);
+        if (liveWaveformDino && timing.beatDuration > 0) {
+            const sourceCurrentTime = getSourceTimeForPlaybackTime(selectedTrackIndex, currentTime);
+            const beatPosition = Math.max(0, (sourceCurrentTime - timing.startOffset) / timing.beatDuration);
+            const phraseBeats = timing.beatsPerBar * 4;
+            const fourBarPhase = (beatPosition % phraseBeats) / phraseBeats;
+            const dinoFrame = Math.min(35, Math.floor(fourBarPhase * 36));
+            const dinoColumn = dinoFrame % 6;
+            const dinoRow = Math.floor(dinoFrame / 6);
+            liveWaveformDino.style.backgroundPosition = `${dinoColumn * 20}% ${dinoRow * 20}%`;
+        }
 
         const hasActiveLyric = cachedLyricTimings.some(timingEntry =>
             currentTime >= timingEntry.startTime && currentTime < timingEntry.endTime
         );
         lyricsWaveformCanvas.classList.toggle('has-active-lyric', hasActiveLyric);
-        liveWaveformCursor?.classList.toggle('has-active-lyric', hasActiveLyric);
-        liveWaveformCursorDot?.classList.toggle('has-active-lyric', hasActiveLyric);
+        liveWaveformDino?.classList.toggle('has-active-lyric', hasActiveLyric);
     }
 
     if (lyricsWaveformCanvas && window.ResizeObserver) {
@@ -10033,6 +10149,19 @@
     // Recompute when resizing viewport
     window.addEventListener('resize', recomputeChordLayout);
 
+    function fitMobileActiveLyric() {
+        const activeLine = liveLyricsDisplay?.querySelector('.live-lyrics-line.is-active');
+        if (!activeLine) return;
+        activeLine.style.removeProperty('font-size');
+        if (!window.matchMedia('(max-width: 768px)').matches) return;
+        const availableWidth = activeLine.clientWidth;
+        const requiredWidth = activeLine.scrollWidth;
+        if (availableWidth <= 0 || requiredWidth <= availableWidth) return;
+        const baseFontSize = Number.parseFloat(getComputedStyle(activeLine).fontSize) || 16;
+        const fittedFontSize = Math.max(10, baseFontSize * availableWidth / requiredWidth);
+        activeLine.style.fontSize = `${fittedFontSize.toFixed(2)}px`;
+    }
+
     function updateLiveLyricsStack(lyricTimings, activeIndex, force = false) {
         if (!liveLyricsDisplay) return;
         if (!Array.isArray(lyricTimings) || !lyricTimings.length) {
@@ -10058,11 +10187,14 @@
         if (!force && renderKey === lastLiveLyricIndex) return;
 
         const fragment = document.createDocumentFragment();
-        const start = Math.max(0, anchorIndex - 1);
-        const end = Math.min(lyricTimings.length - 1, anchorIndex + 1);
-
-        for (let index = start; index <= end; index += 1) {
+        for (let index = anchorIndex - 1; index <= anchorIndex + 1; index += 1) {
             const line = document.createElement('div');
+            if (index < 0 || index >= lyricTimings.length) {
+                line.className = 'live-lyrics-line is-placeholder';
+                line.setAttribute('aria-hidden', 'true');
+                fragment.appendChild(line);
+                continue;
+            }
             const distance = Math.abs(index - anchorIndex);
             line.className = 'live-lyrics-line';
             line.dataset.lyricIndex = index;
@@ -10087,6 +10219,7 @@
         liveLyricsDisplay.classList.remove('is-changing');
         void liveLyricsDisplay.offsetWidth;
         liveLyricsDisplay.classList.add('is-changing');
+        requestAnimationFrame(fitMobileActiveLyric);
         lastLiveLyricIndex = renderKey;
         lastLiveLyricAnchorIndex = activeIndex;
     }

@@ -439,6 +439,7 @@
     {
       "id": 12,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino.png",
       "title": "Промена",
       "status": "deluxe track",
       "mp3": "audio/Promena.wav",
@@ -459,6 +460,7 @@
     {
       "id": 14,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino_slow.png",
       "title": "Дестинација",
       "status": "deluxe track",
       "mp3": "audio/Destinacija.wav",
@@ -479,6 +481,7 @@
     {
       "id": 1,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino_slow.png",
       "title": "Импулс",
       "status": "missing recorded sax and vocals from mix",
        "mp3": "audio/impuls.mp3",
@@ -965,6 +968,7 @@
     {
       "id": 5,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino_headbang.png",
       "title": "Magic",
       "status": "missing recorded vocals from mix",
        "mp3": "audio/magic.mp3",
@@ -2054,6 +2058,7 @@
     {
       "id": 4,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino_headbang.png",
       "title": "Нов Зеланд",
       "status": "missing recorded vocals and bass from mix",
       "mp3": "audio/nov_zeland.mp3",
@@ -2576,6 +2581,7 @@
     {
       "id": 9,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino_slow.png",
       "title": "Quite Unreal",
       "status": "missing recorded vocals from mix",
        "mp3": "audio/quite_unreal.mp3",
@@ -3146,6 +3152,7 @@
     {
       "id": 2,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino.png",
       "title": "За век понапред",
       "status": "home demo, horror vocals by Martin™",
       "mp3": "audio/za_vek_ponapred.mp3",
@@ -3831,6 +3838,7 @@
     {
       "id": 8,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino_slow.png",
       "title": "Cinema",
       "status": "missing recorded vocals and violins from mix",
        "mp3": "audio/cinema.mp3",
@@ -4748,6 +4756,7 @@
     {
       "id": 3,
       "capo": 3,
+      "dinosaurAnimation": "dancin_dino_slow.png",
       "title": "Сноп од светлина",
       "feature": "\u0441\u043e \u041a\u0440\u0441\u0442\u0435 \u0420\u043e\u045f\u0435\u0432\u0441\u043a\u0438",
       "status": "home demo, vocals not recorded yet",
@@ -4997,6 +5006,7 @@
     {
       "id": 15,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino.png",
       "title": "My Innocent Sea",
       "status": "missing recorded vocals and violins from mix",
       "mp3": "audio/my_innocent_sea.mp3",
@@ -5488,6 +5498,7 @@
     {
       "id": 6,
       "capo": 4,
+      "dinosaurAnimation": "dancin_dino_headbang.png",
       "title": "Time Machine",
       "status": "recorded vocals missing, sax home recorded",
        "mp3": "audio/time_machine.mp3",
@@ -5925,6 +5936,7 @@
     {
       "id": 10,
       "capo": 3,
+      "dinosaurAnimation": "dancin_dino_slow.png",
       "title": "Roots Apart",
       "status": "studio version, unmixed",
        "mp3": "audio/roots_apart.mp3",
@@ -6235,6 +6247,7 @@
     {
       "id": 13,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino.png",
       "title": "Колку далеку?",
       "status": "home demo, stiched together",
       "mp3": "audio/kolku_daleku.mp3",
@@ -7128,6 +7141,7 @@
     {
       "id": 7,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino.png",
       "title": "Higher Ground",
       "status": "missing recorded vocals from mix",
        "mp3": "audio/higher_ground.mp3",
@@ -7727,6 +7741,7 @@
     {
       "id": 11,
       "capo": 0,
+      "dinosaurAnimation": "dancin_dino_slow.png",
       "title": "Одмор",
       "status": "outtake",
       "mp3": "audio/Odmor.wav",
