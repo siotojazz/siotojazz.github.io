@@ -1100,19 +1100,29 @@
             transform: translate3d(0, -3px, 0) scale(0.94);
         }
         .live-lyrics-line.is-active {
-            min-height: 24px;
-            width: min(72%, 560px);
+            min-height: 0;
+            width: fit-content;
+            max-width: min(72%, 560px);
             margin: 0;
+            padding: 0;
             font-size: clamp(13px, 2.5vw, 17px);
             font-weight: 700;
             line-height: 1.18;
             opacity: 1;
-            transform: translate3d(0, 0, 0) scale(var(--live-lyric-scale, 0.8));
+            transform: translate3d(0, 0, 0);
             color: #fff;
+            background: transparent;
+            border-radius: 0;
             filter: blur(0);
             text-shadow:
                 0 0 3px rgba(27, 79, 165, 0.82),
                 0 2px 8px rgba(27, 79, 165, 0.5);
+        }
+        .live-lyrics-line__text {
+            display: inline-block;
+            transform: scale(var(--live-lyric-scale, 0.8));
+            transform-origin: center;
+            will-change: transform;
         }
         .live-lyrics-line:hover {
             opacity: 0.9;
@@ -1131,7 +1141,7 @@
         @keyframes live-lyric-shift {
             0% {
                 opacity: 0;
-                transform: translate3d(0, 14px, 0) scale(0.94);
+                transform: translate3d(0, 14px, 0);
                 filter: blur(7px);
             }
             62% {
@@ -1139,14 +1149,14 @@
             }
             100% {
                 opacity: var(--live-lyric-opacity, 0.48);
-                transform: translate3d(0, 0, 0) scale(var(--live-lyric-scale, 0.98));
+                transform: translate3d(0, 0, 0);
                 filter: var(--live-lyric-filter, blur(0.35px));
             }
         }
         @keyframes track-change-live-lyrics {
             0% {
                 opacity: 0;
-                transform: translate3d(0, 12px, 0) scale(0.94);
+                transform: translate3d(0, 12px, 0);
                 filter: blur(8px);
             }
             55% {
@@ -1155,7 +1165,7 @@
             }
             100% {
                 opacity: 1;
-                transform: translate3d(0, 0, 0) scale(1);
+                transform: translate3d(0, 0, 0);
                 filter: blur(0);
             }
         }
@@ -3127,8 +3137,9 @@
             }
             .live-lyrics-line.is-active {
                 display: block;
-                width: 100%;
-                min-height: 18px;
+                width: fit-content;
+                max-width: calc(100% - 16px);
+                min-height: 0;
                 margin: 0;
                 font-size: 16px;
                 line-height: 1.12;
@@ -4434,6 +4445,20 @@
     const audioPreloaderAudioButton = document.getElementById('audio-preloader-audio-button');
     let racingDinoTargetProgress = 0;
     let racingDinoDisplayedProgress = 0;
+    let racingDinoMotionStartProgress = 0;
+    let racingDinoMotionStartedAt = 0;
+    let racingDinoMotionDuration = 650;
+
+    function setRacingDinoTargetProgress(progress) {
+        const nextProgress = Math.max(0, Math.min(1, Number.parseFloat(progress) || 0));
+        if (nextProgress === racingDinoTargetProgress) return;
+        racingDinoMotionStartProgress = racingDinoDisplayedProgress;
+        racingDinoTargetProgress = nextProgress;
+        racingDinoMotionStartedAt = performance.now();
+        const distance = Math.abs(racingDinoTargetProgress - racingDinoMotionStartProgress);
+        racingDinoMotionDuration = 500 + Math.min(700, distance * 1600);
+    }
+
     if (audioPreloaderRacingDino) {
         const racingDinoUrl = new URL('racing_dino.png', document.baseURI);
         racingDinoUrl.searchParams.set('reload', Date.now().toString());
@@ -4442,15 +4467,17 @@
         const racingFrameDuration = 1000 / 6;
         let racingFrame = 0;
         let lastRacingFrameAt = 0;
-        let lastRacingMotionAt = 0;
         const animateRacingDino = timestamp => {
             if (!lastRacingFrameAt) lastRacingFrameAt = timestamp;
-            if (!lastRacingMotionAt) lastRacingMotionAt = timestamp;
-            const motionElapsed = Math.min(100, timestamp - lastRacingMotionAt);
-            lastRacingMotionAt = timestamp;
-            const interpolation = 1 - Math.exp(-motionElapsed / 240);
-            racingDinoDisplayedProgress += (racingDinoTargetProgress - racingDinoDisplayedProgress) * interpolation;
-            if (Math.abs(racingDinoTargetProgress - racingDinoDisplayedProgress) < 0.0001) {
+            const motionProgress = Math.max(0, Math.min(1,
+                (timestamp - racingDinoMotionStartedAt) / racingDinoMotionDuration
+            ));
+            const easedMotionProgress = motionProgress < 0.5
+                ? 4 * motionProgress * motionProgress * motionProgress
+                : 1 - Math.pow(-2 * motionProgress + 2, 3) / 2;
+            racingDinoDisplayedProgress = racingDinoMotionStartProgress
+                + (racingDinoTargetProgress - racingDinoMotionStartProgress) * easedMotionProgress;
+            if (motionProgress >= 1) {
                 racingDinoDisplayedProgress = racingDinoTargetProgress;
             }
             const displayedPercent = racingDinoDisplayedProgress * 100;
@@ -9455,7 +9482,7 @@
             audioPreloaderPercent.textContent = `${percent}%`;
         }
         if (audioPreloaderRacingDino) {
-            racingDinoTargetProgress = safeProgress;
+            setRacingDinoTargetProgress(safeProgress);
         }
         if (message && audioPreloaderMeta) {
             audioPreloaderMeta.textContent = message;
@@ -9991,7 +10018,10 @@
     let lastActiveChord = null;
     let lyricsWaveformLastDrawAt = 0;
     const lyricsWaveformEnvelopeCache = new Map();
-    const lyricsWaveformSectionPalette = ['95, 139, 217', '17, 71, 159'];
+    const lyricsWaveformSectionPalette = ['30, 82, 166', '30, 82, 166'];
+    let lyricsWaveformLyricEnvelope = null;
+    let lyricsWaveformLyricBlend = 0;
+    let lyricsWaveformLyricBlendAt = 0;
 
     function getStableLyricsWaveformEnvelope(trackIndex, audioBuffer) {
         const cachedEnvelope = lyricsWaveformEnvelopeCache.get(trackIndex);
@@ -10098,6 +10128,46 @@
             amplitudes[x] = contrastedAmplitude / (1 + contrastedAmplitude * 0.35);
         }
 
+        const activeLyricForWaveform = liveLyricsDisplay?.querySelector('.live-lyrics-line.is-active');
+        if (activeLyricForWaveform) {
+            const canvasRect = lyricsWaveformCanvas.getBoundingClientRect();
+            const lyricRect = activeLyricForWaveform.getBoundingClientRect();
+            lyricsWaveformLyricEnvelope = {
+                left: Math.max(0, lyricRect.left - canvasRect.left),
+                right: Math.min(width, lyricRect.right - canvasRect.left),
+                halfHeight: Math.min(height * 0.46, lyricRect.height / 2)
+            };
+            const computedLyricOpacity = Number.parseFloat(getComputedStyle(activeLyricForWaveform).opacity);
+            lyricsWaveformLyricBlend = Number.isFinite(computedLyricOpacity) ? computedLyricOpacity : 1;
+            lyricsWaveformLyricBlendAt = now;
+        } else if (lyricsWaveformLyricBlend > 0) {
+            const fadeElapsed = lyricsWaveformLyricBlendAt > 0 ? now - lyricsWaveformLyricBlendAt : 0;
+            lyricsWaveformLyricBlend = Math.max(0, lyricsWaveformLyricBlend - fadeElapsed / 580);
+            lyricsWaveformLyricBlendAt = now;
+            if (lyricsWaveformLyricBlend === 0) lyricsWaveformLyricEnvelope = null;
+        }
+
+        if (lyricsWaveformLyricEnvelope && lyricsWaveformLyricBlend > 0) {
+            const lyricLeft = lyricsWaveformLyricEnvelope.left;
+            const lyricRight = lyricsWaveformLyricEnvelope.right;
+            const lyricHalfHeight = lyricsWaveformLyricEnvelope.halfHeight;
+            const shoulderWidth = 22;
+            const envelopeScale = height * 0.36;
+            const shoulderStart = Math.max(0, lyricLeft - shoulderWidth);
+            const shoulderEnd = Math.min(width, lyricRight + shoulderWidth);
+            for (let x = Math.floor(shoulderStart); x < Math.ceil(shoulderEnd); x += 1) {
+                let lyricEnvelope = 1;
+                if (x < lyricLeft) lyricEnvelope = (x - shoulderStart) / Math.max(1, lyricLeft - shoulderStart);
+                if (x > lyricRight) lyricEnvelope = (shoulderEnd - x) / Math.max(1, shoulderEnd - lyricRight);
+                lyricEnvelope = Math.max(0, Math.min(1, lyricEnvelope));
+                lyricEnvelope = lyricEnvelope * lyricEnvelope * (3 - 2 * lyricEnvelope);
+                const originalAmplitude = amplitudes[x];
+                const expandedAmplitude = Math.max(originalAmplitude, lyricHalfHeight * lyricEnvelope / envelopeScale);
+                amplitudes[x] = originalAmplitude
+                    + (expandedAmplitude - originalAmplitude) * lyricsWaveformLyricBlend;
+            }
+        }
+
         const timing = getTrackTiming(currentTrack);
         if (timing.beatDuration > 0) {
             const sourceWindowStart = getSourceTimeForPlaybackTime(selectedTrackIndex, Math.max(0, windowStart));
@@ -10147,7 +10217,7 @@
             context.beginPath();
             context.rect(sectionX, 0, Math.max(1, sectionWidth), height);
             context.clip();
-            context.fillStyle = `rgba(${sectionRgb}, ${section.index % 2 === 0 ? 0.72 : 0.9})`;
+            context.fillStyle = `rgb(${sectionRgb})`;
             context.fill(waveformPath);
             context.restore();
         }
@@ -10292,7 +10362,10 @@
             line.dataset.lyricIndex = index;
             line.dataset.seekTime = String(lyricTimings[index]?.startTime ?? 0);
             const isCenter = distance === 0;
-            line.textContent = (lyricTimings[index]?.line?.textContent || '').trim();
+            const lineText = document.createElement('span');
+            lineText.className = 'live-lyrics-line__text';
+            lineText.textContent = (lyricTimings[index]?.line?.textContent || '').trim();
+            line.appendChild(lineText);
             if (isCenter) {
                 line.classList.add('is-active');
                 line.style.setProperty('--live-lyric-opacity', '1');
