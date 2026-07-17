@@ -10018,7 +10018,7 @@
     let lastActiveChord = null;
     let lyricsWaveformLastDrawAt = 0;
     const lyricsWaveformEnvelopeCache = new Map();
-    const lyricsWaveformSectionPalette = ['30, 82, 166', '30, 82, 166'];
+    const lyricsWaveformSectionPalette = ['95, 139, 217', '17, 71, 159'];
     let lyricsWaveformLyricEnvelope = null;
     let lyricsWaveformLyricBlend = 0;
     let lyricsWaveformLyricBlendAt = 0;
@@ -10217,7 +10217,7 @@
             context.beginPath();
             context.rect(sectionX, 0, Math.max(1, sectionWidth), height);
             context.clip();
-            context.fillStyle = `rgb(${sectionRgb})`;
+            context.fillStyle = `rgba(${sectionRgb}, ${section.index % 2 === 0 ? 0.72 : 0.9})`;
             context.fill(waveformPath);
             context.restore();
         }
