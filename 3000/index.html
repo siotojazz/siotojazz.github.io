@@ -3014,7 +3014,7 @@
         /* ── Responsive ── */
         @media (max-width: 768px) {
             :root {
-                --mobile-player-height: 130px;
+                --mobile-player-height: 140px;
             }
             body {
                 overflow: hidden;
@@ -3090,28 +3090,30 @@
             .player-basic .player-controls {
                 order: 1;
                 justify-content: center;
-                padding: 5px 8px 3px;
+                width: 100%;
+                padding: 4px 0 0;
             }
             .player-basic .seek-bar-container {
-                order: 3;
-                padding: 2px 12px 4px;
+                order: 2;
+                margin: 0;
+                padding: 0;
             }
             .live-lyrics-stage {
                 display: block;
-                order: 2;
-                flex: 0 0 50px;
-                min-height: 50px;
-                height: 50px;
-                overflow: visible;
+                order: 3;
+                flex: 0 0 70px;
+                min-height: 70px;
+                height: 70px;
+                overflow: hidden;
             }
             .live-waveform-dino {
-                left: 34px;
-                top: 0;
-                width: 76px;
-                height: 76px;
+                left: 10%;
+                top: 50%;
+                width: 64px;
+                height: 64px;
             }
             .live-lyrics {
-                min-height: 50px;
+                min-height: 70px;
                 padding: 0 8px;
                 display: flex;
                 align-items: center;
@@ -3164,21 +3166,23 @@
                 font-size: 24px;
             }
             .player-controls button {
-                width: 29px;
-                height: 36px;
-                flex-basis: 29px;
+                width: auto;
+                min-width: 0;
+                height: 38px;
+                flex: 1 1 0;
                 aspect-ratio: 1 / 1;
             }
             .player-controls .track-nav-btn {
-                width: 29px;
-                height: 36px;
-                flex-basis: 29px;
+                width: auto;
+                min-width: 0;
+                height: 38px;
+                flex: 1 1 0;
             }
             .player-controls .track-nav-btn.audio-quality-toggle {
-                width: 29px;
-                min-width: 29px;
-                height: 36px;
-                flex-basis: 29px;
+                width: auto;
+                min-width: 0;
+                height: 38px;
+                flex: 1 1 0;
             }
             .player-controls .tempo-dino {
                 display: none;
@@ -3304,7 +3308,19 @@
             }
             .transport-cluster,
             .transport-buttons {
+                width: 100%;
                 min-width: 0;
+            }
+            .transport-cluster {
+                gap: 0;
+            }
+            .transport-buttons > button,
+            .transport-buttons > .volume-control {
+                flex: 1 1 0;
+                min-width: 0;
+            }
+            .transport-buttons > .volume-control .volume-btn {
+                width: 100%;
             }
             .playback-settings {
                 gap: 2px;
