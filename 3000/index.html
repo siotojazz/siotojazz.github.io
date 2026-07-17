@@ -1110,7 +1110,9 @@
             transform: translate3d(0, 0, 0) scale(var(--live-lyric-scale, 0.8));
             color: #fff;
             filter: blur(0);
-            text-shadow: 0 8px 22px rgba(var(--club-blue-rgb), 0.22);
+            text-shadow:
+                0 0 3px rgba(27, 79, 165, 0.82),
+                0 2px 8px rgba(27, 79, 165, 0.5);
         }
         .live-lyrics-line:hover {
             opacity: 0.9;
@@ -10070,7 +10072,7 @@
         context.fillRect(0, 0, width, height);
 
         const windowDuration = 8;
-        const currentTimeAnchor = 0.1;
+        const currentTimeAnchor = 0.85;
         const windowStart = currentTime - windowDuration * currentTimeAnchor;
         const windowEnd = windowStart + windowDuration;
         const centerY = height / 2;
@@ -10089,6 +10091,11 @@
             const interpolation = envelopePosition - lowerIndex;
             amplitudes[x] = envelope.values[lowerIndex]
                 + (envelope.values[upperIndex] - envelope.values[lowerIndex]) * interpolation;
+        }
+
+        for (let x = 0; x < width; x += 1) {
+            const contrastedAmplitude = Math.pow(amplitudes[x], 1.7) * 1.35;
+            amplitudes[x] = contrastedAmplitude / (1 + contrastedAmplitude * 0.35);
         }
 
         const timing = getTrackTiming(currentTrack);
@@ -10118,10 +10125,10 @@
         const waveformPath = new Path2D();
         waveformPath.moveTo(0, centerY);
         for (let x = 0; x < width; x += 1) {
-            waveformPath.lineTo(x, centerY - amplitudes[x] * height * 0.408);
+            waveformPath.lineTo(x, centerY - amplitudes[x] * height * 0.36);
         }
         for (let x = width - 1; x >= 0; x -= 1) {
-            waveformPath.lineTo(x, centerY + amplitudes[x] * height * 0.408);
+            waveformPath.lineTo(x, centerY + amplitudes[x] * height * 0.36);
         }
         waveformPath.closePath();
         context.fillStyle = waveformGradient;
@@ -10144,6 +10151,34 @@
             context.fill(waveformPath);
             context.restore();
         }
+
+        const cursorX = Math.round(width * currentTimeAnchor) + 0.5;
+        const cursorSourceTime = getSourceTimeForPlaybackTime(selectedTrackIndex, currentTime);
+        const cursorBeatPosition = timing.beatDuration > 0
+            ? Math.max(0, (cursorSourceTime - timing.startOffset) / timing.beatDuration)
+            : 0;
+        const cursorBeatPhase = cursorBeatPosition - Math.floor(cursorBeatPosition);
+        const cursorBeatPulse = Math.max(0, 1 - cursorBeatPhase * 2);
+        const mixChannel = (resting, pulse) => Math.round(resting + (pulse - resting) * cursorBeatPulse);
+        const coreColor = `rgba(${mixChannel(255, 227)}, ${mixChannel(255, 38)}, ${mixChannel(255, 54)}, 0.5)`;
+        const shadowColor = `rgba(${mixChannel(255, 227)}, ${mixChannel(255, 38)}, ${mixChannel(255, 54)}, 0.5)`;
+        context.save();
+        context.strokeStyle = coreColor;
+        context.shadowColor = shadowColor;
+        context.shadowBlur = 13;
+        context.lineWidth = 1;
+        for (let cursorOffset = -1; cursorOffset <= 1; cursorOffset += 1) {
+            const cursorAmplitudeIndex = Math.max(
+                0,
+                Math.min(width - 1, Math.round(width * currentTimeAnchor) + cursorOffset)
+            );
+            const cursorAmplitude = amplitudes[cursorAmplitudeIndex] * height * 0.36;
+            context.beginPath();
+            context.moveTo(cursorX + cursorOffset, centerY - cursorAmplitude);
+            context.lineTo(cursorX + cursorOffset, centerY + cursorAmplitude);
+            context.stroke();
+        }
+        context.restore();
 
         if (liveWaveformDino && timing.beatDuration > 0) {
             const sourceCurrentTime = getSourceTimeForPlaybackTime(selectedTrackIndex, currentTime);
