@@ -3093,7 +3093,7 @@
                 background:
                     radial-gradient(circle at 20% 0%, rgba(var(--club-blue-bright-rgb), 0.24), rgba(var(--club-blue-bright-rgb), 0) 34%),
                     linear-gradient(180deg, rgba(249, 252, 255, 0.98), rgba(222, 233, 255, 0.98));
-                border-top: 1px solid rgba(255, 255, 255, 0.72);
+                border-top: 0;
                 box-shadow: 0 -18px 42px rgba(var(--club-blue-night-rgb), 0.26);
                 backdrop-filter: blur(22px);
             }
@@ -3107,12 +3107,16 @@
                 order: 1;
                 justify-content: center;
                 width: 100%;
-                padding: 4px 0 0;
+                padding: 0;
             }
             .player-basic .seek-bar-container {
                 order: 2;
                 margin: 0;
                 padding: 0;
+            }
+            .player-basic #seek-gl {
+                height: 1px;
+                box-shadow: none;
             }
             .live-lyrics-stage {
                 display: block;
@@ -10353,11 +10357,23 @@
             return { text, part: 0, startTime: timing.startTime, endTime: timing.endTime };
         }
 
-        const textMiddle = text.length / 2;
-        const splitAt = commaIndexes.reduce((nearest, index) =>
-            Math.abs(index - textMiddle) < Math.abs(nearest - textMiddle) ? index : nearest
-        );
-        const parts = [text.slice(0, splitAt).trim(), text.slice(splitAt + 1).trim()];
+        const words = text.split(/\s+/);
+        const balancedCommas = commaIndexes.filter(index => {
+            const wordsBeforeComma = text.slice(0, index).trim().split(/\s+/).length;
+            const splitRatio = wordsBeforeComma / words.length;
+            return splitRatio >= 0.35 && splitRatio <= 0.65;
+        });
+        let parts;
+        if (balancedCommas.length) {
+            const textMiddle = text.length / 2;
+            const splitAt = balancedCommas.reduce((nearest, index) =>
+                Math.abs(index - textMiddle) < Math.abs(nearest - textMiddle) ? index : nearest
+            );
+            parts = [text.slice(0, splitAt).trim(), text.slice(splitAt + 1).trim()];
+        } else {
+            const middleWord = Math.ceil(words.length / 2);
+            parts = [words.slice(0, middleWord).join(' '), words.slice(middleWord).join(' ')];
+        }
         const midpoint = timing.startTime + (timing.endTime - timing.startTime) / 2;
         const part = currentTime < midpoint ? 0 : 1;
         return {
