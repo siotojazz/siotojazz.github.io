@@ -448,7 +448,7 @@ body.is-audio-revealing .audio-preloader__inner {
     background-repeat: no-repeat;
     filter: drop-shadow(0 5px 8px rgba(2, 17, 55, 0.36));
     transform: translateX(0);
-    will-change: left, transform, background-position;
+    will-change: transform, background-position;
 }
 
 .audio-preloader__percent {

@@ -540,6 +540,7 @@
     const currentSongNameDisplay = document.getElementById('current-song-name');
     const currentLyricDisplay = playerBasic.querySelector('.current-lyric');
     const liveLyricsDisplay = document.getElementById('live-lyrics');
+    const lyricsPanel = document.getElementById('tab-lyrics');
     let lastLiveLyricIndex = -1;
     let lastLiveLyricAnchorIndex = 0;
     const playerWrap = document.querySelector('.player-wrap');
@@ -608,9 +609,25 @@
         audioPreloaderRacingDino.style.backgroundImage = `url("${racingDinoUrl.href}")`;
 
         const racingFrameDuration = 1000 / 6;
+        const racingDinoTrack = audioPreloaderRacingDino.parentElement;
         let racingFrame = 0;
         let lastRacingFrameAt = 0;
         let lastRacingMotionAt = 0;
+        let racingDinoTravelDistance = 0;
+        const updateRacingDinoTravelDistance = () => {
+            const trackWidth = racingDinoTrack?.getBoundingClientRect().width || 0;
+            const dinoWidth = audioPreloaderRacingDino.getBoundingClientRect().width || 0;
+            racingDinoTravelDistance = Math.max(
+                0,
+                trackWidth - dinoWidth
+            );
+        };
+        updateRacingDinoTravelDistance();
+        if (window.ResizeObserver && racingDinoTrack) {
+            new ResizeObserver(updateRacingDinoTravelDistance).observe(racingDinoTrack);
+        } else {
+            window.addEventListener('resize', updateRacingDinoTravelDistance);
+        }
         const animateRacingDino = timestamp => {
             if (!document.body.classList.contains('is-audio-preloading')) return;
             if (!lastRacingFrameAt) lastRacingFrameAt = timestamp;
@@ -639,9 +656,8 @@
                     racingDinoDisplayedProgress += motionStep;
                 }
             }
-            const displayedPercent = racingDinoDisplayedProgress * 100;
-            audioPreloaderRacingDino.style.left = `${displayedPercent}%`;
-            audioPreloaderRacingDino.style.transform = `translateX(-${displayedPercent}%)`;
+            const displayedPosition = racingDinoDisplayedProgress * racingDinoTravelDistance;
+            audioPreloaderRacingDino.style.transform = `translate3d(${displayedPosition}px, 0, 0)`;
             const elapsed = timestamp - lastRacingFrameAt;
             if (elapsed >= racingFrameDuration) {
                 const elapsedFrames = Math.floor(elapsed / racingFrameDuration);
@@ -2086,6 +2102,7 @@
     }
 
     function updateLiveTelemetryAnalysis(force = false) {
+        if (!telemetryEnabled) return;
         const telemetryPanel = document.getElementById('tab-telemetry');
         if (!force && (!telemetryPanel || !telemetryPanel.classList.contains('active'))) return;
         if (!telemetryLiveTitle) return;
@@ -3175,7 +3192,10 @@
             appContainer.classList.toggle('telemetry-expanded', tabId === 'telemetry');
         }
         if (tabId === 'lyrics') {
-            requestAnimationFrame(recomputeChordLayout);
+            requestAnimationFrame(() => {
+                recomputeChordLayout();
+                updateProgressBars({ forceTimedContent: true });
+            });
         }
         if (tabId === 'telemetry') {
             ensureTelemetryAudioAnalysis();
@@ -3365,11 +3385,13 @@
         if (wasPlaying) scheduleStitchedAlbumFrom(resumeAlbumTime);
     }
 
-    function getCurrentSeekSectionIndex() {
+    function getCurrentSeekSectionIndex(
+        currentTime = getPlaybackCurrentTime(),
+        duration = getPlaybackDuration()
+    ) {
         if (!currentTrack || !currentSeekSections.length) return -1;
-        const duration = getPlaybackDuration();
         if (!duration) return -1;
-        const ratio = Math.max(0, Math.min(1, getPlaybackCurrentTime() / duration));
+        const ratio = Math.max(0, Math.min(1, currentTime / duration));
         const containingIndex = currentSeekSections.findIndex(section => ratio >= section.start && ratio < section.end);
         if (containingIndex >= 0) return containingIndex;
         for (let index = currentSeekSections.length - 1; index >= 0; index -= 1) {
@@ -3378,16 +3400,19 @@
         return -1;
     }
 
-    function updateSectionNavButtons() {
-        const sectionIndex = getCurrentSeekSectionIndex();
+    function updateSectionNavButtons(
+        currentTime = getPlaybackCurrentTime(),
+        duration = getPlaybackDuration()
+    ) {
+        const sectionIndex = getCurrentSeekSectionIndex(currentTime, duration);
         const hasSections = currentSeekSections.length > 0;
         const currentSection = currentSeekSections[sectionIndex];
-        const duration = getPlaybackDuration();
-        const currentTime = getPlaybackCurrentTime();
         const currentSectionStart = currentSection && duration > 0 ? currentSection.start * duration : 0;
         const canRestartCurrentSection = Boolean(currentSection) && currentTime > currentSectionStart + 0.75;
-        if (prevSectionBtn) prevSectionBtn.disabled = !hasSections || (sectionIndex <= 0 && !canRestartCurrentSection);
-        if (nextSectionBtn) nextSectionBtn.disabled = !hasSections || sectionIndex >= currentSeekSections.length - 1;
+        const prevDisabled = !hasSections || (sectionIndex <= 0 && !canRestartCurrentSection);
+        const nextDisabled = !hasSections || sectionIndex >= currentSeekSections.length - 1;
+        if (prevSectionBtn && prevSectionBtn.disabled !== prevDisabled) prevSectionBtn.disabled = prevDisabled;
+        if (nextSectionBtn && nextSectionBtn.disabled !== nextDisabled) nextSectionBtn.disabled = nextDisabled;
     }
 
     function goToAdjacentSection(direction) {
@@ -4765,6 +4790,7 @@
 
         document.querySelectorAll('.song-item').forEach(item => item.classList.remove('active'));
         songItem.classList.add('active');
+        selectedSongItem = songItem;
         triggerTrackChangeAnimation(trackIndex, previousTrackIndex);
         toggleBtn.disabled = false;
         currentTrack = track;
@@ -4966,11 +4992,28 @@
         cachedLyricTimings = buildLyricTimingEntries(track, cachedLyricLines);
         requestAnimationFrame(() => renderLyricsWaveform(targetTime, { force: true }));
         cachedChordElements = Array.from(structureContent.querySelectorAll('.structure-chord'));
+        cachedChordStates = cachedChordElements.map(chord => {
+            const startBeat = Number.parseInt(chord.dataset.beat, 10) - 1;
+            const spanLength = Number.parseInt(chord.dataset.span, 10) || 1;
+            const progressElement = chord.nextElementSibling;
+            return {
+                chord,
+                progressElement: progressElement?.classList.contains('chord-progress') ? progressElement : null,
+                startBeat,
+                spanLength,
+                endBeat: startBeat + spanLength - 1,
+                extendsToEnd: chord.dataset.extendsToEnd === 'true'
+            };
+        });
         cachedChordContainers = [];
         cachedChordOverlay = window.getChordOverlayRenderer
             ? window.getChordOverlayRenderer(chordsCanvas)
             : null;
         lastActiveChord = null;
+        activeChordState = null;
+        lastRenderedChordBeat = Number.NaN;
+        lastRenderedLyricState = '';
+        lastRenderedSectionBeat = Number.NaN;
 
         lyricsContent.querySelectorAll('.lyrics-line').forEach(line => line.classList.remove('active', 'passed'));
         structureContent.querySelectorAll('.structure-chord').forEach(chord => chord.classList.remove('active', 'passed'));
@@ -5913,20 +5956,10 @@
         }
 
         const remainingTrackIndexes = preloadOrder.slice(1);
-        const beginBackgroundPreload = () => {
-            void preloadAlbumTracksConcurrently(remainingTrackIndexes, preloadSources)
-                .then(() => {
-                    rebuildStitchedAlbumTimeline({ preservePlayback: true });
-                    scheduleLoadedFutureTracks();
-                    setAudioPreloadProgress(1, 'All songs loaded');
-                })
-                .catch(error => console.warn('Background album preload failed:', error));
-        };
-        if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(beginBackgroundPreload, { timeout: 1500 });
-        } else {
-            window.setTimeout(beginBackgroundPreload, 250);
-        }
+        await preloadAlbumTracksConcurrently(remainingTrackIndexes, preloadSources);
+        rebuildStitchedAlbumTimeline({ preservePlayback: true });
+        scheduleLoadedFutureTracks();
+        setAudioPreloadProgress(1, 'All songs loaded');
     }
 
     function getCinematicRevealDuration() {
@@ -6225,10 +6258,18 @@
     let cachedLyricLines = [];
     let cachedLyricTimings = [];
     let cachedChordElements = [];
+    let cachedChordStates = [];
     let cachedChordContainers = [];
     let cachedChordOverlay = null;
     let lastActiveChord = null;
+    let activeChordState = null;
+    let lastRenderedChordBeat = Number.NaN;
+    let lastRenderedLyricState = '';
+    let lastRenderedSectionBeat = Number.NaN;
+    let selectedSongItem = null;
     let lyricsWaveformLastDrawAt = 0;
+    let lyricsWaveformAmplitudes = new Float32Array(0);
+    let lastLiveWaveformDinoFrame = -1;
     const lyricsWaveformEnvelopeCache = new Map();
     const lyricsWaveformSectionPalette = ['95, 139, 217', '17, 71, 159'];
     let lyricsWaveformLyricEnvelope = null;
@@ -6286,7 +6327,10 @@
         return envelope;
     }
 
-    function renderLyricsWaveform(currentTime = getPlaybackCurrentTime(), { force = false } = {}) {
+    function renderLyricsWaveform(
+        currentTime = getPlaybackCurrentTime(),
+        { force = false, duration = getPlaybackDuration() } = {}
+    ) {
         if (!lyricsWaveformCanvas || !currentTrack || selectedTrackIndex < 0) return;
         const now = performance.now();
         if (!force && now - lyricsWaveformLastDrawAt < 33) return;
@@ -6294,7 +6338,6 @@
         const audioBuffer = preloadedTrackAudio.get(selectedTrackIndex)?.audioBuffer;
         const width = Math.round(lyricsWaveformCanvas.clientWidth);
         const height = Math.round(lyricsWaveformCanvas.clientHeight);
-        const duration = getPlaybackDuration();
         if (!audioBuffer || width <= 0 || height <= 0 || duration <= 0) return;
         lyricsWaveformLastDrawAt = now;
 
@@ -6319,23 +6362,26 @@
         const windowEnd = windowStart + windowDuration;
         const centerY = height / 2;
         const envelope = getStableLyricsWaveformEnvelope(selectedTrackIndex, audioBuffer);
-        const amplitudes = new Float32Array(width);
+        if (lyricsWaveformAmplitudes.length !== width) {
+            lyricsWaveformAmplitudes = new Float32Array(width);
+        }
+        const amplitudes = lyricsWaveformAmplitudes;
 
         const sectionPalette = lyricsWaveformSectionPalette;
 
         for (let x = 0; x < width; x += 1) {
             const playbackTime = windowStart + (x / Math.max(1, width - 1)) * windowDuration;
-            if (playbackTime < 0 || playbackTime > duration) continue;
-            const sourceTime = getSourceTimeForPlaybackTime(selectedTrackIndex, playbackTime);
-            const envelopePosition = Math.max(0, Math.min(envelope.values.length - 1, sourceTime * envelope.pointsPerSecond));
-            const lowerIndex = Math.floor(envelopePosition);
-            const upperIndex = Math.min(envelope.values.length - 1, lowerIndex + 1);
-            const interpolation = envelopePosition - lowerIndex;
-            amplitudes[x] = envelope.values[lowerIndex]
-                + (envelope.values[upperIndex] - envelope.values[lowerIndex]) * interpolation;
-        }
-
-        for (let x = 0; x < width; x += 1) {
+            if (playbackTime < 0 || playbackTime > duration) {
+                amplitudes[x] = 0;
+            } else {
+                const sourceTime = getSourceTimeForPlaybackTime(selectedTrackIndex, playbackTime);
+                const envelopePosition = Math.max(0, Math.min(envelope.values.length - 1, sourceTime * envelope.pointsPerSecond));
+                const lowerIndex = Math.floor(envelopePosition);
+                const upperIndex = Math.min(envelope.values.length - 1, lowerIndex + 1);
+                const interpolation = envelopePosition - lowerIndex;
+                amplitudes[x] = envelope.values[lowerIndex]
+                    + (envelope.values[upperIndex] - envelope.values[lowerIndex]) * interpolation;
+            }
             const contrastedAmplitude = Math.pow(amplitudes[x], 1.7) * 1.35;
             amplitudes[x] = contrastedAmplitude / (1 + contrastedAmplitude * 0.35);
         }
@@ -6470,14 +6516,17 @@
             const dinoFrame = Math.min(35, Math.floor(fourBarPhase * 36));
             const dinoColumn = dinoFrame % 6;
             const dinoRow = Math.floor(dinoFrame / 6);
-            liveWaveformDino.style.backgroundPosition = `${dinoColumn * 20}% ${dinoRow * 20}%`;
+            if (dinoFrame !== lastLiveWaveformDinoFrame) {
+                liveWaveformDino.style.backgroundPosition = `${dinoColumn * 20}% ${dinoRow * 20}%`;
+                lastLiveWaveformDinoFrame = dinoFrame;
+            }
         }
 
         const activeLyricTiming = cachedLyricTimings.find(timingEntry =>
             currentTime >= timingEntry.startTime && currentTime < timingEntry.endTime
         );
         const hasActiveLyric = Boolean(activeLyricTiming);
-        const activeLyricLine = liveLyricsDisplay?.querySelector('.live-lyrics-line.is-active');
+        const activeLyricLine = activeLyricForWaveform;
         if (activeLyricLine && activeLyricTiming) {
             const segmentStart = Number.parseFloat(activeLyricLine.dataset.segmentStart);
             const segmentEnd = Number.parseFloat(activeLyricLine.dataset.segmentEnd);
@@ -6568,15 +6617,43 @@
         return measuringContext.measureText(text).width > availableWidth * 0.9;
     }
 
+    const liveLyricSegmentCache = new WeakMap();
+    let liveLyricLayoutRevision = 0;
+    window.addEventListener('resize', () => {
+        liveLyricLayoutRevision += 1;
+    });
+    if (liveLyricsDisplay && window.ResizeObserver) {
+        new ResizeObserver(() => {
+            liveLyricLayoutRevision += 1;
+        }).observe(liveLyricsDisplay);
+    }
+
     function getLiveLyricSegment(timing, currentTime) {
         const text = (timing?.line?.textContent || '').trim();
         if (!text || !liveLyricsDisplay) {
             return { text, part: 0, startTime: timing?.startTime ?? 0, endTime: timing?.endTime ?? 0 };
         }
 
+        const cachedSegmentation = liveLyricSegmentCache.get(timing);
+        if (
+            cachedSegmentation
+            && cachedSegmentation.text === text
+            && cachedSegmentation.layoutRevision === liveLyricLayoutRevision
+        ) {
+            if (cachedSegmentation.segments.length === 1) return cachedSegmentation.segments[0];
+            return cachedSegmentation.segments[currentTime < cachedSegmentation.midpoint ? 0 : 1];
+        }
+
         const wordMatches = Array.from(text.matchAll(/\S+/g));
         if (wordMatches.length < 2 || !isLiveLyricTooLong(text)) {
-            return { text, part: 0, startTime: timing.startTime, endTime: timing.endTime };
+            const segment = { text, part: 0, startTime: timing.startTime, endTime: timing.endTime };
+            liveLyricSegmentCache.set(timing, {
+                text,
+                layoutRevision: liveLyricLayoutRevision,
+                midpoint: timing.endTime,
+                segments: [segment]
+            });
+            return segment;
         }
 
         const wordSyllables = wordMatches.map(match => estimateLyricWordSyllables(match[0]));
@@ -6617,13 +6694,17 @@
             parts = [text.slice(0, splitAt).trim(), text.slice(splitAt).trim()];
         }
         const midpoint = timing.startTime + (timing.endTime - timing.startTime) / 2;
-        const part = currentTime < midpoint ? 0 : 1;
-        return {
-            text: parts[part],
-            part,
-            startTime: part === 0 ? timing.startTime : midpoint,
-            endTime: part === 0 ? midpoint : timing.endTime
-        };
+        const segments = [
+            { text: parts[0], part: 0, startTime: timing.startTime, endTime: midpoint },
+            { text: parts[1], part: 1, startTime: midpoint, endTime: timing.endTime }
+        ];
+        liveLyricSegmentCache.set(timing, {
+            text,
+            layoutRevision: liveLyricLayoutRevision,
+            midpoint,
+            segments
+        });
+        return segments[currentTime < midpoint ? 0 : 1];
     }
 
     function updateLiveLyricsStack(lyricTimings, activeIndex, force = false, currentTime = getPlaybackCurrentTime()) {
@@ -6696,55 +6777,55 @@
         lastLiveLyricAnchorIndex = activeIndex;
     }
 
-    function updateProgressBars() {
+    function updateProgressBars({ forceTimedContent = false } = {}) {
         if (!currentTrack) return;
         syncActiveTrackToPlaybackTime();
         const currentTime = getPlaybackCurrentTime();
         const duration = getPlaybackDuration();
-        renderLyricsWaveform(currentTime);
-        if (isPlaybackPaused()) return;
-        maybePrepareNextTrack(currentTime, duration);
+        renderLyricsWaveform(currentTime, { duration });
+        const isPaused = isPlaybackPaused();
+        if (isPaused && !forceTimedContent) return;
+        if (!isPaused) maybePrepareNextTrack(currentTime, duration);
         
         // Update timeline text (throttle to reduce DOM writes)
         const timeText = `${formatTime(currentTime)} / ${formatTime(duration)}`;
         if (timeline.textContent !== timeText) {
             timeline.textContent = timeText;
         }
-        updateSectionNavButtons();
+        updateSectionNavButtons(currentTime, duration);
         
         const progressPercent = duration ? (currentTime / duration) : 0;
         glSeek.render(progressPercent);
 
         const songGridTime = getSongGridTime(currentTrack, currentTime);
-        const { beatDuration, beatsPerBar, startOffset } = getTrackTiming(currentTrack);
+        const { beatDuration, startOffset } = getTrackTiming(currentTrack);
         const currentBeat = Math.floor(songGridTime / beatDuration);
+        const isLyricsPanelActive = lyricsPanel?.classList.contains('active') === true;
 
-        // Find current section
-        let currentSection = '';
-        let beatIndex = 0;
-        const sections = currentTrack.structure.sections;
-        for (let i = 0; i < sections.length; i++) {
-            const sectionBeats = sections[i].chords.length;
-            if (currentBeat >= beatIndex && currentBeat < beatIndex + sectionBeats) {
-                currentSection = sections[i].label;
-                break;
+        // The section label only changes at beat boundaries.
+        if (currentBeat !== lastRenderedSectionBeat) {
+            let currentSection = '';
+            let beatIndex = 0;
+            const sections = currentTrack.structure.sections;
+            for (let i = 0; i < sections.length; i++) {
+                const sectionBeats = sections[i].chords.length;
+                if (currentBeat >= beatIndex && currentBeat < beatIndex + sectionBeats) {
+                    currentSection = sections[i].label;
+                    break;
+                }
+                beatIndex += sectionBeats;
             }
-            beatIndex += sectionBeats;
-        }
-        
-        // Update song item section display
-        const activeSongItem = document.querySelector('.song-item.active');
-        if (activeSongItem) {
-            const sectionSpan = activeSongItem.querySelector('.song-section');
+            const sectionSpan = selectedSongItem?.querySelector('.song-section');
             if (sectionSpan && sectionSpan.textContent !== currentSection) {
                 sectionSpan.textContent = currentSection;
             }
+            lastRenderedSectionBeat = currentBeat;
         }
 
-        // Update lyrics with minimal DOM manipulation
-        let currentLyric = '';
+        // Find the current lyric every frame for the always-visible live display,
+        // but only touch the hidden detailed lyrics when their state changes.
         let activeLyricIndex = -1;
-        
+        let lyricState = '';
         const activeLyricText = [];
         const lyricTimings = cachedLyricTimings.length
             ? cachedLyricTimings
@@ -6752,85 +6833,95 @@
 
         for (let i = 0; i < lyricTimings.length; i++) {
             const timing = lyricTimings[i];
-            const line = timing.line;
-            const startTime = timing.startTime;
-            const endTime = timing.endTime;
-            
-            const isActive = currentTime >= startTime && currentTime < endTime;
-            const isPassed = currentTime >= endTime;
-            
-            // Only update classes if state changed
+            const isActive = currentTime >= timing.startTime && currentTime < timing.endTime;
             if (isActive) {
-                line.classList.add('active');
-                line.classList.remove('passed');
+                lyricState += 'a';
                 if (activeLyricIndex === -1) activeLyricIndex = i;
-                activeLyricText.push(line.textContent);
-            } else if (isPassed && !line.classList.contains('passed')) {
-                line.classList.remove('active');
-                line.classList.add('passed');
-            } else if (!isActive && !isPassed && (line.classList.contains('active') || line.classList.contains('passed'))) {
-                line.classList.remove('active', 'passed');
+                activeLyricText.push(timing.line.textContent);
+            } else if (currentTime >= timing.endTime) {
+                lyricState += 'p';
+            } else {
+                lyricState += 'f';
             }
         }
-        currentLyric = activeLyricText.join(' / ');
+        if (isLyricsPanelActive) {
+            if (lyricState !== lastRenderedLyricState) {
+                for (let i = 0; i < lyricTimings.length; i++) {
+                    const timing = lyricTimings[i];
+                    const isActive = currentTime >= timing.startTime && currentTime < timing.endTime;
+                    const isPassed = currentTime >= timing.endTime;
+                    timing.line.classList.toggle('active', isActive);
+                    timing.line.classList.toggle('passed', !isActive && isPassed);
+                }
+                lastRenderedLyricState = lyricState;
+            }
+        } else {
+            lastRenderedLyricState = '';
+        }
+        const currentLyric = activeLyricText.join(' / ');
         if (currentLyricDisplay) setAnimatedText(currentLyricDisplay, currentLyric);
         updateLiveLyricsStack(lyricTimings, activeLyricIndex, false, currentTime);
 
-        // Update chords with minimal DOM manipulation
-        let currentChord = '';
-        for (let i = 0; i < cachedChordElements.length; i++) {
-            const chord = cachedChordElements[i];
-            const startBeat = parseInt(chord.dataset.beat) - 1;
-            const spanLength = parseInt(chord.dataset.span) || 1;
-            const endBeat = startBeat + spanLength - 1;
-            
-            const isActive = currentBeat >= startBeat && currentBeat <= endBeat;
-            const isPassed = currentBeat > endBeat;
+        // Chord detail is only visible in the Song tab. Synchronize its full DOM
+        // state once per beat, then animate only the active chord's progress.
+        if (!isLyricsPanelActive) {
+            activeChordState = null;
+            lastRenderedChordBeat = Number.NaN;
+            return;
+        }
 
-            // Update progress CSS variable
-            const progressEl = chord.nextElementSibling;
-            if (progressEl && progressEl.classList.contains('chord-progress')) {
-                const currentTrackIndex = selectedTrackIndex;
-                const beatSourceStartTime = startOffset + startBeat * beatDuration;
-                const beatSourceEndTime = beatSourceStartTime + (beatDuration * spanLength);
-                const beatStartTime = currentTrackIndex >= 0
-                    ? getPlaybackTimeForSourceTime(currentTrackIndex, beatSourceStartTime)
-                    : beatSourceStartTime;
-                const beatEndTime = chord.dataset.extendsToEnd === 'true'
-                    ? duration
-                    : (currentTrackIndex >= 0
-                        ? getPlaybackTimeForSourceTime(currentTrackIndex, beatSourceEndTime)
-                        : beatSourceEndTime);
-                const beatPlaybackDuration = Math.max(0.001, beatEndTime - beatStartTime);
-                let p = 0;
-                if (currentTime >= beatEndTime) p = 100;
-                else if (currentTime >= beatStartTime && currentTime < beatEndTime) {
-                    p = ((currentTime - beatStartTime) / beatPlaybackDuration) * 100;
+        if (currentBeat !== lastRenderedChordBeat) {
+            activeChordState = null;
+            for (let i = 0; i < cachedChordStates.length; i++) {
+                const chordState = cachedChordStates[i];
+                const { chord, progressElement, startBeat, endBeat } = chordState;
+                const isActive = currentBeat >= startBeat && currentBeat <= endBeat;
+                const isPassed = currentBeat > endBeat;
+
+                if (progressElement && !isActive) {
+                    const snapProgress = isPassed ? 100 : 0;
+                    if (progressElement.style.getPropertyValue('--progress') !== String(snapProgress)) {
+                        progressElement.style.setProperty('--progress', snapProgress);
+                    }
                 }
-                
-                // Optimization: avoid unnecessary style recalcs
-                const currentP = progressEl.style.getPropertyValue('--progress');
+
                 if (isActive) {
-                    // Always update active chord for smoothness
-                    progressEl.style.setProperty('--progress', p);
-                } else if ((p === 0 && currentP !== '0') || (p === 100 && currentP !== '100')) {
-                    // Only update inactive chords if they need to snap to 0 or 100
-                    progressEl.style.setProperty('--progress', p);
+                    activeChordState = chordState;
+                    if (chord !== lastActiveChord) {
+                        if (lastActiveChord) lastActiveChord.classList.remove('active');
+                        chord.classList.add('active');
+                        chord.classList.remove('passed');
+                        lastActiveChord = chord;
+                    }
+                } else if (isPassed && !chord.classList.contains('passed')) {
+                    chord.classList.remove('active');
+                    chord.classList.add('passed');
+                } else if (!isPassed && (chord.classList.contains('active') || chord.classList.contains('passed'))) {
+                    chord.classList.remove('active', 'passed');
                 }
             }
-            
-            // Only update classes if state changed
-            if (isActive && chord !== lastActiveChord) {
-                if (lastActiveChord) lastActiveChord.classList.remove('active');
-                chord.classList.add('active');
-                chord.classList.remove('passed');
-                lastActiveChord = chord;
-            } else if (isPassed && !chord.classList.contains('passed')) {
-                chord.classList.remove('active');
-                chord.classList.add('passed');
-            } else if (!isActive && !isPassed && (chord.classList.contains('active') || chord.classList.contains('passed'))) {
-                chord.classList.remove('active', 'passed');
+            lastRenderedChordBeat = currentBeat;
+        }
+
+        if (activeChordState?.progressElement) {
+            const { progressElement, startBeat, spanLength, extendsToEnd } = activeChordState;
+            const beatSourceStartTime = startOffset + startBeat * beatDuration;
+            const beatSourceEndTime = beatSourceStartTime + beatDuration * spanLength;
+            const beatStartTime = selectedTrackIndex >= 0
+                ? getPlaybackTimeForSourceTime(selectedTrackIndex, beatSourceStartTime)
+                : beatSourceStartTime;
+            const beatEndTime = extendsToEnd
+                ? duration
+                : (selectedTrackIndex >= 0
+                    ? getPlaybackTimeForSourceTime(selectedTrackIndex, beatSourceEndTime)
+                    : beatSourceEndTime);
+            const beatPlaybackDuration = Math.max(0.001, beatEndTime - beatStartTime);
+            let progress = 0;
+            if (currentTime >= beatEndTime) progress = 100;
+            else if (currentTime >= beatStartTime) {
+                progress = ((currentTime - beatStartTime) / beatPlaybackDuration) * 100;
             }
+            progressElement.style.setProperty('--progress', progress);
         }
     }
 
@@ -6842,7 +6933,7 @@
             return;
         }
         updateProgressBars();
-        updateLiveTelemetryAnalysis();
+        if (telemetryEnabled) updateLiveTelemetryAnalysis();
         animationFrameId = requestAnimationFrame(smoothUpdateLoop);
     }
     

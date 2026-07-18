@@ -49,6 +49,7 @@ function createSeekRenderer(canvas) {
                 index: Number.isFinite(section.index) ? section.index : index
             }))
             .filter(section => section.end > section.start);
+        sectionsRevision += 1;
         render(lastProgress);
     }
 
@@ -61,17 +62,20 @@ function createSeekRenderer(canvas) {
     }
 
     function resize() {
-        if (!needsResize) return;
+        if (!needsResize) return false;
         const rect = canvas.getBoundingClientRect();
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const w = Math.max(200, Math.floor(rect.width * dpr));
         const h = Math.max(8, Math.floor(rect.height * dpr));
+        let resized = false;
         if (canvas.width !== w || canvas.height !== h) {
             canvas.width = w;
             canvas.height = h;
+            resized = true;
         }
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
         needsResize = false;
+        return resized;
     }
 
     // Basic shaders for solid rects
@@ -118,6 +122,7 @@ function createSeekRenderer(canvas) {
 
     // Pre-allocate buffer to avoid GC
     const verts = new Float32Array(12);
+    gl.bufferData(gl.ARRAY_BUFFER, verts.byteLength, gl.DYNAMIC_DRAW);
 
     function rect(x, y, w, h){
         const x2 = x + w, y2 = y + h;
@@ -127,7 +132,7 @@ function createSeekRenderer(canvas) {
         verts[6] = x; verts[7] = y2;
         verts[8] = x2; verts[9] = y;
         verts[10] = x2; verts[11] = y2;
-        gl.bufferData(gl.ARRAY_BUFFER, verts, gl.DYNAMIC_DRAW);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, verts);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
@@ -140,18 +145,30 @@ function createSeekRenderer(canvas) {
         rect(x, y + h - bottomShade, w, bottomShade);
     }
 
+    let sectionsRevision = 0;
+    let lastRenderedSectionsRevision = -1;
+    let lastRenderedProgressPixel = -1;
+
     function render(progress){
         lastProgress = Math.max(0, Math.min(1, Number.parseFloat(progress) || 0));
-        resize();
+        const resized = resize();
         const W = gl.drawingBufferWidth;
         const H = gl.drawingBufferHeight;
+        const frame = Math.max(2, Math.floor(H * 0.14));
+        const innerW = Math.max(0, W - frame * 2);
+        const progressPixel = Math.round(lastProgress * innerW);
+        if (
+            !resized
+            && sectionsRevision === lastRenderedSectionsRevision
+            && progressPixel === lastRenderedProgressPixel
+        ) return;
+        lastRenderedSectionsRevision = sectionsRevision;
+        lastRenderedProgressPixel = progressPixel;
         gl.uniform2f(u_res, W, H);
         gl.clearColor(theme.surface[0], theme.surface[1], theme.surface[2], 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        const frame = Math.max(2, Math.floor(H * 0.14));
         const innerX = frame;
         const innerY = frame;
-        const innerW = Math.max(0, W - frame * 2);
         const innerH = Math.max(0, H - frame * 2);
         const topSheen = Math.max(1, Math.floor(innerH * 0.34));
         const bottomShade = Math.max(1, Math.floor(innerH * 0.18));
@@ -215,7 +232,10 @@ function createSeekRenderer(canvas) {
         }
     }
 
-    window.addEventListener('resize', () => render(lastProgress));
+    window.addEventListener('resize', () => {
+        needsResize = true;
+        render(lastProgress);
+    });
     // Initial style sizing
     const style = canvas.style;
     style.display = 'block';
@@ -279,6 +299,7 @@ function createChordOverlayRenderer(canvas){
 
     // Pre-allocate buffer
     const verts = new Float32Array(12);
+    gl.bufferData(gl.ARRAY_BUFFER, verts.byteLength, gl.DYNAMIC_DRAW);
 
     let needsResize = true;
     if (window.ResizeObserver) {
@@ -307,7 +328,7 @@ function createChordOverlayRenderer(canvas){
         verts[6] = x; verts[7] = y2;
         verts[8] = x2; verts[9] = y;
         verts[10] = x2; verts[11] = y2;
-        gl.bufferData(gl.ARRAY_BUFFER, verts, gl.DYNAMIC_DRAW);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, verts);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
@@ -370,6 +391,7 @@ function createPanelRenderer(canvas){
     gl.enableVertexAttribArray(a_pos);
     gl.vertexAttribPointer(a_pos,2,gl.FLOAT,false,0,0);
     const verts=new Float32Array(12);
+    gl.bufferData(gl.ARRAY_BUFFER, verts.byteLength, gl.DYNAMIC_DRAW);
     let mouseX=0, mouseY=0, running=false, rafId=null;
     function resize(){ const r=canvas.getBoundingClientRect(); const dpr=Math.min(window.devicePixelRatio||1,2);
         const w=Math.max(200, Math.floor(r.width*dpr)); const h=Math.max(40, Math.floor(r.height*dpr));
@@ -377,7 +399,7 @@ function createPanelRenderer(canvas){
         gl.viewport(0,0,gl.drawingBufferWidth, gl.drawingBufferHeight);
         gl.uniform2f(u_res, gl.drawingBufferWidth, gl.drawingBufferHeight);
     }
-    function fullQuad(){ verts[0]=-1;verts[1]=-1; verts[2]=1;verts[3]=-1; verts[4]=-1;verts[5]=1; verts[6]=-1;verts[7]=1; verts[8]=1;verts[9]=-1; verts[10]=1;verts[11]=1; gl.bufferData(gl.ARRAY_BUFFER, verts, gl.DYNAMIC_DRAW); gl.drawArrays(gl.TRIANGLES,0,6); }
+    function fullQuad(){ verts[0]=-1;verts[1]=-1; verts[2]=1;verts[3]=-1; verts[4]=-1;verts[5]=1; verts[6]=-1;verts[7]=1; verts[8]=1;verts[9]=-1; verts[10]=1;verts[11]=1; gl.bufferSubData(gl.ARRAY_BUFFER,0,verts); gl.drawArrays(gl.TRIANGLES,0,6); }
     function draw(){ resize(); const W=gl.drawingBufferWidth,H=gl.drawingBufferHeight; gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform2f(u_mouse, mouseX, mouseY); gl.uniform1f(u_time, performance.now()*0.001);
         fullQuad();
