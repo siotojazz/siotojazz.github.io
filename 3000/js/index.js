@@ -6539,34 +6539,82 @@
         activeLine.style.fontSize = `${fittedFontSize.toFixed(2)}px`;
     }
 
+    function estimateLyricWordSyllables(rawWord) {
+        const word = String(rawWord || '').toLocaleLowerCase().replace(/[^\p{L}]/gu, '');
+        if (!word) return 0;
+
+        const vowelGroups = word.match(/[aeiouyà-æè-ïò-öù-üаеиоу]+/giu) || [];
+        let syllables = vowelGroups.length;
+        if (/^[a-z]+$/i.test(word) && syllables > 1 && /e$/i.test(word) && !/(?:le|ye)$/i.test(word)) {
+            syllables -= 1;
+        }
+        return Math.max(1, syllables);
+    }
+
+    function isLiveLyricTooLong(text) {
+        if (!liveLyricsDisplay) return false;
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+        const displayWidth = liveLyricsDisplay.clientWidth || window.innerWidth;
+        const availableWidth = isMobile
+            ? Math.max(0, displayWidth - 16)
+            : Math.min(displayWidth * 0.72, 560);
+        const fontSize = isMobile
+            ? 16
+            : Math.min(17, Math.max(13, window.innerWidth * 0.025));
+        const measuringCanvas = isLiveLyricTooLong.canvas ||
+            (isLiveLyricTooLong.canvas = document.createElement('canvas'));
+        const measuringContext = measuringCanvas.getContext('2d');
+        measuringContext.font = `700 ${fontSize}px Garet, Arial, sans-serif`;
+        return measuringContext.measureText(text).width > availableWidth * 0.9;
+    }
+
     function getLiveLyricSegment(timing, currentTime) {
         const text = (timing?.line?.textContent || '').trim();
         if (!text || !liveLyricsDisplay) {
             return { text, part: 0, startTime: timing?.startTime ?? 0, endTime: timing?.endTime ?? 0 };
         }
 
-        const commaIndexes = Array.from(text.matchAll(/,/g), match => match.index)
-            .filter(index => text.slice(0, index).trim() && text.slice(index + 1).trim());
-        if (!commaIndexes.length) {
+        const wordMatches = Array.from(text.matchAll(/\S+/g));
+        if (wordMatches.length < 2 || !isLiveLyricTooLong(text)) {
             return { text, part: 0, startTime: timing.startTime, endTime: timing.endTime };
         }
 
-        const words = text.split(/\s+/);
-        const balancedCommas = commaIndexes.filter(index => {
-            const wordsBeforeComma = text.slice(0, index).trim().split(/\s+/).length;
-            const splitRatio = wordsBeforeComma / words.length;
+        const wordSyllables = wordMatches.map(match => estimateLyricWordSyllables(match[0]));
+        const totalSyllables = wordSyllables.reduce((sum, count) => sum + count, 0);
+        const middleSyllable = totalSyllables / 2;
+        const commaIndexes = Array.from(text.matchAll(/,/g), match => match.index)
+            .filter(index => text.slice(0, index).trim() && text.slice(index + 1).trim());
+        const balancedCommas = commaIndexes.map(index => {
+            const syllablesBeforeComma = wordMatches.reduce((sum, match, wordIndex) =>
+                match.index < index ? sum + wordSyllables[wordIndex] : sum, 0
+            );
+            return { index, syllablesBeforeComma };
+        }).filter(candidate => {
+            const splitRatio = candidate.syllablesBeforeComma / totalSyllables;
             return splitRatio >= 0.35 && splitRatio <= 0.65;
         });
+
         let parts;
         if (balancedCommas.length) {
-            const textMiddle = text.length / 2;
-            const splitAt = balancedCommas.reduce((nearest, index) =>
-                Math.abs(index - textMiddle) < Math.abs(nearest - textMiddle) ? index : nearest
-            );
+            const splitAt = balancedCommas.reduce((nearest, candidate) =>
+                Math.abs(candidate.syllablesBeforeComma - middleSyllable) <
+                Math.abs(nearest.syllablesBeforeComma - middleSyllable) ? candidate : nearest
+            ).index;
             parts = [text.slice(0, splitAt).trim(), text.slice(splitAt + 1).trim()];
         } else {
-            const middleWord = Math.ceil(words.length / 2);
-            parts = [words.slice(0, middleWord).join(' '), words.slice(middleWord).join(' ')];
+            let runningSyllables = 0;
+            let splitWordIndex = 1;
+            let closestDistance = Number.POSITIVE_INFINITY;
+            for (let wordIndex = 1; wordIndex < wordMatches.length; wordIndex += 1) {
+                runningSyllables += wordSyllables[wordIndex - 1];
+                const distance = Math.abs(runningSyllables - middleSyllable);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    splitWordIndex = wordIndex;
+                }
+            }
+            const splitAt = wordMatches[splitWordIndex].index;
+            parts = [text.slice(0, splitAt).trim(), text.slice(splitAt).trim()];
         }
         const midpoint = timing.startTime + (timing.endTime - timing.startTime) / 2;
         const part = currentTime < midpoint ? 0 : 1;
