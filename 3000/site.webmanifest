@@ -16,8 +16,8 @@
       "purpose": "any maskable"
     },
     {
-      "src": "album_cover.png",
-      "sizes": "5000x5000",
+      "src": "album_cover_1000x1000.png",
+      "sizes": "1000x1000",
       "type": "image/png",
       "purpose": "any"
     }

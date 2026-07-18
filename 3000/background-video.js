@@ -3,8 +3,22 @@
     const source = new URL("background.mp4", script.src).href;
     const deferUntil = script.dataset.deferUntil || '';
     const fadeDuration = 3.5;
+    const mobileLayout = window.matchMedia('(max-width: 768px)');
+    let mediaLoadingReleased = document.documentElement.dataset.mediaLoadingReleased === 'true';
+
+    function removeVideoBackground() {
+        const background = document.querySelector('.site-video-background');
+        if (!background) return;
+        background.querySelectorAll('video').forEach(video => {
+            video.pause();
+            video.removeAttribute('src');
+            video.load();
+        });
+        background.remove();
+    }
 
     function initializeVideoBackground() {
+        if (mobileLayout.matches) return;
         if (document.querySelector(".site-video-background")) return;
 
         const background = document.createElement("div");
@@ -76,11 +90,26 @@
         play(videos[0]);
     }
 
+    function syncVideoBackground() {
+        if (mobileLayout.matches) {
+            removeVideoBackground();
+            return;
+        }
+        if (mediaLoadingReleased) initializeVideoBackground();
+    }
+
+    function releaseVideoBackground() {
+        mediaLoadingReleased = true;
+        syncVideoBackground();
+    }
+
+    mobileLayout.addEventListener?.('change', syncVideoBackground);
+
     if (deferUntil && document.documentElement.dataset.mediaLoadingReleased !== 'true') {
-        window.addEventListener(deferUntil, initializeVideoBackground, { once: true });
+        window.addEventListener(deferUntil, releaseVideoBackground, { once: true });
     } else if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initializeVideoBackground, { once: true });
+        document.addEventListener("DOMContentLoaded", releaseVideoBackground, { once: true });
     } else {
-        initializeVideoBackground();
+        releaseVideoBackground();
     }
 })();

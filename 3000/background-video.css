@@ -22,3 +22,9 @@
 .site-video-background video.is-active {
     opacity: 1;
 }
+
+@media (max-width: 768px) {
+    .site-video-background {
+        display: none;
+    }
+}
