@@ -240,6 +240,7 @@
         const fretHeight = 17;
         const nutY = top + fretCount * fretHeight;
         const headstockBottom = nutY + 31;
+        const originalHeight = headstockBottom + 12;
         const xStart = 38;
         const xEnd = 168;
         const stringGap = instrument.strings.length > 1 ? (xEnd - xStart) / (instrument.strings.length - 1) : 0;
@@ -254,7 +255,7 @@
             const fretNumber = fretCount - index;
             const y = top + index * fretHeight;
             const opacity = instrument.fretless && fretNumber > 0 ? 0.28 : 0.75;
-            return `<line x1="${xStart}" y1="${y}" x2="${xEnd}" y2="${y}" stroke="#ffffff" stroke-width="${fretNumber === 0 ? 3 : 1}" opacity="${opacity}"/>${fretNumber > 0 ? `<text x="27" y="${y + 12}" fill="#ffffff" text-anchor="middle" font-size="8" opacity="0.72">${fretNumber}</text>` : ''}`;
+            return `<line x1="${xStart}" y1="${y}" x2="${xEnd}" y2="${y}" stroke="#ffffff" stroke-width="${fretNumber === 0 ? 3 : 1}" opacity="${opacity}"/>`;
         }).join('');
         const markers = frets.map((fret, index) => {
             const x = xEnd - index * stringGap;
@@ -266,14 +267,28 @@
             return `<circle cx="${x}" cy="${y}" r="6.5" fill="${isRoot ? '#ffd166' : '#8fb7ff'}" stroke="#08205e" stroke-width="1.5"/><text x="${x}" y="${y + 3}" fill="#08205e" text-anchor="middle" font-size="7" font-weight="700">${SEMITONE_TO_NOTE[note]}</text>`;
         }).join('');
         const headstock = `<path d="M${xStart} ${nutY} L${xEnd} ${nutY} L${xEnd + 8} ${nutY + 16} Q${width / 2} ${headstockBottom + 8} ${xStart - 8} ${nutY + 16} Z" fill="rgba(255,255,255,0.1)" stroke="#ffffff" stroke-width="1"/>`;
+        const positionFrets = numericFrets.filter(fret => fret > 0);
+        const positionFret = positionFrets.length && Math.min(...positionFrets) > 3 ? Math.min(...positionFrets) : 0;
+        const positionY = positionFret ? nutY - positionFret * fretHeight : 0;
+        const positionMarker = positionFret
+            ? `<line x1="${xStart - 3}" y1="${positionY}" x2="${xEnd + 3}" y2="${positionY}" stroke="#8fb7ff" stroke-width="3"/>`
+            : '';
+        const positionNumber = positionFret
+            ? `<text x="${originalHeight - positionY}" y="186" fill="#8fb7ff" text-anchor="middle" font-size="9" font-weight="800">${positionFret}</text>`
+            : '';
+        const capoMarker = selectedCapoFret > 0
+            ? `<line x1="${xStart - 3}" y1="${nutY + 6}" x2="${xEnd + 3}" y2="${nutY + 6}" stroke="#ffd166" stroke-width="5"/>`
+            : '';
+        const capoNumber = selectedCapoFret > 0
+            ? `<text x="${originalHeight - nutY - 6}" y="186" fill="#ffd166" text-anchor="middle" font-size="10" font-weight="800">${selectedCapoFret}</text>`
+            : '';
         const instruction = instrumentKey === 'bass' && Number.isFinite(rootTone)
             ? `${instrument.label} · ${SEMITONE_TO_NOTE[rootTone]} single note`
-            : `${instrument.label} · ${frets.join(' ')}`;
-        const originalHeight = headstockBottom + 12;
-        const diagramContent = `${guides}${strings}${headstock}${markers}`;
+            : `${instrument.label}${selectedCapoFret > 0 ? ` · capo ${selectedCapoFret}` : ''} · ${frets.join(' ')}`;
+        const diagramContent = `${guides}${strings}${headstock}${positionMarker}${capoMarker}${markers}`;
         return {
             instructions: instruction,
-            diagram: `<svg viewBox="0 0 ${originalHeight} ${width}" role="img" aria-label="${normalizeChordName(chordName)} ${instrument.label} fingering, rotated 90 degrees clockwise"><g transform="translate(${originalHeight} 0) rotate(90)">${diagramContent}</g></svg>`
+            diagram: `<svg viewBox="0 0 ${originalHeight} ${width}" role="img" aria-label="${normalizeChordName(chordName)} ${instrument.label} fingering, rotated 90 degrees clockwise"><g transform="translate(${originalHeight} 0) rotate(90)">${diagramContent}</g>${positionNumber}${capoNumber}</svg>`
         };
     }
 
@@ -288,33 +303,7 @@
         return String(chordName || '')
             .split('>')
             .map(name => name.trim())
-            .filter(Boolean)
-            .map(transposeChordForCapo);
-    }
-
-    function transposeNoteForCapo(noteName, semitones) {
-        const semitone = NOTE_TO_SEMITONE[noteName];
-        if (!Number.isFinite(semitone)) return noteName;
-        const transposed = (semitone + semitones + 120) % 12;
-        const preferFlats = noteName.includes('b');
-        const sharpNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-        const flatNames = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
-        return (preferFlats ? flatNames : sharpNames)[transposed];
-    }
-
-    function transposeChordForCapo(chordName) {
-        const normalized = normalizeChordName(chordName);
-        if (!selectedCapoFret) return normalized;
-        const match = normalized.match(/^([A-Ga-g])([#b]?)(.*)$/);
-        if (!match) return normalized;
-        const root = `${match[1].toUpperCase()}${match[2] || ''}`;
-        let suffix = match[3] || '';
-        const bassMatch = suffix.match(/\/([A-Ga-g])([#b]?)$/);
-        if (bassMatch) {
-            const bass = `${bassMatch[1].toUpperCase()}${bassMatch[2] || ''}`;
-            suffix = `${suffix.slice(0, bassMatch.index)}/${transposeNoteForCapo(bass, -selectedCapoFret)}`;
-        }
-        return `${transposeNoteForCapo(root, -selectedCapoFret)}${suffix}`;
+            .filter(Boolean);
     }
 
     function renderChordSlotLabel(chordElement, chordName) {

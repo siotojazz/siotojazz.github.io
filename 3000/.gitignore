@@ -16,3 +16,5 @@ labels.html
 /tools/
 lyric-sync.html
 album-booklet.html
+node_modules/
+.pnpm-store/
