@@ -6116,7 +6116,8 @@
         const { beatDuration, beatsPerBar } = getTrackTiming(track);
         const entries = lyricLines.map((line, order) => {
             const length = Number.parseFloat(line.dataset.length) || 1;
-            const barNumber = Number.parseFloat(line.dataset.bar) || 1;
+            const parsedBarNumber = Number.parseFloat(line.dataset.bar);
+            const barNumber = Number.isFinite(parsedBarNumber) ? parsedBarNumber : 1;
             const offset = Number.parseFloat(line.dataset.offset) || 0;
             const startTime = getBarStartTime(track, barNumber, offset);
             const naturalEndTime = startTime + (length * beatsPerBar * beatDuration);
@@ -6850,7 +6851,7 @@
             const lineDiv = document.createElement('div');
             lineDiv.className = 'lyrics-line';
             lineDiv.dataset.index = index;
-            lineDiv.dataset.bar = line.barNumber || 1;
+            lineDiv.dataset.bar = Number.isFinite(Number.parseFloat(line.barNumber)) ? line.barNumber : 1;
             lineDiv.dataset.length = line.barLength || 1;
             lineDiv.dataset.offset = line.offset || 0;
             if (line.stanzaEnd) lineDiv.classList.add('stanza-end');

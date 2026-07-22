@@ -1088,14 +1088,16 @@ body.is-audio-revealing .audio-preloader__presents {
 }
 .live-lyrics-line.is-active {
     min-height: 0;
-    width: fit-content;
-    max-width: min(72%, 560px);
+    width: min(92%, 760px);
+    max-width: none;
     margin: 0;
     padding: 0;
     font-size: clamp(13px, 2.5vw, 17px);
     font-weight: 700;
     line-height: 1.18;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
     opacity: 1;
     transform: translate3d(0, 0, 0);
     color: #fff;
@@ -1108,7 +1110,7 @@ body.is-audio-revealing .audio-preloader__presents {
     pointer-events: auto;
 }
 .live-lyrics-line__text {
-    display: inline-block;
+    display: block;
     transform: scale(var(--live-lyric-scale, 0.8));
     transform-origin: center;
     will-change: transform;
@@ -3131,13 +3133,14 @@ audio {
     }
     .live-lyrics-line.is-active {
         display: block;
-        width: fit-content;
+        width: calc(100% - 16px);
         max-width: calc(100% - 16px);
         min-height: 0;
         margin: 0;
         font-size: 16px;
         line-height: 1.12;
-        white-space: nowrap;
+        white-space: normal;
+        overflow-wrap: anywhere;
         overflow: visible;
         text-align: center;
     }

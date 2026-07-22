@@ -4362,7 +4362,8 @@
         const { beatDuration, beatsPerBar } = getTrackTiming(track);
         const entries = lyricLines.map((line, order) => {
             const length = Number.parseFloat(line.dataset.length) || 1;
-            const barNumber = Number.parseFloat(line.dataset.bar) || 1;
+            const parsedBarNumber = Number.parseFloat(line.dataset.bar);
+            const barNumber = Number.isFinite(parsedBarNumber) ? parsedBarNumber : 1;
             const offset = Number.parseFloat(line.dataset.offset) || 0;
             const startTime = getBarStartTime(track, barNumber, offset);
             const naturalEndTime = startTime + (length * beatsPerBar * beatDuration);
@@ -4830,7 +4831,7 @@
             const lineDiv = document.createElement('div');
             lineDiv.className = 'lyrics-line';
             lineDiv.dataset.index = index;
-            lineDiv.dataset.bar = line.barNumber || 1;
+            lineDiv.dataset.bar = Number.isFinite(Number.parseFloat(line.barNumber)) ? line.barNumber : 1;
             lineDiv.dataset.length = line.barLength || 1;
             lineDiv.dataset.offset = line.offset || 0;
             if (line.stanzaEnd) lineDiv.classList.add('stanza-end');
@@ -5235,7 +5236,7 @@
 
     function getLyricEntryStartTime(track, lyricEntry) {
         if (!lyricEntry) return 0;
-        return getBarStartTime(track, lyricEntry.barNumber || 1, lyricEntry.offset || 0);
+        return getBarStartTime(track, lyricEntry.barNumber ?? 1, lyricEntry.offset || 0);
     }
 
     function getSectionRanges(track) {
@@ -6588,123 +6589,14 @@
         activeLine.style.fontSize = `${fittedFontSize.toFixed(2)}px`;
     }
 
-    function estimateLyricWordSyllables(rawWord) {
-        const word = String(rawWord || '').toLocaleLowerCase().replace(/[^\p{L}]/gu, '');
-        if (!word) return 0;
-
-        const vowelGroups = word.match(/[aeiouyà-æè-ïò-öù-üаеиоу]+/giu) || [];
-        let syllables = vowelGroups.length;
-        if (/^[a-z]+$/i.test(word) && syllables > 1 && /e$/i.test(word) && !/(?:le|ye)$/i.test(word)) {
-            syllables -= 1;
-        }
-        return Math.max(1, syllables);
-    }
-
-    function isLiveLyricTooLong(text) {
-        if (!liveLyricsDisplay) return false;
-        const isMobile = window.matchMedia('(max-width: 768px)').matches;
-        const displayWidth = liveLyricsDisplay.clientWidth || window.innerWidth;
-        const availableWidth = isMobile
-            ? Math.max(0, displayWidth - 16)
-            : Math.min(displayWidth * 0.72, 560);
-        const fontSize = isMobile
-            ? 16
-            : Math.min(17, Math.max(13, window.innerWidth * 0.025));
-        const measuringCanvas = isLiveLyricTooLong.canvas ||
-            (isLiveLyricTooLong.canvas = document.createElement('canvas'));
-        const measuringContext = measuringCanvas.getContext('2d');
-        measuringContext.font = `700 ${fontSize}px Garet, Arial, sans-serif`;
-        return measuringContext.measureText(text).width > availableWidth * 0.9;
-    }
-
-    const liveLyricSegmentCache = new WeakMap();
-    let liveLyricLayoutRevision = 0;
-    window.addEventListener('resize', () => {
-        liveLyricLayoutRevision += 1;
-    });
-    if (liveLyricsDisplay && window.ResizeObserver) {
-        new ResizeObserver(() => {
-            liveLyricLayoutRevision += 1;
-        }).observe(liveLyricsDisplay);
-    }
-
-    function getLiveLyricSegment(timing, currentTime) {
+    function getLiveLyricSegment(timing) {
         const text = (timing?.line?.textContent || '').trim();
-        if (!text || !liveLyricsDisplay) {
-            return { text, part: 0, startTime: timing?.startTime ?? 0, endTime: timing?.endTime ?? 0 };
-        }
-
-        const cachedSegmentation = liveLyricSegmentCache.get(timing);
-        if (
-            cachedSegmentation
-            && cachedSegmentation.text === text
-            && cachedSegmentation.layoutRevision === liveLyricLayoutRevision
-        ) {
-            if (cachedSegmentation.segments.length === 1) return cachedSegmentation.segments[0];
-            return cachedSegmentation.segments[currentTime < cachedSegmentation.midpoint ? 0 : 1];
-        }
-
-        const wordMatches = Array.from(text.matchAll(/\S+/g));
-        if (wordMatches.length < 2 || !isLiveLyricTooLong(text)) {
-            const segment = { text, part: 0, startTime: timing.startTime, endTime: timing.endTime };
-            liveLyricSegmentCache.set(timing, {
-                text,
-                layoutRevision: liveLyricLayoutRevision,
-                midpoint: timing.endTime,
-                segments: [segment]
-            });
-            return segment;
-        }
-
-        const wordSyllables = wordMatches.map(match => estimateLyricWordSyllables(match[0]));
-        const totalSyllables = wordSyllables.reduce((sum, count) => sum + count, 0);
-        const middleSyllable = totalSyllables / 2;
-        const commaIndexes = Array.from(text.matchAll(/,/g), match => match.index)
-            .filter(index => text.slice(0, index).trim() && text.slice(index + 1).trim());
-        const balancedCommas = commaIndexes.map(index => {
-            const syllablesBeforeComma = wordMatches.reduce((sum, match, wordIndex) =>
-                match.index < index ? sum + wordSyllables[wordIndex] : sum, 0
-            );
-            return { index, syllablesBeforeComma };
-        }).filter(candidate => {
-            const splitRatio = candidate.syllablesBeforeComma / totalSyllables;
-            return splitRatio >= 0.35 && splitRatio <= 0.65;
-        });
-
-        let parts;
-        if (balancedCommas.length) {
-            const splitAt = balancedCommas.reduce((nearest, candidate) =>
-                Math.abs(candidate.syllablesBeforeComma - middleSyllable) <
-                Math.abs(nearest.syllablesBeforeComma - middleSyllable) ? candidate : nearest
-            ).index;
-            parts = [text.slice(0, splitAt).trim(), text.slice(splitAt + 1).trim()];
-        } else {
-            let runningSyllables = 0;
-            let splitWordIndex = 1;
-            let closestDistance = Number.POSITIVE_INFINITY;
-            for (let wordIndex = 1; wordIndex < wordMatches.length; wordIndex += 1) {
-                runningSyllables += wordSyllables[wordIndex - 1];
-                const distance = Math.abs(runningSyllables - middleSyllable);
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    splitWordIndex = wordIndex;
-                }
-            }
-            const splitAt = wordMatches[splitWordIndex].index;
-            parts = [text.slice(0, splitAt).trim(), text.slice(splitAt).trim()];
-        }
-        const midpoint = timing.startTime + (timing.endTime - timing.startTime) / 2;
-        const segments = [
-            { text: parts[0], part: 0, startTime: timing.startTime, endTime: midpoint },
-            { text: parts[1], part: 1, startTime: midpoint, endTime: timing.endTime }
-        ];
-        liveLyricSegmentCache.set(timing, {
+        return {
             text,
-            layoutRevision: liveLyricLayoutRevision,
-            midpoint,
-            segments
-        });
-        return segments[currentTime < midpoint ? 0 : 1];
+            part: 0,
+            startTime: timing?.startTime ?? 0,
+            endTime: timing?.endTime ?? 0
+        };
     }
 
     function updateLiveLyricsStack(lyricTimings, activeIndex, force = false, currentTime = getPlaybackCurrentTime()) {
@@ -6728,7 +6620,7 @@
         }
 
         const anchorIndex = activeIndex;
-        const activeSegment = getLiveLyricSegment(lyricTimings[activeIndex], currentTime);
+        const activeSegment = getLiveLyricSegment(lyricTimings[activeIndex]);
         const renderKey = `${activeIndex}:${activeSegment.part}`;
         if (!force && renderKey === lastLiveLyricIndex) return;
 
