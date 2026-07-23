@@ -6609,15 +6609,14 @@
         const cursorBeatPosition = timing.beatDuration > 0
             ? Math.max(0, (cursorSourceTime - timing.startOffset) / timing.beatDuration)
             : 0;
-        const cursorBeatPhase = cursorBeatPosition - Math.floor(cursorBeatPosition);
-        const cursorBeatPulse = Math.max(0, 1 - cursorBeatPhase * 2);
-        const mixChannel = (resting, pulse) => Math.round(resting + (pulse - resting) * cursorBeatPulse);
-        const coreColor = `rgba(${mixChannel(255, 227)}, ${mixChannel(255, 38)}, ${mixChannel(255, 54)}, 0.5)`;
-        const shadowColor = `rgba(${mixChannel(255, 227)}, ${mixChannel(255, 38)}, ${mixChannel(255, 54)}, 0.5)`;
+        const cursorBarBeat = cursorBeatPosition % timing.beatsPerBar;
+        const cursorBarPulse = Math.max(0, 1 - cursorBarBeat / 0.55);
         context.save();
-        context.strokeStyle = coreColor;
-        context.shadowColor = shadowColor;
-        context.shadowBlur = 13;
+        context.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+        context.shadowColor = `rgba(255, 255, 255, ${(0.08 + cursorBarPulse * 0.84).toFixed(2)})`;
+        context.shadowBlur = 3 + cursorBarPulse * 10;
+        context.shadowOffsetX = -4;
+        context.shadowOffsetY = 1;
         context.lineWidth = 1;
         for (let cursorOffset = -1; cursorOffset <= 1; cursorOffset += 1) {
             const cursorAmplitudeIndex = Math.max(
