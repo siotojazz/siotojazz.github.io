@@ -1116,15 +1116,20 @@ body.is-audio-revealing .audio-preloader__presents {
 .live-lyrics-line__text {
     display: grid;
     grid-template-columns: repeat(var(--live-lyric-word-count, 1), minmax(0, 1fr));
+    column-gap: 6px;
     align-items: center;
     width: 100%;
     transform: none;
 }
 .live-lyrics-line__word {
     display: block;
+    justify-self: start;
+    width: max-content;
     min-width: 0;
-    text-align: center;
+    text-align: left;
     white-space: nowrap;
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
 }
 .live-lyrics-line:hover {
     opacity: 1;
@@ -3029,7 +3034,8 @@ audio {
 /* ── Responsive ── */
 @media (max-width: 768px) {
     :root {
-        --mobile-player-height: 140px;
+        --mobile-live-stage-height: 76px;
+        --mobile-player-height: calc(39px + var(--mobile-live-stage-height));
     }
     body {
         overflow: hidden;
@@ -3088,7 +3094,7 @@ audio {
         z-index: 20;
         flex: 0 0 var(--mobile-player-height);
         min-height: var(--mobile-player-height);
-        padding-bottom: max(10px, env(safe-area-inset-bottom));
+        padding-bottom: 0;
         background:
             radial-gradient(circle at 20% 0%, rgba(var(--club-blue-bright-rgb), 0.24), rgba(var(--club-blue-bright-rgb), 0) 34%),
             linear-gradient(180deg, rgba(249, 252, 255, 0.98), rgba(222, 233, 255, 0.98));
@@ -3110,19 +3116,24 @@ audio {
     }
     .player-basic .seek-bar-container {
         order: 2;
+        flex: 0 0 1px;
+        height: 1px;
+        min-height: 1px;
         margin: 0;
         padding: 0;
+        line-height: 0;
     }
     .player-basic #seek-gl {
-        height: 1px;
+        height: 1px !important;
+        min-height: 1px;
         box-shadow: none;
     }
     .live-lyrics-stage {
         display: block;
         order: 3;
-        flex: 0 0 70px;
-        min-height: 70px;
-        height: 70px;
+        flex: 0 0 var(--mobile-live-stage-height);
+        min-height: var(--mobile-live-stage-height);
+        height: var(--mobile-live-stage-height);
         overflow: hidden;
     }
     .live-waveform-dino {
@@ -3132,12 +3143,13 @@ audio {
         height: 64px;
     }
     .live-lyrics {
-        min-height: 70px;
+        min-height: var(--mobile-live-stage-height);
         padding: 0;
         display: block;
     }
     .live-lyrics-line {
-        display: none;
+        display: block;
+        top: 50%;
     }
     .live-lyrics-line.is-active {
         display: block;

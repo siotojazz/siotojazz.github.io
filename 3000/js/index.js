@@ -6273,6 +6273,8 @@
     let lyricsWaveformCssHeight = 0;
     let lyricsWaveformContext = null;
     const LIVE_LYRIC_HALF_HEIGHT = 16 * 1.18 / 2;
+    const LIVE_LYRIC_HORIZONTAL_PADDING = 8;
+    const LIVE_LYRIC_WORD_GAP = 6;
     const liveLyricsEnvelopeScratch = [];
 
     function getStableLyricsWaveformEnvelope(trackIndex, audioBuffer) {
@@ -6343,11 +6345,19 @@
         ).map(line => {
             const lineText = line.querySelector('.live-lyrics-line__text');
             const text = (lineText?.dataset.lyricText || lineText?.textContent || '').trim();
+            const words = Array.from(
+                line.querySelectorAll('.live-lyrics-line__word')
+            ).map(element => ({
+                element,
+                width: element.getBoundingClientRect().width ||
+                    measureLiveLyricTextWidth(element.textContent || '')
+            }));
             return {
                 line,
                 startTime: Number.parseFloat(line.dataset.segmentStart),
                 endTime: Number.parseFloat(line.dataset.segmentEnd),
-                wordCount: Math.max(1, text.split(/\s+/).filter(Boolean).length),
+                words,
+                wordCount: Math.max(1, words.length || text.split(/\s+/).filter(Boolean).length),
                 isOffWaveform: null,
                 x: 0,
                 endX: 0
@@ -6381,15 +6391,42 @@
         if (windowDuration <= 0 || width <= 0 || !liveLyricsLayoutEntries.length) return;
         refreshLiveLyricsSlotMetrics(windowDuration, width);
         const pixelsPerSecond = width / windowDuration;
+        const cursorX = width * LIVE_LYRICS_WAVEFORM_CURRENT_ANCHOR;
         for (const entry of liveLyricsLayoutEntries) {
             const lyricX = (entry.startTime - windowStart) * pixelsPerSecond;
             const lyricEndX = (entry.endTime - windowStart) * pixelsPerSecond;
             entry.x = lyricX;
             entry.endX = lyricEndX;
+            const slotWidth = Math.max(1, lyricEndX - lyricX);
             entry.line.style.transform = `translate3d(${lyricX.toFixed(2)}px, -50%, 0)`;
+
+            const lyricContentWidth = Math.max(
+                1,
+                slotWidth - LIVE_LYRIC_HORIZONTAL_PADDING * 2
+            );
+            const totalWordGap = LIVE_LYRIC_WORD_GAP * Math.max(0, entry.wordCount - 1);
+            const wordSpaceWidth = Math.max(
+                1,
+                (lyricContentWidth - totalWordGap) / entry.wordCount
+            );
+            for (let wordIndex = 0; wordIndex < entry.words.length; wordIndex += 1) {
+                const word = entry.words[wordIndex];
+                const wordSpaceLeft =
+                    lyricX +
+                    LIVE_LYRIC_HORIZONTAL_PADDING +
+                    wordIndex * (wordSpaceWidth + LIVE_LYRIC_WORD_GAP);
+                const rightmostOffset = Math.max(0, wordSpaceWidth - word.width);
+                const pinnedOffset = Math.max(
+                    0,
+                    Math.min(rightmostOffset, cursorX - wordSpaceLeft)
+                );
+                word.element.style.transform =
+                    `translate3d(${pinnedOffset.toFixed(2)}px, 0, 0)`;
+            }
+
             const isOffWaveform =
-                (Number.isFinite(lyricEndX) ? lyricEndX : lyricX) < -width ||
-                lyricX > width * 2;
+                lyricEndX < 0 ||
+                lyricX > width;
             if (isOffWaveform !== entry.isOffWaveform) {
                 entry.line.classList.toggle('is-off-waveform', isOffWaveform);
                 entry.isOffWaveform = isOffWaveform;
@@ -6625,7 +6662,7 @@
                 lyricsWaveformCssHeight = Math.round(contentRect.height);
             }
             if (currentTrack) requestAnimationFrame(() => renderLyricsWaveform(getPlaybackCurrentTime(), { force: true }));
-        }).observe(lyricsWaveformCanvas);
+        }).observe(lyricsWaveformCanvas.parentElement || lyricsWaveformCanvas);
     }
     document.fonts?.ready.then(() => {
         liveLyricsWindowScaleCache = null;
