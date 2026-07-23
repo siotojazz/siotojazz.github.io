@@ -476,8 +476,10 @@
     let queueAlbumCoverSourceUpdate = () => {};
     const songInfoHost = document.getElementById('song-info-host');
     const lyricsWaveformCanvas = document.getElementById('lyrics-waveform');
-    const LIVE_LYRICS_WAVEFORM_WINDOW_SECONDS = 8;
-    const LIVE_LYRICS_WAVEFORM_CURRENT_ANCHOR = 0.85;
+    const LIVE_LYRICS_WAVEFORM_WINDOW_BARS = 4;
+    const LIVE_LYRICS_WAVEFORM_FALLBACK_SECONDS = 8;
+    const LIVE_LYRICS_WAVEFORM_CURRENT_ANCHOR = 0.5;
+    const LIVE_LYRICS_WAVEFORM_FRAME_INTERVAL = 16;
     const liveWaveformDino = document.getElementById('live-waveform-dino');
     const dinosaurAnimationFiles = new Map([
         ['dancin_dino.png', 'dancin_dino.webp'],
@@ -6211,11 +6213,12 @@
         if (rect.width <= 0) return;
         const clickRatio = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
         const currentTime = getPlaybackCurrentTime();
+        const windowDuration = getLiveLyricsWaveformWindowDuration();
         const windowStart = currentTime
-            - LIVE_LYRICS_WAVEFORM_WINDOW_SECONDS * LIVE_LYRICS_WAVEFORM_CURRENT_ANCHOR;
+            - windowDuration * LIVE_LYRICS_WAVEFORM_CURRENT_ANCHOR;
         const targetTime = Math.max(0, Math.min(
             getPlaybackDuration(),
-            windowStart + clickRatio * LIVE_LYRICS_WAVEFORM_WINDOW_SECONDS
+            windowStart + clickRatio * windowDuration
         ));
         seekPlayback(targetTime).catch(err => {
             console.error('Audio play error:', err);
@@ -6262,9 +6265,15 @@
     let lastLiveWaveformDinoFrame = -1;
     const lyricsWaveformEnvelopeCache = new Map();
     const lyricsWaveformSectionPalette = ['95, 139, 217', '17, 71, 159'];
-    let lyricsWaveformLyricEnvelope = null;
-    let lyricsWaveformLyricBlend = 0;
-    let lyricsWaveformLyricBlendAt = 0;
+    let liveLyricsWindowScaleCache = null;
+    let liveLyricsLayoutEntries = [];
+    let liveLyricsLayoutWidth = 0;
+    let liveLyricsLayoutWindowDuration = 0;
+    let lyricsWaveformCssWidth = 0;
+    let lyricsWaveformCssHeight = 0;
+    let lyricsWaveformContext = null;
+    const LIVE_LYRIC_HALF_HEIGHT = 16 * 1.18 / 2;
+    const liveLyricsEnvelopeScratch = [];
 
     function getStableLyricsWaveformEnvelope(trackIndex, audioBuffer) {
         const cachedEnvelope = lyricsWaveformEnvelopeCache.get(trackIndex);
@@ -6317,18 +6326,96 @@
         return envelope;
     }
 
+    function measureLiveLyricTextWidth(text) {
+        const measuringCanvas = measureLiveLyricTextWidth.canvas ||
+            (measureLiveLyricTextWidth.canvas = document.createElement('canvas'));
+        const measuringContext = measuringCanvas.getContext('2d');
+        measuringContext.font = '700 16px Garet, Arial, sans-serif';
+        return Math.max(
+            1,
+            measuringContext.measureText(text).width - Math.max(0, text.length - 1) * 0.5
+        );
+    }
+
+    function rebuildLiveLyricsLayoutCache() {
+        liveLyricsLayoutEntries = Array.from(
+            liveLyricsDisplay?.querySelectorAll('.live-lyrics-line[data-segment-start]') || []
+        ).map(line => {
+            const lineText = line.querySelector('.live-lyrics-line__text');
+            const text = (lineText?.dataset.lyricText || lineText?.textContent || '').trim();
+            return {
+                line,
+                startTime: Number.parseFloat(line.dataset.segmentStart),
+                endTime: Number.parseFloat(line.dataset.segmentEnd),
+                wordCount: Math.max(1, text.split(/\s+/).filter(Boolean).length),
+                isOffWaveform: null,
+                x: 0,
+                endX: 0
+            };
+        }).filter(entry => Number.isFinite(entry.startTime))
+            .sort((first, second) => first.startTime - second.startTime);
+        liveLyricsLayoutWidth = 0;
+        liveLyricsLayoutWindowDuration = 0;
+    }
+
+    function refreshLiveLyricsSlotMetrics(windowDuration, width) {
+        if (
+            liveLyricsLayoutWidth === width &&
+            liveLyricsLayoutWindowDuration === windowDuration
+        ) {
+            return;
+        }
+        for (const entry of liveLyricsLayoutEntries) {
+            const slotEndTime = Number.isFinite(entry.endTime) && entry.endTime > entry.startTime
+                ? entry.endTime
+                : entry.startTime + windowDuration;
+            const slotWidth = Math.max(1, ((slotEndTime - entry.startTime) / windowDuration) * width);
+            entry.line.style.setProperty('--live-lyric-slot-width', `${slotWidth.toFixed(2)}px`);
+            entry.line.style.setProperty('--live-lyric-word-count', String(entry.wordCount));
+        }
+        liveLyricsLayoutWidth = width;
+        liveLyricsLayoutWindowDuration = windowDuration;
+    }
+
+    function positionLiveLyricsOnWaveform(windowStart, windowDuration, width) {
+        if (windowDuration <= 0 || width <= 0 || !liveLyricsLayoutEntries.length) return;
+        refreshLiveLyricsSlotMetrics(windowDuration, width);
+        const pixelsPerSecond = width / windowDuration;
+        for (const entry of liveLyricsLayoutEntries) {
+            const lyricX = (entry.startTime - windowStart) * pixelsPerSecond;
+            const lyricEndX = (entry.endTime - windowStart) * pixelsPerSecond;
+            entry.x = lyricX;
+            entry.endX = lyricEndX;
+            entry.line.style.transform = `translate3d(${lyricX.toFixed(2)}px, -50%, 0)`;
+            const isOffWaveform =
+                (Number.isFinite(lyricEndX) ? lyricEndX : lyricX) < -width ||
+                lyricX > width * 2;
+            if (isOffWaveform !== entry.isOffWaveform) {
+                entry.line.classList.toggle('is-off-waveform', isOffWaveform);
+                entry.isOffWaveform = isOffWaveform;
+            }
+        }
+    }
+
     function renderLyricsWaveform(
         currentTime = getPlaybackCurrentTime(),
         { force = false, duration = getPlaybackDuration() } = {}
     ) {
         if (!lyricsWaveformCanvas || !currentTrack || selectedTrackIndex < 0) return;
         const now = performance.now();
-        if (!force && now - lyricsWaveformLastDrawAt < 33) return;
+        const width = lyricsWaveformCssWidth || Math.round(lyricsWaveformCanvas.clientWidth);
+        const height = lyricsWaveformCssHeight || Math.round(lyricsWaveformCanvas.clientHeight);
+        if (width <= 0 || height <= 0 || duration <= 0) return;
+
+        const windowDuration = getLiveLyricsWaveformWindowDuration(currentTrack, width);
+        const currentTimeAnchor = LIVE_LYRICS_WAVEFORM_CURRENT_ANCHOR;
+        const windowStart = currentTime - windowDuration * currentTimeAnchor;
+        const windowEnd = windowStart + windowDuration;
+        positionLiveLyricsOnWaveform(windowStart, windowDuration, width);
+        if (!force && now - lyricsWaveformLastDrawAt < LIVE_LYRICS_WAVEFORM_FRAME_INTERVAL) return;
 
         const audioBuffer = preloadedTrackAudio.get(selectedTrackIndex)?.audioBuffer;
-        const width = Math.round(lyricsWaveformCanvas.clientWidth);
-        const height = Math.round(lyricsWaveformCanvas.clientHeight);
-        if (!audioBuffer || width <= 0 || height <= 0 || duration <= 0) return;
+        if (!audioBuffer) return;
         lyricsWaveformLastDrawAt = now;
 
         const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -6339,17 +6426,14 @@
             lyricsWaveformCanvas.height = pixelHeight;
         }
 
-        const context = lyricsWaveformCanvas.getContext('2d');
+        const context = lyricsWaveformContext ||
+            (lyricsWaveformContext = lyricsWaveformCanvas.getContext('2d'));
         if (!context) return;
         context.setTransform(dpr, 0, 0, dpr, 0, 0);
         context.clearRect(0, 0, width, height);
         context.fillStyle = '#e9f0fb';
         context.fillRect(0, 0, width, height);
 
-        const windowDuration = LIVE_LYRICS_WAVEFORM_WINDOW_SECONDS;
-        const currentTimeAnchor = LIVE_LYRICS_WAVEFORM_CURRENT_ANCHOR;
-        const windowStart = currentTime - windowDuration * currentTimeAnchor;
-        const windowEnd = windowStart + windowDuration;
         const centerY = height / 2;
         const envelope = getStableLyricsWaveformEnvelope(selectedTrackIndex, audioBuffer);
         if (lyricsWaveformAmplitudes.length !== width) {
@@ -6358,13 +6442,18 @@
         const amplitudes = lyricsWaveformAmplitudes;
 
         const sectionPalette = lyricsWaveformSectionPalette;
+        const playbackTrim = getTrackPlaybackTrim(selectedTrackIndex);
+        const playbackSecondsPerPixel = windowDuration / Math.max(1, width);
+        let playbackTime = windowStart;
 
         for (let x = 0; x < width; x += 1) {
-            const playbackTime = windowStart + (x / Math.max(1, width - 1)) * windowDuration;
             if (playbackTime < 0 || playbackTime > duration) {
                 amplitudes[x] = 0;
             } else {
-                const sourceTime = getSourceTimeForPlaybackTime(selectedTrackIndex, playbackTime);
+                const sourceTime = Math.max(
+                    0,
+                    Math.min(playbackTrim.rawDuration, playbackTrim.sourceStart + playbackTime)
+                );
                 const envelopePosition = Math.max(0, Math.min(envelope.values.length - 1, sourceTime * envelope.pointsPerSecond));
                 const lowerIndex = Math.floor(envelopePosition);
                 const upperIndex = Math.min(envelope.values.length - 1, lowerIndex + 1);
@@ -6374,31 +6463,25 @@
             }
             const contrastedAmplitude = Math.pow(amplitudes[x], 1.7) * 1.35;
             amplitudes[x] = contrastedAmplitude / (1 + contrastedAmplitude * 0.35);
+            playbackTime += playbackSecondsPerPixel;
         }
 
-        const activeLyricForWaveform = liveLyricsDisplay?.querySelector('.live-lyrics-line.is-active');
-        if (activeLyricForWaveform) {
-            const canvasRect = lyricsWaveformCanvas.getBoundingClientRect();
-            const lyricRect = activeLyricForWaveform.getBoundingClientRect();
-            lyricsWaveformLyricEnvelope = {
-                left: Math.max(0, lyricRect.left - canvasRect.left),
-                right: Math.min(width, lyricRect.right - canvasRect.left),
-                halfHeight: Math.min(height * 0.46, lyricRect.height / 2)
-            };
-            const computedLyricOpacity = Number.parseFloat(getComputedStyle(activeLyricForWaveform).opacity);
-            lyricsWaveformLyricBlend = Number.isFinite(computedLyricOpacity) ? computedLyricOpacity : 1;
-            lyricsWaveformLyricBlendAt = now;
-        } else if (lyricsWaveformLyricBlend > 0) {
-            const fadeElapsed = lyricsWaveformLyricBlendAt > 0 ? now - lyricsWaveformLyricBlendAt : 0;
-            lyricsWaveformLyricBlend = Math.max(0, lyricsWaveformLyricBlend - fadeElapsed / 580);
-            lyricsWaveformLyricBlendAt = now;
-            if (lyricsWaveformLyricBlend === 0) lyricsWaveformLyricEnvelope = null;
+        const lyricEnvelopes = liveLyricsEnvelopeScratch;
+        lyricEnvelopes.length = 0;
+        for (const entry of liveLyricsLayoutEntries) {
+            if (entry.isOffWaveform) continue;
+            const left = Math.max(0, entry.x);
+            const right = Math.min(width, entry.endX);
+            if (!Number.isFinite(left) || !Number.isFinite(right) || right <= left) continue;
+            entry.visibleLeft = left;
+            entry.visibleRight = right;
+            lyricEnvelopes.push(entry);
         }
 
-        if (lyricsWaveformLyricEnvelope && lyricsWaveformLyricBlend > 0) {
-            const lyricLeft = lyricsWaveformLyricEnvelope.left;
-            const lyricRight = lyricsWaveformLyricEnvelope.right;
-            const lyricHalfHeight = lyricsWaveformLyricEnvelope.halfHeight;
+        for (const lyricEnvelopeEntry of lyricEnvelopes) {
+            const lyricLeft = lyricEnvelopeEntry.visibleLeft;
+            const lyricRight = lyricEnvelopeEntry.visibleRight;
+            const lyricHalfHeight = Math.min(height * 0.46, LIVE_LYRIC_HALF_HEIGHT);
             const shoulderWidth = 22;
             const envelopeScale = height * 0.36;
             const shoulderStart = Math.max(0, lyricLeft - shoulderWidth);
@@ -6411,8 +6494,7 @@
                 lyricEnvelope = lyricEnvelope * lyricEnvelope * (3 - 2 * lyricEnvelope);
                 const originalAmplitude = amplitudes[x];
                 const expandedAmplitude = Math.max(originalAmplitude, lyricHalfHeight * lyricEnvelope / envelopeScale);
-                amplitudes[x] = originalAmplitude
-                    + (expandedAmplitude - originalAmplitude) * lyricsWaveformLyricBlend;
+                amplitudes[x] = expandedAmplitude;
             }
         }
 
@@ -6470,7 +6552,22 @@
             context.restore();
         }
 
-        const cursorX = Math.round(width * currentTimeAnchor) + 0.5;
+        for (const lyricEnvelopeEntry of lyricEnvelopes) {
+            context.save();
+            context.beginPath();
+            context.rect(
+                lyricEnvelopeEntry.visibleLeft,
+                0,
+                Math.max(1, lyricEnvelopeEntry.visibleRight - lyricEnvelopeEntry.visibleLeft),
+                height
+            );
+            context.clip();
+            context.fillStyle = '#08205e';
+            context.fill(waveformPath);
+            context.restore();
+        }
+
+        const cursorX = width * currentTimeAnchor;
         const cursorSourceTime = getSourceTimeForPlaybackTime(selectedTrackIndex, currentTime);
         const cursorBeatPosition = timing.beatDuration > 0
             ? Math.max(0, (cursorSourceTime - timing.startOffset) / timing.beatDuration)
@@ -6516,25 +6613,29 @@
             currentTime >= timingEntry.startTime && currentTime < timingEntry.endTime
         );
         const hasActiveLyric = Boolean(activeLyricTiming);
-        const activeLyricLine = activeLyricForWaveform;
-        if (activeLyricLine && activeLyricTiming) {
-            const segmentStart = Number.parseFloat(activeLyricLine.dataset.segmentStart);
-            const segmentEnd = Number.parseFloat(activeLyricLine.dataset.segmentEnd);
-            const lyricStart = Number.isFinite(segmentStart) ? segmentStart : activeLyricTiming.startTime;
-            const lyricEnd = Number.isFinite(segmentEnd) ? segmentEnd : activeLyricTiming.endTime;
-            const lyricDuration = Math.max(0.001, lyricEnd - lyricStart);
-            const lyricProgress = Math.max(0, Math.min(1, (currentTime - lyricStart) / lyricDuration));
-            activeLyricLine.style.setProperty('--live-lyric-scale', (0.8 + lyricProgress * 0.2).toFixed(4));
-        }
         lyricsWaveformCanvas.classList.toggle('has-active-lyric', hasActiveLyric);
         liveWaveformDino?.classList.toggle('has-active-lyric', hasActiveLyric);
     }
 
     if (lyricsWaveformCanvas && window.ResizeObserver) {
-        new ResizeObserver(() => {
+        new ResizeObserver(entries => {
+            const contentRect = entries[0]?.contentRect;
+            if (contentRect) {
+                lyricsWaveformCssWidth = Math.round(contentRect.width);
+                lyricsWaveformCssHeight = Math.round(contentRect.height);
+            }
             if (currentTrack) requestAnimationFrame(() => renderLyricsWaveform(getPlaybackCurrentTime(), { force: true }));
         }).observe(lyricsWaveformCanvas);
     }
+    document.fonts?.ready.then(() => {
+        liveLyricsWindowScaleCache = null;
+        rebuildLiveLyricsLayoutCache();
+        if (currentTrack) {
+            requestAnimationFrame(() =>
+                renderLyricsWaveform(getPlaybackCurrentTime(), { force: true })
+            );
+        }
+    });
 
     // Recompute chord overlay layout when player becomes visible or viewport changes
     function recomputeChordLayout() {
@@ -6566,18 +6667,6 @@
     // Recompute when resizing viewport
     window.addEventListener('resize', recomputeChordLayout);
 
-    function fitActiveLiveLyric() {
-        const activeLine = liveLyricsDisplay?.querySelector('.live-lyrics-line.is-active');
-        if (!activeLine) return;
-        activeLine.style.removeProperty('font-size');
-        const availableWidth = activeLine.clientWidth;
-        const requiredWidth = activeLine.scrollWidth;
-        if (availableWidth <= 0 || requiredWidth <= availableWidth) return;
-        const baseFontSize = Number.parseFloat(getComputedStyle(activeLine).fontSize) || 16;
-        const fittedFontSize = baseFontSize * (availableWidth / requiredWidth) * 0.98;
-        activeLine.style.fontSize = `${fittedFontSize.toFixed(2)}px`;
-    }
-
     function getLiveLyricSegment(timing) {
         const text = (timing?.line?.textContent || '').trim();
         return {
@@ -6588,72 +6677,150 @@
         };
     }
 
+    function getLiveLyricsWaveformWindowDuration(
+        track = currentTrack,
+        viewportWidth = lyricsWaveformCanvas?.clientWidth || liveLyricsDisplay?.clientWidth || 0
+    ) {
+        if (!track) return LIVE_LYRICS_WAVEFORM_FALLBACK_SECONDS;
+        const { beatDuration, beatsPerBar } = getTrackTiming(track);
+        const barDuration = beatDuration * beatsPerBar;
+        const fourBarDuration = barDuration * LIVE_LYRICS_WAVEFORM_WINDOW_BARS;
+        if (!Number.isFinite(fourBarDuration) || fourBarDuration <= 0) {
+            return LIVE_LYRICS_WAVEFORM_FALLBACK_SECONDS;
+        }
+
+        const width = Math.round(viewportWidth);
+        if (width <= 0 || cachedLyricTimings.length < 1) return fourBarDuration;
+        if (
+            liveLyricsWindowScaleCache?.track === track &&
+            liveLyricsWindowScaleCache?.width === width &&
+            liveLyricsWindowScaleCache?.timings === cachedLyricTimings
+        ) {
+            return liveLyricsWindowScaleCache.duration;
+        }
+
+        const chronologicalTimings = [...cachedLyricTimings]
+            .sort((first, second) => first.startTime - second.startTime);
+        const measureLyricWidth = timing => {
+            const lyricText = (timing.line?.textContent || '').trim();
+            const words = lyricText.split(/\s+/).filter(Boolean);
+            if (words.length <= 1) return measureLiveLyricTextWidth(lyricText);
+            const widestWord = words.reduce(
+                (widest, word) => Math.max(widest, measureLiveLyricTextWidth(word)),
+                1
+            );
+            return widestWord * words.length;
+        };
+        let fittedWindowDuration = fourBarDuration;
+
+        for (const timing of chronologicalTimings) {
+            const lyricDuration = timing.endTime - timing.startTime;
+            if (lyricDuration <= 0.02) continue;
+            const requiredWidth = measureLyricWidth(timing) + 16;
+            fittedWindowDuration = Math.min(
+                fittedWindowDuration,
+                width * lyricDuration / requiredWidth
+            );
+        }
+
+        for (let index = 0; index < chronologicalTimings.length - 1; index += 1) {
+            const timing = chronologicalTimings[index];
+            const nextTiming = chronologicalTimings[index + 1];
+            const timeGap = nextTiming.startTime - timing.startTime;
+            if (timeGap <= 0.02) continue;
+            const requiredWidth = measureLyricWidth(timing) + 18;
+            fittedWindowDuration = Math.min(
+                fittedWindowDuration,
+                width * timeGap / requiredWidth
+            );
+        }
+
+        const duration = Math.max(0.05, fittedWindowDuration);
+        liveLyricsWindowScaleCache = {
+            track,
+            width,
+            timings: cachedLyricTimings,
+            duration
+        };
+        return duration;
+    }
+
     function updateLiveLyricsStack(lyricTimings, activeIndex, force = false, currentTime = getPlaybackCurrentTime()) {
         if (!liveLyricsDisplay) return;
         if (!Array.isArray(lyricTimings) || !lyricTimings.length) {
             if (force || liveLyricsDisplay.childElementCount) {
                 liveLyricsDisplay.replaceChildren();
+                liveLyricsLayoutEntries = [];
+                liveLyricsLayoutWidth = 0;
+                liveLyricsLayoutWindowDuration = 0;
                 lastLiveLyricIndex = -1;
                 lastLiveLyricAnchorIndex = 0;
             }
             return;
         }
-        const hasActiveLine = activeIndex >= 0 && activeIndex < lyricTimings.length;
-        if (!hasActiveLine) {
-            if (force || liveLyricsDisplay.childElementCount || lastLiveLyricIndex !== -1) {
-                liveLyricsDisplay.replaceChildren();
-                liveLyricsDisplay.classList.remove('is-changing');
-                lastLiveLyricIndex = -1;
-            }
-            return;
-        }
 
-        const anchorIndex = activeIndex;
-        const activeSegment = getLiveLyricSegment(lyricTimings[activeIndex]);
-        const renderKey = `${activeIndex}:${activeSegment.part}`;
+        const waveformWidth = lyricsWaveformCssWidth ||
+            Math.round(lyricsWaveformCanvas?.clientWidth || liveLyricsDisplay.clientWidth);
+        const waveformWindowDuration = getLiveLyricsWaveformWindowDuration(currentTrack, waveformWidth);
+        const windowStart = currentTime
+            - waveformWindowDuration * LIVE_LYRICS_WAVEFORM_CURRENT_ANCHOR;
+        const renderStart = windowStart - waveformWindowDuration;
+        const renderEnd = windowStart + waveformWindowDuration * 2;
+        const visibleIndexes = lyricTimings
+            .map((timing, index) => ({ timing, index }))
+            .filter(({ timing }) => timing.endTime >= renderStart && timing.startTime <= renderEnd)
+            .map(({ index }) => index);
+        const activeSegment = activeIndex >= 0 && activeIndex < lyricTimings.length
+            ? getLiveLyricSegment(lyricTimings[activeIndex])
+            : null;
+        const renderKey = `${visibleIndexes.join(',')}|${activeIndex}:${activeSegment?.part ?? 0}`;
         if (!force && renderKey === lastLiveLyricIndex) return;
 
         const fragment = document.createDocumentFragment();
-        for (let index = anchorIndex - 1; index <= anchorIndex + 1; index += 1) {
+        for (const index of visibleIndexes) {
             const line = document.createElement('div');
-            if (index < 0 || index >= lyricTimings.length) {
-                line.className = 'live-lyrics-line is-placeholder';
-                line.setAttribute('aria-hidden', 'true');
-                fragment.appendChild(line);
-                continue;
-            }
-            const distance = Math.abs(index - anchorIndex);
             line.className = 'live-lyrics-line';
             line.dataset.lyricIndex = index;
             line.dataset.seekTime = String(lyricTimings[index]?.startTime ?? 0);
-            const isCenter = distance === 0;
+            line.dataset.segmentStart = String(lyricTimings[index]?.startTime ?? 0);
+            line.dataset.segmentEnd = String(lyricTimings[index]?.endTime ?? 0);
+            const isCenter = index === activeIndex;
             const lineText = document.createElement('span');
             lineText.className = 'live-lyrics-line__text';
-            lineText.textContent = isCenter
+            const lyricText = isCenter && activeSegment
                 ? activeSegment.text
                 : (lyricTimings[index]?.line?.textContent || '').trim();
+            const lyricWords = lyricText.split(/\s+/).filter(Boolean);
+            lineText.dataset.lyricText = lyricText;
+            lineText.setAttribute('aria-label', lyricText);
+            for (const word of lyricWords) {
+                const wordSpan = document.createElement('span');
+                wordSpan.className = 'live-lyrics-line__word';
+                wordSpan.setAttribute('aria-hidden', 'true');
+                wordSpan.textContent = word;
+                lineText.appendChild(wordSpan);
+            }
             line.appendChild(lineText);
-            if (isCenter) {
+            if (isCenter && activeSegment) {
                 line.classList.add('is-active');
                 line.dataset.segmentStart = String(activeSegment.startTime);
                 line.dataset.segmentEnd = String(activeSegment.endTime);
-                line.style.setProperty('--live-lyric-opacity', '1');
-                line.style.setProperty('--live-lyric-scale', '0.8');
-                line.style.setProperty('--live-lyric-filter', 'blur(0)');
-            } else if (distance === 1) {
-                line.classList.add('is-near', index < anchorIndex ? 'is-previous' : 'is-next');
-                line.style.setProperty('--live-lyric-opacity', '0.48');
-                line.style.setProperty('--live-lyric-scale', '0.94');
-                line.style.setProperty('--live-lyric-filter', 'blur(0.35px)');
+            } else {
+                line.classList.add(
+                    'is-near',
+                    lyricTimings[index].startTime < currentTime ? 'is-previous' : 'is-next'
+                );
             }
             fragment.appendChild(line);
         }
 
         liveLyricsDisplay.replaceChildren(fragment);
-        liveLyricsDisplay.classList.remove('is-changing');
-        void liveLyricsDisplay.offsetWidth;
-        liveLyricsDisplay.classList.add('is-changing');
-        requestAnimationFrame(fitActiveLiveLyric);
+        rebuildLiveLyricsLayoutCache();
+        positionLiveLyricsOnWaveform(
+            currentTime - waveformWindowDuration * LIVE_LYRICS_WAVEFORM_CURRENT_ANCHOR,
+            waveformWindowDuration,
+            waveformWidth
+        );
         lastLiveLyricIndex = renderKey;
         lastLiveLyricAnchorIndex = activeIndex;
     }

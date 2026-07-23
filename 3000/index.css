@@ -1010,7 +1010,7 @@ body.is-audio-revealing .audio-preloader__presents {
     position: absolute;
     left: 10%;
     top: 50%;
-    z-index: 1;
+    z-index: 3;
     width: 78px;
     height: 78px;
     opacity: 1;
@@ -1030,12 +1030,9 @@ body.is-audio-revealing .audio-preloader__presents {
     width: 100%;
     height: 100%;
     min-height: 98px;
-    padding: 9px 16px 11px;
+    padding: 0;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
+    display: block;
     color: var(--club-blue-strong);
     background: transparent;
     border-top: 1px solid rgba(var(--club-blue-rgb), 0.08);
@@ -1048,58 +1045,65 @@ body.is-audio-revealing .audio-preloader__presents {
     border-top-color: transparent;
 }
 .live-lyrics-line {
+    position: absolute;
+    left: 0;
+    top: 50%;
     min-height: 14px;
-    width: min(68%, 560px);
-    justify-self: end;
-    margin-right: max(10px, 3vw);
-    font-size: 11px;
-    line-height: 1.2;
+    width: var(--live-lyric-slot-width, max-content);
+    max-width: none;
+    margin: 0;
+    padding: 0 8px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.18;
     overflow: visible;
     text-overflow: clip;
-    white-space: normal;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    overflow-wrap: normal;
     text-align: center;
     cursor: default;
-    opacity: 0.34;
-    transform: translate3d(0, 0, 0) scale(0.96);
-    filter: blur(0.35px);
+    opacity: 1;
+    transform: translate3d(var(--live-lyric-x, 0px), -50%, 0);
+    filter: none;
+    color: #fff;
+    text-shadow:
+        0 0 3px rgba(27, 79, 165, 0.82),
+        0 2px 8px rgba(27, 79, 165, 0.5);
     letter-spacing: 0;
-    transition: opacity 0.34s ease, transform 0.44s cubic-bezier(0.16, 1, 0.3, 1), color 0.34s ease, filter 0.34s ease;
-    will-change: opacity, transform;
+    transition: none;
+    will-change: transform;
 }
 .live-lyrics-line.is-placeholder {
     visibility: hidden;
     pointer-events: none;
     animation: none !important;
 }
-.live-lyrics-line:not(.is-active) {
-    display: none;
+.live-lyrics-line.is-off-waveform {
+    visibility: hidden;
 }
 .live-lyrics-line.is-near {
-    opacity: 0.48;
+    opacity: 1;
 }
 .live-lyrics-line.is-previous {
-    align-self: end;
-    transform: translate3d(0, 3px, 0) scale(0.94);
+    transform: translate3d(var(--live-lyric-x, 0px), -50%, 0);
 }
 .live-lyrics-line.is-next {
-    align-self: start;
-    transform: translate3d(0, -3px, 0) scale(0.94);
+    transform: translate3d(var(--live-lyric-x, 0px), -50%, 0);
 }
 .live-lyrics-line.is-active {
     min-height: 0;
-    width: min(92%, 760px);
+    width: var(--live-lyric-slot-width, max-content);
     max-width: none;
     margin: 0;
-    padding: 0;
-    font-size: clamp(13px, 2.5vw, 17px);
+    padding: 0 8px;
+    font-size: 16px;
     font-weight: 700;
     line-height: 1.18;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    text-wrap: balance;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    text-wrap: nowrap;
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(var(--live-lyric-x, 0px), -50%, 0);
     color: #fff;
     background: transparent;
     border-radius: 0;
@@ -1110,29 +1114,36 @@ body.is-audio-revealing .audio-preloader__presents {
     pointer-events: auto;
 }
 .live-lyrics-line__text {
+    display: grid;
+    grid-template-columns: repeat(var(--live-lyric-word-count, 1), minmax(0, 1fr));
+    align-items: center;
+    width: 100%;
+    transform: none;
+}
+.live-lyrics-line__word {
     display: block;
-    transform: scale(var(--live-lyric-scale, 0.8));
-    transform-origin: center;
-    will-change: transform;
+    min-width: 0;
+    text-align: center;
+    white-space: nowrap;
 }
 .live-lyrics-line:hover {
-    opacity: 0.9;
-    color: var(--club-blue);
-    filter: blur(0);
+    opacity: 1;
+    color: #fff;
+    filter: none;
 }
 .live-lyrics-line.is-active:hover {
     color: #fff;
 }
 .live-lyrics.is-changing .live-lyrics-line {
-    animation: live-lyric-shift 0.58s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: none;
 }
 .player-basic.is-track-changing .live-lyrics-line {
-    animation: track-change-live-lyrics 0.72s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: none;
 }
 @keyframes live-lyric-shift {
     0% {
         opacity: 0;
-        transform: translate3d(0, 14px, 0);
+        transform: translate3d(-100%, calc(-50% + 14px), 0);
         filter: blur(7px);
     }
     62% {
@@ -1140,14 +1151,14 @@ body.is-audio-revealing .audio-preloader__presents {
     }
     100% {
         opacity: var(--live-lyric-opacity, 0.48);
-        transform: translate3d(0, 0, 0);
+        transform: translate3d(-100%, -50%, 0);
         filter: var(--live-lyric-filter, blur(0.35px));
     }
 }
 @keyframes track-change-live-lyrics {
     0% {
         opacity: 0;
-        transform: translate3d(0, 12px, 0);
+        transform: translate3d(-100%, calc(-50% + 12px), 0);
         filter: blur(8px);
     }
     55% {
@@ -1156,7 +1167,7 @@ body.is-audio-revealing .audio-preloader__presents {
     }
     100% {
         opacity: 1;
-        transform: translate3d(0, 0, 0);
+        transform: translate3d(-100%, -50%, 0);
         filter: blur(0);
     }
 }
@@ -3122,25 +3133,22 @@ audio {
     }
     .live-lyrics {
         min-height: 70px;
-        padding: 0 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0;
+        padding: 0;
+        display: block;
     }
     .live-lyrics-line {
         display: none;
     }
     .live-lyrics-line.is-active {
         display: block;
-        width: calc(100% - 16px);
-        max-width: calc(100% - 16px);
+        width: var(--live-lyric-slot-width, max-content);
+        max-width: none;
         min-height: 0;
         margin: 0;
         font-size: 16px;
-        line-height: 1.12;
-        white-space: normal;
-        overflow-wrap: anywhere;
+        line-height: 1.18;
+        white-space: nowrap;
+        overflow-wrap: normal;
         overflow: visible;
         text-align: center;
     }
