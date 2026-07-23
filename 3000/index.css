@@ -447,9 +447,10 @@ body.is-audio-revealing .audio-preloader__inner {
     background-size: 600% 600%;
     background-repeat: no-repeat;
     filter:
-        drop-shadow(0 0 20px rgba(255, 255, 255, 1.0))
-        drop-shadow(0 0 50px rgba(255, 255, 255, 1.0))
-        drop-shadow(0 10px 20px rgba(16, 66, 151, 1.0));
+        drop-shadow(2px 0 0 #fff)
+        drop-shadow(-2px 0 0 #fff)
+        drop-shadow(0 2px 0 #fff)
+        drop-shadow(0 -2px 0 #fff);
     transform: translateX(0);
     will-change: transform, background-position;
 }
@@ -1015,9 +1016,10 @@ body.is-audio-revealing .audio-preloader__presents {
     height: 78px;
     opacity: 1;
     filter:
-        drop-shadow(0 0 20px rgba(255, 255, 255, 1.0))
-        drop-shadow(0 0 50px rgba(255, 255, 255, 1.0))
-        drop-shadow(0 10px 20px rgba(16, 66, 151, 1.0));
+        drop-shadow(2px 0 0 #fff)
+        drop-shadow(-2px 0 0 #fff)
+        drop-shadow(0 2px 0 #fff)
+        drop-shadow(0 -2px 0 #fff);
     background-position: 0 0;
     background-size: 600% 600%;
     background-repeat: no-repeat;
