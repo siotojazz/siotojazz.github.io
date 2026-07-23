@@ -3307,9 +3307,9 @@
         const percent = Math.round(playerVolume * 100);
         if (volumeSlider) volumeSlider.value = String(percent);
         if (!volumeBtn) return;
-        volumeBtn.setAttribute('aria-label', `Volume: ${percent}%`);
-        volumeBtn.setAttribute('aria-pressed', String(percent === 0));
-        volumeBtn.title = percent === 0 ? 'Unmute' : 'Mute';
+        volumeBtn.setAttribute('aria-label', `Volume: ${percent}%. Open volume control`);
+        volumeBtn.removeAttribute('aria-pressed');
+        volumeBtn.title = `Volume: ${percent}%`;
         const icon = volumeBtn.querySelector('i');
         if (!icon) return;
         icon.className = `fa-solid ${percent === 0 ? 'fa-volume-xmark' : percent < 50 ? 'fa-volume-low' : 'fa-volume-high'}`;
@@ -6137,11 +6137,15 @@
 
     volumeBtn?.addEventListener('click', event => {
         event.stopPropagation();
-        setPlayerVolume(playerVolume > 0 ? 0 : lastAudibleVolume || 1);
-        volumeControl.classList.add('is-open');
-        volumeBtn.setAttribute('aria-expanded', 'true');
-        volumeSlider?.focus({ preventScroll: true });
-        queueVolumePopoverPosition();
+        const willOpen = !volumeControl.classList.contains('is-open');
+        volumeControl.classList.toggle('is-open', willOpen);
+        volumeBtn.setAttribute('aria-expanded', String(willOpen));
+        if (willOpen) {
+            volumeSlider?.focus({ preventScroll: true });
+            queueVolumePopoverPosition();
+        } else {
+            volumeBtn.focus({ preventScroll: true });
+        }
     });
 
     volumeControl?.addEventListener('pointerenter', queueVolumePopoverPosition, { passive: true });
@@ -6609,26 +6613,31 @@
         const cursorBeatPosition = timing.beatDuration > 0
             ? Math.max(0, (cursorSourceTime - timing.startOffset) / timing.beatDuration)
             : 0;
-        const cursorBarBeat = cursorBeatPosition % timing.beatsPerBar;
-        const cursorBarPulse = Math.max(0, 1 - cursorBarBeat / 0.55);
+        const cursorBeatPhase = cursorBeatPosition - Math.floor(cursorBeatPosition);
+        const cursorBeatPulse = Math.max(0, 1 - cursorBeatPhase / 0.55);
+        const cursorAmplitudeIndex = Math.max(
+            0,
+            Math.min(width - 1, Math.round(width * currentTimeAnchor))
+        );
+        const cursorAmplitude = amplitudes[cursorAmplitudeIndex] * height * 0.36;
+        const cursorTop = centerY - cursorAmplitude;
+        const cursorHeight = cursorAmplitude * 2;
+        const shadowLength = 30;
+        const shadowStrength = 0.12 + cursorBeatPulse * 0.84;
+        const cursorShadow = context.createLinearGradient(cursorX, 0, cursorX - shadowLength, 0);
+        cursorShadow.addColorStop(0, `rgba(255, 255, 255, ${shadowStrength.toFixed(2)})`);
+        cursorShadow.addColorStop(0.28, `rgba(255, 255, 255, ${(shadowStrength * 0.58).toFixed(2)})`);
+        cursorShadow.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
         context.save();
-        context.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-        context.shadowColor = `rgba(255, 255, 255, ${(0.08 + cursorBarPulse * 0.84).toFixed(2)})`;
-        context.shadowBlur = 3 + cursorBarPulse * 10;
-        context.shadowOffsetX = -4;
-        context.shadowOffsetY = 1;
-        context.lineWidth = 1;
-        for (let cursorOffset = -1; cursorOffset <= 1; cursorOffset += 1) {
-            const cursorAmplitudeIndex = Math.max(
-                0,
-                Math.min(width - 1, Math.round(width * currentTimeAnchor) + cursorOffset)
-            );
-            const cursorAmplitude = amplitudes[cursorAmplitudeIndex] * height * 0.36;
-            context.beginPath();
-            context.moveTo(cursorX + cursorOffset, centerY - cursorAmplitude);
-            context.lineTo(cursorX + cursorOffset, centerY + cursorAmplitude);
-            context.stroke();
-        }
+        context.fillStyle = cursorShadow;
+        context.fillRect(cursorX - shadowLength, cursorTop, shadowLength, cursorHeight);
+        context.strokeStyle = '#fff';
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo(cursorX, cursorTop);
+        context.lineTo(cursorX, cursorTop + cursorHeight);
+        context.stroke();
         context.restore();
 
         if (liveWaveformDino && timing.beatDuration > 0) {

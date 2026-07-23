@@ -960,14 +960,10 @@ body.is-audio-revealing .audio-preloader__presents {
     flex-shrink: 0;
     box-shadow: 0 -10px 24px rgba(var(--club-blue-rgb), 0.08);
 }
-.player-basic:has(.volume-control:hover),
-.player-basic:has(.volume-control:focus-within),
 .player-basic:has(.volume-control.is-open),
 .player-basic:has(.seek-section-tooltip.is-visible) {
     z-index: 400;
 }
-.player-main:has(.volume-control:hover),
-.player-main:has(.volume-control:focus-within),
 .player-main:has(.volume-control.is-open),
 .player-main:has(.seek-section-tooltip.is-visible) {
     z-index: 400;
@@ -1224,8 +1220,6 @@ body.is-audio-revealing .audio-preloader__presents {
     top: auto;
     bottom: calc(100% + 8px);
 }
-.volume-control:hover .volume-popover,
-.volume-control:focus-within .volume-popover,
 .volume-control.is-open .volume-popover {
     opacity: 1;
     visibility: visible;
