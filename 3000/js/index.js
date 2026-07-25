@@ -1,10 +1,4 @@
     const AUDIO_CACHE_NAME = 'sioto-jazz-audio-v2';
-    const AUDIO_QUALITY_PARAM = 'quality';
-    const requestedAudioQuality = new URLSearchParams(window.location.search).get(AUDIO_QUALITY_PARAM)?.toLowerCase();
-    const activeAudioQuality = requestedAudioQuality === 'exceptional' || requestedAudioQuality === 'wav'
-        ? 'exceptional'
-        : 'standard';
-    const audioQualityToggle = document.getElementById('audio-quality-toggle');
     const audioCacheReady = (async () => {
         if (!('caches' in window)) return null;
         try {
@@ -14,21 +8,6 @@
             return null;
         }
     })();
-
-    if (audioQualityToggle) {
-        const exceptionalSelected = activeAudioQuality === 'exceptional';
-        audioQualityToggle.setAttribute('aria-pressed', String(exceptionalSelected));
-        audioQualityToggle.dataset.format = exceptionalSelected ? 'wav' : 'mp3';
-        audioQualityToggle.title = exceptionalSelected
-            ? 'Exceptional Quality selected (WAV). Switch to Standard Quality (MP3).'
-            : 'Standard Quality selected (MP3). Switch to Exceptional Quality (WAV).';
-        audioQualityToggle.addEventListener('click', () => {
-            const nextQuality = exceptionalSelected ? 'standard' : 'exceptional';
-            const nextUrl = new URL(window.location.href);
-            nextUrl.searchParams.set(AUDIO_QUALITY_PARAM, nextQuality);
-            window.location.assign(nextUrl.href);
-        });
-    }
 
     Promise.all([
         fetch('album.json?v=20260718').then(response => response.json()),
@@ -4395,7 +4374,6 @@
     function generateSongLink(trackIndex) {
         const url = new URL(window.location.origin + window.location.pathname);
         url.searchParams.set('song', String(trackIndex));
-        url.searchParams.set(AUDIO_QUALITY_PARAM, activeAudioQuality);
         return url.href;
     }
 
@@ -4409,8 +4387,7 @@
     }
 
     function getVersionedAudioSources(track, version = activeSongVersion) {
-        const qualitySource = activeAudioQuality === 'exceptional' ? track?.wav : track?.mp3;
-        const baseSrc = String(qualitySource || track?.mp3 || '').trim();
+        const baseSrc = String(track?.mp3 || '').trim();
         if (!baseSrc || version !== 'dani') return baseSrc ? [baseSrc] : [];
 
         const queryIndex = baseSrc.search(/[?#]/);

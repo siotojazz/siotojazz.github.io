@@ -1629,33 +1629,6 @@ body.is-audio-revealing .audio-preloader__presents {
 .version-toggle__message:empty {
     display: none;
 }
-.player-controls .track-nav-btn.audio-quality-toggle {
-    width: 32px;
-    min-width: 32px;
-    height: 32px;
-    flex-basis: 32px;
-    padding: 0;
-}
-.player-controls .track-nav-btn.audio-quality-toggle[aria-pressed="true"] {
-    background: linear-gradient(180deg, rgba(var(--club-blue-night-rgb), 0.48), rgba(255, 255, 255, 0.08) 100%);
-    color: #fff;
-    box-shadow:
-        inset 0 4px 9px rgba(var(--club-blue-night-rgb), 0.66),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-    transform: var(--button-press-transform);
-}
-.player-controls .track-nav-btn.audio-quality-toggle:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 2px;
-}
-@media (max-width: 640px) {
-    .player-controls .track-nav-btn.audio-quality-toggle {
-        width: 38px;
-        min-width: 38px;
-        height: 38px;
-        flex-basis: 38px;
-    }
-}
 .player-timeline {
     display: inline-flex;
     align-items: center;
@@ -3191,12 +3164,6 @@ audio {
         aspect-ratio: 1 / 1;
     }
     .player-controls .track-nav-btn {
-        width: auto;
-        min-width: 0;
-        height: 38px;
-        flex: 1 1 0;
-    }
-    .player-controls .track-nav-btn.audio-quality-toggle {
         width: auto;
         min-width: 0;
         height: 38px;
