@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f56b4">
+    <meta name="description" content="Instagram натпреварот за In a Race Against Time од Sioto Jazz.">
+    <title>Instagram натпревар — Sioto Jazz</title>
+    <link rel="icon" href="../favicon.ico">
+    <link rel="apple-touch-icon" href="album_cover_500x500.png">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preload" href="album.json" as="fetch" crossorigin>
+    <link rel="preload" href="competition.json" as="fetch" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="background-video.css?v=20260725">
+    <link rel="stylesheet" href="competition.css?v=20260725-4">
+    <script src="background-video.js?v=20260725" defer></script>
+    <script src="competition.js?v=20260725-4" defer></script>
+</head>
+<body>
+    <main class="competition-shell">
+        <header class="competition-hero">
+            <div class="hero-primary">
+                <a class="album-cover" href="index.html" aria-label="Назад кон албумот">
+                    <img id="album-cover" src="album_cover_500x500.webp" alt="Насловната слика на In a Race Against Time">
+                </a>
+
+                <div class="hero-content">
+                    <div class="hero-topline">
+                        <span class="status-pill" id="competition-status">Се вчитува</span>
+                        <a class="album-link" href="index.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Албум</a>
+                    </div>
+                    <p class="eyebrow">Sioto Jazz претставува</p>
+                    <h1>Instagram натпревар</h1>
+                    <p class="hero-copy">Создајте ја најдобрата фотографија или Reel за која било песна.</p>
+
+                    <div class="date-row" aria-label="Датуми на натпреварот">
+                        <span><i class="fa-regular fa-calendar" aria-hidden="true"></i> <span id="competition-start">—</span></span>
+                        <i class="fa-solid fa-arrow-right date-arrow" aria-hidden="true"></i>
+                        <span id="competition-end">—</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-details">
+                <div class="prize-grid" id="prize-grid" aria-label="Награди"></div>
+            </div>
+        </header>
+
+        <nav class="competition-tabs" id="competition-tabs" aria-label="Содржина на натпреварот">
+            <button class="competition-tab active" type="button" data-tab="leaderboard" aria-selected="true">
+                <i class="fa-solid fa-ranking-star" aria-hidden="true"></i>
+                <span>Ранг-листа</span>
+            </button>
+            <button class="competition-tab" type="button" data-tab="submissions" aria-selected="false">
+                <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+                <span>Пријави</span>
+            </button>
+            <button class="competition-tab" type="button" data-tab="rules" aria-selected="false">
+                <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                <span>Правила</span>
+            </button>
+        </nav>
+
+        <div class="competition-tab-content">
+            <div class="competition-tab-panel active" id="tab-leaderboard">
+                <section class="competition-panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Рангирање во живо</p>
+                            <h2>Моментални лидери</h2>
+                        </div>
+                        <p class="sync-time" id="sync-time"></p>
+                    </div>
+                    <div class="leaderboard" id="leaderboard" aria-live="polite">
+                        <div class="loading-state">Се вчитува ранг-листата…</div>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="competition-tab-panel" id="tab-submissions" hidden>
+                <section class="competition-panel posts-panel">
+                    <div class="section-heading section-heading--posts">
+                        <div>
+                            <p class="eyebrow">Сите пријави</p>
+                            <h2>Објави во натпреварот</h2>
+                        </div>
+                        <label class="track-filter">
+                            <span class="sr-only">Филтрирај по песна</span>
+                            <select id="track-filter">
+                                <option value="all">Сите песни</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                        </label>
+                    </div>
+                    <div class="posts-grid" id="posts-grid" aria-live="polite">
+                        <div class="loading-state">Се вчитуваат објавите…</div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="competition-tab-panel" id="tab-rules" hidden>
+                <section class="competition-panel rules-panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Како функционира</p>
+                            <h2>Правила</h2>
+                        </div>
+                    </div>
+                    <ol class="rules-list">
+                        <li>Изберете ја вашата омилена песна од албумот и објавете Instagram пост или Reel инспириран од неа.</li>
+                        <li>Лајковите се вреднуваат со 30 поени, коментарите со 100 поени.</li>
+                        <li>Прифатливи се само Јавни Posts и Reels. Stories и сите други формати не учествуваат.</li>
+                        <li>Означете нè на профилот <strong>@siotojazz</strong> и ставете ја песната на објавата.</li>
+                        <li>Еден човек може да пријави неограничен број Posts и Reels.</li>
+                        <li>Се зема предвид само највисоко рангираната пријава според освоените поени - еден човек може да добие една награда.</li>
+                        <li>Сите пријави се рангираат на една глобална ранг-листа, без разлика на песната.</li>
+                        <li>Првото место освојува 5.000 МКД, второто 3.000 МКД, третото 2.000 МКД, а четвртото и петтото по 1.000 МКД.</li>
+                        <li>Сите учесници од првото до десеттото место добиваат физички буклет од албумот.</li>
+                        <li>Се бројат интеракциите остварени до крајниот датум на натпреварот, сајтот се ажурира само повремено.</li>
+                        <li>Организаторите го задржуваат правото да дисквалификуваат пријава или профил поради сомнително однесување или прекршување на правилата.</li>
+                    </ol>
+                </section>
+            </div>
+        </div>
+
+        <footer class="competition-footer">
+            <a href="https://www.instagram.com/siotojazz/" target="_blank" rel="noopener">
+                <i class="fa-brands fa-instagram" aria-hidden="true"></i> Sioto Jazz
+            </a>
+            <span id="competition-window"></span>
+        </footer>
+    </main>
+
+    <template id="empty-state-template">
+        <div class="empty-state">
+            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+            <p>Сè уште нема прифатливи објави.</p>
+        </div>
+    </template>
+</body>
+</html>

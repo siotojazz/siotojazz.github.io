@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "competition": {
+    "id": "iraat-instagram-competition-2026",
+    "title": "In a Race Against Time — Instagram Competition",
+    "startAt": "2026-07-24T00:00:00+02:00",
+    "endAt": "2026-08-24T23:59:59+02:00",
+    "timezone": "Europe/Skopje",
+    "status": "active",
+    "winnerSelection": "global_highest_score",
+    "entriesPerAccount": "unlimited",
+    "eligibleMediaTypes": [
+      "IMAGE",
+      "CAROUSEL_ALBUM",
+      "REEL"
+    ]
+  },
+  "scoringRules": [
+    {
+      "id": "score-like",
+      "metric": "likes",
+      "label": "Like",
+      "pointsPerUnit": 30
+    },
+    {
+      "id": "score-comment",
+      "metric": "comments",
+      "label": "Comment",
+      "pointsPerUnit": 100
+    }
+  ],
+  "prizeRules": [
+    {
+      "id": "overall-first",
+      "scope": "overall",
+      "rank": 1,
+      "amount": 5000,
+      "currency": "MKD"
+    },
+    {
+      "id": "overall-second",
+      "scope": "overall",
+      "rank": 2,
+      "amount": 3000,
+      "currency": "MKD"
+    },
+    {
+      "id": "overall-third",
+      "scope": "overall",
+      "rank": 3,
+      "amount": 2000,
+      "currency": "MKD"
+    },
+    {
+      "id": "overall-fourth",
+      "scope": "overall",
+      "rank": 4,
+      "amount": 1000,
+      "currency": "MKD"
+    },
+    {
+      "id": "overall-fifth",
+      "scope": "overall",
+      "rank": 5,
+      "amount": 1000,
+      "currency": "MKD"
+    }
+  ],
+  "additionalRewards": [
+    {
+      "id": "top-ten-booklet",
+      "scope": "overall",
+      "rankFrom": 1,
+      "rankTo": 10,
+      "reward": "physical_album_booklet"
+    }
+  ],
+  "instagramSync": {
+    "provider": "instagram_rendered_browser",
+    "mode": "local_snapshot",
+    "lastSyncedAt": "2026-07-25T15:49:45.440Z",
+    "lastFetchedAt": "2026-07-25T15:49:45.440Z",
+    "failedEntries": 0,
+    "metrics": [
+      "likes",
+      "comments"
+    ]
+  },
+  "submissionLinksByTrack": {
+    "1": [
+      "https://www.instagram.com/p/DbK0lFwMBID/"
+    ],
+    "2": [
+      "https://www.instagram.com/reels/DbLqIoJu3CQ/"
+    ],
+    "3": [
+      "https://www.instagram.com/p/DadVJI0DD-e/"
+    ],
+    "4": [],
+    "5": [],
+    "6": [],
+    "7": [],
+    "8": [],
+    "9": [],
+    "10": []
+  },
+  "participants": [
+    {
+      "id": "instagram-user-anastasija__trajkovska",
+      "username": "anastasija__trajkovska",
+      "displayName": "anastasija__trajkovska"
+    },
+    {
+      "id": "instagram-user-robscallon",
+      "username": "robscallon",
+      "displayName": "robscallon"
+    },
+    {
+      "id": "instagram-user-siotojazz",
+      "username": "siotojazz",
+      "displayName": "siotojazz"
+    }
+  ],
+  "entries": [
+    {
+      "id": "instagram-p-DbK0lFwMBID",
+      "participantId": "instagram-user-anastasija__trajkovska",
+      "trackId": 1,
+      "permalink": "https://www.instagram.com/p/DbK0lFwMBID/",
+      "mediaType": "IMAGE",
+      "caption": "",
+      "thumbnailUrl": "competition-media/instagram-p-DbK0lFwMBID.png",
+      "mediaAspectRatio": 0.5625016300237331,
+      "publishedAt": "2026-07-25T15:11:41.078Z",
+      "submittedAt": "2026-07-25T15:11:41.078Z",
+      "status": "approved"
+    },
+    {
+      "id": "instagram-reel-DbLqIoJu3CQ",
+      "participantId": "instagram-user-robscallon",
+      "trackId": 2,
+      "permalink": "https://www.instagram.com/reel/DbLqIoJu3CQ/",
+      "mediaType": "REEL",
+      "caption": "",
+      "thumbnailUrl": "competition-media/instagram-reel-DbLqIoJu3CQ.png",
+      "mediaAspectRatio": 0.5625016300237331,
+      "publishedAt": "2026-07-25T15:46:39.592Z",
+      "submittedAt": "2026-07-25T15:46:39.592Z",
+      "status": "approved"
+    },
+    {
+      "id": "instagram-p-DadVJI0DD-e",
+      "participantId": "instagram-user-siotojazz",
+      "trackId": 3,
+      "permalink": "https://www.instagram.com/p/DadVJI0DD-e/",
+      "mediaType": "IMAGE",
+      "caption": "",
+      "thumbnailUrl": "https://instagram.fskp4-2.fna.fbcdn.net/v/t51.82787-15/736207223_18007345700927388_1416469253645137335_n.webp?_nc_cat=110&ig_cache_key=MzkzNTM5NDYzNjMwNjg1Nzg4Ng%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTQ0MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=Ci-BAc51bhgQ7kNvwGmfAuY&_nc_oc=AdqhOXiInAirlkZIbhpgFjz9zJdVQ6wghRcKAROYTgdefTCtn-IaTNWfYrobgQV775k&_nc_zt=23&_nc_ht=instagram.fskp4-2.fna&_nc_gid=b39Ms34SLXEPsBAvGe-6FA&_nc_ss=7ba8c&oh=00_AQAseTc-snapl5MbimVbRbQA7wksVxbm_uXerKerLAdeRg&oe=6A6AC1B7",
+      "mediaAspectRatio": 1,
+      "publishedAt": "2026-07-25T15:49:45.440Z",
+      "submittedAt": "2026-07-25T15:49:45.440Z",
+      "status": "approved"
+    }
+  ],
+  "metricSnapshots": [
+    {
+      "id": "metric-latest-instagram-p-DbK0lFwMBID",
+      "entryId": "instagram-p-DbK0lFwMBID",
+      "capturedAt": "2026-07-25T15:11:41.078Z",
+      "likes": 205,
+      "comments": 2,
+      "source": "instagram_rendered_browser"
+    },
+    {
+      "id": "metric-latest-instagram-reel-DbLqIoJu3CQ",
+      "entryId": "instagram-reel-DbLqIoJu3CQ",
+      "capturedAt": "2026-07-25T15:49:45.440Z",
+      "likes": 38100,
+      "comments": 85,
+      "source": "instagram_rendered_browser"
+    },
+    {
+      "id": "metric-latest-instagram-p-DadVJI0DD-e",
+      "entryId": "instagram-p-DadVJI0DD-e",
+      "capturedAt": "2026-07-25T15:49:45.440Z",
+      "likes": 128,
+      "comments": 4,
+      "source": "instagram_rendered_browser"
+    }
+  ]
+}
