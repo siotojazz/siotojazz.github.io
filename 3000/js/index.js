@@ -5913,9 +5913,6 @@
         const preloadSources = data.tracks.map(track => getVersionedAudioSrc(track, 'martin'));
         const preloadOrder = getAlbumPreloadOrder(initialSelection.trackIndex);
         const priorityTrackIndex = preloadOrder[0] ?? 0;
-        if (audioQualityToggle) {
-            audioQualityToggle.dataset.source = preloadSources[priorityTrackIndex] || '';
-        }
 
         await ensureAlbumTrackPreloaded(priorityTrackIndex, preloadSources[priorityTrackIndex]);
         const priorityTrack = data.tracks[priorityTrackIndex];
@@ -5996,6 +5993,7 @@
         document.body.classList.remove('is-audio-revealing');
         setAudioPreloadProgress(1, `Could not load audio: ${error.message || error}`);
         audioPreloader?.classList.add('has-error');
+        finishAudioPreloaderImmediately();
     }
 
     renderTelemetry();
